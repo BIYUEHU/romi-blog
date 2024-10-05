@@ -1,12 +1,14 @@
 #[macro_use]
 extern crate rocket;
 
-mod pool;
-use pool::Db;
+mod api;
+mod entity;
+mod utils;
+
+use api::articles;
 use rocket::{serde::json::Json, Request};
 use sea_orm_rocket::Database;
-
-mod api;
+use utils::pool::Db;
 
 #[catch(404)]
 pub fn not_found(req: &Request<'_>) -> Json<String> {
@@ -18,7 +20,16 @@ async fn bootstrap() -> Result<(), rocket::Error> {
     // TODO: run migrations
     rocket::build()
         .attach(Db::init())
-        .mount("/api/articles", routes![])
+        .mount(
+            "/api/articles",
+            routes![
+                articles::fetch,
+                articles::fetch_all,
+                articles::create,
+                articles::update,
+                articles::delete
+            ],
+        )
         .register("/", catchers![not_found])
         .launch()
         .await

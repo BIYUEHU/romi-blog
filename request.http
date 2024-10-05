@@ -1,0 +1,34 @@
+
+@URL = http://127.0.0.1:8000
+
+### Get All Articles
+
+GET {{URL}}/api/articles/
+
+### Get Single Article
+
+GET {{URL}}/api/articles/1/
+
+### Create Article
+
+POST {{URL}}/api/articles/
+Content-Type: application/json
+
+{
+    "title": "New Article",
+    "text": "This is the text of the new article."
+}
+
+### Update Article
+
+PUT {{URL}}/api/articles/2/
+Content-Type: application/json
+
+{
+    "title": "New Article2",
+    "text": "This is the text of the new article."
+}
+
+### Delete Article
+
+DELETE {{URL}}/api/articles/1/

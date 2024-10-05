@@ -65,3 +65,15 @@ ADD KEY `created` (`created`);
 ALTER TABLE `romi_metas` ADD PRIMARY KEY (`mid`);
 
 ALTER TABLE `romi_relationships` ADD PRIMARY KEY (`aid`, `mid`);
+
+ALTER TABLE `romi_comments`
+MODIFY `cid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `romi_users`
+MODIFY `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `romi_articles`
+MODIFY `aid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `romi_metas`
+MODIFY `mid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;

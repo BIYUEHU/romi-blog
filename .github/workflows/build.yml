@@ -2,21 +2,70 @@ name: Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
-
-env:
-  CARGO_TERM_COLOR: always
+    branches: ["main"]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        arch: [x86_64, aarch64]
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-    # - name: Run tests
-    #   run: cargo test --verbose
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          override: true
+
+      - name: Build project
+        run: cargo build
+
+      - name: Upload artifact (Linux)
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-latest-server
+          path: target/debug/server
+
+      - name: Upload artifact (Linux aarch64)
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: ubuntu-latest-server-aarch64
+          path: target/debug/server
+
+      - name: Upload artifact (macOS)
+        if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-latest-server
+          path: target/debug/server
+
+      - name: Upload artifact (macOS aarch64)
+        if: matrix.os == 'macos-latest' && matrix.arch == 'aarch64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-latest-server-aarch64
+          path: target/debug/server
+
+      - name: Upload artifact (Windows)
+        if: matrix.os == 'windows-latest' && matrix.arch == 'x86_64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-latest-server
+          path: target/debug/server.exe
+
+      - name: Upload artifact (Windows aarch64)
+        if: matrix.os == 'windows-latest' && matrix.arch == 'aarch64'
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-latest-server-aarch64
+          path: target/debug/server.exe
