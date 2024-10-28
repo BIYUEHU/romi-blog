@@ -1,0 +1,47 @@
+<div class="tui-container">
+  <div class="tui-row">
+    <div class="tui-col_12">
+      <h2 class="tui-text_h2">文章列表</h2>
+
+      <div [attr.showLoader]="loading">
+        <div [attr.columns]="columns" [attr.data]="articles">
+          <ng-template tuiHead="title">标题</ng-template>
+          <ng-template tuiHead="created">创建时间</ng-template>
+          <ng-template tuiHead="views">浏览</ng-template>
+          <ng-template tuiHead="likes">点赞</ng-template>
+          <ng-template tuiHead="comments">评论</ng-template>
+          <ng-template tuiHead="actions">操作</ng-template>
+
+          <ng-template let-article tuiCell="title">
+            <!-- <a [routerLink]="['/articles', article.aid]">
+              {{ article.title }}
+            </a> -->
+          </ng-template>
+
+          <ng-template let-article tuiCell="created">
+            <!-- {{ article.created | date }} -->
+          </ng-template>
+
+          <ng-template let-article tuiCell="actions">
+            <button
+              tuiIconButton
+              type="button"
+              appearance="flat"
+              size="s"
+              icon="tuiIconEdit"
+            ></button>
+            /* [routerLink]="['/articles/edit', article.aid]"
+            (click)="onDelete(article)" */
+            <button
+              tuiIconButton
+              type="button"
+              appearance="flat"
+              size="s"
+              icon="tuiIconTrash"
+            ></button>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
