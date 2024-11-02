@@ -7,7 +7,7 @@ GET {{URL}}/api/articles/
 
 ### Get Single Article
 
-GET {{URL}}/api/articles/1/
+GET {{URL}}/api/articles/4/
 
 ### Create Article
 

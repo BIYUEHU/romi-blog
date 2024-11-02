@@ -32,40 +32,40 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v3
         with:
-          name: ubuntu-latest-server
+          name: ubuntu-latest-romichan
           path: target/debug/server
 
       - name: Upload artifact (Linux aarch64)
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v3
         with:
-          name: ubuntu-latest-server-aarch64
+          name: ubuntu-latest-romichan-aarch64
           path: target/debug/server
 
       - name: Upload artifact (macOS)
         if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v3
         with:
-          name: macos-latest-server
+          name: macos-latest-romichan
           path: target/debug/server
 
       - name: Upload artifact (macOS aarch64)
         if: matrix.os == 'macos-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v3
         with:
-          name: macos-latest-server-aarch64
+          name: macos-latest-romichan-aarch64
           path: target/debug/server
 
       - name: Upload artifact (Windows)
         if: matrix.os == 'windows-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v3
         with:
-          name: windows-latest-server
+          name: windows-latest-romichan
           path: target/debug/server.exe
 
       - name: Upload artifact (Windows aarch64)
         if: matrix.os == 'windows-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v3
         with:
-          name: windows-latest-server-aarch64
+          name: windows-latest-romichan-aarch64
           path: target/debug/server.exe
