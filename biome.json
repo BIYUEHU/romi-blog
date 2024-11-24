@@ -11,8 +11,15 @@
   },
   "linter": {
     "enabled": true,
-    "rules": {},
-    "ignore": ["**/*.js", "**/*.d.ts"]
+    "rules": {
+      "style": {
+        "useImportType": "off"
+      }
+    },
+    "ignore": [
+      "**/*.js",
+      "**/*.d.ts"
+    ]
   },
   "javascript": {
     "formatter": {
@@ -33,7 +40,10 @@
   },
   "overrides": [
     {
-      "include": ["*.ts", "*.tsx"]
+      "include": [
+        "*.ts",
+        "*.tsx"
+      ]
     }
   ]
 }

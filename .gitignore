@@ -42,3 +42,8 @@ typings
 Thumbs.db
 
 .42c
+
+# Custom
+scripts/config.json
+articles
+uno.css

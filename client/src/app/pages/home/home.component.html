@@ -1,0 +1,19 @@
+<div class="container mx-auto px-4 pt-20">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div
+      *ngFor="let post of posts; index as i"
+      [routerLink]="['/post', post.id]"
+      class="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
+    >
+      <div class="p-6">
+        <h2 class="text-xl font-bold mb-2">
+          <a [routerLink]="['/post', post.id]">{{ post.title }}</a>
+        </h2>
+        <p class="text-gray-600 text-sm">{{ post.summary }}</p>
+        <div class="mt-4 text-sm text-gray-500">
+          {{ post.date | date : "yyyy-MM-dd" }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

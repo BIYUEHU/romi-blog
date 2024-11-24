@@ -1,13 +1,13 @@
-use crate::{
-    entity::romi_articles,
-    utils::{
-        pool::Db,
-        req::{req_result_ok, ReqErr, ReqResult},
-    },
-};
+use crate::entity::romi_articles;
+use crate::utils::pool::Db;
+use crate::utils::req::{req_result_ok, ReqErr, ReqResult};
+use anyhow::{Context, Result};
 use rocket::serde::json::Json;
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel, TryIntoModel};
 use sea_orm_rocket::Connection;
+use std::env;
+use std::fs;
+use walkdir::WalkDir;
 
 #[derive(serde::Deserialize)]
 pub struct ArticleData {
@@ -18,6 +18,54 @@ pub struct ArticleData {
     pub allow_comment: Option<String>,
     pub created: Option<u32>,
     pub modified: Option<u32>,
+}
+
+fn read_markdown_files() -> Result<Vec<String>> {
+    let dir_path = env::current_dir()?.join("articles");
+
+    // 确保目录存在
+    if !dir_path.exists() {
+        return Err(anyhow::anyhow!(
+            "Directory '{}' does not exist",
+            dir_path.to_str().unwrap()
+        ));
+    }
+
+    let mut articles = Vec::new();
+
+    // 使用 walkdir 递归遍历目录
+    for entry in WalkDir::new(dir_path)
+        .follow_links(true)
+        .into_iter()
+        .filter_map(|e| e.ok())
+    {
+        let path = entry.path();
+
+        // 检查文件扩展名是否为 .md
+        if path
+            .extension()
+            .map_or(false, |ext| ext.eq_ignore_ascii_case("md"))
+        {
+            // 读取文件内容
+            let content = fs::read_to_string(path)
+                .with_context(|| format!("Failed to read file: {}", path.display()))?;
+
+            articles.push(content);
+        }
+    }
+
+    Ok(articles)
+}
+
+#[get("/test")]
+pub async fn fetch_test() -> ReqResult<Vec<String>> {
+    req_result_ok(match read_markdown_files() {
+        Ok(articles) => articles,
+        Err(e) => {
+            eprintln!("Error: {}", e);
+            vec![]
+        }
+    })
 }
 
 #[get("/")]
@@ -131,4 +179,18 @@ pub async fn delete(id: u32, coon: Connection<'_, Db>) -> ReqResult<String> {
         })?;
 
     Ok(Json("Article deleted".to_string()))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_read_markdown_files() -> Result<()> {
+        // 测试读取函数
+        let articles = read_markdown_files()?;
+
+        assert_ne!(articles.len(), 0);
+        Ok(())
+    }
 }
