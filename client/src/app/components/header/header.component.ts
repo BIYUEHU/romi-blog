@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
 
 @Component({
@@ -9,9 +9,14 @@ import { RouterLink } from '@angular/router'
 })
 export class HeaderComponent {
   navItems = [
-    { name: '首页', link: '/' },
-    { name: '归档', link: '/archives' },
-    { name: '友链', link: '/friends' },
-    { name: '关于', link: '/about' }
+    { text: '首页', link: '/' },
+    { text: '归档', link: '/posts' },
+    { text: '友链', link: '/friends' },
+    { text: '日志', link: '/log' },
+    { text: '关于', link: '/about' },
+    { text: '项目', link: '/project' },
+    { text: '分类', link: '/categories' },
+    { text: '更多', link: '/more' },
+    { text: '相关', link: '/related' }
   ]
 }

@@ -1,4 +1,4 @@
-use crate::entity::romi_articles;
+use crate::entity::romi_posts;
 use crate::utils::pool::Db;
 use crate::utils::req::{req_result_ok, ReqErr, ReqResult};
 use anyhow::{Context, Result};
@@ -21,7 +21,7 @@ pub struct ArticleData {
 }
 
 fn read_markdown_files() -> Result<Vec<String>> {
-    let dir_path = env::current_dir()?.join("articles");
+    let dir_path = env::current_dir()?.join("posts");
 
     // 确保目录存在
     if !dir_path.exists() {
@@ -31,7 +31,7 @@ fn read_markdown_files() -> Result<Vec<String>> {
         ));
     }
 
-    let mut articles = Vec::new();
+    let mut posts = Vec::new();
 
     // 使用 walkdir 递归遍历目录
     for entry in WalkDir::new(dir_path)
@@ -50,17 +50,17 @@ fn read_markdown_files() -> Result<Vec<String>> {
             let content = fs::read_to_string(path)
                 .with_context(|| format!("Failed to read file: {}", path.display()))?;
 
-            articles.push(content);
+            posts.push(content);
         }
     }
 
-    Ok(articles)
+    Ok(posts)
 }
 
 #[get("/test")]
 pub async fn fetch_test() -> ReqResult<Vec<String>> {
     req_result_ok(match read_markdown_files() {
-        Ok(articles) => articles,
+        Ok(posts) => posts,
         Err(e) => {
             eprintln!("Error: {}", e);
             vec![]
@@ -69,9 +69,9 @@ pub async fn fetch_test() -> ReqResult<Vec<String>> {
 }
 
 #[get("/")]
-pub async fn fetch(coon: Connection<'_, Db>) -> ReqResult<Vec<romi_articles::Model>> {
+pub async fn fetch(coon: Connection<'_, Db>) -> ReqResult<Vec<romi_posts::Model>> {
     req_result_ok(
-        romi_articles::Entity::find()
+        romi_posts::Entity::find()
             .all(coon.into_inner())
             .await
             .map_err(|_| ReqErr {
@@ -81,8 +81,8 @@ pub async fn fetch(coon: Connection<'_, Db>) -> ReqResult<Vec<romi_articles::Mod
 }
 
 #[get("/<id>")]
-pub async fn fetch_all(id: u32, coon: Connection<'_, Db>) -> ReqResult<romi_articles::Model> {
-    match romi_articles::Entity::find_by_id(id)
+pub async fn fetch_all(id: u32, coon: Connection<'_, Db>) -> ReqResult<romi_posts::Model> {
+    match romi_posts::Entity::find_by_id(id)
         .one(coon.into_inner())
         .await
         .map_err(|_| ReqErr {
@@ -100,10 +100,10 @@ pub async fn fetch_all(id: u32, coon: Connection<'_, Db>) -> ReqResult<romi_arti
 pub async fn create(
     article: Json<ArticleData>,
     coon: Connection<'_, Db>,
-) -> ReqResult<romi_articles::Model> {
+) -> ReqResult<romi_posts::Model> {
     req_result_ok(
-        romi_articles::ActiveModel {
-            aid: ActiveValue::not_set(),
+        romi_posts::ActiveModel {
+            pid: ActiveValue::not_set(),
             title: ActiveValue::set(article.title.clone()),
             text: ActiveValue::set(article.text.clone()),
             password: ActiveValue::set(article.password.clone()),
@@ -130,9 +130,9 @@ pub async fn update(
     id: u32,
     article: Json<ArticleData>,
     coon: Connection<'_, Db>,
-) -> ReqResult<romi_articles::Model> {
+) -> ReqResult<romi_posts::Model> {
     let db = coon.into_inner();
-    match romi_articles::Entity::find_by_id(id)
+    match romi_posts::Entity::find_by_id(id)
         .one(db)
         .await
         .map_err(|_| ReqErr {
@@ -171,7 +171,7 @@ pub async fn update(
 pub async fn delete(id: u32, coon: Connection<'_, Db>) -> ReqResult<String> {
     let db = coon.into_inner();
 
-    romi_articles::Entity::delete_by_id(id)
+    romi_posts::Entity::delete_by_id(id)
         .exec(db)
         .await
         .map_err(|_| ReqErr {
@@ -188,9 +188,9 @@ mod tests {
     #[test]
     fn test_read_markdown_files() -> Result<()> {
         // 测试读取函数
-        let articles = read_markdown_files()?;
+        let posts = read_markdown_files()?;
 
-        assert_ne!(articles.len(), 0);
+        assert_ne!(posts.len(), 0);
         Ok(())
     }
 }

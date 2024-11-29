@@ -44,6 +44,7 @@ Thumbs.db
 .42c
 
 # Custom
-scripts/config.json
+scripts/*.json
+scripts/*.jsonl
 articles
 uno.css

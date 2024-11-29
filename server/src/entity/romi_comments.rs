@@ -7,7 +7,7 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub cid: u32,
-    pub aid: u32,
+    pub pid: u32,
     pub uid: u32,
     pub created: Option<u32>,
     pub ip: String,

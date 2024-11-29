@@ -11,5 +11,5 @@ import { CommonModule } from '@angular/common'
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  title = 'Hotaru Blog'
+  public title = 'Romi Blog'
 }

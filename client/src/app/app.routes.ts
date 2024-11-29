@@ -8,13 +8,13 @@ import { PostComponent } from './pages/post/post.component'
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
-    title: 'Hotaru Blog - Home'
+    component: HomeComponent
+    // title: 'Romi Blog - Home'
   },
   {
     path: 'post/:id',
-    component: PostComponent,
-    title: 'Article'
+    component: PostComponent
+    // title: 'Article'
   },
   // {
   //   path: 'about',

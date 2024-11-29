@@ -12,3 +12,11 @@ export interface Author {
   avatar: string
   bio: string
 }
+
+export interface ExternalHitokoto {
+  data: {
+    msg: string
+    from: string
+    id: number
+  }
+}

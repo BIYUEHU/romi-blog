@@ -1,37 +1,22 @@
-<div>
-  <nav
-    class="fixed top-0 left-0 right-0 h-14 bg-white/80 backdrop-blur flex items-center px-4 z-50 border-b border-gray-200"
+<div
+  class="bg-black/15 backdrop-blur-10 z-3 fixed top-0 left-0 w-full text-light"
+>
+  <div
+    class="h-14 mx-0 px-0 py-3 my-auto flex items-center flex-1 relative justify-center h-full"
   >
-    <div class="text-xl font-bold">Hotaru Blog</div>
-    <div class="flex-1 flex justify-center gap-6">
-      <a
-        *ngFor="let item of navItems"
-        [routerLink]="item.link"
-        class="text-gray-300 hover:text-white"
-      >
-        {{ item.name }}
-      </a>
-      <!-- <a class="hover:text-blue-500">首页</a>
-    <a class="hover:text-blue-500">归档</a>
-    <a class="hover:text-blue-500">友链</a>
-    <a class="hover:text-blue-500">日志</a>
-    <a class="hover:text-blue-500">关于</a> -->
-    </div>
-    <button class="px-4 py-1 rounded bg-gray-100 hover:bg-gray-200">
-      夜光
-    </button>
-  </nav>
-  <header class="relative h-60 mb-8">
-    <div
-      class="absolute inset-0 bg-cover bg-center"
-      style="background-image: url('/api/placeholder/1200/240')"
-    ></div>
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="absolute bottom-8 left-8 text-white">
-      <h1 class="text-3xl font-bold mb-2">Arimura Sena</h1>
-      <p class="text-sm opacity-80">
-        What is mind? No matter. What is matter? Never mind.
-      </p>
-    </div>
-  </header>
+    <a
+      [routerLink]="'/'"
+      class="no-underline text-white left-0 text-7 justify-center absolute font-bold space-inline-xs"
+    >
+      Romi Blog
+    </a>
+    @for (item of navItems; track $index) {
+    <a
+      [routerLink]="item.link"
+      class="no-underline text-light-950 hover:text-black/86 outline-0 border-none flex justify-center px-2 py-2"
+    >
+      {{ item.text }}
+    </a>
+    }
+  </div>
 </div>

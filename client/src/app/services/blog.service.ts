@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core'
-// biome-ignore lint:
 import { HttpClient } from '@angular/common/http'
-import { map, type Observable } from 'rxjs'
-import type { Post, Author } from '../models/blog.model'
+import { map, switchMap, type Observable } from 'rxjs'
+import type { Post, Author, ExternalHitokoto } from '../models/blog.model'
 import { API_BASE_URL } from '../shared/constants'
 import { parseMarkdown } from '../../utils/parseMarkdown'
 
@@ -20,15 +19,19 @@ export class BlogService {
       .pipe(map((data) => data.map((text) => parseMarkdown(text))))
   }
 
-  getPosts(): Observable<Post[]> {
+  getPosts() {
     return this.http.get<Post[]>(`${this.apiUrl}/articles`)
   }
 
-  getPost(id: string): Observable<Post> {
+  getPost(id: string) {
     return this.http.get<Post>(`${this.apiUrl}/articles/${id}`)
   }
 
-  getAuthor(): Observable<Author> {
+  getAuthor() {
     return this.http.get<Author>(`${this.apiUrl}/author`)
+  }
+
+  getHitokoto() {
+    return this.http.get<ExternalHitokoto>('https://hotaru.icu/api/hitokoto/v2/')
   }
 }

@@ -1,11 +1,11 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "romi_articles")]
+#[sea_orm(table_name = "romi_posts")]
 #[derive(serde::Serialize)]
 pub struct Model {
     #[sea_orm(primary_key)]
-    pub aid: u32,
+    pub pid: u32,
     pub title: String,
     pub created: Option<u32>,
     pub modified: Option<u32>,
@@ -18,6 +18,7 @@ pub struct Model {
     pub views: Option<i32>,
     pub likes: Option<i32>,
     pub comments: Option<i32>,
+    pub banner: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

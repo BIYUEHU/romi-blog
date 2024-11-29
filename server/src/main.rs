@@ -5,11 +5,17 @@ mod api;
 mod entity;
 mod utils;
 
-use api::articles;
+use api::posts;
+use rocket::fs::{relative, FileServer};
+// use rocket::http::uri::Path;
 use rocket::http::Method;
-use rocket::{serde::json::Json, Request};
+use rocket::response::content::RawHtml;
+use rocket::serde::json::Json;
+use rocket::Request;
 use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors};
 use sea_orm_rocket::Database;
+use std::fs;
+use std::path::Path;
 use utils::pool::Db;
 
 #[catch(404)]
@@ -38,24 +44,45 @@ fn get_cors() -> Cors {
     .expect("cors config error")
 }
 
+#[get("/<_path..>", rank = 99)]
+fn fallback_route(_path: std::path::PathBuf) -> RawHtml<String> {
+    RawHtml(
+        if let Ok(content) = fs::read_to_string(Path::new("static/index.html")) {
+            content
+        } else {
+            "<html><body><h1>404 Not Found</h1><p>Page not exists.</p></body></html>".to_string()
+        },
+    )
+}
+
+fn init_directory() {
+    let static_dir = Path::new("static");
+    if !static_dir.exists() {
+        fs::create_dir(static_dir).unwrap();
+    }
+}
+
 #[rocket::main]
 async fn bootstrap() -> Result<(), rocket::Error> {
+    init_directory();
     // TODO: run migrations
     rocket::build()
         .attach(Db::init())
+        .mount("/", FileServer::from(relative!("static")))
         .attach(get_cors())
         .mount(
-            "/api/articles",
+            "/api/posts",
             routes![
-                articles::fetch,
+                posts::fetch,
                 // temporary route for testing
-                articles::fetch_test,
-                articles::fetch_all,
-                articles::create,
-                articles::update,
-                articles::delete
+                posts::fetch_test,
+                posts::fetch_all,
+                posts::create,
+                posts::update,
+                posts::delete
             ],
         )
+        .mount("/", routes![fallback_route])
         .register("/", catchers![not_found])
         .launch()
         .await

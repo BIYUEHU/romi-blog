@@ -2,7 +2,7 @@
 
 CREATE TABLE `romi_comments` (
     `cid` int(10) UNSIGNED NOT NULL,
-    `aid` int(10) UNSIGNED NOT NULL,
+    `pid` int(10) UNSIGNED NOT NULL,
     `uid` int(10) UNSIGNED NOT NULL,
     `created` int(10) UNSIGNED DEFAULT '0',
     `ip` varchar(64) NOT NULL,
@@ -22,8 +22,8 @@ CREATE TABLE `romi_users` (
     `url` varchar(128) DEFAULT NULL
 );
 
-CREATE TABLE `romi_articles` (
-    `aid` int(10) UNSIGNED NOT NULL,
+CREATE TABLE `romi_posts` (
+    `pid` int(10) UNSIGNED NOT NULL,
     `title` varchar(150) NOT NULL,
     `created` int(10) UNSIGNED DEFAULT '0',
     `modified` int(10) UNSIGNED DEFAULT '0',
@@ -33,7 +33,8 @@ CREATE TABLE `romi_articles` (
     `allowComment` char(1) DEFAULT '1',
     `views` int(10) DEFAULT '0',
     `likes` int(10) DEFAULT '0',
-    `comments` int(10) DEFAULT '0'
+    `comments` int(10) DEFAULT '0',
+    `banner` longtext DEFAULT NULL
 );
 
 CREATE TABLE `romi_metas` (
@@ -44,13 +45,13 @@ CREATE TABLE `romi_metas` (
 );
 
 CREATE TABLE `romi_relationships` (
-    `aid` int(10) UNSIGNED NOT NULL,
+    `pid` int(10) UNSIGNED NOT NULL,
     `mid` int(10) UNSIGNED NOT NULL
 );
 
 ALTER TABLE `romi_comments`
 ADD PRIMARY KEY (`cid`),
-ADD KEY `aid` (`aid`),
+ADD KEY `pid` (`pid`),
 ADD KEY `uid` (`uid`);
 
 ALTER TABLE `romi_users`
@@ -58,13 +59,13 @@ ADD PRIMARY KEY (`uid`),
 ADD UNIQUE KEY `username` (`username`),
 ADD UNIQUE KEY `email` (`email`);
 
-ALTER TABLE `romi_articles`
-ADD PRIMARY KEY (`aid`),
+ALTER TABLE `romi_posts`
+ADD PRIMARY KEY (`pid`),
 ADD KEY `created` (`created`);
 
 ALTER TABLE `romi_metas` ADD PRIMARY KEY (`mid`);
 
-ALTER TABLE `romi_relationships` ADD PRIMARY KEY (`aid`, `mid`);
+ALTER TABLE `romi_relationships` ADD PRIMARY KEY (`pid`, `mid`);
 
 ALTER TABLE `romi_comments`
 MODIFY `cid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
@@ -72,8 +73,8 @@ MODIFY `cid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 ALTER TABLE `romi_users`
 MODIFY `uid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `romi_articles`
-MODIFY `aid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+ALTER TABLE `romi_posts`
+MODIFY `pid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `romi_metas`
 MODIFY `mid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;

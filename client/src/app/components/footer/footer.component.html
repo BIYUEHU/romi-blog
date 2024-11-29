@@ -1,4 +1,32 @@
-<footer class="mt-12 py-6 px-4 text-center text-sm text-gray-600 border-t">
-  <p>© 2019-2024 Hotaru Blog</p>
-  <p class="mt-2">Made with ❤️ by Arimura Sena</p>
-</footer>
+<div
+  class="bg-cover bg-no-repeat relative text-center bg-black mt-5 py-5 w-full text-white font-300 m-auto"
+>
+  <div
+    class="max-w-80% w-5xl flex justify-between m-auto children:max-w-full children:w-5xl children:mx-0 children:pt-1 children:pb-4 children:children:mt-2 children:children:children:no-underline children:children:text-gray children:children:children:text-gray"
+  >
+    <div class="text-left">
+      <p>© 2019 - 2024 <span class="text-light">Romi Blog</span></p>
+      <p>感谢陪伴：{{ currentTime }}</p>
+      @if (hitokoto) {
+      <p>
+        <a target="_blank" href="{{ hitokoto.url }}">{{ hitokoto.msg }}</a>
+      </p>
+      }
+    </div>
+    <div class="text-right">
+      <p>
+        Made with ❤️ by
+        <a target="_blank" class="text-blue-2" href="https://github.com/biyuehu"
+          >Arimura Sena</a
+        >
+      </p>
+      <p>
+        @for (item of footerItems; track $index) { @if (item.vanilla) {
+        <a href="{{ item.link }}">{{ item.text }}</a>
+        } @else {
+        <a [routerLink]="item.link">{{ item.text }}</a>
+        } @if ($index !== footerItems.length - 1) { • } }
+      </p>
+    </div>
+  </div>
+</div>

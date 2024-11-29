@@ -2,8 +2,8 @@
 
 pub mod prelude;
 
-pub mod romi_articles;
 pub mod romi_comments;
 pub mod romi_metas;
+pub mod romi_posts;
 pub mod romi_relationships;
 pub mod romi_users;
