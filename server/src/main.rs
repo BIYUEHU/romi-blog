@@ -7,6 +7,7 @@ mod tools;
 mod utils;
 
 use api::posts;
+use rocket::figment::providers::Env;
 use rocket::fs::{relative, FileServer};
 // use rocket::http::uri::Path;
 use rocket::http::Method;
@@ -16,8 +17,13 @@ use rocket::Request;
 use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors};
 use sea_orm_rocket::Database;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use utils::pool::Db;
+
+pub struct Directory {
+    root_dir: PathBuf,
+    static_dir: PathBuf,
+}
 
 #[catch(404)]
 pub fn not_found(req: &Request<'_>) -> Json<String> {
@@ -56,10 +62,15 @@ fn fallback_route(_path: std::path::PathBuf) -> RawHtml<String> {
     )
 }
 
-fn init_directory() {
-    let static_dir = Path::new("static");
+fn init_directory() -> Directory {
+    let root_dir = std::env::current_dir().unwrap();
+    let static_dir = root_dir.join("static");
     if !static_dir.exists() {
-        fs::create_dir(static_dir).unwrap();
+        fs::create_dir(static_dir.clone()).unwrap();
+    }
+    Directory {
+        root_dir,
+        static_dir,
     }
 }
 
