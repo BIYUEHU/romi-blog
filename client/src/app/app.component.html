@@ -1,16 +1,30 @@
-<app-header />
-<div class="flex-1 bg-white w-full">
-  <div class="bg-dark min-h-30vh pt-14 overflow-hidden relative mb-6">
-    <div class="brightness-60 absolute left-0 top-0 w-full h-full">
-      <img
-        class="object-cover left-0 top-0 w-full h-full"
-        src="https://files.superbed.cn/proxy/7569696d6e2732326a766d75726972337e7973337f7e787f726e337e727032282d2d7b79247b24792a2f7c2b2d2824257c2f7f29282a292e252e292e29247f2d2e2e7f7f7c7c2c33776d7a.png"
-        alt="Background Image"
-      />
+<div class="h-full">
+  <app-header />
+  <div class="flex-1 bg-white w-full">
+    <div class="bg-dark min-h-30vh pt-14 overflow-hidden relative mb-6">
+      <div class="brightness-60 absolute left-0 top-0 w-full h-full">
+        <img
+          class="object-cover left-0 top-0 w-full h-full"
+          src="https://hotaru.icu/api/background"
+          alt="Background Image"
+        />
+      </div>
     </div>
+    <div class="text-center font-fold text-gray-700 mb-4">
+      当前博客正在逐步重构中，观察进度可前往
+      <a
+        class="text-blue-500 hover:text-blue-700"
+        target="_blank"
+        href="https://github.com/biyuehu/romichan"
+        >biyuehu/romichan</a
+      >，旧博客：<a
+        class="text-blue-500 hover:text-blue-700"
+        target="_blank"
+        href="https://old.hotaru.icu"
+        >old.hotaru.icu</a
+      >
+    </div>
+    <router-outlet />
   </div>
-  <router-outlet
-    class="relative max-w-full mx-0 my-auto px-0 py-5"
-  ></router-outlet>
+  <app-footer />
 </div>
-<app-footer />

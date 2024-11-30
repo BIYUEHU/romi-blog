@@ -1,15 +1,15 @@
 <div class="w-5xl max-w-90% mx-auto flex-1">
-  <div style="list-style: none" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @for (post of posts; track $index) {
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @if (posts) { @for (post of posts; track $index) {
     <a
       [routerLink]="['/post', post.id]"
       class="no-underline text-black left-0 top-0 bg-white border border-solid border-black border-b-black/86 border-2 overflow-hidden hover:shadow-2xl transition-shadow"
     >
-      @if (post.cover) {
+      @if (post.banner) {
 
       <img
-        [src]="post.cover"
-        class="w-full h-48 object-cover"
+        [src]="post.banner"
+        class="w-full h-36 object-cover"
         [alt]="post.title"
       />
       }
@@ -19,10 +19,12 @@
         </h1>
         <p class="text-gray-600 text-sm">{{ post.summary }}</p>
         <div class="mt-4 text-sm text-gray-500">
-          {{ post.date | date : "yyyy-MM-dd" }}
+          {{ post.created * 1000 | date : "yyyy-MM-dd" }}
         </div>
       </div>
     </a>
+    } } @else {
+    <app-loading />
     }
   </div>
 </div>

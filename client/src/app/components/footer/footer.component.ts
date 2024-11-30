@@ -24,7 +24,7 @@ export class FooterComponent implements OnInit {
     this.blogService.getHitokoto().subscribe(({ data }) => {
       this.hitokoto = {
         ...data,
-        msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}——${data.from}`,
+        msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from ? ` —— ${data.from}` : ''}`,
         url: `https://hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
       }
     })

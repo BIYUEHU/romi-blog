@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { map, switchMap, type Observable } from 'rxjs'
-import type { Post, Author, ExternalHitokoto } from '../models/blog.model'
+import { map } from 'rxjs'
+import type { ExternalHitokoto, ResPostData, ResPostSingleData } from '../models/blog.model'
 import { API_BASE_URL } from '../shared/constants'
 import { parseMarkdown } from '../../utils/parseMarkdown'
 
@@ -15,20 +15,16 @@ export class BlogService {
 
   getArticlesTesting() {
     return this.http
-      .get<string[]>(`${this.apiUrl}/articles/test`)
+      .get<string[]>(`${this.apiUrl}/posts/test`)
       .pipe(map((data) => data.map((text) => parseMarkdown(text))))
   }
 
   getPosts() {
-    return this.http.get<Post[]>(`${this.apiUrl}/articles`)
+    return this.http.get<ResPostData[]>(`${this.apiUrl}/posts`)
   }
 
   getPost(id: string) {
-    return this.http.get<Post>(`${this.apiUrl}/articles/${id}`)
-  }
-
-  getAuthor() {
-    return this.http.get<Author>(`${this.apiUrl}/author`)
+    return this.http.get<ResPostSingleData>(`${this.apiUrl}/posts/${id}`)
   }
 
   getHitokoto() {

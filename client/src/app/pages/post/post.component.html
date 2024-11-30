@@ -1,0 +1,21 @@
+<div class="w-4xl max-w-90% mx-auto flex-1">
+  @if (post) {
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
+    <div class="text-gray-400 mb-6 text-size-sm">
+      <p>
+        创建时间：{{ post.created * 1000 | date : "yyyy-MM-dd" }} 更新时间：{{
+          post.modified * 1000 | date : "yyyy-MM-dd"
+        }}
+      </p>
+      <p>
+        {{ post.views }} 次阅读 | {{ post.comments }} 条评论 |
+        {{ post.likes }} 人喜欢
+      </p>
+    </div>
+  </div>
+  <div class="post-body" [innerHTML]="renderedContent"></div>
+  } @else {
+  <app-loading />
+  }
+</div>

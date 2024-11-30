@@ -9,6 +9,7 @@
     "unocss:dev": "unocss --watch",
     "test": "ng test"
   },
+  "license": "BAN-CHINAMAN-USING",
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",
@@ -20,6 +21,7 @@
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "@taiga-ui/addon-mobile": "^4.17.0",
     "@taiga-ui/cdk": "^4.12.0",
     "@taiga-ui/core": "^4.12.0",
     "@taiga-ui/event-plugins": "^4.0.2",

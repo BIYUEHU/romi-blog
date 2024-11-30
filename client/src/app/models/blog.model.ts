@@ -1,10 +1,37 @@
-export interface Post {
-  id: string
+export interface ReqPostData {
   title: string
-  content: string
-  date: Date
+  text: string
+  password: boolean
+  hide: boolean
+  allow_comment: boolean
+  created: number
+  modified: number
+  tags: string[]
+  categories: string[]
+}
+
+export interface ResPostData {
+  id: number
+  title: string
   summary: string
-  cover?: string
+  created: number
+  banner?: string
+}
+
+export interface ResPostSingleData {
+  id: number
+  title: string
+  created: number
+  modified: number
+  text: string
+  password: boolean
+  allow_comment: boolean
+  tags: string[]
+  categories: string[]
+  views: number
+  likes: number
+  comments: number
+  banner: string
 }
 
 export interface Author {
