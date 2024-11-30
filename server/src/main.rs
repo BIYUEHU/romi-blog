@@ -7,8 +7,7 @@ mod tools;
 mod utils;
 
 use api::posts;
-use rocket::figment::providers::Env;
-use rocket::fs::{relative, FileServer};
+use rocket::fs::FileServer;
 // use rocket::http::uri::Path;
 use rocket::http::Method;
 use rocket::response::content::RawHtml;
