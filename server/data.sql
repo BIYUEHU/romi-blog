@@ -6,6 +6,7 @@ CREATE TABLE `romi_comments` (
     `uid` int(10) UNSIGNED NOT NULL,
     `created` int(10) UNSIGNED DEFAULT '0',
     `ip` varchar(64) NOT NULL,
+    `ua` varchar(511) NOT NULL,
     `text` text NOT NULL
 );
 

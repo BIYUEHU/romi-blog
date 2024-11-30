@@ -1,29 +1,61 @@
-use crate::entity::romi_posts;
+use crate::entity::{romi_metas, romi_posts, romi_relationships};
+use crate::tools::{from_bool, summary_markdown, to_bool};
 use crate::utils::pool::Db;
 use crate::utils::req::{req_result_ok, ReqErr, ReqResult};
 use anyhow::{Context, Result};
 use rocket::serde::json::Json;
-use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel, TryIntoModel};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter,
+    TryIntoModel,
+};
 use sea_orm_rocket::Connection;
-use std::env;
 use std::fs;
+use std::{env, vec};
 use walkdir::WalkDir;
 
 #[derive(serde::Deserialize)]
-pub struct ArticleData {
+pub struct ReqPostData {
     pub title: String,
     pub text: String,
-    pub password: Option<String>,
-    pub hide: Option<String>,
-    pub allow_comment: Option<String>,
+    pub password: bool,
+    pub hide: bool,
+    pub allow_comment: bool,
     pub created: Option<u32>,
     pub modified: Option<u32>,
+    // pub tags: Vec<String>,
+    // pub categories: Vec<String>,
+}
+
+#[derive(serde::Serialize)]
+pub struct ResPostData {
+    pub id: u32,
+    pub title: String,
+    pub summary: String,
+    pub created: u32,
+    pub banner: Option<String>,
+}
+
+#[derive(serde::Serialize)]
+pub struct ResPostSingleData {
+    pub id: u32,
+    pub title: String,
+    pub created: u32,
+    pub modified: u32,
+    pub text: String,
+    pub password: bool,
+    pub hide: bool,
+    pub allow_comment: bool,
+    pub tags: Vec<String>,
+    pub categories: Vec<String>,
+    pub views: i32,
+    pub likes: i32,
+    pub comments: i32,
+    pub banner: Option<String>,
 }
 
 fn read_markdown_files() -> Result<Vec<String>> {
     let dir_path = env::current_dir()?.join("posts");
 
-    // 确保目录存在
     if !dir_path.exists() {
         return Err(anyhow::anyhow!(
             "Directory '{}' does not exist",
@@ -33,7 +65,6 @@ fn read_markdown_files() -> Result<Vec<String>> {
 
     let mut posts = Vec::new();
 
-    // 使用 walkdir 递归遍历目录
     for entry in WalkDir::new(dir_path)
         .follow_links(true)
         .into_iter()
@@ -41,12 +72,10 @@ fn read_markdown_files() -> Result<Vec<String>> {
     {
         let path = entry.path();
 
-        // 检查文件扩展名是否为 .md
         if path
             .extension()
             .map_or(false, |ext| ext.eq_ignore_ascii_case("md"))
         {
-            // 读取文件内容
             let content = fs::read_to_string(path)
                 .with_context(|| format!("Failed to read file: {}", path.display()))?;
 
@@ -69,48 +98,118 @@ pub async fn fetch_test() -> ReqResult<Vec<String>> {
 }
 
 #[get("/")]
-pub async fn fetch(coon: Connection<'_, Db>) -> ReqResult<Vec<romi_posts::Model>> {
+pub async fn fetch(coon: Connection<'_, Db>) -> ReqResult<Vec<ResPostData>> {
     req_result_ok(
         romi_posts::Entity::find()
             .all(coon.into_inner())
             .await
             .map_err(|_| ReqErr {
                 ..Default::default()
-            })?,
+            })?
+            .iter()
+            .filter(|data| data.hide != Some("1".to_string()))
+            .map(|data| ResPostData {
+                id: data.pid.clone(),
+                title: data.title.clone(),
+                summary: summary_markdown(data.text.as_str(), 70),
+                created: data.created.unwrap(),
+                banner: data.banner.clone(),
+            })
+            .rev()
+            .collect(),
     )
 }
 
 #[get("/<id>")]
-pub async fn fetch_all(id: u32, coon: Connection<'_, Db>) -> ReqResult<romi_posts::Model> {
-    match romi_posts::Entity::find_by_id(id)
-        .one(coon.into_inner())
+pub async fn fetch_all(id: u32, coon: Connection<'_, Db>) -> ReqResult<ResPostSingleData> {
+    let db = coon.into_inner();
+    let metas = futures::future::join_all(
+        romi_relationships::Entity::find()
+            .filter(romi_relationships::Column::Pid.eq(id))
+            .all(db)
+            .await
+            .map_err(|_| ReqErr {
+                ..Default::default()
+            })?
+            .iter()
+            .map(|tag| async {
+                romi_metas::Entity::find_by_id(tag.mid)
+                    .one(db)
+                    .await
+                    .map_err(|_| ReqErr {
+                        ..Default::default()
+                    })
+                    .unwrap()
+            }),
+    )
+    .await;
+
+    if let Some(post) = romi_posts::Entity::find_by_id(id)
+        .one(db)
         .await
         .map_err(|_| ReqErr {
             ..Default::default()
-        })? {
-        Some(article) => req_result_ok(article),
-        None => Err(ReqErr {
+        })?
+    {
+        req_result_ok(ResPostSingleData {
+            id: post.pid.clone(),
+            title: post.title.clone(),
+            created: post.created.unwrap(),
+            modified: post.modified.unwrap(),
+            text: post.text.clone(),
+            password: to_bool(post.password),
+            hide: to_bool(post.hide),
+            allow_comment: to_bool(post.allow_comment),
+            tags: metas
+                .iter()
+                .filter(|meta| {
+                    if let Some(meta) = meta {
+                        meta.is_category != Some("1".to_string())
+                    } else {
+                        false
+                    }
+                })
+                .map(|meta| meta.clone().unwrap().name.clone())
+                .collect::<Vec<String>>(),
+            categories: metas
+                .iter()
+                .filter(|meta| {
+                    if let Some(meta) = meta {
+                        meta.is_category == Some("1".to_string())
+                    } else {
+                        false
+                    }
+                })
+                .map(|meta| meta.clone().unwrap().name.clone())
+                .collect::<Vec<String>>(),
+            views: post.views.unwrap(),
+            likes: post.likes.unwrap(),
+            comments: post.comments.unwrap(),
+            banner: post.banner.clone(),
+        })
+    } else {
+        Err(ReqErr {
             code: 404,
-            msg: "Article not found".to_string(),
-        }),
+            msg: "Post not found".to_string(),
+        })
     }
 }
 
-#[post("/", data = "<article>")]
+#[post("/", data = "<post>")]
 pub async fn create(
-    article: Json<ArticleData>,
+    post: Json<ReqPostData>,
     coon: Connection<'_, Db>,
 ) -> ReqResult<romi_posts::Model> {
     req_result_ok(
         romi_posts::ActiveModel {
             pid: ActiveValue::not_set(),
-            title: ActiveValue::set(article.title.clone()),
-            text: ActiveValue::set(article.text.clone()),
-            password: ActiveValue::set(article.password.clone()),
-            hide: ActiveValue::set(article.hide.clone()),
-            allow_comment: ActiveValue::set(article.allow_comment.clone()),
-            created: ActiveValue::set(article.created),
-            modified: ActiveValue::set(article.modified),
+            title: ActiveValue::set(post.title.clone()),
+            text: ActiveValue::set(post.text.clone()),
+            password: ActiveValue::set(from_bool(post.password)),
+            hide: ActiveValue::set(from_bool(post.hide)),
+            allow_comment: ActiveValue::set(from_bool(post.allow_comment)),
+            created: ActiveValue::set(post.created),
+            modified: ActiveValue::set(post.modified),
             ..Default::default()
         }
         .save(coon.into_inner())
@@ -125,30 +224,31 @@ pub async fn create(
     )
 }
 
-#[put("/<id>", data = "<article>")]
+#[put("/<id>", data = "<post>")]
 pub async fn update(
     id: u32,
-    article: Json<ArticleData>,
+    post: Json<ReqPostData>,
     coon: Connection<'_, Db>,
 ) -> ReqResult<romi_posts::Model> {
     let db = coon.into_inner();
+
     match romi_posts::Entity::find_by_id(id)
         .one(db)
         .await
         .map_err(|_| ReqErr {
             ..Default::default()
         })? {
-        Some(article_origin) => {
-            let mut article_origin = article_origin.into_active_model();
-            article_origin.title = ActiveValue::Set(article.title.clone());
-            article_origin.text = ActiveValue::Set(article.text.clone());
-            article_origin.password = ActiveValue::Set(article.password.clone());
-            article_origin.hide = ActiveValue::Set(article.hide.clone());
-            article_origin.allow_comment = ActiveValue::Set(article.allow_comment.clone());
-            article_origin.created = ActiveValue::Set(article.created);
-            article_origin.modified = ActiveValue::Set(article.modified);
+        Some(post_origin) => {
+            let mut post_origin = post_origin.into_active_model();
+            post_origin.title = ActiveValue::Set(post.title.clone());
+            post_origin.text = ActiveValue::Set(post.text.clone());
+            post_origin.password = ActiveValue::Set(from_bool(post.password));
+            post_origin.hide = ActiveValue::Set(from_bool(post.hide));
+            post_origin.allow_comment = ActiveValue::Set(from_bool(post.allow_comment));
+            post_origin.created = ActiveValue::Set(post.created);
+            post_origin.modified = ActiveValue::Set(post.modified);
             req_result_ok(
-                article_origin
+                post_origin
                     .save(db)
                     .await
                     .map_err(|_| ReqErr {
@@ -162,7 +262,7 @@ pub async fn update(
         }
         None => Err(ReqErr {
             code: 404,
-            msg: "Article not found".to_string(),
+            msg: "Post not found".to_string(),
         }),
     }
 }
@@ -178,7 +278,7 @@ pub async fn delete(id: u32, coon: Connection<'_, Db>) -> ReqResult<String> {
             ..Default::default()
         })?;
 
-    Ok(Json("Article deleted".to_string()))
+    Ok(Json("Post deleted".to_string()))
 }
 
 #[cfg(test)]

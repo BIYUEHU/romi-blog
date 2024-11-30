@@ -25,6 +25,7 @@
 ### Frontend
 
 - Angular18
+- UnoCSS
 - Taiga UI
 
 ### Backend
@@ -32,3 +33,7 @@
 - Rocket
 - SeaORM
 - MySQL
+
+## License
+
+The project is licensed under the [BCU](https://github.com/BIYUEHU/ban-chinaman-using) license.

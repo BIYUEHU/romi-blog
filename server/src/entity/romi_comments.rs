@@ -11,6 +11,7 @@ pub struct Model {
     pub uid: u32,
     pub created: Option<u32>,
     pub ip: String,
+    pub ua: String,
     #[sea_orm(column_type = "Text")]
     pub text: String,
 }

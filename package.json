@@ -3,7 +3,7 @@
   "description": "A blog system",
   "version": "0.0.0",
   "private": true,
-  "license": "GPL-3.0-or-later",
+  "license": "BAN-CHINAMAN-USING",
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
     "client": "pnpm --filter client",

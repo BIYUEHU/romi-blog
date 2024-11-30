@@ -3,6 +3,7 @@ extern crate rocket;
 
 mod api;
 mod entity;
+mod tools;
 mod utils;
 
 use api::posts;

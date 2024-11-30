@@ -3,7 +3,7 @@ name = "server"
 version = "0.1.0"
 edition = "2021"
 publish = false
-license = "GPL-3.0-or-later"
+license = "BAN-CHINAMAN-USING"
 
 [dependencies]
 rocket = { version = "0.5.1", features = ["json"] }
@@ -22,3 +22,4 @@ async-trait = { version = "0.1" }
 serde = { version = "1.0.210", features = ["derive"] }
 walkdir = "2.5.0"
 rocket_cors = "0.6.0"
+futures = "0.3.31"

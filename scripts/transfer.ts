@@ -36,10 +36,9 @@ ${content.text.replace('<!--markdown-->', '')}`
 async function main() {
   try {
     const contents: TypechoContent[] = await db('typecho_contents').select('*')
-
-    for (const content of contents) {
-      getPostMetas(content.cid).then((metas) => createMarkdownFile(content, metas))
-    }
+    await Promise.all(
+      contents.map((content) => getPostMetas(content.cid).then((metas) => createMarkdownFile(content, metas)))
+    )
 
     console.log('Export completed successfully!')
   } catch (error) {
