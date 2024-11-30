@@ -21,8 +21,8 @@ use std::path::{Path, PathBuf};
 use utils::pool::Db;
 
 pub struct Directory {
-    root_dir: PathBuf,
-    static_dir: PathBuf,
+    pub root_dir: PathBuf,
+    pub static_dir: PathBuf,
 }
 
 #[catch(404)]
@@ -76,11 +76,11 @@ fn init_directory() -> Directory {
 
 #[rocket::main]
 async fn bootstrap() -> Result<(), rocket::Error> {
-    init_directory();
+    let dir = init_directory();
     // TODO: run migrations
     rocket::build()
         .attach(Db::init())
-        .mount("/", FileServer::from(relative!("static")))
+        .mount("/", FileServer::from(dir.static_dir))
         .attach(get_cors())
         .mount(
             "/api/posts",
