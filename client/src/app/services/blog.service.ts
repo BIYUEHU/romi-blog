@@ -28,6 +28,6 @@ export class BlogService {
   }
 
   getHitokoto() {
-    return this.http.get<ExternalHitokoto>('https://hotaru.icu/api/hitokoto/v2/')
+    return this.http.get<ExternalHitokoto>('https://api.hotaru.icu/ial/hitokoto/v2/')
   }
 }
