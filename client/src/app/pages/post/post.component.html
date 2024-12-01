@@ -1,5 +1,5 @@
-<div class="w-4xl max-w-90% mx-auto flex-1">
-  @if (post) {
+@if (post) {
+<div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="text-center">
     <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
     <div class="text-gray-400 mb-6 text-size-sm">
@@ -15,7 +15,7 @@
     </div>
   </div>
   <div class="post-body" [innerHTML]="renderedContent"></div>
-  } @else {
-  <app-loading />
-  }
 </div>
+} @else {
+<app-loading />
+}

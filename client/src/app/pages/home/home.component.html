@@ -1,6 +1,7 @@
+@if (posts) {
 <div class="w-5xl max-w-90% mx-auto flex-1">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @if (posts) { @for (post of posts; track $index) {
+    @for (post of posts; track $index) {
     <a
       [routerLink]="['/post', post.id]"
       class="no-underline text-black left-0 top-0 bg-white border border-solid border-black border-b-black/86 border-2 overflow-hidden hover:shadow-2xl transition-shadow"
@@ -23,8 +24,9 @@
         </div>
       </div>
     </a>
-    } } @else {
-    <app-loading />
     }
   </div>
 </div>
+} @else {
+<app-loading />
+}

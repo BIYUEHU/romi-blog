@@ -3,6 +3,8 @@
   font-size: 1.1rem;
   line-height: 1.75;
   margin-inline: auto;
+  max-width: 85%;
+  width: 860px;
 }
 
 .post-body img,
@@ -10,6 +12,21 @@ svg,
 video {
   max-width: 90%;
   display: block;
+}
+
+/* TODO: fix table width */
+.post-body table,
+tbody,
+thead,
+td,
+th,
+code,
+pre,
+blockquote,
+ul {
+  max-width: 0;
+  max-height: 0;
+  visibility: hidden;
 }
 
 .post-body a {
