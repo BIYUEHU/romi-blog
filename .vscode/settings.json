@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["metas", "Metas", "Typecho"]
+  "cSpell.words": ["metas", "Metas", "shikijs", "Typecho", "unocss", "vitesse"],
+  "cSpell.ignoreWords": ["Shiki", "linkify"]
 }
