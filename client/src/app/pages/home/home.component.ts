@@ -1,6 +1,6 @@
 import { Component, type OnInit } from '@angular/core'
-import { BlogService } from '../../services/blog.service'
-import { ResPostData } from '../../models/blog.model'
+import { ApiService } from '../../services/api.service'
+import { ResPostData } from '../../models/api.model'
 import { CommonModule, DatePipe } from '@angular/common'
 import { LoadingComponent } from '../../loading/loading.component'
 import { RouterLink } from '@angular/router'
@@ -14,10 +14,10 @@ import { RouterLink } from '@angular/router'
 export class HomeComponent implements OnInit {
   public posts?: ResPostData[]
 
-  public constructor(private readonly blogService: BlogService) {}
+  public constructor(private readonly apiService: ApiService) {}
 
   public ngOnInit() {
-    this.blogService.getPosts().subscribe((posts) => {
+    this.apiService.getPosts().subscribe((posts) => {
       this.posts = posts
     })
   }

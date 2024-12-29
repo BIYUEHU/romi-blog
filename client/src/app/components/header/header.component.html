@@ -1,4 +1,5 @@
 <div
+  id="header"
   class="bg-black/15 backdrop-blur-10 z-3 fixed top-0 left-0 w-full text-light"
 >
   <div
@@ -6,14 +7,14 @@
   >
     <a
       [routerLink]="'/'"
-      class="no-underline text-white left-0 text-7 justify-center absolute font-bold space-inline-xs"
+      class="no-underline text-white left-0 text-7 justify-center absolute font-bold space-inline-xs text-accent-color"
     >
       Romi Blog
     </a>
     @for (item of navItems; track $index) {
     <a
       [routerLink]="item.link"
-      class="no-underline text-light-950 hover:text-black/86 outline-0 border-none flex justify-center px-2 py-2"
+      class="no-underline text-light-950 hover:text-black/86 outline-0 border-none flex justify-center px-2 py-2 text-accent-color"
     >
       {{ item.text }}
     </a>

@@ -15,7 +15,10 @@
       />
       }
       <div class="p-6">
-        <h1 class="text-xl font-bold mb-2" [routerLink]="['/post', post.id]">
+        <h1
+          class="text-xl font-bold mb-2 text-main-color"
+          [routerLink]="['/post', post.id]"
+        >
           {{ post.title }}
         </h1>
         <p class="text-gray-600 text-sm">{{ post.summary }}</p>

@@ -6,6 +6,7 @@
   "license": "BAN-CHINAMAN-USING",
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
+    "dev": "tsx scripts/dev",
     "client": "pnpm --filter client",
     "server": "cd server && cargo run"
   },
@@ -19,6 +20,7 @@
     "knex": "^3.1.0",
     "mysql2": "^3.11.4",
     "shelljs": "^0.8.5",
+    "tsx": "^4.19.2",
     "unocss": "^0.64.1"
   },
   "packageManager": "pnpm@8.7.4+",

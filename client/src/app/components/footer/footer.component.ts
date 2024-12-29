@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { BlogService } from '../../services/blog.service'
-import { ExternalHitokoto } from '../../models/blog.model'
+import { ApiService } from '../../services/api.service'
+import { ExternalHitokoto } from '../../models/api.model'
 
 @Component({
   selector: 'app-footer',
@@ -14,14 +14,14 @@ export class FooterComponent implements OnInit {
 
   public hitokoto?: ExternalHitokoto['data'] & { url: string }
 
-  public constructor(private blogService: BlogService) {}
+  public constructor(private apiService: ApiService) {}
 
   public ngOnInit() {
     setInterval(() => {
       this.currentTime = this.getTimeString()
     }, 1000)
 
-    this.blogService.getHitokoto().subscribe(({ data }) => {
+    this.apiService.getHitokoto().subscribe(({ data }) => {
       this.hitokoto = {
         ...data,
         msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from ? ` —— ${data.from}` : ''}`,
