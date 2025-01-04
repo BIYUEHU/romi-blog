@@ -34,10 +34,15 @@ export interface ResPostSingleData {
   banner: string
 }
 
+// TODO: improve backend api and here is temporary solution
+export interface ResPostSingleDataExtra {
+  url: string
+  commentsList: { created: number; author: Author; id: number; reply: number; text: string }[]
+}
+
 export interface Author {
-  name: string
+  username: string
   avatar: string
-  bio: string
 }
 
 export interface ExternalHitokoto {
@@ -46,4 +51,10 @@ export interface ExternalHitokoto {
     from: string
     id: number
   }
+}
+
+export interface RelatedPost {
+  url: string
+  title: string
+  type: 'prev' | 'next'
 }

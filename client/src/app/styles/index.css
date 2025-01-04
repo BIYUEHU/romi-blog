@@ -4,33 +4,8 @@
   --main-color: #c1508e;
   --accent-color: #b3bff1;
   --primary-color: #ce92d0;
-
   scrollbar-color: var(--accent-color) var(--primary-color);
   scrollbar-width: thin;
-}
-
-.text-main-color {
-  color: var(--main-color);
-}
-
-.text-accent-color {
-  color: var(--accent-color);
-}
-
-.text-primary-color {
-  color: var(--primary-color);
-}
-
-.bg-main-color {
-  background-color: var(--main-color);
-}
-
-.bg-accent-color {
-  background-color: var(--accent-color);
-}
-
-.bg-primary-color {
-  background-color: var(--primary-color);
 }
 
 a {
@@ -39,11 +14,6 @@ a {
 }
 
 /* Details */
-
-.header-pull-up {
-  background: var(--main-color);
-  opacity: 0.85;
-}
 
 .progress-bar {
   transition: width 0.3s ease-out;
@@ -68,6 +38,7 @@ a {
   margin-inline: auto;
   max-width: 85%;
   width: 890px;
+  word-wrap: break-word;
 
   h1,
   h2,
@@ -146,7 +117,7 @@ a {
     border: 2px solid #eee;
     padding: 0.5em;
     overflow-x: auto;
-    white-space: pre-wrap;
+    /* white-space: pre-wrap; */
     width: 98%;
     margin: 1rem auto;
   }

@@ -25,7 +25,7 @@ export class FooterComponent implements OnInit {
       this.hitokoto = {
         ...data,
         msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from ? ` —— ${data.from}` : ''}`,
-        url: `https://hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
+        url: `https://old.hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
       }
     })
   }

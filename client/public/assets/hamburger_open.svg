@@ -1,0 +1,19 @@
+<svg
+  class="icon"
+  style="
+          width: 0.8em;
+          height: 0.8em;
+          vertical-align: middle;
+          fill: currentColor;
+          overflow: hidden;
+        "
+  viewBox="0 0 1024 1024"
+  version="1.1"
+  xmlns="http://www.w3.org/2000/svg"
+  p-id="5337"
+>
+  <path
+    d="M590.7456 508.416 1016.832 934.5024 938.0864 1009.664 512 583.5776 78.7456 1024 0 941.6704l433.2544-440.4224L7.168 75.1616 85.9136 0 512 426.0864 938.0864 0 1016.832 82.3296 590.7456 508.416z"
+    p-id="5338"
+  ></path>
+</svg>

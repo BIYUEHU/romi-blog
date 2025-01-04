@@ -11,7 +11,7 @@ import { parseMarkdown } from '../../utils/parseMarkdown'
 export class ApiService {
   private apiUrl = API_BASE_URL
 
-  public constructor(private http: HttpClient) {}
+  public constructor(private readonly http: HttpClient) {}
 
   public getArticlesTesting() {
     return this.http

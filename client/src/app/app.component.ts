@@ -4,9 +4,6 @@ import { NavigationEnd, NavigationError, NavigationStart, Router, RouterOutlet }
 import { HeaderComponent } from './components/header/header.component'
 import { FooterComponent } from './components/footer/footer.component'
 import { NotifyService } from './services/notify.service'
-// import { TuiResponsiveDialogService } from '@taiga-ui/addon-mobile'
-// import { TuiRoot } from '@taiga-ui/core'
-// import { TUI_CONFIRM } from '@taiga-ui/kit'
 
 // TODO: move the code which is unrelated with appComponent to other components
 // TODO: improve the implementation of progress bar
@@ -18,7 +15,7 @@ import { NotifyService } from './services/notify.service'
 })
 export class AppComponent implements OnInit, AfterViewInit {
   private initHeaderData = {
-    title: 'Romi Blog',
+    title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
     imageUrl: 'https://api.hotaru.icu/ial/background?id=2'
   }
@@ -27,44 +24,18 @@ export class AppComponent implements OnInit, AfterViewInit {
   public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
 
   public constructor(
-    private renderer: Renderer2,
-    private el: ElementRef,
     private router: Router,
     private notifyService: NotifyService
     // private readonly dialogs: TuiResponsiveDialogService
   ) {}
 
   public ngOnInit() {
-    this.header = this.el.nativeElement.querySelector('#header')
-
     this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
   }
 
   public ngAfterViewInit() {
-    // this.dialogs
-    //   .open<boolean>(TUI_CONFIRM, {
-    //     label: '公告',
-    //     size: 's',
-    //     data: {
-    //       content: /* html */ `当前博客正在逐步重构中，观察进度可前往 <a target="_blank" href="https://github.com/biyuehu/romichan">biyuehu/romichan</a>，旧博客：<a target="_blank" href="https://old.hotaru.icu">old.hotaru.icu</a>`,
-    //       yes: 'That is great!',
-    //       no: 'Who cares?'
-    //     }
-    //   })
-    //   .subscribe((response) => {})
-    window.addEventListener('scroll', this.checkHeader.bind(this))
     this.initProgress()
-  }
-
-  private checkHeader() {
-    if (this.header) {
-      if (window.scrollY > 345) {
-        this.renderer.addClass(this.header, 'header-pull-up')
-      } else {
-        this.renderer.removeClass(this.header, 'header-pull-up')
-      }
-    }
   }
 
   private updateHeaderContent(data: Partial<typeof this.initHeaderData>) {
@@ -77,7 +48,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   private handleRouteEvent(event: object) {
     if (event instanceof NavigationStart) {
       this.updateHeaderContent({})
-      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+      // setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 0)
       this.startProgress()
     }
 

@@ -24,18 +24,9 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              {
-                "glob": "**/*",
-                "input": "node_modules/@taiga-ui/icons/src",
-                "output": "assets/taiga-ui/icons"
               }
             ],
             "styles": [
-              "node_modules/@taiga-ui/core/styles/taiga-ui-theme.less",
-              "node_modules/@taiga-ui/core/styles/taiga-ui-fonts.less",
-              "@taiga-ui/core/styles/taiga-ui-theme.less",
-              "@taiga-ui/core/styles/taiga-ui-fonts.less",
               "src/app/styles/uno.css",
               "src/app/styles/index.css"
             ],

@@ -1,28 +1,152 @@
 @if (post) {
 <div class="max-w-90% w-4xl mx-auto flex-1">
-  <!-- <div class="text-center">
-    <h1 class="text-4xl font-bold mb-4 text-main-color">{{ post.title }}</h1>
-    <div class="text-gray-400 text-accent-color mb-6 text-size-sm">
-      <p>
-        创建时间：{{ post.created * 1000 | date : "yyyy-MM-dd" }} 更新时间：{{
-          post.modified * 1000 | date : "yyyy-MM-dd"
-        }}
-      </p>
-      <p>
-        {{ post.views }} 次阅读 | {{ post.comments }} 条评论 |
-        {{ post.likes }} 人喜欢
-      </p>
-    </div>
-  </div> -->
-  <div class="post-body" [innerHTML]="renderedContent"></div>
-  <span class="block my-8 h-1 border-rounded bg-gray-200 w-25% mx-auto"></span>
+  <div class="post-body mt-2" [innerHTML]="renderedContent"></div>
+
+  <span
+    class="block my-8 h-3px border-rounded bg-gray-200 w-35% mx-auto"
+  ></span>
+
   <div
-    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-white border-l-rose-400"
+    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-white border-l-[var(--main-color)]"
   >
     <strong> 本文链接：</strong
     ><a [href]="post.url" class="text-gray-400 underline">{{ post.url }}</a
     ><br />
     <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
+  </div>
+
+  <div class="w-85% mx-auto line-height-loose mt-5">
+    <span class="block h-1px mb-4 w-98% mx-auto bg-gray-200"></span>
+    @for (items of [post.categories, post.tags]; track $index) { @for (item of
+    items; track post) {
+    <a
+      [routerLink]="[$index === 0 ? '/category' : '/tag', item]"
+      [class]="
+        [
+          'mx-1 px-3 py-1 hover:bg-gray-200 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded-full text-lg transition-colors',
+          $index === 0 ? 'bg-gray-100 font-bold' : 'bg-gray-50'
+        ].join(' ')
+      "
+    >
+      @if ($index === 0) { {{ item }} } @else { #{{ item }} }
+    </a>
+    } }
+    <span class="block h-1px mt-4 w-98% mx-auto bg-gray-200"></span>
+  </div>
+
+  <div class="w-85% mx-auto flex gap-8 mt-6">
+    <div
+      class="px-6 py-2 border-[var(--primary-color)] border-solid border-2 hover:border-[var(--main-color)] bg-gray-50 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded hover:bg-gray-200 transition-colors"
+    >
+      赏杯咖啡
+    </div>
+    <div class="flex gap-4">
+      @for (item of ['like',"wechat", "bilibili", "link",]; track $index) {
+      <div
+        class="w-9 h-9 rounded-full bg-gray-50 hover:bg-gray-200 flex transition-colors"
+      >
+        <img [src]="['/assets/', item, '.svg'].join('')" />
+      </div>
+      }
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
+    @for (post of relatedPosts; track $index) {
+    <a
+      [href]="post.url"
+      class="group p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+    >
+      <div
+        [class]="
+          [
+            'flex items-center gap-2 text-gray-500 mb-2',
+            post.type === 'prev' ? '' : 'justify-end'
+          ].join(' ')
+        "
+      >
+        <span> @if (post.type === 'prev' ) { 上一篇 } @else { 下一篇 } </span>
+      </div>
+      <div
+        [class]="
+          [
+            'text-lg text-[var(--primary-color)] hover:text-[var(--main-color)] line-clamp-1 transition-colors',
+            post.type === 'prev' ? '' : 'text-right'
+          ].join(' ')
+        "
+      >
+        {{ post.title }}
+      </div>
+    </a>
+    }
+  </div>
+
+  <div class="mt-8 mb-6">
+    <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
+
+    <div class="mb-8">
+      <textarea
+        class="w-full p-4 border rounded-lg resize-none h-32"
+        placeholder="写下你的想法..."
+      ></textarea>
+      <div class="flex justify-end mt-4 gap-4">
+        <input
+          type="text"
+          class="px-4 py-2 border rounded"
+          placeholder="昵称"
+        />
+        <input
+          type="text"
+          class="px-4 py-2 border rounded"
+          placeholder="邮箱"
+        />
+        <input
+          type="text"
+          class="px-4 py-2 border rounded"
+          placeholder="网址"
+        />
+        <div
+          class="px-6 py-2 border-[var(--primary-color)] border-solid border-1 hover:border-[var(--main-color)] bg-gray-50 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded hover:bg-gray-200 transition-colors"
+        >
+          发表评论
+        </div>
+      </div>
+    </div>
+
+    <h3 class="text-2xl font-bold mb-8 flex items-center gap-2">
+      共 {{ post.commentsList.length }} 条评论
+    </h3>
+
+    @if (post.commentsList.length > 0) {
+    <div class="space-y-6 mb-6">
+      @for (comment of post.commentsList; track $index) {
+      <div class="flex gap-4">
+        <img
+          [src]="comment.author.avatar"
+          alt="avatar"
+          class="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden"
+        />
+        <div class="flex-1">
+          <div class="flex items-center gap-2">
+            <span class="font-medium">{{ comment.author.username }}</span>
+            <span class="text-gray-400 text-sm">{{
+              comment.created | date : "yyyy-MM-dd HH:mm"
+            }}</span>
+          </div>
+          <p class="mt-2 text-gray-700">{{ comment.text }}</p>
+
+          <div class="mt-2 flex gap-4">
+            <div
+              class="text-gray-400 hover:text-gray-600 text-sm flex items-center gap-1"
+            >
+              回复
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    }
   </div>
 </div>
 } @else {
