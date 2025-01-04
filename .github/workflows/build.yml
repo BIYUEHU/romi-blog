@@ -85,7 +85,7 @@ jobs:
       - name: Build frontend
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
           cd client
           pnpm build
           tar -czf dist.tar.gz dist/client

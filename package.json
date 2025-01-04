@@ -21,11 +21,11 @@
     "backend"
   ],
   "bugs": {
-    "url": "https://github.com/biyuehu/gal-keeper/issues"
+    "url": "https://github.com/biyuehu/romi-blog/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/biyuehu/gal-keeper.git"
+    "url": "git+https://github.com/biyuehu/romi-blog.git"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
