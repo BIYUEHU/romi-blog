@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://127.0.0.1:8000/api'
+export const API_BASE_URL = import.meta.url.includes(':4200') ? 'http://127.0.0.1:8000/api' : '/api'
 
 export const POSTS_PER_PAGE = 10
 
