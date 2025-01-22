@@ -29,7 +29,7 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-client/.angular/cache
+.angular/cache
 .sass-cache/
 connect.lock
 coverage
@@ -46,6 +46,5 @@ Thumbs.db
 # Custom
 scripts/*.json
 scripts/*.jsonl
-articles
 uno.css
 *.env
