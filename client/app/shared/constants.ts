@@ -1,5 +1,10 @@
-export const API_BASE_URL =
-  typeof process !== 'undefined' ? `http://127.0.0.1:${Number((process.env as { PORT: string }).PORT) - 1}/api` : '/api'
+import { isDevMode } from '@angular/core'
+
+export const API_BASE_URL = isDevMode()
+  ? 'http://localhost:8000/api'
+  : typeof process !== 'undefined'
+    ? `http://127.0.0.1:${Number((process.env as { PORT: string }).PORT ?? 4200) - 1}/api`
+    : '/api'
 
 export const POSTS_PER_PAGE = 10
 

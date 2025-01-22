@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: ["amain"]
+    branches: ["main"]
   pull_request:
-    branches: ["amain"]
+    branches: ["main"]
 
 jobs:
   build:
@@ -86,10 +86,8 @@ jobs:
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
           pnpm install --no-frozen-lockfile
-          cd client
           pnpm build
-          tar -czf dist.tar.gz dist/client
-          cd ../
+          tar -czf dist.tar.gz dist
 
       - name: Upload artifact (Frontend)
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'

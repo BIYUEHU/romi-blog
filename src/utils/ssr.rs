@@ -10,13 +10,21 @@ use std::thread;
 use tokio::sync::Mutex;
 
 pub struct SSR {
-    process: Arc<Mutex<Child>>,
+    process: Option<Arc<Mutex<Child>>>,
     client: reqwest::Client,
     port: u16,
 }
 
 impl SSR {
-    pub fn new(file: &'static str, port: u16, logger: Logger) -> Self {
+    pub fn new(file: String, port: u16, logger: Logger) -> Self {
+        if file.trim().is_empty() {
+            return SSR {
+                process: None,
+                client: reqwest::Client::new(),
+                port,
+            };
+        }
+
         let mut process = Command::new("node")
             .arg(file)
             .env("PORT", port.to_string())
@@ -24,27 +32,43 @@ impl SSR {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .expect("Failed to start Node.js process");
+            .map_err(|e| {
+                l_error!(
+                    logger.clone().with_label("Node.js"),
+                    "Failed to start Node.js process: {}",
+                    e
+                );
+                e
+            })
+            .unwrap();
 
         if let Some(stderr) = process.stderr.take() {
             thread::spawn(move || {
                 let reader = std::io::BufReader::new(stderr);
                 reader.lines().for_each(|line| {
                     if let Ok(line) = line {
-                        l_error!(logger.clone().with_label("Node.js"), "{}", line);
+                        l_error!(logger.clone().with_label("Node.js"), "{}", line)
                     }
                 });
             });
         }
 
         SSR {
-            process: Arc::new(Mutex::new(process)),
+            process: Some(Arc::new(Mutex::new(process))),
             client: reqwest::Client::new(),
             port,
         }
     }
 
     pub async fn render(&self, url: &str) -> Result<(Status, Vec<(String, String)>, Vec<u8>)> {
+        if self.process.is_none() {
+            return Ok((
+                Status::NotFound,
+                vec![("Content-Type".to_owned(), "text/plain".to_owned())],
+                "404 Not found".as_bytes().to_vec(),
+            ));
+        }
+
         let response = self
             .client
             .get(format!("http://localhost:{}/{}", self.port, url))
@@ -59,11 +83,7 @@ impl SSR {
             .filter_map(|(name, value)| Some((name.to_string(), value.to_str().ok()?.to_owned())))
             .collect();
 
-        let body = response
-            .bytes()
-            .await
-            .map_err(|e| anyhow::Error::from(e))?
-            .to_vec();
+        let body = response.bytes().await?.to_vec();
 
         Ok((status, headers, body))
     }
@@ -71,7 +91,10 @@ impl SSR {
 
 impl Drop for SSR {
     fn drop(&mut self) {
-        if let Ok(mut process) = self.process.try_lock() {
+        if self.process.is_none() {
+            return;
+        }
+        if let Ok(mut process) = self.process.as_ref().unwrap().try_lock() {
             let _ = process.kill();
         }
     }
@@ -90,7 +113,6 @@ impl<'r> Responder<'r, 'static> for SSRResponse {
             .status(self.status)
             .sized_body(self.body.len(), Cursor::new(self.body));
 
-        // 添加 headers
         for (name, value) in self.headers {
             response.raw_header(name, value);
         }

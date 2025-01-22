@@ -10,81 +10,107 @@ use api::global::ssr_handler;
 use api::post;
 use dotenvy::dotenv;
 use logger::*;
-use rocket::http::Method;
 use rocket::Config;
-use rocket_cors::{AllowedHeaders, AllowedOrigins, Cors};
 use sea_orm_rocket::Database;
+use std::fs::exists;
 use transport::console::ConsoleTransport;
+use utils::config::load_config;
+use utils::cros::get_cors;
 use utils::pool::Db;
-use utils::request_logger::RequestLogger;
+use utils::recorder::Recorder;
 use utils::ssr::SSR;
-
-fn get_cors() -> Cors {
-    rocket_cors::CorsOptions {
-        allowed_origins: AllowedOrigins::All,
-        allowed_methods: vec![
-            Method::Get,
-            Method::Post,
-            Method::Options,
-            Method::Delete,
-            Method::Put,
-        ]
-        .into_iter()
-        .map(From::from)
-        .collect(),
-        allowed_headers: AllowedHeaders::All,
-        allow_credentials: true,
-        ..Default::default()
-    }
-    .to_cors()
-    .expect("cors config error")
-}
 
 #[rocket::main]
 async fn bootstrap() {
-    dotenv().expect("Failed to load .env file");
+    let logger = Logger::new().with_transport(ConsoleTransport {
+        label_color: "magenta",
+        ..Default::default()
+    });
 
-    let config = Config {
-        port: 3200,
+    if exists(".env").unwrap() {
+        dotenv()
+            .map_err(|e| {
+                l_error!(
+                    &logger,
+                    "Failed to load environment variables from .env file: {}",
+                    e
+                );
+            })
+            .unwrap();
+    }
+
+    let config = load_config()
+        .map_err(|e| l_fatal!(&logger, "{}", e))
+        .unwrap();
+
+    let logger = logger.clone().with_level(match config.log_level.as_str() {
+        "trace" => LoggerLevel::Trace,
+        "debug" => LoggerLevel::Debug,
+        "record" => LoggerLevel::Record,
+        "info" => LoggerLevel::Info,
+        "warn" => LoggerLevel::Warn,
+        "error" => LoggerLevel::Error,
+        "fatal" => LoggerLevel::Fatal,
+        "silent" => LoggerLevel::Silent,
+        _ => {
+            l_warn!(
+                &logger,
+                "Invalid log level: {}, using default level: info",
+                config.log_level
+            );
+            LoggerLevel::Info
+        }
+    });
+
+    if !config.database_url.trim().is_empty() {
+        std::env::set_var("DATABASE_URL", config.clone().database_url);
+    }
+    if config.ssr_entry.trim().is_empty() {
+        l_warn!(
+            &logger,
+            "SSR entry file not provided, SSR will not be launched"
+        )
+    } else if !exists(config.ssr_entry.clone()).unwrap() {
+        l_fatal!(
+            &logger,
+            "SSR entry file not found: {}",
+            config.ssr_entry.clone()
+        );
+        return;
+    }
+
+    rocket::custom(Config {
+        port: config.port,
         log_level: rocket::config::LogLevel::Off,
         ..Config::debug_default()
-    };
-
-    let logger = Logger::new()
-        .with_transport(ConsoleTransport {
-            label_color: "magenta",
-            ..Default::default()
-        })
-        .with_level(LoggerLevel::Debug);
-
-    let result = rocket::custom(config.clone())
-        .attach(Db::init())
-        .attach(get_cors())
-        .attach(RequestLogger::new(logger.clone()))
-        .manage(SSR::new(
-            "dist\\server\\server.mjs",
-            config.port + 1,
-            logger.clone(),
-        ))
-        .manage(logger.clone())
-        .mount(
-            "/api/post",
-            routes![
-                post::fetch,
-                post::fetch_all,
-                post::create,
-                post::update,
-                post::delete
-            ],
-        )
-        .mount("/", routes![ssr_handler])
-        .launch()
-        .await
-        .map(|_| ());
-
-    if let Err(e) = result {
-        l_fatal!(&logger, e);
-    }
+    })
+    .attach(Db::init())
+    .attach(get_cors())
+    .attach(Recorder::new(logger.clone(), config.clone()))
+    .manage(SSR::new(
+        config.ssr_entry.clone(),
+        config.port + 1,
+        logger.clone(),
+    ))
+    .manage(logger.clone())
+    .mount(
+        "/api/post",
+        routes![
+            post::fetch,
+            post::fetch_all,
+            post::create,
+            post::update,
+            post::delete
+        ],
+    )
+    .mount("/", routes![ssr_handler])
+    .launch()
+    .await
+    .map(|_| ())
+    .map_err(|e| {
+        l_fatal!(&logger, "Failed to launch server: {}", e);
+    })
+    .unwrap();
 }
 
 fn main() {
