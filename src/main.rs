@@ -7,7 +7,7 @@ mod tools;
 mod utils;
 
 use api::global::ssr_handler;
-use api::post;
+use api::{meta, post};
 use dotenvy::dotenv;
 use logger::*;
 use rocket::Config;
@@ -101,6 +101,16 @@ async fn bootstrap() {
             post::create,
             post::update,
             post::delete
+        ],
+    )
+    .mount(
+        "/api/meta",
+        routes![
+            meta::fetch,
+            meta::fetch_all,
+            meta::create,
+            meta::update,
+            meta::delete
         ],
     )
     .mount("/", routes![ssr_handler])

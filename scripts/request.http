@@ -32,3 +32,10 @@ Content-Type: application/json
 ### Delete Article
 
 DELETE {{URL}}/api/articles/1/
+
+### Get All Meta
+GET {{URL}}/api/meta/
+
+### Get Single Meta
+GET {{URL}}/api/meta/1/
+

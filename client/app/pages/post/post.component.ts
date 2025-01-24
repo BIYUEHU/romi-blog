@@ -10,7 +10,7 @@ import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
 import { NotifyService } from '../../services/notify.service'
 import { APP_BASE_HREF, DatePipe } from '@angular/common'
 import { CacheService } from '../../services/cache.service'
-import { generateCommentsList } from '../../tools/generateCommentsList'
+import { generateCommentsList } from '../../utils/generateCommentsList'
 
 @Component({
   selector: 'app-post',

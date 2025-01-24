@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { ApiService } from './api.service'
 import { RelatedPost, ResPostData } from '../models/api.model'
 import { Observable, of, map, tap } from 'rxjs'
-import { CommentData, generateCommentsList } from '../tools/generateCommentsList'
+import { CommentData, generateCommentsList } from '../utils/generateCommentsList'
 
 @Injectable({
   providedIn: 'root'

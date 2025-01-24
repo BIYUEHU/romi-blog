@@ -11,8 +11,10 @@ use sea_orm::{
     TryIntoModel,
 };
 use sea_orm_rocket::Connection;
+use ts_rs::TS;
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct ReqPostData {
     pub title: String,
     pub text: String,
@@ -25,7 +27,8 @@ pub struct ReqPostData {
     // pub categories: Vec<String>,
 }
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostData {
     pub id: u32,
     pub title: String,
@@ -34,7 +37,8 @@ pub struct ResPostData {
     pub banner: Option<String>,
 }
 
-#[derive(serde::Serialize)]
+#[derive(serde::Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleData {
     pub id: u32,
     pub title: String,
@@ -89,7 +93,6 @@ pub async fn fetch_all(
 
     l_info!(logger, "Fetching post details: id={}", id);
 
-    // 获取文章标签和分类
     let metas = futures::future::join_all(
         romi_relationships::Entity::find()
             .filter(romi_relationships::Column::Pid.eq(id))
@@ -115,7 +118,6 @@ pub async fn fetch_all(
     )
     .await;
 
-    // 获取文章详情
     let post = romi_posts::Entity::find_by_id(id)
         .one(db)
         .await
