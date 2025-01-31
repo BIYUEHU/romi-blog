@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "library/logger", "library/migration"]
+members = [".", "library/roga", "library/migration"]
 
 [package]
 name = "server"
@@ -23,7 +23,7 @@ migration = { path = "library/migration" }
 serde_json = { version = "1" }
 async-trait = { version = "0.1" }
 serde = { version = "1.0.210", features = ["derive"] }
-logger = { path = "library/logger" }
+roga = { path = "library/roga" }
 rocket_cors = "0.6.0"
 futures = "0.3.31"
 reqwest = "0.12.12"

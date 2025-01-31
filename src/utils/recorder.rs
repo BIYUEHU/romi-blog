@@ -1,8 +1,8 @@
-use logger::*;
 use rocket::{
     fairing::{Fairing, Info, Kind, Result},
     Build, Data, Orbit, Request, Response, Rocket,
 };
+use roga::*;
 
 use super::config::RomiConfig;
 

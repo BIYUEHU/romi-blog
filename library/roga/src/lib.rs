@@ -88,7 +88,6 @@ macro_rules! log_args {
     });
 }
 
-// 重新定义各个日志级别的宏
 #[macro_export]
 macro_rules! l_fatal {
     ($logger:expr, $fmt:expr) => {
