@@ -65,7 +65,7 @@ jobs:
 
       - name: Upload artifact (Windows aarch64)
         if: matrix.os == 'windows-latest' && matrix.arch == 'aarch64'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-latest-romichan-server-aarch64
           path: target/debug/server.exe

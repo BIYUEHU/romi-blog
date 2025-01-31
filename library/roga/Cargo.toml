@@ -7,7 +7,7 @@ description = "A Fast, beautiful, lightweight, and flexible logging library for 
 repository = "https://github.com/BIYUEHU/romi-blog/tree/main/library/roga"
 readme = "README.md"
 keywords = ["logger", "log", "record"]
-license = "BAN-ZHINESE-USING"
+license = "GPL-3.0-only"
 
 [dependencies]
 chrono = "0.4"
