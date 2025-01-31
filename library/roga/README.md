@@ -1,4 +1,4 @@
-# Logger
+# Roga
 
 A Fast, beautiful, lightweight, and flexible logging library for Rust.
 
