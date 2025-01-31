@@ -1,11 +1,11 @@
 # Logger
 
-> Fast, beautiful, lightweight, and flexible logging library for Rust.
+A Fast, beautiful, lightweight, and flexible logging library for Rust.
 
 ## Demo
 
 ```rust
-use logger::*;
+use roga::*;
 use serde_json::json;
 use transport::console::ConsoleTransport;
 
@@ -68,6 +68,5 @@ fn main() {
         format!("System check at {} by user {}", current_time, username)
     );
 }
-
 
 ```

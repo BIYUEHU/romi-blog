@@ -102,60 +102,60 @@ macro_rules! l_fatal {
 #[macro_export]
 macro_rules! l_error {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Error, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Error, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Error, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Error, roga::log_args!($fmt, $($arg)*))
     };
 }
 
 #[macro_export]
 macro_rules! l_warn {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Warn, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Warn, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Warn, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Warn, roga::log_args!($fmt, $($arg)*))
     };
 }
 
 #[macro_export]
 macro_rules! l_info {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Info, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Info, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Info, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Info, roga::log_args!($fmt, $($arg)*))
     };
 }
 
 #[macro_export]
 macro_rules! l_record {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Record, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Record, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Record, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Record, roga::log_args!($fmt, $($arg)*))
     };
 }
 
 #[macro_export]
 macro_rules! l_debug {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Debug, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Debug, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Debug, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Debug, roga::log_args!($fmt, $($arg)*))
     };
 }
 
 #[macro_export]
 macro_rules! l_trace {
     ($logger:expr, $fmt:expr) => {
-        $logger.log(logger::LoggerLevel::Trace, logger::log_args!($fmt))
+        $logger.log(roga::LoggerLevel::Trace, roga::log_args!($fmt))
     };
     ($logger:expr, $fmt:expr, $($arg:tt)*) => {
-        $logger.log(logger::LoggerLevel::Trace, logger::log_args!($fmt, $($arg)*))
+        $logger.log(roga::LoggerLevel::Trace, roga::log_args!($fmt, $($arg)*))
     };
 }
 

@@ -1,7 +1,13 @@
 [package]
-name = "logger"
-version = "0.1.0"
+name = "roga"
+version = "1.0.0"
 edition = "2021"
+authors = ["Arimura Sena <me@hotaru.icu>"]
+description = "A Fast, beautiful, lightweight, and flexible logging library for Rust"
+repository = "https://github.com/biyuehu/datrie"
+readme = "README.md"
+keywords = ["logger", "log", "record"]
+license = "BAN-ZHINESE-LICENSE"
 
 [dependencies]
 chrono = "0.4"
