@@ -6,7 +6,7 @@ use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
 use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, QuerySelect,
+    ActiveModelTrait, ActiveValue, DatabaseConnection, DbBackend, EntityTrait, Statement,
 };
 use sea_orm_rocket::Connection;
 use ts_rs::TS;
@@ -16,7 +16,7 @@ use ts_rs::TS;
 pub struct ReqHitokotoData {
     pub msg: String,
     pub from: String,
-    pub type_: String,
+    pub r#type: u32,
 }
 
 #[derive(serde::Serialize, TS)]
@@ -25,8 +25,49 @@ pub struct ResHitokotoData {
     pub id: u32,
     pub msg: String,
     pub from: String,
-    pub type_: String,
+    pub r#type: u32,
     pub likes: i32,
+}
+
+async fn get_hitokoto(
+    length: Option<u32>,
+    db: &DatabaseConnection,
+    is_first: bool,
+) -> ApiResult<ResHitokotoData> {
+    let query = if length.is_some() {
+        romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
+            DbBackend::MySql,
+            r#"SELECT * FROM romi_hitokotos WHERE char_length(msg) <= $1 ORDER BY RAND() limit 1"#,
+            [length.unwrap().into()],
+        ))
+    } else {
+        romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
+            DbBackend::MySql,
+            r#"SELECT * FROM romi_hitokotos ORDER BY RAND() limit 1"#,
+            [],
+        ))
+    };
+
+    match query
+        .one(db)
+        .await
+        .with_context(|| "Failed to fetch hitokoto")?
+    {
+        Some(hitokoto) => api_ok(ResHitokotoData {
+            id: hitokoto.id,
+            msg: hitokoto.msg,
+            from: hitokoto.from,
+            r#type: hitokoto.r#type.parse::<u32>().unwrap_or(0),
+            likes: hitokoto.likes.unwrap_or(0),
+        }),
+        None => {
+            if length.is_some() && is_first {
+                Box::pin(get_hitokoto(None, db, false)).await
+            } else {
+                Err(ApiError::not_found("No hitokoto found"))
+            }
+        }
+    }
 }
 
 #[get("/?<length>")]
@@ -37,39 +78,7 @@ pub async fn fetch(
 ) -> ApiResult<ResHitokotoData> {
     l_info!(logger, "Fetching random hitokoto");
     let db = conn.into_inner();
-
-    let mut query =
-        romi_hitokotos::Entity::find().filter(romi_hitokotos::Column::IsPublic.eq(Some("1")));
-
-    if let Some(len) = length {
-        query = query.filter(sea_orm::Expr::expr(
-            sea_orm::Func::char_length(romi_hitokotos::Column::Msg).lte(len as i32),
-        ));
-    }
-
-    let result = query
-        // .order_("RAND()")
-        .limit(1)
-        .one(db)
-        .await
-        .with_context(|| "Failed to fetch hitokoto")?;
-
-    match result {
-        Some(hitokoto) => api_ok(ResHitokotoData {
-            id: hitokoto.id,
-            msg: hitokoto.msg,
-            from: hitokoto.from,
-            r#type_: hitokoto.r#type,
-            likes: hitokoto.likes,
-        }),
-        None => {
-            if length.is_some() {
-                // 如果有长度限制但没找到，重试无限制查询
-                return fetch(None, logger, Connection::new(db)).await;
-            }
-            Err(ApiError::not_found("No hitokoto found"))
-        }
-    }
+    get_hitokoto(length, &db, true).await
 }
 
 #[post("/", data = "<hitokoto>")]
@@ -84,7 +93,7 @@ pub async fn create(
         id: ActiveValue::not_set(),
         msg: ActiveValue::set(hitokoto.msg.clone()),
         from: ActiveValue::set(hitokoto.from.clone()),
-        r#type: ActiveValue::set(hitokoto.type_.clone()),
+        r#type: ActiveValue::set(hitokoto.r#type.clone().to_string()),
         likes: ActiveValue::set(Some(0)),
         is_public: ActiveValue::set(Some("1".to_string())),
     };

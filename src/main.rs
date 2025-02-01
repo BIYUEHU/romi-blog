@@ -7,10 +7,10 @@ mod tools;
 mod utils;
 
 use api::global::ssr_handler;
-use api::{meta, post};
+use api::{hitokoto, meta, post};
 use dotenvy::dotenv;
-use roga::*;
 use rocket::Config;
+use roga::*;
 use sea_orm_rocket::Database;
 use std::fs::exists;
 use transport::console::ConsoleTransport;
@@ -113,6 +113,7 @@ async fn bootstrap() {
             meta::delete
         ],
     )
+    .mount("/api/hitokoto", routes![hitokoto::fetch, hitokoto::create])
     .mount("/", routes![ssr_handler])
     .launch()
     .await
