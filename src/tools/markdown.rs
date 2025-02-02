@@ -54,22 +54,6 @@ pub fn summary_markdown(markdown: &str, max_length: usize) -> String {
         .to_string()
 }
 
-pub fn from_bool(b: bool) -> Option<String> {
-    if b {
-        Some('1'.to_string())
-    } else {
-        Some('0'.to_string())
-    }
-}
-
-pub fn to_bool(s: Option<String>) -> bool {
-    if let Some(s) = s {
-        s == '1'.to_string()
-    } else {
-        false
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser'
 import { ActivatedRoute, RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
-import { LoadingComponent } from '../../loading/loading.component'
+import { LoadingComponent } from '../../components/loading/loading.component'
 import MarkdownIt from 'markdown-it'
 import { BundledLanguage, HighlighterGeneric, BundledTheme, createHighlighter } from 'shiki'
 import { RelatedPost, ResPostSingleData, ResPostSingleDataExtra } from '../../models/api.model'
@@ -10,7 +10,6 @@ import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
 import { NotifyService } from '../../services/notify.service'
 import { APP_BASE_HREF, DatePipe } from '@angular/common'
 import { CacheService } from '../../services/cache.service'
-import { generateCommentsList } from '../../utils/generateCommentsList'
 
 @Component({
   selector: 'app-post',

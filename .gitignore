@@ -49,3 +49,4 @@ scripts/*.jsonl
 uno.css
 *.env
 output.ts
+static

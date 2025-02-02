@@ -13,13 +13,13 @@ pub struct Model {
     pub salt: String,
     #[sea_orm(unique)]
     pub email: String,
-    pub created: Option<u32>,
+    pub created: u32,
     #[sea_orm(column_name = "lastLogin")]
-    pub last_login: Option<u32>,
+    pub last_login: u32,
     #[sea_orm(column_name = "isAdmin")]
-    pub is_admin: Option<String>,
+    pub is_admin: String,
     #[sea_orm(column_name = "isDeleted")]
-    pub is_deleted: Option<String>,
+    pub is_deleted: String,
     pub url: Option<String>,
 }
 

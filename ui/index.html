@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RomiUI Demo</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+  <div class="text-center">
+    <h1>RomiUI Demo</h1>
+    <input type="checkbox" class="border-gray-300 rounded bg-success-400 focus:ring-success-500 bg-accent">2</input>
+    <hr />
+    <h2>Alert</h2>
+    <div class="flex flex-wrap items-center justify-center children:m-1">
+      <r-alert type="success" closeable>Success</r-alert>
+      <r-alert type="info">Info Alert</r-alert>
+      <r-alert type="warning">Warning Alert</r-alert>
+      <r-alert type="error">Error Alert</r-alert>
+      <r-alert onClose="(a)=>console.log(a,1)" type="primary">Primary Alert</r-alert>
+      <r-alert type="secondary">Secondary Alert</r-alert>
+      <r-alert type="accent">Accent Alert</r-alert>
+      <r-alert type="error" colorful>With Colorful Background</r-alert>
+      <r-alert type="primary" bordered>With Border</r-alert>
+      <r-alert type="info" no-icon>Without Icon</r-alert>
+    </div>
+    <hr />
+    <h2>Button</h2>
+    <div class="mb-1">
+      <r-button type="default" size="sm">sm</r-button>
+      <r-button onclick="() => alert('Hello World!')" type="default" size="md">md</r-button>
+      <r-button type="default" size="lg">lg</r-button>
+    </div>
+    <div>
+      <r-button type="success">Success</r-button>
+      <r-button type="info">Info</r-button>
+      <r-button type="warning">Warning</r-button>
+      <r-button type="error">Error</r-button>
+      <r-button type="primary">Primary</r-button>
+      <r-button type="secondary">Secondary</r-button>
+      <r-button type="accent">Accent Button</r-button>
+      <r-button type="error" disabled>Disabled</r-button>
+      <r-button type="info" bordered>With Border</r-button>
+    </div>
+    <hr />
+    <h2>Badge</h2>
+    <div class="children:mx-5 p-3">
+      <r-badge size="sm" content="sm">sm</r-badge>
+      <r-badge size="md" content="md">md</r-badge>
+      <r-badge size="lg" content="lg">lg</r-badge>
+      <r-badge type="success">Success</r-badge>
+      <r-badge type="info">Info</r-badge>
+      <r-badge type="warning">Warning</r-badge>
+      <r-badge type="error">Error</r-badge>
+      <r-badge type="primary">Primary</r-badge>
+      <r-badge type="secondary">Secondary</r-badge>
+      <r-badge type="accent">Accent</r-badge>
+    </div>
+    <hr />
+    <h2>Checkbox</h2>
+    <div class="flex flex-wrap items-center justify-center">
+      <r-checkbox onchange="(s) => console.log(s)" size="sm">sm</r-checkbox>
+      <r-checkbox size="md">md</r-checkbox>
+      <r-checkbox size="lg">lg</r-checkbox>
+      <r-checkbox type="success">Success</r-checkbox>
+      <r-checkbox type="info">Info</r-checkbox>
+      <r-checkbox type="warning">Warning</r-checkbox>
+      <r-checkbox type="error">Error</r-checkbox>
+      <r-checkbox type="primary">Primary</r-checkbox>
+      <r-checkbox type="secondary">Secondary</r-checkbox>
+      <r-checkbox type="accent">Accent</r-checkbox>
+      <r-checkbox checked>Checked</r-checkbox>
+      <r-checkbox disabled>Disabled</r-checkbox>
+    </div>
+  </div>
+  <script type="module" src="/demo/main.ts"></script>
+</body>
+
+</html>

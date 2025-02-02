@@ -27,8 +27,8 @@
               }
             ],
             "styles": [
-              "client/app/styles/uno.css",
-              "client/app/styles/index.css"
+              "client/app/styles/index.css",
+              "ui/styles.css"
             ],
             "scripts": [],
             "server": "client/main.server.ts",

@@ -1,12 +1,30 @@
-import { defineConfig, presetAttributify, presetUno } from 'unocss'
+import { resolve } from 'node:path'
+import { defineConfig, presetIcons, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { presetRomiUI } from './ui/src/preset'
 
 export default defineConfig({
   cli: {
     entry: {
-      patterns: ['client/**/*.{html,ts}'],
-      outFile: 'client/app/styles/uno.css'
+      patterns: ['client/**/*.{html,ts}', 'ui/**/*.{html,ts}'],
+      outFile: resolve(__dirname, 'ui/styles.css')
     }
   },
-  presets: [presetAttributify({}), presetUno()]
-  // rules: [['m-1', { margin: '1px' }]]
+  presets: [presetUno(), presetIcons(), presetRomiUI()],
+
+  transformers: [transformerDirectives(), transformerVariantGroup()],
+  theme: {
+    colors: {
+      'primary-100': 'var(--primary-100)',
+      'primary-200': 'var(--primary-200)',
+      'primary-300': 'var(--primary-300)',
+      'accent-100': 'var(--accent-100)',
+      'accent-200': 'var(--accent-200)',
+      'text-100': 'var(--text-100)',
+      'text-200': 'var(--text-200)',
+      'text-300': 'var(--text-300)',
+      'bg-100': 'var(--bg-100)',
+      'bg-200': 'var(--bg-200)',
+      'bg-300': 'var(--bg-300)'
+    }
+  }
 })

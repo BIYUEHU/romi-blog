@@ -2,7 +2,7 @@ import { Component, type OnInit } from '@angular/core'
 import { ApiService } from '../../services/api.service'
 import { ResPostData } from '../../models/api.model'
 import { CommonModule, DatePipe } from '@angular/common'
-import { LoadingComponent } from '../../loading/loading.component'
+import { LoadingComponent } from '../../components/loading/loading.component'
 import { RouterLink } from '@angular/router'
 import { CacheService } from '../../services/cache.service'
 
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   public ngOnInit() {
     this.apiService.getPosts().subscribe((posts) => {
       this.posts = posts
-      this.cacheService.setCacheData( posts)
+      this.cacheService.setCacheData(posts)
     })
   }
 }

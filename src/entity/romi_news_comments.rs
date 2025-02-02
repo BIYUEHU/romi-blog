@@ -9,7 +9,7 @@ pub struct Model {
     pub cid: u32,
     pub nid: u32,
     pub uid: u32,
-    pub created: Option<u32>,
+    pub created: u32,
     pub ip: String,
     pub ua: String,
     #[sea_orm(column_type = "Text")]

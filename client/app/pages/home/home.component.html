@@ -2,27 +2,18 @@
 <div class="w-5xl max-w-90% mx-auto flex-1">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     @for (post of posts; track $index) {
-    <a
-      [routerLink]="['/post', post.id]"
-      class="no-underline text-black left-0 top-0 bg-white border border-solid border-black border-b-black/86 border-2 overflow-hidden hover:shadow-2xl transition-shadow"
-    >
+    <a [routerLink]="['/post', post.id]"
+      class="no-underline text-bg-100 left-0 top-0 bg-text-100 border border-solid border-primary-300 border-2 hover:border-primary-200 overflow-hidden hover:shadow-2xl transition-shadow">
       @if (post.banner) {
 
-      <img
-        [src]="post.banner"
-        class="w-full h-36 object-cover"
-        [alt]="post.title"
-      />
+      <img [src]="post.banner" class="w-full h-36 object-cover" [alt]="post.title" />
       }
       <div class="p-6">
-        <h1
-          class="text-xl font-bold mb-2 text-[var(--main-color)]"
-          [routerLink]="['/post', post.id]"
-        >
+        <h1 class="text-xl font-bold mb-2 text-primary-100" [routerLink]="['/post', post.id]">
           {{ post.title }}
         </h1>
-        <p class="text-gray-600 text-sm">{{ post.summary }}</p>
-        <div class="mt-4 text-sm text-gray-500">
+        <p class="text-bg-300 text-sm">{{ post.summary }}</p>
+        <div class="mt-4 text-sm text-bg-300">
           {{ post.created * 1000 | date : "yyyy-MM-dd" }}
         </div>
       </div>

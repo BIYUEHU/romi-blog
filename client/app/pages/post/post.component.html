@@ -2,49 +2,38 @@
 <div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="post-body mt-2" [innerHTML]="renderedContent"></div>
 
-  <span
-    class="block my-8 h-3px border-rounded bg-gray-200 w-35% mx-auto"
-  ></span>
+  <span class="block my-8 h-3px border-rounded bg-text-200 w-35% mx-auto"></span>
 
   <div
-    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-white border-l-[var(--main-color)]"
-  >
-    <strong> 本文链接：</strong
-    ><a [href]="post.url" class="text-gray-400 underline">{{ post.url }}</a
-    ><br />
+    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100">
+    <strong> 本文链接：</strong><a [href]="post.url" class="text-text-300 underline">{{ post.url }}</a><br />
     <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
   </div>
 
   <div class="w-85% mx-auto line-height-loose mt-5">
-    <span class="block h-1px mb-4 w-98% mx-auto bg-gray-200"></span>
+    <span class="block h-1px mb-4 w-98% mx-auto bg-text-200"></span>
     @for (items of [post.categories, post.tags]; track $index) { @for (item of
-    items; track post) {
-    <a
-      [routerLink]="[$index === 0 ? '/category' : '/tag', item]"
-      [class]="
+    items; track post.id + $index) {
+    <a [routerLink]="[$index === 0 ? '/category' : '/tag', item]" [class]="
         [
-          'mx-1 px-3 py-1 hover:bg-gray-200 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded-full text-lg transition-colors',
-          $index === 0 ? 'bg-gray-100 font-bold' : 'bg-gray-50'
+          'mx-1 px-3 py-1 hover:bg-text-200 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors',
+          $index === 0 ? 'bg-text-200 font-bold' : 'bg-text-300'
         ].join(' ')
-      "
-    >
+      ">
       @if ($index === 0) { {{ item }} } @else { #{{ item }} }
     </a>
     } }
-    <span class="block h-1px mt-4 w-98% mx-auto bg-gray-200"></span>
+    <span class="block h-1px mt-4 w-98% mx-auto bg-text-200"></span>
   </div>
 
   <div class="w-85% mx-auto flex gap-8 mt-6">
     <div
-      class="px-6 py-2 border-[var(--primary-color)] border-solid border-2 hover:border-[var(--main-color)] bg-gray-50 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded hover:bg-gray-200 transition-colors"
-    >
+      class="px-6 py-2 border-primary-200 border-solid border-2 hover:border-primary-100 bg-text-300 text-primary-200 hover:text-primary-100 rounded hover:bg-text-200 transition-colors">
       赏杯咖啡
     </div>
     <div class="flex gap-4">
       @for (item of ['like',"wechat", "bilibili", "link",]; track $index) {
-      <div
-        class="w-9 h-9 rounded-full bg-gray-50 hover:bg-gray-200 flex transition-colors"
-      >
+      <div class="w-9 h-9 rounded-full bg-text-200 hover:bg-text-200 flex transition-colors">
         <img [src]="['/assets/', item, '.svg'].join('')" />
       </div>
       }
@@ -53,28 +42,21 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
     @for (post of relatedPosts; track $index) {
-    <a
-      [href]="post.url"
-      class="group p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
-    >
-      <div
-        [class]="
+    <a [href]="post.url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+      <div [class]="
           [
             'flex items-center gap-2 text-gray-500 mb-2',
             post.type === 'prev' ? '' : 'justify-end'
           ].join(' ')
-        "
-      >
+        ">
         <span> @if (post.type === 'prev' ) { 上一篇 } @else { 下一篇 } </span>
       </div>
-      <div
-        [class]="
+      <div [class]="
           [
-            'text-lg text-[var(--primary-color)] hover:text-[var(--main-color)] line-clamp-1 transition-colors',
+            'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors',
             post.type === 'prev' ? '' : 'text-right'
           ].join(' ')
-        "
-      >
+        ">
         {{ post.title }}
       </div>
     </a>
@@ -85,29 +67,13 @@
     <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
 
     <div class="mb-8">
-      <textarea
-        class="w-full p-4 border rounded-lg resize-none h-32"
-        placeholder="写下你的想法..."
-      ></textarea>
-      <div class="flex justify-end mt-4 gap-4">
-        <input
-          type="text"
-          class="px-4 py-2 border rounded"
-          placeholder="昵称"
-        />
-        <input
-          type="text"
-          class="px-4 py-2 border rounded"
-          placeholder="邮箱"
-        />
-        <input
-          type="text"
-          class="px-4 py-2 border rounded"
-          placeholder="网址"
-        />
+      <textarea class="w-full p-4 border rounded-lg resize-none h-32" placeholder="写下你的想法..."></textarea>
+      <div class="flex justify-end mt-4 gap-4 flex-auto">
+        <input type="text" class="border rounded" placeholder="昵称" />
+        <input type="text" class="border rounded" placeholder="邮箱" />
+        <input type="text" class="border rounded" placeholder="网址" />
         <div
-          class="px-6 py-2 border-[var(--primary-color)] border-solid border-1 hover:border-[var(--main-color)] bg-gray-50 text-[var(--primary-color)] hover:text-[var(--main-color)] rounded hover:bg-gray-200 transition-colors"
-        >
+          class="border-primary-200 border-solid border-1 hover:border-primary-100 bg-text-300 text-primary-200 hover:text-primary-100 rounded hover:bg-text-200 transition-colors">
           发表评论
         </div>
       </div>
@@ -121,24 +87,19 @@
     <div class="space-y-6 mb-6">
       @for (comment of post.commentsList; track $index) {
       <div class="flex gap-4">
-        <img
-          [src]="comment.author.avatar"
-          alt="avatar"
-          class="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden"
-        />
+        <img [src]="comment.author.avatar" alt="avatar"
+          class="w-10 h-10 rounded-full bg-text-200 flex-shrink-0 overflow-hidden" />
         <div class="flex-1">
           <div class="flex items-center gap-2">
             <span class="font-medium">{{ comment.author.username }}</span>
             <span class="text-gray-400 text-sm">{{
               comment.created | date : "yyyy-MM-dd HH:mm"
-            }}</span>
+              }}</span>
           </div>
           <p class="mt-2 text-gray-700">{{ comment.text }}</p>
 
           <div class="mt-2 flex gap-4">
-            <div
-              class="text-gray-400 hover:text-gray-600 text-sm flex items-center gap-1"
-            >
+            <div class="text-gray-400 hover:text-gray-600 text-sm flex items-center gap-1">
               回复
             </div>
           </div>

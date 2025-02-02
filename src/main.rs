@@ -6,8 +6,8 @@ mod entity;
 mod tools;
 mod utils;
 
-use api::global::ssr_handler;
-use api::{hitokoto, meta, post};
+use api::global;
+use api::{hitokoto, meta, post, seimg};
 use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
@@ -113,8 +113,21 @@ async fn bootstrap() {
             meta::delete
         ],
     )
-    .mount("/api/hitokoto", routes![hitokoto::fetch, hitokoto::create])
-    .mount("/", routes![ssr_handler])
+    .mount(
+        "/api/hitokoto",
+        routes![
+            hitokoto::fetch,
+            hitokoto::create,
+            hitokoto::update,
+            hitokoto::like,
+            hitokoto::delete
+        ],
+    )
+    .mount(
+        "/api/seimg",
+        routes![seimg::fetch, seimg::create, seimg::update, seimg::delete],
+    )
+    .mount("/", routes![global::ssr_handler])
     .launch()
     .await
     .map(|_| ())

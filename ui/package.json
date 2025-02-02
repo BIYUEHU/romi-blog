@@ -1,0 +1,31 @@
+{
+  "name": "romiui",
+  "description": "A Tiny, Simple and Framework unrelated's UI Library base on Lit (Web Components) and UnoCSS.",
+  "version": "1.0.0",
+  "type": "module",
+  "files": [
+    "dist",
+    "styles.css"
+  ],
+  "main": "./dist/romi-ui.umd.cjs",
+  "module": "./dist/romi-ui.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/romi-ui.js",
+    "require": "./dist/romi-ui.umd.cjs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc && pnpx @unocss/cli build"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vite": "^6.0.1"
+  },
+  "dependencies": {
+    "@iconify-json/mdi": "^1.2.3",
+    "@unocss/preset-icons": "^65.4.3",
+    "lit": "^3.2.1"
+  }
+}

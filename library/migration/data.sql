@@ -19,30 +19,30 @@ CREATE TABLE `romi_users` (
     `created` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `lastLogin` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `isAdmin` char(1) NOT NULL DEFAULT '0',
-    `isDeleted` char(1)NOT NULL DEFAULT '0',
+    `isDeleted` char(1) NOT NULL DEFAULT '0',
     `url` varchar(128) DEFAULT NULL
 );
 
 CREATE TABLE `romi_posts` (
     `pid` int(10) UNSIGNED NOT NULL,
     `title` varchar(150) NOT NULL,
-    `created` int(10) UNSIGNED DEFAULT '0',
-    `modified` int(10) UNSIGNED DEFAULT '0',
+    `created` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `modified` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `text` text NOT NULL,
-    `password` varchar(32) DEFAULT NULL,
-    `hide` char(1) DEFAULT '0',
-    `allowComment` char(1) DEFAULT '1',
-    `views` int(10) DEFAULT '0',
-    `likes` int(10) DEFAULT '0',
-    `comments` int(10) DEFAULT '0',
+    `password` varchar(32) NOT NULL DEFAULT NULL,
+    `hide` char(1) NOT NULL DEFAULT '0',
+    `allowComment` char(1) NOT NULL DEFAULT '1',
+    `views` int(10) NOT NULL DEFAULT '0',
+    `likes` int(10) NOT NULL DEFAULT '0',
+    `comments` int(10) NOT NULL DEFAULT '0',
     `banner` text DEFAULT NULL
 );
 
 CREATE TABLE `romi_metas` (
     `mid` int(10) UNSIGNED NOT NULL,
     `name` varchar(32) NOT NULL,
-    `count` varchar(10) DEFAULT '0',
-    `isCategory` char(1) DEFAULT '0'
+    `count` varchar(10) NOT NULL DEFAULT '0',
+    `isCategory` char(1) NOT NULL DEFAULT '0'
 );
 
 CREATE TABLE `romi_relationships` (
@@ -54,14 +54,14 @@ CREATE TABLE `romi_fields` (
     `fid` int(10) UNSIGNED NOT NULL,
     `key` varchar(32) NOT NULL,
     `value` text NOT NULL,
-    `isPublic` char(1) DEFAULT '0'
+    `isPublic` char(1) NOT NULL DEFAULT '0'
 )
 
 CREATE TABLE `romi_news_comments` (
     `cid` int(10) UNSIGNED NOT NULL,
     `nid` int(10) UNSIGNED NOT NULL,
     `uid` int(10) UNSIGNED NOT NULL,
-    `created` int(10) UNSIGNED DEFAULT '0',
+    `created` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `ip` varchar(64) NOT NULL,
     `ua` varchar(511) NOT NULL,
     `text` text NOT NULL
@@ -69,13 +69,13 @@ CREATE TABLE `romi_news_comments` (
 
 CREATE TABLE `romi_news` (
     `nid` int(10) UNSIGNED NOT NULL,
-    `created` int(10) UNSIGNED DEFAULT '0',
-    `modified` int(10) UNSIGNED DEFAULT '0',
+    `created` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `modified` int(10) UNSIGNED NOT NULL DEFAULT '0',
     `text` text NOT NULL,
-    `hide` char(1) DEFAULT '0',
-    `views` int(10) DEFAULT '0',
-    `likes` int(10) DEFAULT '0',
-    `comments` int(10) DEFAULT '0',
+    `hide` char(1) NOT NULL DEFAULT '0',
+    `views` int(10) NOT NULL DEFAULT '0',
+    `likes` int(10) NOT NULL DEFAULT '0',
+    `comments` int(10) NOT NULL DEFAULT '0',
     `imgs` text DEFAULT NULL
 );
 
@@ -85,8 +85,8 @@ CREATE TABLE `romi_seimgs` (
     `pixivUid` int(10) UNSIGNED NOT NULL,
     `title` varchar(150) NOT NULL,
     `author` varchar(150) NOT NULL,
-    `r18` char(1) DEFAULT '0',
-    `tags` text DEFAULT NULL,
+    `r18` char(1) NOT NULL DEFAULT '0',
+    `tags` text  DEFAULT NULL,
     `width` int(10) UNSIGNED NOT NULL,
     `height` int(10) UNSIGNED NOT NULL,
     `type` varchar(10) NOT NULL,
@@ -98,8 +98,8 @@ CREATE TABLE `romi_hitokotos` (
     `msg` text NOT NULL,
     `from` varchar(150) NOT NULL,
     `type` varchar(10) NOT NULL,
-    `likes` int(10) DEFAULT '0',
-    `isPublic` char(1) DEFAULT '0'
+    `likes` int(10) NOT NULL DEFAULT '0',
+    `isPublic` char(1) NOT NULL DEFAULT '0'
 )
 
 ALTER TABLE `romi_comments`

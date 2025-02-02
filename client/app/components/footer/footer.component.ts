@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
-import { ExternalHitokoto } from '../../models/api.model'
+import { ResHitokotoData } from '../../models/api.model'
 
 @Component({
   selector: 'app-footer',
@@ -12,7 +12,7 @@ import { ExternalHitokoto } from '../../models/api.model'
 export class FooterComponent implements OnInit {
   public currentTime = ''
 
-  public hitokoto?: ExternalHitokoto['data'] & { url: string }
+  public hitokoto?: ResHitokotoData & { url: string }
 
   public constructor(private apiService: ApiService) {}
 
@@ -21,10 +21,10 @@ export class FooterComponent implements OnInit {
     this.currentTime = this.getTimeString()
     // }, 1000)
 
-    this.apiService.getHitokoto().subscribe(({ data }) => {
+    this.apiService.getHitokoto().subscribe((data) => {
       this.hitokoto = {
         ...data,
-        msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from ? ` —— ${data.from}` : ''}`,
+        msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`,
         url: `https://old.hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
       }
     })

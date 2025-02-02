@@ -1,20 +1,12 @@
 <div class="h-full a-accent-color">
   <app-header />
-  <div class="flex-1 bg-white w-full">
-    <div class="bg-dark min-h-30vh pt-14 overflow-hidden relative mb-6">
+  <div class="flex-1 bg-text-100 w-full text-bg-100">
+    <div class="bg-bg-100 min-h-30vh pt-14 overflow-hidden relative mb-6">
       <div class="brightness-60 absolute left-0 top-0 w-full h-full">
-        <img
-          class="object-cover left-0 top-0 w-full h-full"
-          [src]="headerData.imageUrl"
-          alt="Header Image"
-        />
+        <img class="object-cover left-0 top-0 w-full h-full" [src]="headerData.imageUrl" alt="Header Image" />
       </div>
-      <div
-        class="flex items-center justify-center mt-7vh relative text-[var(--primary-color)]"
-      >
-        <h1
-          class="text-center max-w-85% font-350 break-words m-0 line-height-relaxed children:font-normal"
-        >
+      <div class="flex items-center justify-center mt-7vh relative text-primary-200">
+        <h1 class="text-center max-w-85% font-350 break-words m-0 line-height-relaxed children:font-normal">
           <span class="font-sans">{{ headerData.title }}</span>
           <br />
           <span class="text-4 block">
@@ -25,19 +17,10 @@
         </h1>
       </div>
     </div>
-    <div class="text-center font-fold text-gray-700 mb-4 max-w-90% mx-auto">
+    <div class="text-center font-fold text-bg-200 mb-4 max-w-90% mx-auto">
       当前博客正在逐步重构中，观察进度可前往
-      <a
-        class="text-blue-500 hover:text-blue-700"
-        target="_blank"
-        href="https://github.com/biyuehu/romichan"
-        >biyuehu/romichan</a
-      >，旧博客：<a
-        class="text-blue-500 hover:text-blue-700"
-        target="_blank"
-        href="https://old.hotaru.icu"
-        >old.hotaru.icu</a
-      >
+      <a target="_blank" href="https://github.com/biyuehu/romichan">biyuehu/romichan</a>，旧博客：<a target="_blank"
+        href="https://old.hotaru.icu">old.hotaru.icu</a>
     </div>
     <router-outlet />
   </div>

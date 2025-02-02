@@ -11,7 +11,7 @@ pub struct Model {
     #[sea_orm(column_type = "Text")]
     pub value: String,
     #[sea_orm(column_name = "isPublic")]
-    pub is_public: Option<String>,
+    pub is_public: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

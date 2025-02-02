@@ -2,9 +2,9 @@ use crate::entity::{romi_metas, romi_relationships};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
-use roga::*;
 use rocket::serde::json::Json;
 use rocket::State;
+use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter,
     TryIntoModel,
@@ -48,8 +48,8 @@ pub async fn fetch_all(
             .map(|meta| ResMetaData {
                 mid: meta.mid,
                 name: meta.name,
-                count: meta.count.unwrap_or("0".to_string()).parse().unwrap_or(0),
-                is_category: meta.is_category == Some("1".to_string()),
+                count: meta.count.parse().unwrap_or(0),
+                is_category: meta.is_category.eq(&1.to_string()),
             })
             .collect(),
     )
@@ -77,13 +77,8 @@ pub async fn fetch(
             let response = ResMetaData {
                 mid: meta.mid,
                 name: meta.clone().name,
-                count: meta
-                    .clone()
-                    .count
-                    .unwrap_or("0".to_string())
-                    .parse()
-                    .unwrap_or(0),
-                is_category: meta.is_category == Some("1".to_string()),
+                count: meta.clone().count.parse().unwrap_or(0),
+                is_category: meta.is_category.eq(&1.to_string()),
             };
 
             l_debug!(logger, "Successfully fetched meta: {}", meta.clone().name);
@@ -107,8 +102,8 @@ pub async fn create(
     let result = romi_metas::ActiveModel {
         mid: ActiveValue::not_set(),
         name: ActiveValue::set(meta.name.clone()),
-        count: ActiveValue::set(Some("0".to_string())),
-        is_category: ActiveValue::set(Some(if meta.is_category { "1" } else { "0" }.to_string())),
+        count: ActiveValue::set(0.to_string()),
+        is_category: ActiveValue::set(if meta.is_category { "1" } else { "0" }.to_string()),
     }
     .save(conn.into_inner())
     .await
@@ -152,7 +147,7 @@ pub async fn update(
             let mut active_model = meta_origin.into_active_model();
             active_model.name = ActiveValue::Set(meta.name.clone());
             active_model.is_category =
-                ActiveValue::Set(Some(if meta.is_category { "1" } else { "0" }.to_string()));
+                ActiveValue::Set(if meta.is_category { "1" } else { "0" }.to_string());
 
             let result = active_model
                 .save(db)

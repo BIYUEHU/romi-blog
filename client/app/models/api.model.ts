@@ -11,14 +11,6 @@ export interface Author {
   avatar: string
 }
 
-export interface ExternalHitokoto {
-  data: {
-    msg: string
-    from: string
-    id: number
-  }
-}
-
 export interface RelatedPost {
   url: string
   title: string

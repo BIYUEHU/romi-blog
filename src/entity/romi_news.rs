@@ -7,14 +7,14 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub nid: u32,
-    pub created: Option<u32>,
-    pub modified: Option<u32>,
+    pub created: u32,
+    pub modified: u32,
     #[sea_orm(column_type = "Text")]
     pub text: String,
-    pub hide: Option<String>,
-    pub views: Option<i32>,
-    pub likes: Option<i32>,
-    pub comments: Option<i32>,
+    pub hide: String,
+    pub views: i32,
+    pub likes: i32,
+    pub comments: i32,
     #[sea_orm(column_type = "Text", nullable)]
     pub imgs: Option<String>,
 }
