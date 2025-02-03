@@ -5,16 +5,18 @@ import type { Sizes } from '../../preset'
 @customElement('r-input')
 export default class RInput extends LitElement {
   @property({ type: String }) public value: string | number = ''
-  @property({ type: String }) label = ''
-  @property({ type: String }) type = 'text'
-  @property({ type: String }) size: Sizes = 'md'
-  @property({ type: Boolean }) disabled = false
-  @property({ type: Boolean }) required = false
-  @property({ type: String }) errorMessage = ''
-  @property({ type: String }) placeholder = 'Please input'
-  @property({ type: Boolean }) clearable = false
-  @property({ type: String }) leftIcon = ''
-  @property({ type: String }) rightIcon = ''
+  @property({ type: String }) public label = ''
+  @property({ type: String }) public type = 'text'
+  @property({ type: String }) public size: Sizes = 'md'
+  @property({ type: String }) public as: 'input' | 'textarea' = 'input'
+  @property({ type: Number }) public rows = 1
+  @property({ type: Boolean }) public disabled = false
+  @property({ type: Boolean }) public required = false
+  @property({ type: String }) public errorMessage = ''
+  @property({ type: String }) public placeholder = 'Please input'
+  @property({ type: Boolean }) public clearable = false
+  @property({ type: String }) public leftIcon = ''
+  @property({ type: String }) public rightIcon = ''
 
   @state() protected focused = false
 
@@ -61,6 +63,26 @@ export default class RInput extends LitElement {
   }
 
   public override render() {
+    const classTag = `
+    w-full text-sm
+    border-0 rounded z-2
+    bg-white ring-1 ring-inset ring-gray-300
+    focus:outline-none focus:ring-2 focus:ring-primary-600
+    placeholder:text-gray-400 placeholder:text-sm
+    ${this.disabled ? 'cursor-not-allowed' : ''}
+    ${this.errorMessage ? 'ring-error-500 focus:ring-error-500' : ''}
+    ${this.size === 'sm' ? 'py-1' : this.size === 'md' ? 'py-2' : 'py-3'}
+    ${this.leftIcon ? 'pl-10' : 'pl-3'}
+    ${
+      this.rightIcon && !this.clearable
+        ? 'pr-10'
+        : !this.rightIcon && this.clearable
+          ? 'pr-10'
+          : this.rightIcon && this.clearable
+            ? 'pr-15'
+            : 'pr-3'
+    }`
+
     return html`
       <div class="w-full flex flex-col ${this.disabled ? 'opacity-60' : ''}">
         ${
@@ -96,31 +118,14 @@ export default class RInput extends LitElement {
                 : ''
             }
 
-            <input
+            ${
+              this.as === 'input'
+                ? html`<input
               .value="${this.value}"
               .type="${this.type}"
               ?disabled="${this.disabled}"
               placeholder="${this.placeholder}"
-              class="
-                w-full text-sm
-                border-0 rounded z-2
-                bg-white ring-1 ring-inset ring-gray-300
-                focus:outline-none focus:ring-2 focus:ring-primary-600
-                placeholder:text-gray-400 placeholder:text-sm
-                ${this.disabled ? 'cursor-not-allowed' : ''}
-                ${this.errorMessage ? 'ring-error-500 focus:ring-error-500' : ''}
-                ${this.size === 'sm' ? 'py-1' : this.size === 'md' ? 'py-2' : 'py-3'}
-                ${this.leftIcon ? 'pl-10' : 'pl-3'}
-                ${
-                  this.rightIcon && !this.clearable
-                    ? 'pr-10'
-                    : !this.rightIcon && this.clearable
-                      ? 'pr-10'
-                      : this.rightIcon && this.clearable
-                        ? 'pr-15'
-                        : 'pr-3'
-                }
-              "
+              class="${classTag}"
               @focus="${() => {
                 this.focused = true
               }}"
@@ -129,7 +134,23 @@ export default class RInput extends LitElement {
               }}"
               @change="${this.handleChange}"
               @input="${this.handleInput}"
-            />
+            />`
+                : html`<textarea
+              .value="${this.value}"
+              ?disabled="${this.disabled}"
+              placeholder="${this.placeholder}"
+              class="${classTag}"
+              rows="${this.rows}"
+              @focus="${() => {
+                this.focused = true
+              }}"
+              @blur="${() => {
+                this.focused = false
+              }}"
+              @change="${this.handleChange}"
+              @input="${this.handleInput}"
+            ></textarea>`
+            }
 
             ${
               this.rightIcon

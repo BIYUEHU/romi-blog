@@ -10,7 +10,6 @@ export default class RCollapse extends LitElement {
 
   @state() private collapsed = true
   @state() private expandedCompleted = false
-  @state() private maxHeight = 0
 
   private toggleExpand() {
     if (this.disabled) return
@@ -24,16 +23,10 @@ export default class RCollapse extends LitElement {
     }
 
     this.collapsed = !this.collapsed
-    this.resizeContent()
-  }
-
-  private resizeContent() {
-    this.maxHeight = this.collapsed ? 0 : this.offsetHeight
   }
 
   public override connectedCallback() {
     super.connectedCallback()
-    setTimeout(() => this.resizeContent(), 0)
   }
 
   public override firstUpdated() {
@@ -78,7 +71,7 @@ export default class RCollapse extends LitElement {
             transition-all duration-300 ease-in-out
             ${this.expandedCompleted ? '' : 'overflow-y-hidden'}
           "
-          style="max-height: ${this.maxHeight}px"
+          style="${!this.collapsed ? '' : 'max-height: 0px;'}"
         >
             <slot class="flex self-start mt-4"></slot>
         </div>

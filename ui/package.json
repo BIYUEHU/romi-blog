@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && pnpx @unocss/cli build"
+    "build": "vite build && cd ../ && pnpx @unocss/cli build"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
