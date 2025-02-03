@@ -3,12 +3,13 @@
 :root {
   --primary-100: #d87cb6;
   --primary-200: #e094c5;
-  --primary-300: #f1b9e0;
+  --primary-300: #e7acb4;
   --accent-100: #9573a2;
   --accent-200: #b4a0b1;
+  --accent-300: #c3b9c1;
   --text-100: #ffffff;
   --text-200: #fafafa;
-  --text-300: #a0a0a0;
+  --text-300: #f7f7f7;
   --bg-100: #1a1a1a;
   --bg-200: #292929;
   --bg-300: #404040;
@@ -24,8 +25,6 @@ a {
 a:hover {
   color: var(--accent-100);
 }
-
-/* Details */
 
 .progress-bar {
   transition: width 0.3s ease-out;
@@ -79,17 +78,17 @@ a:hover {
   th,
   td {
     padding: 8px 12px;
-    border: 1px solid var(--text-200);
+    border: 1px solid var(--text-300);
     text-align: left;
   }
 
   th {
-    background-color: var(--text-200);
+    background-color: var(--text-300);
     font-weight: bold;
   }
 
   tr:nth-child(even) {
-    background-color: var(--text-200);
+    background-color: var(--text-300);
   }
 
   ul,
@@ -126,7 +125,7 @@ a:hover {
 
   pre {
     border-radius: 8px;
-    border: 2px solid var(--primary-300);
+    background-color: var(--text-300) !important;
     padding: 0.5em;
     overflow-x: auto;
     /* white-space: pre-wrap; */

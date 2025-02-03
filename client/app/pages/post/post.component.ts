@@ -9,12 +9,15 @@ import { RelatedPost, ResPostSingleData, ResPostSingleDataExtra } from '../../mo
 import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
 import { NotifyService } from '../../services/notify.service'
 import { APP_BASE_HREF, DatePipe } from '@angular/common'
+import { FormsModule } from '@angular/forms'
 import { CacheService } from '../../services/cache.service'
+import { WebComponentValueAccessorDirective } from '../../directives/web-component-value-accessor.directive'
+import { BrowserService } from '../../services/browser.service'
 
 @Component({
   selector: 'app-post',
   standalone: true,
-  imports: [LoadingComponent, RouterLink, DatePipe],
+  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentValueAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post.component.html'
 })
@@ -24,6 +27,8 @@ export class PostComponent implements OnInit {
 
   public renderedContent: SafeHtml = ''
 
+  public commentText = ''
+
   private mdParser: MarkdownIt
   private highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>
 
@@ -31,6 +36,7 @@ export class PostComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly apiService: ApiService,
     private readonly cacheService: CacheService,
+    private readonly browserService: BrowserService,
     private readonly sanitizer: DomSanitizer,
     private readonly notifyService: NotifyService
   ) {
@@ -77,8 +83,7 @@ export class PostComponent implements OnInit {
       const commentsList = this.cacheService.getCommentsList(Number(id))
       this.post = {
         ...post,
-        // url: `${window.location.origin}/post/${post.id}`,
-        url: `${APP_BASE_HREF}/post/${id}`,
+        url: ((ref) => (ref ? `${ref.location.origin}/post/${post.id}` : ''))(this.browserService.windowRef),
         commentsList,
         comments: commentsList.length
       }
@@ -95,5 +100,10 @@ export class PostComponent implements OnInit {
       langs: SUPPORTS_HIGHLIGHT_LANGUAGES
     })
     this.highlighter = highlighter
+  }
+
+  public async addComment() {
+    if (!this.commentText) return
+    console.log(this.commentText)
   }
 }

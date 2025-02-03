@@ -3,6 +3,7 @@ import { ApiService } from './api.service'
 import { RelatedPost, ResPostData } from '../models/api.model'
 import { Observable, of, map, tap } from 'rxjs'
 import { CommentData, generateCommentsList } from '../utils/generateCommentsList'
+import { BrowserService } from './browser.service'
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,10 @@ export class CacheService {
   private readonly CACHE_KEY = 'posts-list'
   private readonly CACHE_DURATION = 1000 * 60 * 60 // 1小时缓存
 
-  constructor(private readonly apiService: ApiService) {}
+  public constructor(
+    private readonly apiService: ApiService,
+    private readonly browserService: BrowserService
+  ) {}
 
   public getRelatedPosts(currentId: number): Observable<RelatedPost[]> {
     return this.getPostsData().pipe(
@@ -53,42 +57,44 @@ export class CacheService {
   }
 
   private getCachedData(): ResPostData[] | null {
-    return []
-    /*  const cached = localStorage.getItem(this.CACHE_KEY)
+    const storage = this.browserService.localStorage
+    if (!storage) return []
+    const cached = storage.getItem(this.CACHE_KEY)
     if (!cached) return null
 
     try {
       const { data, timestamp } = JSON.parse(cached)
 
-      // 检查缓存是否过期
       if (Date.now() - timestamp > this.CACHE_DURATION) {
-        // localStorage.removeItem(this.CACHE_KEY)
+        storage.removeItem(this.CACHE_KEY)
         return null
       }
 
       return data
     } catch {
       return null
-    }*/
+    }
   }
 
   public setCacheData(data: ResPostData[]): void {
+    const storage = this.browserService.localStorage
+    if (!storage) return
     const cacheData = {
       data,
       timestamp: Date.now()
     }
-    // localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData))
+    storage.setItem(this.CACHE_KEY, JSON.stringify(cacheData))
   }
 
   public getCommentsList(id: number): CommentData[] {
-    return []
-    /*
-    const cached = localStorage.getItem(`comments-${id}`)
+    const storage = this.browserService.localStorage
+    if (!storage) return []
+    const cached = storage.getItem(`comments-${id}`)
     if (cached) {
       return JSON.parse(cached)
     }
     const data = generateCommentsList()
-    // localStorage.setItem(`comments-${id}`, JSON.stringify(data))
-    return data*/
+    storage.setItem(`comments-${id}`, JSON.stringify(data))
+    return data
   }
 }

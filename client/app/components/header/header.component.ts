@@ -11,7 +11,7 @@ import { BrowserService } from '../../services/browser.service'
 export class HeaderComponent {
   public navItems = [
     { text: '首页', link: '/' },
-    { text: '归档', link: '/post' },
+    { text: '归档', link: '/archive' },
     { text: '友链', link: '/friends' },
     { text: '日志', link: '/log' },
     { text: '关于', link: '/about' },

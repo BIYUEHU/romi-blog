@@ -46,7 +46,7 @@ Thumbs.db
 # Custom
 scripts/*.json
 scripts/*.jsonl
-uno.css
+ui/styles.css
 *.env
 output.ts
 static

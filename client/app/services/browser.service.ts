@@ -7,15 +7,19 @@ import { isPlatformBrowser } from '@angular/common'
 export class BrowserService {
   constructor(@Inject(PLATFORM_ID) private platformId: object) {}
 
-  get windowRef(): Window | null {
+  public get windowRef(): Window | null {
     return isPlatformBrowser(this.platformId) ? window : null
   }
 
-  get localStorage(): Storage | null {
+  public get localStorage(): Storage | null {
     return isPlatformBrowser(this.platformId) ? window.localStorage : null
   }
 
-  get sessionStorage(): Storage | null {
+  public get sessionStorage(): Storage | null {
     return isPlatformBrowser(this.platformId) ? window.sessionStorage : null
+  }
+
+  public get isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId)
   }
 }
