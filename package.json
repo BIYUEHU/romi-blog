@@ -9,7 +9,7 @@
     "start": "ng serve",
     "dev": "tsx scripts/dev",
     "ui": "cd ui && pnpm dev",
-    "build": "cargo test export_bindings && unocss build && ng build",
+    "build": "cargo test export_bindings && unocss build && cd ui && vite build && cd .. && ng build",
     "watch": "ng build --watch --configuration development",
     "unocss:dev": "unocss --watch",
     "test": "ng test",
