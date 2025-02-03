@@ -8,7 +8,7 @@ export default class RBadge extends LitElement {
   @property({ type: String }) public size: Exclude<Sizes, 'full'> = 'md'
   @property({ type: String }) public content = ''
 
-  public render() {
+  public override render() {
     const classTag = `${RBadge.reflect[this.type]} absolute translate-x-1/2 rounded-full ${
       this.size === 'sm'
         ? 'text-[8px] p-[2px] -top-1 right-0'

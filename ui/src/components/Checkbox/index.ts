@@ -10,44 +10,49 @@ export default class RCheckbox extends LitElement {
   @property({ type: Boolean }) public checked = false
   @property({ type: Boolean }) public disabled = false
   @property({ type: Boolean, attribute: 'label-left' }) public labelLeft = false
-  @property() public modelValue = false
-  // biome-ignore lint:
-  @property() public value: any = null
-  @property({ attribute: 'checked-value' }) public checkedValue = true
-  @property({ attribute: 'unchecked-value' }) public uncheckedValue = false
+  @property({ type: Boolean }) public value = false
 
-  private uid = `checkbox-${getUniqueID()}`
+  private readonly uid = `checkbox-${getUniqueID()}`
 
-  public render() {
-    const wrapperClass = `
-      checkbox-wrapper
-      inline-flex items-center
-      ${this.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
-    `
+  private handleChange() {
+    this.value = !this.value
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }))
+  }
 
+  public override firstUpdated() {
+    if (this.checked) this.value = true
+  }
+
+  public override render() {
     return html`
-      <label class="${wrapperClass}">
+      <label class="inline-flex items-center ${this.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}">
         ${this.labelLeft ? html`<slot class="mr-2"></slot>` : ''}
         <div class="relative">
           <input
             id="${this.uid}"
             type="checkbox"
-            .checked="${false}"
+            .checked="${this.value}"
             .disabled="${this.disabled}"
             .value="${this.value}"
             class="checkbox-input sr-only"
+            @change="${this.handleChange}"
           />
           <div class="
-            checkbox-custom
+            ${this.labelLeft ? 'ml-1 mr-2' : 'mr-1 ml-2'}
             relative
-            ${this.size === 'sm' ? 'h-4 w-4' : this.size === 'md' ? 'h-5 w-5' : 'h-6 w-6'}
+            ${this.size === 'sm' ? 'h-3 w-3' : this.size === 'md' ? 'h-4 w-4' : 'h-5 w-5'}
             rounded
-            border
+            border-1
+            border-solid
             transition-colors
-            ${false ? `bg-${this.type}-500 border-${this.type}-500` : 'bg-white border-gray-300 hover:border-gray-400'}
+            ${
+              this.value
+                ? `bg-${this.type}-500 border-${this.type}-500`
+                : 'bg-white border-gray-300 hover:border-gray-400'
+            }
           ">
             ${
-              false
+              this.value
                 ? html`
               <div class="
                 absolute inset-0
@@ -61,37 +66,10 @@ export default class RCheckbox extends LitElement {
             }
           </div>
         </div>
-        ${!this.labelLeft ? html`<slot class="ml-2"></slot>` : ''}
+        ${this.labelLeft ? '' : html`<slot class="ml-2"></slot>`}
       </label>
     `
   }
 
-  public static styles = css`@unocss-placeholder;
-  
-      
-  .checkbox-wrapper {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .checkbox-custom {
-    cursor: inherit;
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .checkbox-input:focus-visible + .checkbox-custom {
-    outline: 2px solid rgb(var(--un-primary-500));
-    outline-offset: 2px;
-  }
-
-  /* 禁用状态样式 */
-  .checkbox-input:disabled + .checkbox-custom {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* 动画效果 */
-  .checkbox-custom {
-    transition: all 0.2s ease;
-  }`
+  public static override styles = css`@unocss-placeholder`
 }

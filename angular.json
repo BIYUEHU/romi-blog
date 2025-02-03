@@ -30,7 +30,9 @@
               "client/app/styles/index.css",
               "ui/styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "ui/dist/romi-ui.umd.cjs"
+            ],
             "server": "client/main.server.ts",
             "prerender": true,
             "ssr": {

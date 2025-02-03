@@ -11,7 +11,11 @@ export default class RAlert extends LitElement {
   @property({ type: Boolean }) public colorful = false
   @property({ type: Boolean }) public bordered = false
 
-  public render() {
+  private onClose() {
+    this.dispatchEvent(new CustomEvent('close', { detail: {}, bubbles: true, composed: true }))
+  }
+
+  public override render() {
     const classTag = `
       max-w-lg flex justify-between rounded-lg px-4 py-3
       ${this.colorful ? `bg-${this.type}-50 text-${this.type}-800` : 'bg-white text-gray-700'}
@@ -36,10 +40,6 @@ export default class RAlert extends LitElement {
     `
   }
 
-  private onClose() {
-    this.dispatchEvent(new CustomEvent('close', { detail: {}, bubbles: true, composed: true }))
-  }
-
   private static relfect: Record<Types, string> = {
     success: 'i-mdi:check-circle text-success-500',
     info: 'i-mdi:information text-info-500',
@@ -50,5 +50,5 @@ export default class RAlert extends LitElement {
     accent: 'i-mdi:information-slab-circle text-accent-500'
   }
 
-  public static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

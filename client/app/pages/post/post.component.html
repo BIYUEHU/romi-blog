@@ -1,11 +1,11 @@
 @if (post) {
 <div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="post-body mt-2" [innerHTML]="renderedContent"></div>
-
   <span class="block my-8 h-3px border-rounded bg-text-200 w-35% mx-auto"></span>
 
   <div
     class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100">
+    <r-button type="default">22</r-button>
     <strong> 本文链接：</strong><a [href]="post.url" class="text-text-300 underline">{{ post.url }}</a><br />
     <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
   </div>

@@ -11,15 +11,15 @@
 <body>
   <div class="text-center">
     <h1>RomiUI Demo</h1>
-    <input type="checkbox" class="border-gray-300 rounded bg-success-400 focus:ring-success-500 bg-accent">2</input>
     <hr />
+
     <h2>Alert</h2>
     <div class="flex flex-wrap items-center justify-center children:m-1">
       <r-alert type="success" closeable>Success</r-alert>
       <r-alert type="info">Info Alert</r-alert>
       <r-alert type="warning">Warning Alert</r-alert>
       <r-alert type="error">Error Alert</r-alert>
-      <r-alert onClose="(a)=>console.log(a,1)" type="primary">Primary Alert</r-alert>
+      <r-alert type="primary">Primary Alert</r-alert>
       <r-alert type="secondary">Secondary Alert</r-alert>
       <r-alert type="accent">Accent Alert</r-alert>
       <r-alert type="error" colorful>With Colorful Background</r-alert>
@@ -27,24 +27,7 @@
       <r-alert type="info" no-icon>Without Icon</r-alert>
     </div>
     <hr />
-    <h2>Button</h2>
-    <div class="mb-1">
-      <r-button type="default" size="sm">sm</r-button>
-      <r-button onclick="() => alert('Hello World!')" type="default" size="md">md</r-button>
-      <r-button type="default" size="lg">lg</r-button>
-    </div>
-    <div>
-      <r-button type="success">Success</r-button>
-      <r-button type="info">Info</r-button>
-      <r-button type="warning">Warning</r-button>
-      <r-button type="error">Error</r-button>
-      <r-button type="primary">Primary</r-button>
-      <r-button type="secondary">Secondary</r-button>
-      <r-button type="accent">Accent Button</r-button>
-      <r-button type="error" disabled>Disabled</r-button>
-      <r-button type="info" bordered>With Border</r-button>
-    </div>
-    <hr />
+
     <h2>Badge</h2>
     <div class="children:mx-5 p-3">
       <r-badge size="sm" content="sm">sm</r-badge>
@@ -59,23 +42,269 @@
       <r-badge type="accent">Accent</r-badge>
     </div>
     <hr />
+
+    <h2>Button</h2>
+    <div class="mb-1">
+      <r-button type="default" size="sm">sm</r-button>
+      <r-button onclick="alert('Hello, RomiUI!')" type="default" size="md">md</r-button>
+      <r-button type="default" size="lg">lg</r-button>
+    </div>
+    <div>
+      <r-button type="success">Success</r-button>
+      <r-button type="info">Info</r-button>
+      <r-button type="warning">Warning</r-button>
+      <r-button type="error">Error</r-button>
+      <r-button type="primary">Primary</r-button>
+      <r-button type="secondary">Secondary</r-button>
+      <r-button type="accent">Accent Button</r-button>
+      <r-button type="error" disabled>Disabled</r-button>
+      <r-button type="info" bordered>With Border</r-button>
+    </div>
+    <hr />
+
     <h2>Checkbox</h2>
     <div class="flex flex-wrap items-center justify-center">
-      <r-checkbox onchange="(s) => console.log(s)" size="sm">sm</r-checkbox>
+      <r-checkbox id="checkbox1" size="sm">sm</r-checkbox>
       <r-checkbox size="md">md</r-checkbox>
       <r-checkbox size="lg">lg</r-checkbox>
-      <r-checkbox type="success">Success</r-checkbox>
-      <r-checkbox type="info">Info</r-checkbox>
-      <r-checkbox type="warning">Warning</r-checkbox>
-      <r-checkbox type="error">Error</r-checkbox>
-      <r-checkbox type="primary">Primary</r-checkbox>
-      <r-checkbox type="secondary">Secondary</r-checkbox>
-      <r-checkbox type="accent">Accent</r-checkbox>
-      <r-checkbox checked>Checked</r-checkbox>
+      <r-checkbox type="success" checked>Success</r-checkbox>
+      <r-checkbox type="info" checked>Info</r-checkbox>
+      <r-checkbox type="warning" checked>Warning</r-checkbox>
+      <r-checkbox type="error" checked>Error</r-checkbox>
+      <r-checkbox type="primary" checked>Primary</r-checkbox>
+      <r-checkbox type="secondary" checked>Secondary</r-checkbox>
+      <r-checkbox type="accent" checked>Accent</r-checkbox>
+      <r-checkbox>Unchecked</r-checkbox>
       <r-checkbox disabled>Disabled</r-checkbox>
+      <r-checkbox label-left>Label Left</r-checkbox>
     </div>
+    <hr />
+
+    <h2>Collapse</h2>
+    <div class="children:my-1 max-w-80% w-200 flex flex-col mx-auto">
+      <r-collapse label="Click me">Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio obcaecati quam, dicta
+        ipsam, nulla delectus laborum modi corporis id doloremque, ea labore blanditiis tempore adipisci nisi
+        voluptatibus ipsa reprehenderit repudiandae.</r-collapse>
+      <r-collapse label="Auto Expand" expanded>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit
+        reprehenderit repellat veritatis cum eligendi iure hic blanditiis vel voluptate nobis, ipsam similique
+        voluptatum officia, et repudiandae corporis? Omnis, nam odio.</r-collapse>
+      <r-collapse label="Disabled" disabled></r-collapse>
+      <r-collapse label="Icon at left" icon-left>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse dicta
+        ullam incidunt debitis explicabo quaerat voluptatum hic distinctio itaque deleniti, vitae repellat consectetur
+        quis laudantium perferendis, maiores aut unde magni?</r-collapse>
+    </div>
+    <hr />
+    <h2>Divider</h2>
+    <div>
+      <r-divider></r-divider>
+      <r-divider>Text</r-divider>
+      <r-divider align="left">Left Text</r-divider>
+      <r-divider align="right">Right Text</r-divider>
+      <r-divider dashed></r-divider>
+      <r-divider thickness="4"></r-divider>
+    </div>
+    <hr />
+
+    <!-- <h2>Dropdown</h2> -->
+    <!-- <div> -->
+    <!-- <r-dropdown .options="${[
+  { value: '1', label: 'Option 1' },
+  { value: '2', label: 'Option 2' },
+  { value: '3', label: 'Option 3', disabled: true }
+]}" @select="${(e) => console.log(e.detail)}">
+        <r-button>Click me</rbutton>
+      </r-dropdown>
+      <r-dropdown trigger="hover" .options="${[
+  { value: '1', label: 'Option 1', icon: 'i-mdi:home' },
+  { value: '2', label: 'Option 2', icon: 'i-mdi:settings' }
+]}">
+        <r-button>Hover me</r-button>
+      </r-dropdown> -->
+    <!-- </div> -->
+    <!-- <hr /> -->
+
+    <!-- <h2>Drynamic Tags</h2> -->
+    <!-- <div class="flex flex-wrap items-center justify-center"> -->
+    <!-- <r-dynamic-tags .modelValue=${['Tag 1', 'Tag 2' ]} @update:modelValue=${(e: CustomEvent)=> console.log(e.detail)}
+        ></r-dynamic-tags>
+
+      <r-dynamic-tags .modelValue=${['Tag 1', 'Tag 2' ]} .renderTag=${(tag: string, index: number)=> html`
+        <r-tag type="primary">${tag} (${index})</r-tag>
+        `}
+        ></r-dynamic-tags>
+
+      <r-dynamic-tags .modelValue=${['Tag 1', 'Tag 2' ]} .closeable=${false}></r-dynamic-tags>
+
+      <r-dynamic-tags .modelValue=${['Tag 1', 'Tag 2' ]} .max=${3}></r-dynamic-tags>
+
+      <r-dynamic-tags>
+        <div slot="input" @submit=${(e: Event)=> console.log(e)}>
+        </div>
+        <div slot="trigger">
+        </div>
+      </r-dynamic-tags> -->
+    <!-- </div> -->
+    <!-- <hr /> -->
+
+    <h2>Input</h2>
+    <div class="children:(flex flex-wrap flex-row items-center justify-center my-2)">
+      <div>
+        <r-input label="username" id="input1" placeholder="Enter your username"></r-input>
+        <r-input error-message=" This field is required" required></r-input>
+      </div>
+
+      <div>
+        <r-input left-icon="i-mdi:account" right-icon="i-mdi:eye" clearable @clickLeft="${() => {}}"
+          @clickRight="${() => {}}"></r-input>
+
+        <r-input>
+          <span slot="prepend">https://</span>
+          <span slot="append">.com</span>
+        </r-input>
+      </div>
+    </div>
+    <hr />
+
+    <h2>Loading</h2>
+    <div class="children:m-1">
+      <r-loading type="success"></r-loading>
+      <r-loading type="warning"></r-loading>
+      <r-loading type="error"></r-loading>
+      <r-loading type="primary"></r-loading>
+      <r-loading type="secondary"></r-loading>
+      <r-loading type="accent"></r-loading>
+      <r-loading thickness="3"></r-loading>
+      <r-loading label="Small" size="sm"></r-loading>
+      <r-loading label="Medium" size="md"></r-loading>
+      <r-loading label="Large" size="lg"></r-loading>
+      <r-loading label="Loading..."></r-loading>
+    </div>
+    <hr />
+
+    <!-- <h2>Modal</h2> -->
+    <!-- <div> -->
+    <!-- <r-modal .modelValue="${true}">
+          <div slot="header">Modal Title</div>
+          <p>Modal content goes here...</p>
+          <div slot="footer">
+            <button @click="${() => this.close()}">Close</button>
+          </div>
+        </r-modal>
+
+        <r-modal .modelValue="${true}" width="lg" .dismissible="${false}">
+          <div slot="header">Large Modal</div>
+          <p>Content for large modal...</p>
+        </r-modal>
+
+        <r-modal .modelValue="${true}" .padded="${false}">
+          <img src="full-width-image.jpg" alt="Full width content">
+        </r-modal> -->
+    <!-- </div> -->
+    <!-- <hr /> -->
+
+    <h2>Radio</h2>
+    <div class="flex flex-wrap items-center justify-center">
+      <r-radio size="sm">Small</r-radio>
+      <r-radio size="md">Medium</r-radio>
+      <r-radio size="lg">Large</r-radio>
+      <r-radio type="success" checked>Success</r-radio>
+      <r-radio type="warning" checked>Warning</r-radio>
+      <r-radio type="error" checked>Error</r-radio>
+      <r-radio type="primary" checked>Primary</r-radio>
+      <r-radio type="secondary" checked>Secondary</r-radio>
+      <r-radio type="accent" checked>Accent</r-radio>
+      <r-radio disabled>Disabled</r-radio>
+      <r-radio bordered>Bordered</r-radio>
+      <r-radio label-left>Left Label</r-radio>
+      <r-radio circle-colored>Colored Circle</r-radio>
+    </div>
+    <hr />
+
+    <h2>Select</h2>
+    <div class="flex flex-wrap items-center justify-center">
+      <r-select label="Basic Select" id="select1"></r-select>
+      <r-select type=" success" label="Success Select"></r-select>
+      <r-select .options="[
+        { value: '1', label: 'Option 1', icon: 'i-mdi:home' },
+        { value: '2', label: 'Option 2', icon: 'i-mdi:settings' },
+        { value: '3', label: 'Option 3', icon: 'i-mdi:account' },
+      ]">
+      </r-select>
+    </div>
+    <hr />
+
+    <h2>Skeleton</h2>
+    <div class="flex flex-wrap children:m-1 items-center justify-center">
+      <r-skeleton></r-skeleton>
+      <r-skeleton class="h-20 w-20 bg-blue-200"></r-skeleton>
+      <r-skeleton class="h-20 w-20  bg-gray-200 rounded-full"></r-skeleton>
+    </div>
+    <hr />
+
+    <h2>Switch</h2>
+    <div class="flex flex-wrap items-center justify-center">
+      <r-switch type="success" checked>Success</r-switch>
+      <r-switch type="warning" checked>Warning</r-switch>
+      <r-switch type="error" checked>Error</r-switch>
+      <r-switch type="primary" checked>Primary</r-switch>
+      <r-switch type="secondary" checked>Secondary</r-switch>
+      <r-switch type="accent" checked>Accent</r-switch>
+      <r-switch size="sm">Small</r-switch>
+      <r-switch size="md">Medium</r-switch>
+      <r-switch size="lg">Large</r-switch>
+      <r-switch disabled>Disabled</r-switch>
+    </div>
+    <hr />
+
+    <h2>Tag</h2>
+    <div class="flex flex-wrap items-center justify-center children:m-1">
+      <r-tag>Default Tag</r-tag>
+
+      <r-tag type="primary">Primary Tag</r-tag>
+      <r-tag type="success">Success Tag</r-tag>
+      <r-tag type="warning">Warning Tag</r-tag>
+      <r-tag type="error">Error Tag</r-tag>
+
+      <r-tag size="sm">Small Tag</r-tag>
+      <r-tag size="lg">Large Tag</r-tag>
+
+      <r-tag rounded="full">Rounded Full</r-tag>
+      <r-tag rounded="lg">Rounded Large</r-tag>
+
+      <r-tag bordered>Bordered Tag</r-tag>
+
+      <r-tag closeable @close="${() => console.log('Tag closed')}">
+        Closeable Tag
+      </r-tag>
+    </div>
+    <hr />
   </div>
   <script type="module" src="/demo/main.ts"></script>
+  <script>
+    const checkbox1 = document.getElementById("checkbox1");
+    checkbox1.value = true;
+    checkbox1.addEventListener("change", (e) => {
+      console.log(e.target.value);
+    });
+
+    const input1 = document.getElementById("input1");
+    input1.addEventListener("input", (e) => {
+      console.log(e.target.value);
+    });
+
+    const select1 = document.getElementById("select1");
+    const options = [
+      { value: "1", label: "Option 1", icon: "https://via.placeholder.com/150" },
+      { value: "2", label: "Option 2", icon: "https://via.placeholder.com/150" },
+      { value: "3", label: "Option 3", icon: "https://via.placeholder.com/150" },
+      { value: "4", label: "Option 4", icon: "https://via.placeholder.com/150" },
+      { value: "5", label: "Option 5", icon: "https://via.placeholder.com/150" },
+    ];
+    select1.options = options;
+    select1.addEventListener("input", (e) => {
+      console.log(e.target.value);
+    });
+  </script>
 </body>
 
 </html>

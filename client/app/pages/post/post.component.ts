@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, OnInit, Output } from '@angular/core'
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser'
 import { ActivatedRoute, RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
@@ -15,6 +15,7 @@ import { CacheService } from '../../services/cache.service'
   selector: 'app-post',
   standalone: true,
   imports: [LoadingComponent, RouterLink, DatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post.component.html'
 })
 export class PostComponent implements OnInit {

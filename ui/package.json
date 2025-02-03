@@ -9,15 +9,15 @@
   ],
   "main": "./dist/romi-ui.umd.cjs",
   "module": "./dist/romi-ui.js",
-  "types": "./dist/index.d.ts",
+  "types": "./index.d.ts",
   "exports": {
-    "types": "./dist/index.d.ts",
+    "types": "./index.d.ts",
     "import": "./dist/romi-ui.js",
     "require": "./dist/romi-ui.umd.cjs"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && tsc && pnpx @unocss/cli build"
+    "build": "vite build && pnpx @unocss/cli build"
   },
   "devDependencies": {
     "typescript": "~5.7.2",

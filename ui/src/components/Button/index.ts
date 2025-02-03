@@ -10,7 +10,7 @@ export default class RButton extends LitElement {
   @property({ type: Boolean }) public disabled = false
   @property({ type: Boolean }) public bordered = false
 
-  public render() {
+  public override render() {
     const classTag = `cursor-pointer items-center justify-center whitespace-nowrap rounded-md font-sans text-xs font-semibold leading-4 ${this.bordered ? 'border-1 border-solid' : 'border-none'} shadow-sm disabled:cursor-not-allowed disabled:opacity-30 focus:outline-none focus:ring-offset-2 ${
       this.type === 'default'
         ? 'text-gray-700 bg-gray-100 hover:bg-gray-200 focus:ring-gray-500'
@@ -26,7 +26,7 @@ export default class RButton extends LitElement {
               </a>
             `
           : html`
-              <button type="button" class="${classTag}" ?disabled="${this.disabled}" ?aria-disabled="${this.disabled}">
+              <button type="button" class="${classTag}" ?disabled="${this.disabled}" ?aria-disabled="${this.disabled}" >
                 <slot></slot>
               </button>
             `
@@ -35,10 +35,5 @@ export default class RButton extends LitElement {
     `
   }
 
-  constructor() {
-    super()
-    this.addEventListener('click', (e) => console.log(e.type, e.target.localName))
-  }
-
-  public static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

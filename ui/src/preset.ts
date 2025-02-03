@@ -2,10 +2,10 @@ import type { Preset } from 'unocss'
 import { colors } from 'unocss/preset-mini'
 
 const types = ['primary', 'secondary', 'accent', 'success', 'info', 'warning', 'error'] as const
-const levels = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950']
-const sizes = ['sm', 'md', 'lg', 'full']
-const fractions = ['1/2', '1/3', '1/4', '1/5', '1/6', 'full', '80', '96', '120', 'sm', 'md', 'lg']
-const nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+const levels = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'] as const
+const sizes = ['sm', 'md', 'lg', 'full'] as const
+const fractions = ['1/2', '1/3', '1/4', '1/5', '1/6', 'full', '80', '96', '120', 'sm', 'md', 'lg'] as const
+const nums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] as const
 
 export type Types = (typeof types)[number]
 export type Levels = (typeof levels)[number]
@@ -32,9 +32,9 @@ export function presetRomiUI(): Preset {
     ],
     theme: {
       colors: {
-        primary: colors.indigo,
+        primary: colors.pink,
         secondary: colors.teal,
-        accent: colors.pink,
+        accent: colors.purple,
         success: colors.green,
         info: colors.blue,
         warning: colors.yellow,
