@@ -1,4 +1,6 @@
 use crate::entity::romi_seimgs;
+use crate::guards::admin::AdminUser;
+use crate::models::seimg::{ReqSeimgData, ResSeimgData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
@@ -10,37 +12,6 @@ use sea_orm::{
     QueryFilter, Statement,
 };
 use sea_orm_rocket::Connection;
-use ts_rs::TS;
-
-#[derive(serde::Deserialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ReqSeimgData {
-    pub pixiv_pid: u32,
-    pub pixiv_uid: u32,
-    pub title: String,
-    pub author: String,
-    pub r18: bool,
-    pub tags: Vec<String>,
-    pub width: u32,
-    pub height: u32,
-    pub r#type: String,
-    pub url: String,
-}
-
-#[derive(serde::Serialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ResSeimgData {
-    pub pid: u32,
-    pub uid: u32,
-    pub title: String,
-    pub author: String,
-    pub r18: bool,
-    pub tags: Vec<String>,
-    pub width: u32,
-    pub height: u32,
-    pub r#type: String,
-    pub url: String,
-}
 
 #[get("/?<limit>&<tag>&<r18>")]
 pub async fn fetch(
@@ -105,6 +76,7 @@ pub async fn fetch(
 
 #[post("/", data = "<seimg>")]
 pub async fn create(
+    _admin_user: AdminUser,
     seimg: Json<ReqSeimgData>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
@@ -134,6 +106,7 @@ pub async fn create(
 
 #[put("/<id>", data = "<seimg>")]
 pub async fn update(
+    _admin_user: AdminUser,
     id: u32,
     seimg: Json<ReqSeimgData>,
     logger: &State<Logger>,
@@ -172,7 +145,12 @@ pub async fn update(
 }
 
 #[delete("/<id>")]
-pub async fn delete(id: u32, logger: &State<Logger>, conn: Connection<'_, Db>) -> ApiResult<()> {
+pub async fn delete(
+    _admin_user: AdminUser,
+    id: u32,
+    logger: &State<Logger>,
+    conn: Connection<'_, Db>,
+) -> ApiResult<()> {
     l_info!(logger, "Deleting seimg with id={}", id);
 
     romi_seimgs::Entity::delete_by_id(id)

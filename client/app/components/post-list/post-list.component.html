@@ -1,11 +1,11 @@
+<!-- post-list.component.html -->
 @if (posts) {
 <div class="w-5xl max-w-90% mx-auto flex-1">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @for (post of posts; track $index) {
+    @for (post of displayedPosts; track $index) {
     <a [routerLink]="['/post', post.id]"
       class="no-underline text-bg-100 left-0 top-0 bg-text-100 border border-solid border-primary-300 border-2 hover:border-primary-200 overflow-hidden hover:shadow-2xl transition-shadow">
       @if (post.banner) {
-
       <img [src]="post.banner" class="w-full h-36 object-cover" [alt]="post.title" />
       }
       <div class="p-6">
@@ -20,6 +20,26 @@
     </a>
     }
   </div>
+
+  @if (totalPages > 1) {
+  <div class="flex justify-center items-center gap-2 mt-8 mb-4">
+    @for (item of getPageNumbers(); track $index) {
+    <span>
+      @if (item === 'prev') {
+      <r-button (click)="goToPage(currentPage - 1)" bordered class="w-8 h-8 rounded"><- </r-button>
+          } @else if (item === 'next') {
+          <r-button (click)="goToPage(currentPage + 1)" bordered class="w-8 h-8 rounded"> -></r-button>
+          } @else if (item === '...') {
+          <span class="px-2">...</span>
+          } @else {
+          <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'">
+            {{ item }}
+          </r-button>
+          }
+    </span>
+    }
+  </div>
+  }
 </div>
 } @else {
 <app-loading />

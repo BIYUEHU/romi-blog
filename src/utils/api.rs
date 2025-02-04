@@ -21,7 +21,7 @@ impl ApiError {
         }
     }
 
-    /*     pub fn bad_request<T: Into<String>>(msg: T) -> Self {
+    pub fn bad_request<T: Into<String>>(msg: T) -> Self {
         Self::new(400, msg)
     }
 
@@ -31,30 +31,30 @@ impl ApiError {
 
     pub fn forbidden<T: Into<String>>(msg: T) -> Self {
         Self::new(403, msg)
-    } */
+    }
 
     pub fn not_found<T: Into<String>>(msg: T) -> Self {
         Self::new(404, msg)
     }
 
-    // pub fn conflict<T: Into<String>>(msg: T) -> Self {
-    //     Self::new(409, msg)
-    // }
+    pub fn unprocessable_entity<T: Into<String>>(msg: T) -> Self {
+        Self::new(422, msg)
+    }
 
-    pub fn internal_server_error<T: Into<String>>(msg: T) -> Self {
+    pub fn internal<T: Into<String>>(msg: T) -> Self {
         Self::new(500, msg)
     }
 }
 
 impl Default for ApiError {
     fn default() -> Self {
-        Self::internal_server_error("Internal Server Error")
+        Self::internal("Internal Server Error")
     }
 }
 
 impl From<anyhow::Error> for ApiError {
     fn from(error: anyhow::Error) -> Self {
-        Self::internal_server_error(error.to_string())
+        Self::internal(error.to_string())
     }
 }
 

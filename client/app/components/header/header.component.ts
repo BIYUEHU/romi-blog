@@ -12,10 +12,9 @@ export class HeaderComponent {
   public navItems = [
     { text: '首页', link: '/' },
     { text: '归档', link: '/archive' },
+    { text: '关于', link: '/about' },
     { text: '友链', link: '/friends' },
     { text: '日志', link: '/log' },
-    { text: '关于', link: '/about' },
-    { text: '分类', link: '/categories' },
     { text: '更多', link: '/more' }
   ]
 

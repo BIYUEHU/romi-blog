@@ -39,3 +39,25 @@ GET {{URL}}/api/meta/
 ### Get Single Meta
 GET {{URL}}/api/meta/1/
 
+
+### User Login
+
+POST {{URL}}/api/user/login/
+Content-Type: application/json
+
+{
+    "username": "romi",
+    "password": "0517"
+}
+
+### Create User
+
+POST {{URL}}/api/user/
+Content-Type: application/json
+Authorization: Bearer 222
+
+{
+    "username": "newuser",
+    "password": "0517",
+    "email": "newuser@example.com"
+}

@@ -1,15 +1,13 @@
-// archive.component.ts
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ApiService } from '../../services/api.service'
 import { ReqMetaData, ResPostData } from '../../models/api.model'
-import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'app-archive',
   standalone: true,
-  imports: [LoadingComponent, RouterLink, DatePipe],
+  imports: [LoadingComponent, RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './archive.component.html'
 })

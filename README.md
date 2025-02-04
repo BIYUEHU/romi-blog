@@ -26,12 +26,15 @@
 
 - Angular
 - UnoCSS
+- Lit
+- Web Components
 
 ### Backend
 
 - Rocket
 - SeaORM
 - MySQL
+- JsonWebToken
 
 ## License
 

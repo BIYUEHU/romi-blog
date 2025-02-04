@@ -1,4 +1,5 @@
 use crate::entity::romi_hitokotos;
+use crate::models::hitokoto::{ReqHitokotoData, ResHitokotoData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
@@ -10,25 +11,6 @@ use sea_orm::{
     Statement, TryIntoModel,
 };
 use sea_orm_rocket::Connection;
-use ts_rs::TS;
-
-#[derive(serde::Deserialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ReqHitokotoData {
-    pub msg: String,
-    pub from: String,
-    pub r#type: u32,
-}
-
-#[derive(serde::Serialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ResHitokotoData {
-    pub id: u32,
-    pub msg: String,
-    pub from: String,
-    pub r#type: u32,
-    pub likes: i32,
-}
 
 async fn get_hitokoto(
     length: Option<u32>,

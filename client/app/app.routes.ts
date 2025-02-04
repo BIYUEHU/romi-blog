@@ -2,6 +2,8 @@ import type { Routes } from '@angular/router'
 import { HomeComponent } from './pages/home/home.component'
 import { PostComponent } from './pages/post/post.component'
 import { ArchiveComponent } from './pages/archive/archive.component'
+import { TagComponent } from './pages/tag/tag.component'
+import { CategoryComponent } from './pages/category/category.component'
 // import { AboutComponent } from './pages/about/about.component'
 // import { FriendsComponent } from './pages/friends/friends.component'
 
@@ -23,8 +25,15 @@ export const routes: Routes = [
   // },
   {
     path: 'archive',
-    component: ArchiveComponent,
-    title: 'Archives'
+    component: ArchiveComponent
+  },
+  {
+    path: 'tag/:name',
+    component: TagComponent
+  },
+  {
+    path: 'category/:name',
+    component: CategoryComponent
   },
   // {
   //   path: 'friends',

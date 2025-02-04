@@ -1,24 +1,32 @@
+/** 我草你妈的，傻逼支那豚，你翻你妈的代码 **/
+
 #[macro_use]
 extern crate rocket;
 
-mod api;
 mod entity;
+mod guards;
+mod models;
+mod routes;
 mod tools;
 mod utils;
 
-use api::global;
-use api::{hitokoto, meta, post, seimg};
 use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
+use routes::{comment, global, user};
+use routes::{hitokoto, meta, post, seimg};
 use sea_orm_rocket::Database;
 use std::fs::exists;
 use transport::console::ConsoleTransport;
+use utils::catcher;
 use utils::config::load_config;
 use utils::cros::get_cors;
 use utils::pool::Db;
 use utils::recorder::Recorder;
 use utils::ssr::SSR;
+
+pub const FREE_HONG_KONG: &'static str =
+    "香港に栄光あれ\n光复香港，时代革命\nFree Hong Kong, revolution now";
 
 #[rocket::main]
 async fn bootstrap() {
@@ -114,6 +122,26 @@ async fn bootstrap() {
         ],
     )
     .mount(
+        "/api/comment",
+        routes![
+            comment::fetch_all,
+            comment::fetch_by_post,
+            comment::create,
+            comment::delete
+        ],
+    )
+    .mount(
+        "/api/user",
+        routes![
+            user::login,
+            user::fetch,
+            user::fetch_all,
+            user::create,
+            user::update,
+            user::delete
+        ],
+    )
+    .mount(
         "/api/hitokoto",
         routes![
             hitokoto::fetch,
@@ -128,6 +156,17 @@ async fn bootstrap() {
         routes![seimg::fetch, seimg::create, seimg::update, seimg::delete],
     )
     .mount("/", routes![global::ssr_handler])
+    .register(
+        "/",
+        catchers![
+            catcher::bad_request,
+            catcher::unauthorized,
+            catcher::forbidden,
+            catcher::not_found,
+            catcher::unprocessable_entity,
+            catcher::internal_server_error
+        ],
+    )
     .launch()
     .await
     .map(|_| ())

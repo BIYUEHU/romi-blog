@@ -2,15 +2,14 @@ import { Component, type OnInit } from '@angular/core'
 import { ApiService } from '../../services/api.service'
 import { ResPostData } from '../../models/api.model'
 import { CommonModule, DatePipe } from '@angular/common'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { RouterLink } from '@angular/router'
 import { CacheService } from '../../services/cache.service'
+import { PostListComponent } from '../../components/post-list/post-list.component'
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, LoadingComponent, RouterLink],
-  templateUrl: './home.component.html'
+  imports: [CommonModule, PostListComponent],
+  template: `<app-post-list  [posts]="posts" />`
 })
 export class HomeComponent implements OnInit {
   public posts?: ResPostData[]

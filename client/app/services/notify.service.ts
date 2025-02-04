@@ -6,11 +6,13 @@ import { AppComponent } from '../app.component'
   providedIn: 'root'
 })
 export class NotifyService {
-  private headerUpdatedSource = new Subject<Partial<AppComponent['headerData']>>()
+  private headerUpdated = new Subject<Partial<AppComponent['headerData']>>()
 
-  public headerUpdated$ = this.headerUpdatedSource.asObservable()
+  public headerUpdated$ = this.headerUpdated.asObservable()
 
   public updateHeaderContent(data: Partial<AppComponent['headerData']>) {
-    this.headerUpdatedSource.next(data)
+    Promise.resolve().then(() => {
+      this.headerUpdated.next(data)
+    })
   }
 }

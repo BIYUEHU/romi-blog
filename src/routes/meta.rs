@@ -1,4 +1,6 @@
 use crate::entity::{romi_metas, romi_relationships};
+use crate::guards::admin::AdminUser;
+use crate::models::meta::{ReqMetaData, ResMetaData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
@@ -10,23 +12,6 @@ use sea_orm::{
     TryIntoModel,
 };
 use sea_orm_rocket::Connection;
-use ts_rs::TS;
-
-#[derive(serde::Deserialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ReqMetaData {
-    pub name: String,
-    pub is_category: bool,
-}
-
-#[derive(serde::Serialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ResMetaData {
-    pub mid: u32,
-    pub name: String,
-    pub count: i32,
-    pub is_category: bool,
-}
 
 #[get("/")]
 pub async fn fetch_all(
@@ -93,6 +78,7 @@ pub async fn fetch(
 
 #[post("/", data = "<meta>")]
 pub async fn create(
+    _admin_user: AdminUser,
     meta: Json<ReqMetaData>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
@@ -125,6 +111,7 @@ pub async fn create(
 
 #[put("/<id>", data = "<meta>")]
 pub async fn update(
+    _admin_user: AdminUser,
     id: u32,
     meta: Json<ReqMetaData>,
     logger: &State<Logger>,
@@ -176,6 +163,7 @@ pub async fn update(
 
 #[delete("/<id>")]
 pub async fn delete(
+    _admin_user: AdminUser,
     id: u32,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,

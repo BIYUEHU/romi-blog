@@ -1,8 +1,11 @@
 use crate::entity::{romi_metas, romi_posts, romi_relationships};
+use crate::guards::admin::AdminUser;
+use crate::models::post::{ReqPostData, ResPostData, ResPostSingleData};
 use crate::tools::markdown::summary_markdown;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
+use futures::future::join_all;
 use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
@@ -11,57 +14,13 @@ use sea_orm::{
     QueryFilter, TryIntoModel,
 };
 use sea_orm_rocket::Connection;
-use ts_rs::TS;
-
-#[derive(serde::Deserialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ReqPostData {
-    pub title: String,
-    pub text: String,
-    pub password: String,
-    pub hide: bool,
-    pub allow_comment: bool,
-    pub created: u32,
-    pub modified: u32,
-    // pub tags: Vec<String>,
-    // pub categories: Vec<String>,
-}
-
-#[derive(serde::Serialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ResPostData {
-    pub id: u32,
-    pub title: String,
-    pub summary: String,
-    pub created: u32,
-    pub banner: Option<String>,
-}
-
-#[derive(serde::Serialize, TS)]
-#[ts(export, export_to = "../client/output.ts")]
-pub struct ResPostSingleData {
-    pub id: u32,
-    pub title: String,
-    pub created: u32,
-    pub modified: u32,
-    pub text: String,
-    pub password: bool,
-    pub hide: bool,
-    pub allow_comment: bool,
-    pub tags: Vec<String>,
-    pub categories: Vec<String>,
-    pub views: i32,
-    pub likes: i32,
-    pub comments: i32,
-    pub banner: Option<String>,
-}
 
 async fn get_post_metas(
     id: u32,
     logger: &Logger,
     db: &DatabaseConnection,
 ) -> Result<(Vec<String>, Vec<String>), ApiError> {
-    let metas = futures::future::join_all(
+    let metas = join_all(
         romi_relationships::Entity::find()
             .filter(romi_relationships::Column::Pid.eq(id))
             .all(db)
@@ -89,19 +48,19 @@ async fn get_post_metas(
     Ok((
         metas
             .iter()
-            .filter(|meta| {
+            .filter_map(|meta| {
                 meta.as_ref()
-                    .map_or(false, |m| m.is_category.ne(&1.to_string()))
+                    .filter(|m| m.is_category.ne(&1.to_string()))
+                    .map(|m| m.name.clone())
             })
-            .filter_map(|meta| meta.as_ref().map(|m| m.name.clone()))
             .collect(),
         metas
             .iter()
-            .filter(|meta| {
+            .filter_map(|meta| {
                 meta.as_ref()
-                    .map_or(false, |m| m.is_category.eq(&1.to_string()))
+                    .filter(|m| m.is_category.eq(&1.to_string()))
+                    .map(|m| m.name.clone())
             })
-            .filter_map(|meta| meta.as_ref().map(|m| m.name.clone()))
             .collect(),
     ))
 }
@@ -111,26 +70,39 @@ pub async fn fetch(
     logger: &State<Logger>,
     coon: Connection<'_, Db>,
 ) -> ApiResult<Vec<ResPostData>> {
+    l_info!(logger, "Fetching posts");
+    let db = coon.into_inner();
+
     api_ok(
-        romi_posts::Entity::find()
-            .all(coon.into_inner())
-            .await
-            .with_context(|| "Failed to fetch posts")
-            .map_err(|err| {
-                l_error!(logger, "Failed to fetch posts: {}", err);
-                ApiError::from(err)
-            })?
-            .iter()
-            .filter(|data| data.hide.ne(&1.to_string()))
-            .map(|data| ResPostData {
-                id: data.pid.clone(),
-                title: data.title.clone(),
-                summary: summary_markdown(data.text.as_str(), 70),
-                created: data.created,
-                banner: data.banner.clone(),
-            })
-            .rev()
-            .collect(),
+        join_all(
+            romi_posts::Entity::find()
+                .all(db)
+                .await
+                .with_context(|| "Failed to fetch posts")
+                .map_err(|err| {
+                    l_error!(logger, "Failed to fetch posts: {}", err);
+                    ApiError::from(err)
+                })?
+                .iter()
+                .rev()
+                .filter(|data| data.hide.ne(&1.to_string()))
+                .map(|data| async {
+                    let (tags, categories) = get_post_metas(data.pid.clone(), logger, db)
+                        .await
+                        .unwrap_or((vec![], vec![]));
+
+                    ResPostData {
+                        id: data.pid.clone(),
+                        title: data.title.clone(),
+                        summary: summary_markdown(data.text.as_str(), 70),
+                        created: data.created,
+                        banner: data.banner.clone(),
+                        tags,
+                        categories,
+                    }
+                }),
+        )
+        .await,
     )
 }
 
@@ -140,9 +112,8 @@ pub async fn fetch_all(
     coon: Connection<'_, Db>,
     logger: &State<Logger>,
 ) -> ApiResult<ResPostSingleData> {
-    let db = coon.into_inner();
-
     l_info!(logger, "Fetching post details: id={}", id);
+    let db = coon.into_inner();
 
     match romi_posts::Entity::find_by_id(id)
         .one(db)
@@ -183,6 +154,7 @@ pub async fn fetch_all(
 
 #[post("/", data = "<post>")]
 pub async fn create(
+    _admin_user: AdminUser,
     post: Json<ReqPostData>,
     coon: Connection<'_, Db>,
     logger: &State<Logger>,
@@ -224,6 +196,7 @@ pub async fn create(
 
 #[put("/<id>", data = "<post>")]
 pub async fn update(
+    _admin_user: AdminUser,
     id: u32,
     post: Json<ReqPostData>,
     coon: Connection<'_, Db>,
@@ -281,7 +254,12 @@ pub async fn update(
 }
 
 #[delete("/<id>")]
-pub async fn delete(id: u32, coon: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
+pub async fn delete(
+    _admin_user: AdminUser,
+    id: u32,
+    coon: Connection<'_, Db>,
+    logger: &State<Logger>,
+) -> ApiResult<()> {
     l_info!(logger, "Deleting post: id={}", id);
 
     romi_posts::Entity::delete_by_id(id)

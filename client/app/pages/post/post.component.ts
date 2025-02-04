@@ -59,12 +59,6 @@ export class PostComponent implements OnInit {
   }
 
   public async ngOnInit() {
-    this.handlePost()
-  }
-
-  public async likePost() {}
-
-  private handlePost() {
     const id = this.route.snapshot.paramMap.get('id')
     if (!id) return
 
@@ -93,6 +87,8 @@ export class PostComponent implements OnInit {
       this.relatedPosts = relatedPosts
     })
   }
+
+  public async likePost() {}
 
   private async loadSyntaxHighlighter() {
     const highlighter = await createHighlighter({
