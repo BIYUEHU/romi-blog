@@ -1,10 +1,10 @@
 @if (post) {
-<div class="max-w-90% w-4xl mx-auto flex-1">
-  <div class="post-body mt-2" [innerHTML]="renderedContent"></div>
+<div class="max-w-98% w-4xl mx-auto flex-1">
+  <div class="post-body mt-2 p-5 rounded-xl hover:shadow-md" [innerHTML]="renderedContent"></div>
   <span class="block my-8 h-3px border-rounded bg-text-300 w-35% mx-auto"></span>
 
   <div
-    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100">
+    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
     <strong> 本文链接：</strong><a [href]="post.url" class="text-bg-300 underline">{{ post.url }}</a><br />
     <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
   </div>
@@ -68,9 +68,6 @@
     <div class="mb-8">
       <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="commentText" placeholder="写下你的想法..."></r-input>
       <div class="flex flex-wrap justify-end mt-4 gap-4 flex-auto children:text-lg">
-        <r-input placeholder="昵称" />
-        <r-input placeholder="邮箱" />
-        <r-input placeholder="网址" />
         <r-button (click)="addComment()" type="primary">发表评论</r-button>
       </div>
     </div>

@@ -26,9 +26,9 @@
     @for (item of getPageNumbers(); track $index) {
     <span>
       @if (item === 'prev') {
-      <r-button (click)="goToPage(currentPage - 1)" bordered class="w-8 h-8 rounded"><- </r-button>
+      <r-button (click)="goToPage(currentPage - 1)" class="w-8 h-8 rounded"><- </r-button>
           } @else if (item === 'next') {
-          <r-button (click)="goToPage(currentPage + 1)" bordered class="w-8 h-8 rounded"> -></r-button>
+          <r-button (click)="goToPage(currentPage + 1)" class="w-8 h-8 rounded"> -></r-button>
           } @else if (item === '...') {
           <span class="px-2">...</span>
           } @else {

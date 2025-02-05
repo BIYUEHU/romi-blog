@@ -4,7 +4,6 @@ import { ApiService } from '../../services/api.service'
 import { ResPostData } from '../../models/api.model'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { NotifyService } from '../../services/notify.service'
-import { CacheService } from '../../services/cache.service'
 
 @Component({
   selector: 'app-tag',
@@ -28,6 +27,7 @@ export class TagComponent implements OnInit {
 
     this.apiService.getPosts().subscribe((posts) => {
       this.posts = posts.filter((post) => post.tags.includes(this.tagName))
+      console.log(this.posts)
 
       this.notifyService.updateHeaderContent({
         title: `#${this.tagName}`,

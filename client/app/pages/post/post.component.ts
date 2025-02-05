@@ -8,16 +8,16 @@ import { BundledLanguage, HighlighterGeneric, BundledTheme, createHighlighter } 
 import { RelatedPost, ResPostSingleData, ResPostSingleDataExtra } from '../../models/api.model'
 import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
 import { NotifyService } from '../../services/notify.service'
-import { APP_BASE_HREF, DatePipe } from '@angular/common'
+import { DatePipe } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { CacheService } from '../../services/cache.service'
-import { WebComponentValueAccessorDirective } from '../../directives/web-component-value-accessor.directive'
 import { BrowserService } from '../../services/browser.service'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 
 @Component({
   selector: 'app-post',
   standalone: true,
-  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentValueAccessorDirective],
+  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post.component.html'
 })
@@ -100,6 +100,5 @@ export class PostComponent implements OnInit {
 
   public async addComment() {
     if (!this.commentText) return
-    console.log(this.commentText)
   }
 }

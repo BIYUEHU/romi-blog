@@ -1,0 +1,58 @@
+@if (errorMessage) {
+<r-alert type="error" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center">
+  {{ errorMessage }}
+</r-alert>
+}
+
+@if (isSuccess) {
+<r-alert type="success" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center">
+  欢迎回来：{{ username }}
+</r-alert>
+}
+
+
+<div class="min-h-screen w-full bg-gradient-to-br from-primary-100 to-primary-300 flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-accent-100">Romi Admin</h1>
+      <p class="text-text-300 mt-2">欢迎！请登录后以继续！</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-xl p-8">
+
+      <div class="space-y-6">
+        <div>
+          <r-input label="账号" [(ngModel)]="username" id="username" required placeholder="" class="w-full">
+          </r-input>
+        </div>
+
+        <div>
+          <r-input label="密码" [(ngModel)]="password" id="password" placeholder="" required type="password"
+            class="w-full">
+          </r-input>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <r-checkbox name="rememberMe" type="primary" [(ngModel)]="rememberMe">
+            记住我
+          </r-checkbox>
+
+          <span (click)="forgotPassword()" class="text-sm text-primary-100 hover:text-primary-200 transition-colors">
+            忘记密码?
+          </span>
+        </div>
+
+        <div>
+          <r-button (click)="handleSubmit()" type="primary" size="lg">
+            {{ isLoading ? '登录中...' : '登录' }}
+          </r-button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-1/2 -right-1/2 w-full h-full bg-primary-100/5 rounded-full"></div>
+    <div class="absolute -bottom-1/2 -left-1/2 w-full h-full bg-primary-200/5 rounded-full"></div>
+  </div>
+</div>

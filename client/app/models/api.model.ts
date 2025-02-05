@@ -1,3 +1,5 @@
+import { AuthUser } from './api.model'
+
 export * from '../../output'
 
 // TODO: improve backend api and here is temporary solution
@@ -16,3 +18,5 @@ export interface RelatedPost {
   title: string
   type: 'prev' | 'next'
 }
+
+export type UserAuthData = AuthUser & { token: string }

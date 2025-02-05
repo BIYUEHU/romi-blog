@@ -1,7 +1,17 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { ResMetaData, type ResHitokotoData, type ResPostData, type ResPostSingleData } from '../models/api.model'
+import {
+  ResMetaData,
+  type ResHitokotoData,
+  type ResPostData,
+  type ResPostSingleData,
+  LoginResponse,
+  AuthUser,
+  UserAuthData
+} from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
+import { catchError, map, of } from 'rxjs'
+import { jwtDecode } from 'jwt-decode'
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +35,25 @@ export class ApiService {
 
   public getMetas() {
     return this.http.get<ResMetaData[]>(`${this.apiUrl}/meta`)
+  }
+
+  public login(username: string, password: string) {
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/user/login`, {
+        username,
+        password
+      })
+      .pipe(
+        map((res) => {
+          try {
+            return { ...jwtDecode<AuthUser>(res.token), token: res.token } as UserAuthData
+          } catch {
+            return null
+          }
+        }),
+        catchError(() => {
+          return of(null)
+        })
+      )
   }
 }

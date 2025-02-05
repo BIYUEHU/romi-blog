@@ -71,9 +71,4 @@ export class PostListComponent implements OnInit {
       this.currentPage < this.totalPages ? 'next' : null
     ].filter((page) => page !== null) as (number | string)[]
   }
-
-  // 为了改善类型检查，添加一个辅助方法
-  public isNumber(value: number | string): boolean {
-    return typeof value === 'number'
-  }
 }

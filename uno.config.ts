@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { defineConfig, presetIcons, presetUno, transformerDirectives, transformerVariantGroup } from 'unocss'
+import { defineConfig, presetIcons, presetUno } from 'unocss'
 import { presetRomiUI } from './ui/src/preset'
 
 export default defineConfig({
@@ -11,7 +11,7 @@ export default defineConfig({
   },
   presets: [presetUno(), presetIcons(), presetRomiUI()],
 
-  transformers: [transformerDirectives(), transformerVariantGroup()],
+  transformers: [],
   theme: {
     colors: {
       'primary-100': 'var(--primary-100)',

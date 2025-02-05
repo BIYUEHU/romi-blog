@@ -57,16 +57,16 @@ export class CacheService {
   }
 
   private getCachedData(): ResPostData[] | null {
-    const storage = this.browserService.localStorage
-    if (!storage) return []
-    const cached = storage.getItem(this.CACHE_KEY)
+    const { localStorage } = this.browserService
+    if (!localStorage) return []
+    const cached = localStorage.getItem(this.CACHE_KEY)
     if (!cached) return null
 
     try {
       const { data, timestamp } = JSON.parse(cached)
 
       if (Date.now() - timestamp > this.CACHE_DURATION) {
-        storage.removeItem(this.CACHE_KEY)
+        localStorage.removeItem(this.CACHE_KEY)
         return null
       }
 
@@ -77,24 +77,24 @@ export class CacheService {
   }
 
   public setCacheData(data: ResPostData[]): void {
-    const storage = this.browserService.localStorage
-    if (!storage) return
+    const { localStorage } = this.browserService
+    if (!localStorage) return
     const cacheData = {
       data,
       timestamp: Date.now()
     }
-    storage.setItem(this.CACHE_KEY, JSON.stringify(cacheData))
+    localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData))
   }
 
   public getCommentsList(id: number): CommentData[] {
-    const storage = this.browserService.localStorage
-    if (!storage) return []
-    const cached = storage.getItem(`comments-${id}`)
+    const { localStorage } = this.browserService
+    if (!localStorage) return []
+    const cached = localStorage.getItem(`comments-${id}`)
     if (cached) {
       return JSON.parse(cached)
     }
     const data = generateCommentsList()
-    storage.setItem(`comments-${id}`, JSON.stringify(data))
+    localStorage.setItem(`comments-${id}`, JSON.stringify(data))
     return data
   }
 }

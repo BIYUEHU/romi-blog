@@ -2,11 +2,13 @@ use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 use crate::utils::api::ApiError;
 use crate::FREE_HONG_KONG;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct AuthUser {
     pub id: u32,
     pub username: String,
