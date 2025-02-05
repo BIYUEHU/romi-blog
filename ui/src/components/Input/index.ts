@@ -12,7 +12,7 @@ export default class RInput extends LitElement {
   @property({ type: Number }) public rows = 1
   @property({ type: Boolean }) public disabled = false
   @property({ type: Boolean }) public required = false
-  @property({ type: String }) public errorMessage = ''
+  @property({ type: String, attribute: 'error-message', reflect: true }) public errorMessage = ''
   @property({ type: String }) public placeholder = 'Please input'
   @property({ type: Boolean }) public clearable = false
   @property({ type: String }) public leftIcon = ''
@@ -194,7 +194,7 @@ export default class RInput extends LitElement {
         ${
           this.errorMessage
             ? html`
-          <span class="text-error-500 mt-1 text-xs">
+          <span class="flex self-start text-error-500 mt-1 text-xs">
             ${this.errorMessage}
           </span>
         `

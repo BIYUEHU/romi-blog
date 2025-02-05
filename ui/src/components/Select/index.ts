@@ -80,7 +80,6 @@ export default class RSelect extends LitElement {
   }
 
   private handleChange(e: Event) {
-    console.log(e.target)
     this.dispatchEvent(new CustomEvent('input', { detail: { value: 1 }, bubbles: true, composed: true }))
     if (!this.filterable) return
 
