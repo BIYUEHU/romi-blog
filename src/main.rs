@@ -13,7 +13,7 @@ mod utils;
 use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
-use routes::{comment, global, user};
+use routes::{comment, global, info, user};
 use routes::{hitokoto, meta, post, seimg};
 use sea_orm_rocket::Database;
 use std::fs::exists;
@@ -154,6 +154,10 @@ async fn bootstrap() {
     .mount(
         "/api/seimg",
         routes![seimg::fetch, seimg::create, seimg::update, seimg::delete],
+    )
+    .mount(
+        "/api/info",
+        routes![info::fetch_dashboard, info::fetch_settings],
     )
     .mount("/", routes![global::ssr_handler])
     .register(

@@ -54,7 +54,7 @@ export class AdminLoginComponent {
     private readonly browserService: BrowserService
   ) {
     if (this.browserService.isBrowser && this.authService.isLoggedIn()) {
-      location.href = '/admin/login'
+      location.href = '/admin/dashboard'
     }
   }
 
@@ -89,7 +89,7 @@ export class AdminLoginComponent {
           clearTimeout(timerId)
           this.authService.setUser(data, this.rememberMe)
           this.isSuccess = false
-          this.router.navigate(['/admin'])
+          this.router.navigate(['/admin/dashboard'])
         }, 1500)
       } else {
         this.errorMessage = '账号或密码错误'

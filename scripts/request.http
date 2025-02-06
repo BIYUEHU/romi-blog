@@ -61,3 +61,12 @@ Authorization: Bearer 222
     "password": "0517",
     "email": "newuser@example.com"
 }
+
+### Get settings
+
+GET {{URL}}/api/info/settings/
+
+### Get dashboard data
+
+GET {{URL}}/api/info/dashboard/
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJyb21pIiwiY3JlYXRlZCI6MTczODY0MzYwNCwidXJsIjpudWxsLCJpc19hZG1pbiI6dHJ1ZSwiZXhwIjoxNzM4ODI0ODc0fQ.wOcwdN81s_D_nZz4wSbexFR88uGws2E4h_xEN1MCvYU

@@ -99,6 +99,9 @@ pub async fn fetch(
                         banner: data.banner.clone(),
                         tags,
                         categories,
+                        views: data.views,
+                        likes: data.likes,
+                        comments: data.comments,
                     }
                 }),
         )

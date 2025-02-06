@@ -1,67 +1,105 @@
-import { Component, OnInit } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
+import { ApiService } from '../../services/api.service'
 
 interface PostItem {
   id: number
   title: string
   created: Date
-  category: string
+  categories: string[]
   tags: string[]
-  views: number
-  comments: number
-  status: 'published' | 'draft'
+  summary: string
+  banner: string | null
 }
 
 @Component({
-  selector: 'app-admin-post',
+  selector: 'app-admin-posts',
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-posts.component.html'
 })
 export class AdminPostsComponent implements OnInit {
   public searchQuery = ''
   public filterStatus = ''
   public currentPage = 1
-  public totalPosts = 156
-  public pages = [1, 2, 3, 4, 5]
+  public totalPosts = 0
+  public pages: number[] = []
+  public pageSize = 10
 
-  public posts: PostItem[] = [
-    {
-      id: 1,
-      title: '这是一篇测试文章的标题可能会很长很长很长很长很长',
-      created: new Date(),
-      category: '技术',
-      tags: ['Angular', 'TypeScript', 'Web'],
-      views: 123,
-      comments: 5,
-      status: 'published'
-    }
-    // ... 更多文章数据
-  ]
+  public posts: PostItem[] = []
+  public isLoading = true
 
-  get filteredPosts() {
+  public constructor(private apiService: ApiService) {}
+
+  public get filteredPosts() {
     return this.posts.filter((post) => {
       const matchQuery = post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-      const matchStatus = this.filterStatus ? post.status === this.filterStatus : true
-      return matchQuery && matchStatus
+      return matchQuery
     })
   }
 
-  ngOnInit() {
-    // 获取文章数据
+  public ngOnInit() {
+    this.loadPosts()
+  }
+
+  private loadPosts() {
+    this.isLoading = true
+    this.apiService.getPosts().subscribe({
+      next: (data) => {
+        this.posts = data.map((post) => ({
+          id: post.id,
+          title: post.title,
+          created: new Date(post.created * 1000), // 转换时间戳为Date对象
+          categories: post.categories,
+          tags: post.tags,
+          summary: post.summary,
+          banner: post.banner
+        }))
+
+        this.totalPosts = this.posts.length
+        this.updatePagination()
+        this.isLoading = false
+      },
+      error: (error) => {
+        console.error('Failed to load posts:', error)
+        this.isLoading = false
+        // 可以添加错误提示
+      }
+    })
   }
 
   public deletePost(id: number) {
     if (confirm('确定要删除这篇文章吗？')) {
-      // 实现删除逻辑
-      console.log('删除文章:', id)
+      this.apiService.deletePost(id).subscribe({
+        next: () => {
+          this.posts = this.posts.filter((post) => post.id !== id)
+          this.totalPosts = this.posts.length
+          this.updatePagination()
+          // 可以添加成功提示
+        },
+        error: (error) => {
+          console.error('Failed to delete post:', error)
+          // 可以添加错误提示
+        }
+      })
     }
   }
 
   public goToPage(page: number) {
     this.currentPage = page
-    // 实现分页逻辑
+  }
+
+  private updatePagination() {
+    const totalPages = Math.ceil(this.totalPosts / this.pageSize)
+    this.pages = Array.from({ length: totalPages }, (_, i) => i + 1)
+  }
+
+  public get pagedPosts() {
+    const filtered = this.filteredPosts
+    const start = (this.currentPage - 1) * this.pageSize
+    return filtered.slice(start, start + this.pageSize)
   }
 }

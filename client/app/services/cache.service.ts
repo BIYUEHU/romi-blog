@@ -56,7 +56,7 @@ export class CacheService {
     return this.apiService.getPosts().pipe(tap((posts) => this.setCacheData(posts)))
   }
 
-  private getCachedData(): ResPostData[] | null {
+  public getCachedData(): ResPostData[] | null {
     const { localStorage } = this.browserService
     if (!localStorage) return []
     const cached = localStorage.getItem(this.CACHE_KEY)

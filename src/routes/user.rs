@@ -48,7 +48,7 @@ pub async fn login(
         exp: (std::time::SystemTime::now() + std::time::Duration::from_secs(3600))
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap()
-            .as_millis() as u64,
+            .as_secs() as u64,
         is_admin: user.is_admin.eq(&"1".to_string()),
     };
 
@@ -64,7 +64,7 @@ pub async fn login(
                 std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
                     .unwrap()
-                    .as_millis() as u32,
+                    .as_secs() as u32,
             );
             let _ = active_model.save(&thread_db).await;
         }

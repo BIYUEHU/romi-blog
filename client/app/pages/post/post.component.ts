@@ -1,4 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, OnInit, Output } from '@angular/core'
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  TransferState,
+  makeStateKey
+} from '@angular/core'
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser'
 import { ActivatedRoute, RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
@@ -13,6 +21,7 @@ import { FormsModule } from '@angular/forms'
 import { CacheService } from '../../services/cache.service'
 import { BrowserService } from '../../services/browser.service'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-post',
@@ -21,8 +30,9 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post.component.html'
 })
-export class PostComponent implements OnInit {
-  public post: (ResPostSingleData & ResPostSingleDataExtra) | null = null
+export class PostComponent extends romiComponentFactory<ResPostSingleData>('post') {
+  public post: (Omit<ResPostSingleData, 'tags'> & ResPostSingleDataExtra) | null = null
+
   public relatedPosts: RelatedPost[] = []
 
   public renderedContent: SafeHtml = ''
@@ -34,12 +44,11 @@ export class PostComponent implements OnInit {
 
   public constructor(
     private readonly route: ActivatedRoute,
-    private readonly apiService: ApiService,
     private readonly cacheService: CacheService,
-    private readonly browserService: BrowserService,
     private readonly sanitizer: DomSanitizer,
     private readonly notifyService: NotifyService
   ) {
+    super()
     this.mdParser = new MarkdownIt({
       html: true,
       linkify: true,
@@ -62,27 +71,42 @@ export class PostComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')
     if (!id) return
 
-    this.apiService.getPost(id).subscribe(async (post) => {
-      this.notifyService.updateHeaderContent({
-        title: post.title,
-        subTitle: [
-          `创建时间：${new Date(post.created * 1000).toLocaleDateString()} | 更新时间：${new Date(post.modified * 1000).toLocaleDateString()}`,
-          `${post.views} 次阅读 •  ${post.comments} 条评论 •  ${post.likes} 人喜欢`
-        ],
-        ...(post.banner ? { imageUrl: post.banner } : {})
-      })
+    this.setData(
+      (set) => this.apiService.getPost(id).subscribe((data) => set(data)),
+      (data) => {
+        this.notifyService.updateHeaderContent({
+          title: data.title,
+          subTitle: [
+            `创建时间：${new Date(data.created * 1000).toLocaleDateString()} | 更新时间：${new Date(data.modified * 1000).toLocaleDateString()}`,
+            `${data.views} 次阅读 •  ${data.comments} 条评论 •  ${data.likes} 人喜欢`
+          ],
+          ...(data.banner ? { imageUrl: data.banner } : {})
+        })
 
-      await this.loadSyntaxHighlighter()
-      this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(this.mdParser.render(post.text))
-      const commentsList = this.cacheService.getCommentsList(Number(id))
-      this.post = {
-        ...post,
-        url: ((ref) => (ref ? `${ref.location.origin}/post/${post.id}` : ''))(this.browserService.windowRef),
-        commentsList,
-        comments: commentsList.length
+        this.loadSyntaxHighlighter().then(() => {
+          this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(this.mdParser.render(data.text))
+          const commentsList = this.cacheService.getCommentsList(data.id)
+          this.post = {
+            ...data,
+            url: ((ref) => (ref ? `${ref.location.origin}/post/${data.id}` : ''))(this.browserService.windowRef),
+            commentsList,
+            comments: commentsList.length,
+            tags: data.tags.map((tag) => [
+              tag,
+              ((types) => types[Math.floor(Math.random() * types.length)])([
+                'primary',
+                'secondary',
+                'accent',
+                'success',
+                'info',
+                'warning',
+                'error'
+              ])
+            ])
+          }
+        })
       }
-    })
-
+    )
     this.cacheService.getRelatedPosts(Number(id)).subscribe((relatedPosts) => {
       this.relatedPosts = relatedPosts
     })

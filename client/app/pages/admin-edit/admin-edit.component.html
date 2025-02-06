@@ -1,0 +1,104 @@
+<div class="space-y-6">
+  <div class="bg-text-100 rounded-lg border border-text-200 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl text-bg-200">{{ isEdit ? '编辑文章' : '新建文章' }}</h2>
+      <div class="flex gap-2">
+        <r-button type="primary" (click)="savePost()">
+          保存
+        </r-button>
+        <r-button (click)="goBack()">
+          返回
+        </r-button>
+      </div>
+    </div>
+
+    @if (isLoading) {
+    <div class="text-center py-8">
+      <r-loading label="加载中..." />
+    </div>
+    } @else {
+    <div class="space-y-6">
+      <div class="grid grid-cols-3 gap-6">
+        <div class="col-span-2">
+          <r-input label="文章标题" [(ngModel)]="postForm.title" placeholder="请输入文章标题" required class="w-full" />
+        </div>
+        <div>
+          <!--  [(ngModel)]="postForm.banner" -->
+          <r-input label="文章封面" placeholder="输入封面图片URL" class="w-full" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm text-bg-200 mb-2">分类</label>
+          <div class="relative">
+            <r-input [(ngModel)]="categoryInput" (input)="searchCategories()" placeholder="输入以搜索或添加分类" class="w-full" />
+            @if (categoryInput && filteredCategories.length > 0) {
+            <div class="absolute z-10 w-full mt-1 bg-text-100 border border-text-200 rounded-lg shadow-lg">
+              @for (category of filteredCategories; track category) {
+              <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addCategory(category)">
+                {{ category }}
+              </div>
+              }
+            </div>
+            }
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">
+            @for (category of [2342,545454]; track category) {
+            <!-- (close)="removeCategory(category)" -->
+            <r-tag type="primary" closeable>
+              {{ category }}
+            </r-tag>
+            }
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm text-bg-200 mb-2">标签</label>
+          <div class="relative">
+            <r-input [(ngModel)]="tagInput" (input)="searchTags()" placeholder="输入以搜索或添加标签" class="w-full" />
+            @if (tagInput && filteredTags.length > 0) {
+            <div class="absolute z-10 w-full mt-1 bg-text-100 border border-text-200 rounded-lg shadow-lg">
+              @for (tag of filteredTags; track tag) {
+              <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addTag(tag)">
+                {{ tag }}
+              </div>
+              }
+            </div>
+            }
+          </div>
+          <div class="flex flex-wrap gap-2 mt-2">
+            @for (tag of [2,3,5]; track tag) {
+            <!--  (close)="removeTag(tag)" -->
+            <r-tag type="primary" closeable>
+              {{ tag }}
+            </r-tag>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-6">
+        <div>
+          <r-input label="密码保护" [(ngModel)]="postForm.password" placeholder="留空则不设置密码" class="w-full" />
+        </div>
+        <div>
+          <r-checkbox [(ngModel)]="postForm.hide" type="primary" class="mt-8">
+            隐藏文章
+          </r-checkbox>
+        </div>
+        <div>
+          <r-checkbox [(ngModel)]="postForm.allow_comment" type="primary" class="mt-8">
+            允许评论
+          </r-checkbox>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm text-bg-200 mb-2">文章内容</label>
+        <div id="editor"></div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

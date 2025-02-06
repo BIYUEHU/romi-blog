@@ -1,130 +1,93 @@
 <div class="space-y-6">
-  <!-- 顶部操作栏 -->
-  <div class="bg-white rounded-lg border border-gray-200 p-4">
+  <div class="bg-text-100 rounded-lg border border-text-200 p-4">
     <div class="flex flex-wrap items-center gap-4">
-      <!-- 搜索框 -->
-      <div class="flex-1 min-w-60">
-        <input type="text" [(ngModel)]="searchQuery" placeholder="搜索文章标题..."
-          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none" />
+      <div class="flex-1">
+        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索文章标题..." class="w-full" />
       </div>
 
-      <!-- 筛选器 -->
       <select [(ngModel)]="filterStatus"
-        class="px-4 py-2 border border-gray-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+        class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
         <option value="">所有状态</option>
         <option value="published">已发布</option>
         <option value="draft">草稿</option>
       </select>
 
-      <!-- 新建按钮 -->
-      <button [routerLink]="['/admin/posts/new']"
-        class="px-4 py-2 bg-primary-100 text-white rounded-lg hover:bg-primary-200 transition-colors">
-        <i class="i-mdi:plus mr-1"></i>
+      <r-button [routerLink]="['/admin/posts/new']" type="primary" class="transition-colors">
         新建文章
-      </button>
+      </r-button>
     </div>
   </div>
 
-  <!-- 文章列表 -->
-  <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-    <table class="min-w-full divide-y divide-gray-200">
-      <thead class="bg-gray-50">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            标题
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            分类
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            标签
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            状态
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            数据
-          </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-            操作
-          </th>
-        </tr>
+  <div class="bg-text-100 rounded-lg border border-text-200 overflow-y-hidden">
+    @if (isLoading) {
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
+    } @else if (posts.length === 0) {
+    <div class="p-8 text-center text-gray-500">
+      暂无文章
+    </div>
+    } @else {
+    <table class="min-w-full divide-y divide-text-200 overflow-x-auto">
+      <thead class="bg-text-200">
       </thead>
-      <tbody class="bg-white divide-y divide-gray-200">
-        @for (post of filteredPosts; track post.id) {
-        <tr class="hover:bg-gray-50">
+      <tbody class="bg-text-100 divide-y divide-text-200">
+        @for (post of pagedPosts; track post.id) {
+        <tr class="hover:bg-text-100">
           <td class="px-6 py-4">
             <div class="flex items-center">
+              @if (post.banner) {
+              <img [src]="post.banner" class="hidden 2xl:inline h-12 object-cover rounded mr-3" alt="Post banner" />
+              }
               <div>
-                <div class="text-sm font-medium text-gray-900 max-w-md truncate">
+                <a target="_blank" [routerLink]="['/post/', post.id]"
+                  class="text-sm font-medium text-bg-200 w-sm 2xl:max-w-md truncate">
                   {{ post.title }}
-                </div>
+                </a>
                 <div class="text-sm text-gray-500">
-                  {{ post.created | date:'YYYY-MM-DD HH:mm' }}
+                  {{ post.created | date:'YYYY-MM-dd HH:mm' }}
                 </div>
               </div>
             </div>
           </td>
-          <td class="px-6 py-4">
-            <span class="px-2 py-1 text-sm bg-gray-100 text-gray-800 rounded">
-              {{ post.category }}
-            </span>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex flex-wrap gap-1">
-              @for (tag of post.tags; track tag) {
-              <span class="px-2 py-1 text-xs bg-primary-100/10 text-primary-100 rounded">
-                {{ tag }}
-              </span>
-              }
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <span [class]="[
-              'px-2 py-1 text-sm rounded',
-              post.status === 'published' 
-                ? 'bg-green-100 text-green-800' 
-                : 'bg-yellow-100 text-yellow-800'
-            ]">
-              {{ post.status === 'published' ? '已发布' : '草稿' }}
-            </span>
-          </td>
-          <td class="px-6 py-4 text-sm text-gray-500">
-            <div>{{ post.views }} 阅读</div>
-            <div>{{ post.comments }} 评论</div>
+          <td class="hidden 2xl:inline-block px-6 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2">
+              {{ post.summary }}
+            </p>
           </td>
           <td class="px-6 py-4 text-sm">
             <div class="flex items-center gap-2">
-              <button [routerLink]="['/admin/posts/edit', post.id]" class="text-primary-100 hover:text-primary-200">
+              <r-button [routerLink]="['/admin/edit', post.id]" type="primary">
                 编辑
-              </button>
-              <button (click)="deletePost(post.id)" class="text-red-600 hover:text-red-700">
+              </r-button>
+              <r-button (click)="deletePost(post.id)" type="error">
                 删除
-              </button>
+              </r-button>
             </div>
           </td>
         </tr>
         }
       </tbody>
     </table>
+    }
 
-    <!-- 分页 -->
-    <div class="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+    @if (pages.length > 1) {
+    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
       <div class="text-sm text-gray-500">
         共 {{ totalPosts }} 篇文章
       </div>
       <div class="flex items-center gap-2">
         @for (page of pages; track page) {
-        <button (click)="goToPage(page)" [class]="[
-            'px-3 py-1 text-sm rounded',
-            currentPage === page
-              ? 'bg-primary-100 text-white'
-              : 'text-gray-500 hover:bg-gray-100'
-          ]">
+        @if (currentPage === page) {
+        <r-button type="primary">{{ page }}</r-button>
+        } @else {
+        <r-button (click)="goToPage(page)">
           {{ page }}
-        </button>
+        </r-button>
+        }
         }
       </div>
     </div>
+    }
   </div>
 </div>

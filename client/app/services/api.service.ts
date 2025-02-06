@@ -7,7 +7,10 @@ import {
   type ResPostSingleData,
   LoginResponse,
   AuthUser,
-  UserAuthData
+  UserAuthData,
+  ResSettingsData,
+  ResDashboardData,
+  ReqPostData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -27,6 +30,18 @@ export class ApiService {
 
   public getPost(id: string) {
     return this.http.get<ResPostSingleData>(`${this.apiUrl}/post/${id}`)
+  }
+
+  public createPost(data: Partial<ReqPostData>) {
+    return this.http.post<void>(`${this.apiUrl}/post`, data)
+  }
+
+  public updatePost(id: number, data: Partial<ReqPostData>) {
+    return this.http.put<void>(`${this.apiUrl}/post/${id}`, data)
+  }
+
+  public deletePost(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/post/${id}`)
   }
 
   public getHitokoto() {
@@ -55,5 +70,13 @@ export class ApiService {
           return of(null)
         })
       )
+  }
+
+  public getSettings() {
+    return this.http.get<ResSettingsData>(`${this.apiUrl}/info/settings`)
+  }
+
+  public getDashboard() {
+    return this.http.get<ResDashboardData>(`${this.apiUrl}/info/dashboard`)
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "romichan",
   "description": "A blog system built with Angular and Rust",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "BAN-ZHINESE-USING",
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
@@ -49,6 +49,7 @@
     "rxjs": "~7.8.0",
     "shiki": "^1.24.2",
     "tslib": "^2.3.0",
+    "vditor": "^3.10.8",
     "zone.js": "~0.14.10"
   },
   "devDependencies": {

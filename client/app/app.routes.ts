@@ -6,10 +6,11 @@ import { ArchiveComponent } from './pages/archive/archive.component'
 import { TagComponent } from './pages/tag/tag.component'
 import { CategoryComponent } from './pages/category/category.component'
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component'
-import { AdminHomeComponent } from './pages/admin-home/admin-home.component'
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component'
 import { AdminPostsComponent } from './pages/admin-posts/admin-posts.component'
 import { AuthGuard } from './guards/auth.guard'
 import { AdminLoginComponent } from './pages/admin-login/admin-login.component'
+import { AdminEditComponent } from './pages/admin-edit/admin-edit.component'
 // import { AboutComponent } from './pages/about/about.component'
 // import { FriendsComponent } from './pages/friends/friends.component'
 
@@ -48,6 +49,10 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'admin/login',
+    component: AdminLoginComponent
+  },
+  {
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard],
@@ -58,16 +63,16 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
       {
-        path: 'login',
-        component: AdminLoginComponent
-      },
-      {
         path: 'dashboard',
-        component: AdminHomeComponent
+        component: AdminDashboardComponent
       },
       {
         path: 'posts',
         component: AdminPostsComponent
+      },
+      {
+        path: 'edit/:id',
+        component: AdminEditComponent
       }
     ]
   },

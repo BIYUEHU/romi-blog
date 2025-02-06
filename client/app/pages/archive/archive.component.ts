@@ -1,8 +1,8 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { ApiService } from '../../services/api.service'
-import { ReqMetaData, ResPostData } from '../../models/api.model'
+import { ResMetaData, ResPostData } from '../../models/api.model'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-archive',
@@ -11,10 +11,10 @@ import { ReqMetaData, ResPostData } from '../../models/api.model'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './archive.component.html'
 })
-export class ArchiveComponent implements OnInit {
-  public tags: ReqMetaData[] = []
-  public categories: ReqMetaData[] = []
-  public posts: ResPostData[] = []
+export class ArchiveComponent
+  extends romiComponentFactory<[ResPostData[], ResMetaData[], ResMetaData[]]>('archive')
+  implements OnInit
+{
   public groupedPosts: [
     string,
     {
@@ -24,32 +24,29 @@ export class ArchiveComponent implements OnInit {
     }[]
   ][] = []
 
-  public constructor(private readonly apiService: ApiService) {}
-
   public async ngOnInit() {
-    this.apiService.getMetas().subscribe((tags) => {
-      this.tags = tags.filter(({ is_category }) => !is_category)
-      this.categories = tags.filter(({ is_category }) => is_category)
-    })
-
-    this.apiService.getPosts().subscribe((posts) => {
-      this.posts = posts
-      this.groupPostsByYear()
-    })
-  }
-
-  private groupPostsByYear() {
-    this.groupedPosts = this.posts.reduce((acc, post) => {
-      const date = new Date(post.created * 1000)
-      const year = date.getFullYear().toString()
-      let index = acc.findIndex(([target]) => target === year)
-      index = index === -1 ? acc.push([year, []]) - 1 : index
-      acc[index][1].push({
-        date: `${((result) => (result > 10 ? result : `0${result}`))(date.getMonth() + 1)}-${((result) => (result > 10 ? result : `0${result}`))(date.getDate())}`,
-        title: post.title,
-        id: post.id
-      })
-      return acc
-    }, this.groupedPosts)
+    this.setData(
+      (set) =>
+        Promise.all([
+          new Promise<ResPostData[]>((resolve) => this.apiService.getPosts().subscribe((posts) => resolve(posts))),
+          new Promise<ResMetaData[]>((resolve) => this.apiService.getMetas().subscribe((tags) => resolve(tags)))
+        ]).then(([posts, metas]) =>
+          set([posts, metas.filter(({ is_category }) => is_category), metas.filter(({ is_category }) => !is_category)])
+        ),
+      ([posts]) => {
+        this.groupedPosts = posts.reduce((acc, post) => {
+          const date = new Date(post.created * 1000)
+          const year = date.getFullYear().toString()
+          let index = acc.findIndex(([target]) => target === year)
+          index = index === -1 ? acc.push([year, []]) - 1 : index
+          acc[index][1].push({
+            date: `${((result) => (result > 10 ? result : `0${result}`))(date.getMonth() + 1)}-${((result) => (result > 10 ? result : `0${result}`))(date.getDate())}`,
+            title: post.title,
+            id: post.id
+          })
+          return acc
+        }, this.groupedPosts)
+      }
+    )
   }
 }

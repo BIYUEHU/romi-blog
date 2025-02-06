@@ -1,9 +1,9 @@
-@if (posts.length > 0) {
+@if (data && data[0].length > 0) {
 <div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="mb-12">
     <h2 class="text-2xl font-bold mb-6">分类</h2>
     <div class="flex flex-wrap gap-3">
-      @for (category of categories; track category.name) {
+      @for (category of data[1]; track category.name) {
       <a [routerLink]="['/category', category.name]"
         class="px-4 py-2 bg-text-200 hover:bg-text-100 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors font-bold">
         {{ category.name }}
@@ -15,7 +15,7 @@
   <div class="mb-12">
     <h2 class="text-2xl font-bold mb-6">标签</h2>
     <div class="flex flex-wrap gap-3">
-      @for (tag of tags; track tag.name) {
+      @for (tag of data[2]; track tag.name) {
       <a [routerLink]="['/tag', tag.name]"
         class="px-4 py-2 bg-text-300 hover:bg-text-200 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors">
         #{{ tag.name }}

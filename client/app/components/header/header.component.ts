@@ -9,16 +9,8 @@ import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs'
   imports: [RouterLink],
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent {
   private destroy$ = new Subject<void>()
-  // public navItems = [
-  //   { text: '首页', link: '/' },
-  //   { text: '归档', link: '/archive' },
-  //   { text: '关于', link: '/about' },
-  //   { text: '友链', link: '/friends' },
-  //   { text: '日志', link: '/log' },
-  //   { text: '更多', link: '/more' }
-  // ]
 
   public navItems = [
     { text: '首页', link: '/' },
@@ -45,26 +37,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { text: '作品', link: '/works' }
   ]
 
-  public screenWidth = 0
   public isMenuOpen = false
-
-  public constructor(private readonly browserService: BrowserService) {}
-
-  public ngOnInit() {
-    const { windowRef } = this.browserService
-    if (!windowRef) return
-    this.screenWidth = windowRef.innerWidth
-    fromEvent(windowRef, 'resize')
-      .pipe(debounceTime(200), takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.screenWidth = windowRef.innerWidth
-      })
-  }
-
-  public ngOnDestroy() {
-    this.destroy$.next()
-    this.destroy$.complete()
-  }
 
   public toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen

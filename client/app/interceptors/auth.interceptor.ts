@@ -1,26 +1,36 @@
 import { Injectable } from '@angular/core'
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { HttpRequest, HttpHandlerFn } from '@angular/common/http'
+import { EMPTY, catchError, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthInterceptor /* implements HttpInterceptor */ {
   public constructor(
     private readonly authService: AuthService,
-    readonly browserService: BrowserService
+    private readonly browserService: BrowserService
   ) {}
 
-  public intercept(request: HttpRequest<object>, next: HttpHandler): Observable<HttpEvent<object>> {
-    if (!this.browserService.isBrowser) return next.handle(request)
+  public intercept(request: HttpRequest<unknown>, next: HttpHandlerFn) {
+    if (!this.browserService.isBrowser) return next(request)
     const token = this.authService.getToken()
-    if (!token) return next.handle(request)
+    if (!token) return next(request)
 
-    return next.handle(
+    return next(
       request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
+      })
+    ).pipe(
+      catchError((error) => {
+        if (error.status === 401) {
+          this.authService.logout()
+          return EMPTY
+        }
+        return throwError(() => error)
       })
     )
   }

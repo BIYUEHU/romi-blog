@@ -6,6 +6,7 @@ export * from '../../output'
 export interface ResPostSingleDataExtra {
   url: string
   commentsList: { created: number; author: Author; id: number; reply: number; text: string }[]
+  tags: [string, string][]
 }
 
 export interface Author {

@@ -15,15 +15,11 @@ export class AdminHeaderComponent {
 
   public createDate = new Date()
 
-  public constructor(
-    private readonly authService: AuthService,
-    private readonly router: Router
-  ) {
+  public constructor(private readonly authService: AuthService) {
     this.authService.user$.subscribe((user) => {
-      if (!user) return
       this.user = user
-      this.createDate = new Date(this.user.created)
     })
+    this.createDate = new Date((this.user?.created ?? 0) * 1000)
   }
 
   public toggleSidebar() {

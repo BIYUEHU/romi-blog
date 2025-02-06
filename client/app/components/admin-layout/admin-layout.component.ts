@@ -6,6 +6,7 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 import { AdminFooterComponent } from '../admin-footer/admin-footer.component'
 import { UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
+import { BrowserService } from '../../services/browser.service'
 
 @Component({
   selector: 'app-admin-layout',
@@ -14,11 +15,9 @@ import { AuthService } from '../../services/auth.service'
   templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {
-  public user: UserAuthData | null = null
+  public isView = false
 
-  public constructor(private readonly authService: AuthService) {
-    this.authService.user$.subscribe((user) => {
-      this.user = user
-    })
+  public constructor(private readonly browserService: BrowserService) {
+    this.isView = this.browserService.isBrowser
   }
 }

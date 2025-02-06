@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
 import { ResHitokotoData } from '../../models/api.model'
+import { BrowserService } from '../../services/browser.service'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-footer',
@@ -9,25 +11,27 @@ import { ResHitokotoData } from '../../models/api.model'
   imports: [RouterLink],
   templateUrl: './footer.component.html'
 })
-export class FooterComponent implements OnInit {
-  public currentTime = ''
+export class FooterComponent extends romiComponentFactory<ResHitokotoData>('footer') implements OnInit {
+  public currentTime = this.getTimeString()
 
   public hitokoto?: ResHitokotoData & { url: string }
 
-  public constructor(private apiService: ApiService) {}
-
   public ngOnInit() {
-    // setInterval(() => {
-    this.currentTime = this.getTimeString()
-    // }, 1000)
-
-    this.apiService.getHitokoto().subscribe((data) => {
-      this.hitokoto = {
-        ...data,
-        msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`,
-        url: `https://old.hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
+    this.setData(
+      (set) => this.apiService.getHitokoto().subscribe((data) => set(data)),
+      (data) => {
+        this.hitokoto = {
+          ...data,
+          msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`,
+          url: `https://old.hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
+        }
       }
-    })
+    )
+
+    if (!this.browserService.isBrowser) return
+    setInterval(() => {
+      this.currentTime = this.getTimeString()
+    }, 1000)
   }
 
   public getTimeString() {

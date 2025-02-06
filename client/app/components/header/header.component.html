@@ -13,8 +13,7 @@
       Romi Blog
     </a>
 
-    @if (screenWidth >= 1024) {
-    <nav class="flex items-center gap-6">
+    <nav class="hidden lg:flex items-center gap-6">
       @for (item of navItems; track $index) {
       @if (item.children) {
       <div class="relative group">
@@ -38,7 +37,6 @@
       }
       }
     </nav>
-    }
   </div>
   @if (isMenuOpen) {
   <div class="fixed w-screen h-screen mt-0 bg-black/50 z-4" (click)="toggleMenu()">

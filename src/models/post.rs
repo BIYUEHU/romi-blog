@@ -23,6 +23,9 @@ pub struct ResPostData {
     pub banner: Option<String>,
     pub tags: Vec<String>,
     pub categories: Vec<String>,
+    pub views: i32,
+    pub likes: i32,
+    pub comments: i32,
 }
 
 #[derive(Serialize, TS)]

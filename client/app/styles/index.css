@@ -34,8 +34,6 @@ a:hover {
   font-size: 1.05rem;
   line-height: 1.75;
   margin-inline: auto;
-  max-width: 99%;
-  width: 730px;
   word-wrap: break-word;
   scrollbar-color: var(--bg-300) var(--text-300);
 

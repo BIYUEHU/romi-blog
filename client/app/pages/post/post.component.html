@@ -1,7 +1,9 @@
 @if (post) {
 <div class="max-w-98% w-4xl mx-auto flex-1">
-  <div class="post-body mt-2 p-5 rounded-xl hover:shadow-md" [innerHTML]="renderedContent"></div>
-  <span class="block my-8 h-3px border-rounded bg-text-300 w-35% mx-auto"></span>
+  <div class="post-body mt-2 p-5 rounded-xl hover:shadow-sm" [innerHTML]="renderedContent"></div>
+  <div class="w-35% mx-auto my-8">
+    <r-divider thickness="1"></r-divider>
+  </div>
 
   <div
     class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
@@ -10,33 +12,44 @@
   </div>
 
   <div class="w-85% mx-auto line-height-loose mt-5">
-    <span class="block h-1px mb-4 w-98% mx-auto bg-text-300"></span>
-    @for (items of [post.categories, post.tags]; track $index) { @for (item of
-    items; track post.id + $index) {
-    <a [routerLink]="[$index === 0 ? '/category' : '/tag', item]" [class]="
-        [
-          'mx-1 px-3 py-1 hover:bg-text-200 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors',
-          $index === 0 ? 'bg-text-200 font-bold' : 'bg-text-300'
-        ].join(' ')
-      ">
-      @if ($index === 0) { {{ item }} } @else { #{{ item }} }
-    </a>
-    } }
-    <span class="block h-1px mt-4 w-98% mx-auto bg-text-300"></span>
+    <r-divider class="mx-auto"></r-divider>
+    <div class="flex my-4 gap-4">
+      @for (item of
+      post.categories; track $index) {
+      <div class="hover:cursor-pointer">
+        <r-tag [routerLink]="['/category', item]">
+          {{ item }}
+        </r-tag>
+      </div>
+      }
+      @for (item of post.tags; track $index) {
+      <div class="hover:cursor-pointer">
+        <r-tag [routerLink]="['/tag', item[0]]" [type]="item[1]">
+          #{{ item[0] }}
+        </r-tag>
+      </div>
+      }
+    </div>
+    <r-divider class="mx-auto"></r-divider>
   </div>
 
-  <div class="w-85% mx-auto flex gap-8 mt-6">
-    <div
-      class="px-6 py-2 border-primary-200 border-solid border-2 hover:border-primary-100 bg-text-300 text-primary-200 hover:text-primary-100 rounded hover:bg-text-300 transition-colors">
+  <div class="w-85% mx-auto flex gap-4 mt-6">
+    <r-button size="lg">
+      点个赞
+    </r-button>
+    <r-button size="lg" type="success">
       赏杯咖啡
-    </div>
-    <div class="flex gap-4">
+    </r-button>
+    <r-button size="lg" type="warning">
+      分享到...
+    </r-button>
+    <!-- <div class="flex gap-4">
       @for (item of ['like',"wechat", "bilibili", "link",]; track $index) {
       <div class="w-9 h-9 rounded-full bg-text-200 hover:bg-text-200 flex transition-colors">
         <img [src]="['/assets/', item, '.svg'].join('')" />
       </div>
       }
-    </div>
+    </div> -->
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
