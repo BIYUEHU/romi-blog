@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # , macos-latest, windows-latest
-        os: [ubuntu-latest]
+        os: [ubuntu-20.04]
         arch: [x86_64, aarch64]
 
     steps:
@@ -35,42 +35,42 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-romichan-server
-          path: target/debug/romichan
+          path: target/release/romichan
 
       - name: Upload artifact (Linux aarch64)
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-romichan-server-aarch64
-          path: target/debug/romichan
+          path: target/release/romichan
 
       - name: Upload artifact (macOS)
         if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: macos-latest-romichan-server
-          path: target/debug/romichan
+          path: target/release/romichan
 
       - name: Upload artifact (macOS aarch64)
         if: matrix.os == 'macos-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: macos-latest-romichan-server-aarch64
-          path: target/debug/romichan
+          path: target/release/romichan
 
       - name: Upload artifact (Windows)
         if: matrix.os == 'windows-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: windows-latest-romichan-server
-          path: target/debug/romichan.exe
+          path: target/release/romichan.exe
 
       - name: Upload artifact (Windows aarch64)
         if: matrix.os == 'windows-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: windows-latest-romichan-server-aarch64
-          path: target/debug/romichan.exe
+          path: target/release/romichan.exe
 
       - name: Set up Node.js
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
