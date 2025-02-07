@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # , macos-latest, windows-latest
-        os: [ubuntu-20.04]
+        os: [ubuntu-latest]
         arch: [x86_64, aarch64]
 
     steps:
