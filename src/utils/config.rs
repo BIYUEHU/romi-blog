@@ -18,10 +18,13 @@ pub fn load_config() -> Result<RomiConfig> {
             FileFormat::Toml,
         ))
         .build()
-        .context(format!(
-            "Cannot find romi.toml at current directory: {}",
-            current_dir.display()
-        ))?
+        .map_err(|e| {
+            anyhow::anyhow!(
+                "Cannot find romi.toml at current directory: {}, error: {}",
+                current_dir.display(),
+                e
+            )
+        })?
         .try_deserialize()
         .map_err(|e| anyhow::anyhow!("Failed to deserialize config: {}", e,))?;
     Ok(config)
