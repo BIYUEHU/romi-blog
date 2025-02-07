@@ -26,11 +26,6 @@ jobs:
           profile: minimal
           override: true
 
-      - name: Set SSL backend (Unix)
-        if: runner.os != 'Windows'
-        run: |
-          echo "OPENSSL_DIR=/usr/local/ssl" >> $GITHUB_ENV
-          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
 
       - name: Build backend
         run: cargo build
