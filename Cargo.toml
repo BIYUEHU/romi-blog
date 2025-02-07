@@ -2,7 +2,7 @@
 members = [".", "library/roga", "library/migration"]
 
 [package]
-name = "server"
+name = "romichan"
 version = "0.1.0"
 edition = "2021"
 publish = false

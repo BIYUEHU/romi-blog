@@ -11,7 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # , macos-latest, windows-latest
+        os: [ubuntu-latest]
         arch: [x86_64, aarch64]
 
     steps:
@@ -25,6 +26,13 @@ jobs:
           profile: minimal
           override: true
 
+      - name: Set SSL backend (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          echo "OPENSSL_DIR=/usr/local/ssl" >> $GITHUB_ENV
+          echo "OPENSSL_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
+          echo "RUSTFLAGS=-C target-feature=+crt-static" >> $GITHUB_ENV
+
       - name: Build backend
         run: cargo build
 
@@ -33,42 +41,42 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-romichan-server
-          path: target/debug/server
+          path: target/debug/romichan
 
       - name: Upload artifact (Linux aarch64)
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: ubuntu-latest-romichan-server-aarch64
-          path: target/debug/server
+          path: target/debug/romichan
 
       - name: Upload artifact (macOS)
         if: matrix.os == 'macos-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: macos-latest-romichan-server
-          path: target/debug/server
+          path: target/debug/romichan
 
       - name: Upload artifact (macOS aarch64)
         if: matrix.os == 'macos-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: macos-latest-romichan-server-aarch64
-          path: target/debug/server
+          path: target/debug/romichan
 
       - name: Upload artifact (Windows)
         if: matrix.os == 'windows-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: windows-latest-romichan-server
-          path: target/debug/server.exe
+          path: target/debug/romichan.exe
 
       - name: Upload artifact (Windows aarch64)
         if: matrix.os == 'windows-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
           name: windows-latest-romichan-server-aarch64
-          path: target/debug/server.exe
+          path: target/debug/romichan.exe
 
       - name: Set up Node.js
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'

@@ -2475,6 +2475,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "romichan"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "config",
+ "dotenvy",
+ "futures",
+ "jsonwebtoken",
+ "migration",
+ "reqwest",
+ "rocket",
+ "rocket_cors",
+ "roga",
+ "sea-orm",
+ "sea-orm-rocket",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "tokio",
+ "ts-rs",
+]
+
+[[package]]
 name = "ron"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2883,30 +2907,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "config",
- "dotenvy",
- "futures",
- "jsonwebtoken",
- "migration",
- "reqwest",
- "rocket",
- "rocket_cors",
- "roga",
- "sea-orm",
- "sea-orm-rocket",
- "serde",
- "serde_json",
- "sysinfo",
- "tokio",
- "ts-rs",
 ]
 
 [[package]]
