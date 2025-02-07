@@ -52,11 +52,11 @@ pub async fn login(
         is_admin: user.is_admin.eq(&"1".to_string()),
     };
 
-    let thread_db = (*db).clone();
-    let thread_user_id = user.uid;
+    let db_clone = (*db).clone();
+    let user_id_clone = user.uid;
     spawn(async move {
-        if let Ok(Some(model)) = romi_users::Entity::find_by_id(thread_user_id)
-            .one(&thread_db)
+        if let Ok(Some(model)) = romi_users::Entity::find_by_id(user_id_clone)
+            .one(&db_clone)
             .await
         {
             let mut active_model = model.into_active_model();
@@ -66,7 +66,7 @@ pub async fn login(
                     .unwrap()
                     .as_secs() as u32,
             );
-            let _ = active_model.save(&thread_db).await;
+            let _ = active_model.save(&db_clone).await;
         }
     });
 

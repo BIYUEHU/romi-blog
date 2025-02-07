@@ -3,21 +3,13 @@ import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
-
-interface PostItem {
-  id: number
-  title: string
-  created: Date
-  categories: string[]
-  tags: string[]
-  summary: string
-  banner: string | null
-}
+import { ResPostData } from '../../../output'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 
 @Component({
   selector: 'app-admin-posts',
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterLink, FormsModule, WebComponentInputAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-posts.component.html'
 })
@@ -29,16 +21,13 @@ export class AdminPostsComponent implements OnInit {
   public pages: number[] = []
   public pageSize = 10
 
-  public posts: PostItem[] = []
+  public posts: ResPostData[] = []
   public isLoading = true
 
   public constructor(private apiService: ApiService) {}
 
   public get filteredPosts() {
-    return this.posts.filter((post) => {
-      const matchQuery = post.title.toLowerCase().includes(this.searchQuery.toLowerCase())
-      return matchQuery
-    })
+    return this.posts.filter((post) => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
   }
 
   public ngOnInit() {
@@ -49,16 +38,7 @@ export class AdminPostsComponent implements OnInit {
     this.isLoading = true
     this.apiService.getPosts().subscribe({
       next: (data) => {
-        this.posts = data.map((post) => ({
-          id: post.id,
-          title: post.title,
-          created: new Date(post.created * 1000), // 转换时间戳为Date对象
-          categories: post.categories,
-          tags: post.tags,
-          summary: post.summary,
-          banner: post.banner
-        }))
-
+        this.posts = data
         this.totalPosts = this.posts.length
         this.updatePagination()
         this.isLoading = false

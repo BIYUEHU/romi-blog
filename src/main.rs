@@ -117,7 +117,7 @@ async fn bootstrap() {
             meta::fetch,
             meta::fetch_all,
             meta::create,
-            meta::update,
+            // meta::update,
             meta::delete
         ],
     )

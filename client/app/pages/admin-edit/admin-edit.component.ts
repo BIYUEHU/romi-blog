@@ -16,6 +16,51 @@ import Vditor from 'vditor'
   templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
+  private readonly editorOptions: IOptions = {
+    height: 600,
+    mode: 'ir',
+    typewriterMode: true,
+    theme: 'classic',
+    toolbar: [
+      'emoji',
+      'headings',
+      'bold',
+      'italic',
+      'strike',
+      'link',
+      '|',
+      'list',
+      'ordered-list',
+      'check',
+      'outdent',
+      'indent',
+      '|',
+      'quote',
+      'line',
+      'code',
+      'inline-code',
+      'insert-before',
+      'insert-after',
+      '|',
+      'upload',
+      'record',
+      'table',
+      '|',
+      'undo',
+      'redo',
+      'fullscreen'
+    ],
+    toolbarConfig: {
+      pin: true
+    },
+    counter: {
+      enable: true
+    },
+    cache: {
+      enable: false
+    }
+  }
+
   public isEdit = false
   private isLoadingData = false
 
@@ -27,20 +72,28 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
   private set isLoading(value: boolean) {
     this.isLoadingData = value
-    if (!value) setTimeout(() => this.setEditor(), 1000)
+    if (!value)
+      setTimeout(() => {
+        this.editor = new Vditor('editor', {
+          ...this.editorOptions,
+          after: () => {
+            this.editor?.setValue(this.postForm.text)
+          }
+        })
+      }, 0)
   }
 
   public postForm: ReqPostData = {
     title: '',
     text: '',
-    password: '',
+    password: null,
     hide: false,
     allow_comment: true,
     created: Math.floor(Date.now() / 1000),
-    modified: Math.floor(Date.now() / 1000)
-    // tags: [],
-    // categories: [],
-    // banner: null
+    modified: Math.floor(Date.now() / 1000),
+    tags: [],
+    categories: [],
+    banner: null
   }
 
   public tagInput = ''
@@ -51,95 +104,38 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public filteredCategories: string[] = []
 
   public constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private apiService: ApiService
+    private readonly route: ActivatedRoute,
+    private readonly router: Router,
+    private readonly apiService: ApiService
   ) {}
 
   public ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id')
-    if (id) {
+    if (id && !Number.isNaN(Number(id))) {
       this.isEdit = true
-      this.loadPost(id)
+      this.isLoading = true
+      this.apiService.getPost(id).subscribe({
+        next: (post) => {
+          this.postForm = post
+          this.isLoading = false
+        },
+        error: (error) => {
+          console.error('Failed to load post:', error)
+          this.isLoading = false
+        }
+      })
     } else {
       this.isLoading = false
     }
-    // 加载所有标签和分类（这里需要添加相应的API）
-    this.loadTagsAndCategories()
+
+    this.apiService.getMetas().subscribe((metas) => {
+      this.allTags = metas.filter(({ is_category }) => !is_category).map(({ name }) => name)
+      this.allCategories = metas.filter(({ is_category }) => is_category).map(({ name }) => name)
+    })
   }
 
   public ngOnDestroy() {
     this.editor?.destroy()
-  }
-
-  public setEditor() {
-    this.editor = new Vditor('editor', {
-      height: 600,
-      mode: 'ir',
-      typewriterMode: true,
-      theme: 'classic',
-      toolbar: [
-        'emoji',
-        'headings',
-        'bold',
-        'italic',
-        'strike',
-        'link',
-        '|',
-        'list',
-        'ordered-list',
-        'check',
-        'outdent',
-        'indent',
-        '|',
-        'quote',
-        'line',
-        'code',
-        'inline-code',
-        'insert-before',
-        'insert-after',
-        '|',
-        'upload',
-        'record',
-        'table',
-        '|',
-        'undo',
-        'redo',
-        'fullscreen'
-      ],
-      toolbarConfig: {
-        pin: true
-      },
-      counter: {
-        enable: true
-      },
-      cache: {
-        enable: false
-      },
-      after: () => {
-        this.editor?.setValue(this.postForm.text)
-      }
-    })
-  }
-
-  private loadPost(id: string) {
-    this.isLoading = true
-    this.apiService.getPost(id).subscribe({
-      next: (post) => {
-        this.postForm = { ...post, password: '' }
-        this.isLoading = false
-      },
-      error: (error) => {
-        console.error('Failed to load post:', error)
-        this.isLoading = false
-      }
-    })
-  }
-
-  private loadTagsAndCategories() {
-    // 这里需要实现加载所有标签和分类的逻辑
-    // this.apiService.getTags().subscribe(...)
-    // this.apiService.getCategories().subscribe(...)
   }
 
   public searchTags() {
@@ -148,10 +144,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       return
     }
     this.filteredTags = this.allTags.filter(
-      (tag) => tag.toLowerCase().includes(this.tagInput.toLowerCase()) /* &&
-        !this.postForm.tags.includes(tag) */
+      (tag) => tag.toLowerCase().includes(this.tagInput.toLowerCase()) && !this.postForm.tags.includes(tag)
     )
-    // 如果没有匹配的标签，允许创建新标签
     if (!this.filteredTags.includes(this.tagInput)) {
       this.filteredTags.push(this.tagInput)
     }
@@ -163,48 +157,48 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       return
     }
     this.filteredCategories = this.allCategories.filter(
-      (category) => category.toLowerCase().includes(this.categoryInput.toLowerCase()) /* &&
-        !this.postForm.categories.includes(category) */
+      (category) =>
+        category.toLowerCase().includes(this.categoryInput.toLowerCase()) &&
+        !this.postForm.categories.includes(category)
     )
-    // 如果没有匹配的分类，允许创建新分类
     if (!this.filteredCategories.includes(this.categoryInput)) {
       this.filteredCategories.push(this.categoryInput)
     }
   }
 
   public addTag(tag: string) {
-    // if (!this.postForm.tags.includes(tag)) {
-    //   this.postForm.tags.push(tag)
-    // }
+    if (!this.postForm.tags.includes(tag)) {
+      this.postForm.tags.push(tag)
+    }
     this.tagInput = ''
     this.filteredTags = []
   }
 
   public removeTag(tag: string) {
-    // this.postForm.tags = this.postForm.tags.filter(t => t !== tag)
+    this.postForm.tags = this.postForm.tags.filter((t) => t !== tag)
   }
 
   public addCategory(category: string) {
-    // if (!this.postForm.categories.includes(category)) {
-    //   this.postForm.categories.push(category)
-    // }
+    if (!this.postForm.categories.includes(category)) {
+      this.postForm.categories.push(category)
+    }
     this.categoryInput = ''
     this.filteredCategories = []
   }
 
   public removeCategory(category: string) {
-    // this.postForm.categories = this.postForm.categories.filter(c => c !== category)
+    this.postForm.categories = this.postForm.categories.filter((c) => c !== category)
   }
 
   public savePost() {
+    this.postForm.text = this.editor?.getValue() ?? this.postForm.text
     if (!this.postForm.title || !this.postForm.text) {
       // 可以添加错误提示
       return
     }
 
-    const id = this.route.snapshot.paramMap.get('id')
-    const request = id
-      ? this.apiService.updatePost(Number(id), this.postForm)
+    const request = this.isEdit
+      ? this.apiService.updatePost(Number(this.route.snapshot.paramMap.get('id')), this.postForm)
       : this.apiService.createPost(this.postForm)
 
     request.subscribe({

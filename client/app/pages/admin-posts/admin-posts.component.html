@@ -12,7 +12,7 @@
         <option value="draft">草稿</option>
       </select>
 
-      <r-button [routerLink]="['/admin/posts/new']" type="primary" class="transition-colors">
+      <r-button [routerLink]="['/admin/edit/new']" type="primary" class="transition-colors">
         新建文章
       </r-button>
     </div>
@@ -39,10 +39,9 @@
               @if (post.banner) {
               <img [src]="post.banner" class="hidden 2xl:inline h-12 object-cover rounded mr-3" alt="Post banner" />
               }
-              <div>
-                <a target="_blank" [routerLink]="['/post/', post.id]"
-                  class="text-sm font-medium text-bg-200 w-sm 2xl:max-w-md truncate">
-                  {{ post.title }}
+              <div class="">
+                <a target="_blank" [routerLink]="['/post/', post.id]" class="text-sm font-medium text-bg-200 truncate">
+                  {{ post.title.slice(0, 20) }}
                 </a>
                 <div class="text-sm text-gray-500">
                   {{ post.created | date:'YYYY-MM-dd HH:mm' }}
@@ -54,6 +53,26 @@
             <p class="text-sm text-gray-500 line-clamp-2">
               {{ post.summary }}
             </p>
+          </td>
+          <td class="px-6 py-4">
+            @if (post.allow_comment){
+            <p class="text-sm text-green-500">
+              允许评论
+            </p>
+            } @else {
+            <p class="text-sm text-red-500">
+              禁止评论</p>
+            }
+          </td>
+          <td class="px-6 py-4">
+            @if (post.password) {
+            <p class="text-sm text-yellow-500">
+              已加密
+            </p>
+            } @else {
+            <p class="text-sm text-indigo-500">
+              未加密</p>
+            }
           </td>
           <td class="px-6 py-4 text-sm">
             <div class="flex items-center gap-2">

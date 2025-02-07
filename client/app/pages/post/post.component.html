@@ -16,18 +16,14 @@
     <div class="flex my-4 gap-4">
       @for (item of
       post.categories; track $index) {
-      <div class="hover:cursor-pointer">
-        <r-tag [routerLink]="['/category', item]">
-          {{ item }}
-        </r-tag>
-      </div>
+      <r-tag hovered [routerLink]="['/category', item]">
+        {{ item }}
+      </r-tag>
       }
       @for (item of post.tags; track $index) {
-      <div class="hover:cursor-pointer">
-        <r-tag [routerLink]="['/tag', item[0]]" [type]="item[1]">
-          #{{ item[0] }}
-        </r-tag>
-      </div>
+      <r-tag hovered [routerLink]="['/tag', item[0]]" [type]="item[1]">
+        #{{ item[0] }}
+      </r-tag>
       }
     </div>
     <r-divider class="mx-auto"></r-divider>

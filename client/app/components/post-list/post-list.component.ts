@@ -25,6 +25,7 @@ export class PostListComponent implements OnInit {
 
   public ngOnChanges() {
     if (this.posts) {
+      this.posts = this.posts.filter(({ hide }) => !hide)
       this.totalPages = Math.ceil(this.posts.length / this.pageSize)
       this.currentPage = 1
       this.updateDisplayedPosts()

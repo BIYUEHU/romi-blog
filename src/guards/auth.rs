@@ -1,13 +1,11 @@
-use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+use super::access::Access;
+use crate::utils::api::ApiError;
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-use crate::utils::api::ApiError;
-use crate::FREE_HONG_KONG;
-
-#[derive(Debug, Serialize, Deserialize, TS)]
+#[derive(Debug, Serialize, Deserialize, TS, Clone)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct AuthUser {
     pub id: u32,
@@ -23,26 +21,16 @@ impl<'r> FromRequest<'r> for AuthUser {
     type Error = ApiError;
 
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let token = match req.headers().get_one("Authorization") {
-            Some(token) => token.replace("Bearer ", ""),
-            None => {
-                return Outcome::Error((
+        match Access::from_request(req).await {
+            Outcome::Success(access) => match access.user {
+                Some(user) => Outcome::Success(user),
+                None => Outcome::Error((
                     Status::Unauthorized,
-                    ApiError::unauthorized("No token provided"),
-                ))
-            }
-        };
-
-        match decode::<AuthUser>(
-            &token,
-            &DecodingKey::from_secret(FREE_HONG_KONG.as_bytes()),
-            &Validation::new(Algorithm::HS256),
-        ) {
-            Ok(token_data) => Outcome::Success(token_data.claims),
-            Err(_) => Outcome::Error((
-                Status::Unauthorized,
-                ApiError::unauthorized("Invalid token"),
-            )),
+                    ApiError::unauthorized("No token provided or token is invalid"),
+                )),
+            },
+            Outcome::Error(e) => Outcome::Error(e),
+            Outcome::Forward(f) => Outcome::Forward(f),
         }
     }
 }

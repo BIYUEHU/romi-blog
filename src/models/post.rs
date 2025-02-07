@@ -6,8 +6,11 @@ use ts_rs::TS;
 pub struct ReqPostData {
     pub title: String,
     pub text: String,
-    pub password: String,
+    pub password: Option<String>,
     pub hide: bool,
+    pub tags: Vec<String>,
+    pub categories: Vec<String>,
+    pub banner: Option<String>,
     pub allow_comment: bool,
     pub created: u32,
     pub modified: u32,
@@ -18,14 +21,18 @@ pub struct ReqPostData {
 pub struct ResPostData {
     pub id: u32,
     pub title: String,
-    pub summary: String,
     pub created: u32,
-    pub banner: Option<String>,
+    pub modified: u32,
+    pub summary: String,
+    pub password: Option<String>,
+    pub hide: bool,
+    pub allow_comment: bool,
     pub tags: Vec<String>,
     pub categories: Vec<String>,
     pub views: i32,
     pub likes: i32,
     pub comments: i32,
+    pub banner: Option<String>,
 }
 
 #[derive(Serialize, TS)]
@@ -36,7 +43,7 @@ pub struct ResPostSingleData {
     pub created: u32,
     pub modified: u32,
     pub text: String,
-    pub password: bool,
+    pub password: Option<String>,
     pub hide: bool,
     pub allow_comment: bool,
     pub tags: Vec<String>,

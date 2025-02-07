@@ -6,7 +6,7 @@ use roga::*;
 use std::io::{BufRead, Cursor};
 use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
-use std::thread;
+use std::thread::spawn;
 use tokio::sync::Mutex;
 
 pub struct SSR {
@@ -43,7 +43,7 @@ impl SSR {
             .unwrap();
 
         if let Some(stderr) = process.stderr.take() {
-            thread::spawn(move || {
+            spawn(move || {
                 let reader = std::io::BufReader::new(stderr);
                 reader.lines().for_each(|line| {
                     if let Ok(line) = line {

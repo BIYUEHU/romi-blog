@@ -7,10 +7,7 @@ use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
-use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter,
-    TryIntoModel,
-};
+use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, TryIntoModel};
 use sea_orm_rocket::Connection;
 
 #[get("/")]
@@ -109,57 +106,57 @@ pub async fn create(
     api_ok(result)
 }
 
-#[put("/<id>", data = "<meta>")]
-pub async fn update(
-    _admin_user: AdminUser,
-    id: u32,
-    meta: Json<ReqMetaData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<romi_metas::Model> {
-    l_info!(logger, "Updating meta: id={}", id);
-    let db = conn.into_inner();
+// #[put("/<id>", data = "<meta>")]
+// pub async fn update(
+//     _admin_user: AdminUser,
+//     id: u32,
+//     meta: Json<ReqMetaData>,
+//     logger: &State<Logger>,
+//     conn: Connection<'_, Db>,
+// ) -> ApiResult<romi_metas::Model> {
+//     l_info!(logger, "Updating meta: id={}", id);
+//     let db = conn.into_inner();
 
-    let meta_result = romi_metas::Entity::find_by_id(id)
-        .one(db)
-        .await
-        .with_context(|| format!("Failed to fetch meta {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch meta for update: {}", err);
-            ApiError::from(err)
-        })?;
+//     let meta_result = romi_metas::Entity::find_by_id(id)
+//         .one(db)
+//         .await
+//         .with_context(|| format!("Failed to fetch meta {}", id))
+//         .map_err(|err| {
+//             l_error!(logger, "Failed to fetch meta for update: {}", err);
+//             ApiError::from(err)
+//         })?;
 
-    match meta_result {
-        Some(meta_origin) => {
-            let mut active_model = meta_origin.into_active_model();
-            active_model.name = ActiveValue::Set(meta.name.clone());
-            active_model.is_category =
-                ActiveValue::Set(if meta.is_category { "1" } else { "0" }.to_string());
+//     match meta_result {
+//         Some(meta_origin) => {
+//             let mut active_model = meta_origin.into_active_model();
+//             active_model.name = ActiveValue::Set(meta.name.clone());
+//             active_model.is_category =
+//                 ActiveValue::Set(if meta.is_category { "1" } else { "0" }.to_string());
 
-            let result = active_model
-                .save(db)
-                .await
-                .with_context(|| format!("Failed to update meta {}", id))
-                .map_err(|err| {
-                    l_error!(logger, "Failed to update meta: {}", err);
-                    ApiError::from(err)
-                })?
-                .try_into_model()
-                .with_context(|| "Failed to convert updated meta model")
-                .map_err(|err| {
-                    l_error!(logger, "Model conversion failed: {}", err);
-                    ApiError::from(err)
-                })?;
+//             let result = active_model
+//                 .save(db)
+//                 .await
+//                 .with_context(|| format!("Failed to update meta {}", id))
+//                 .map_err(|err| {
+//                     l_error!(logger, "Failed to update meta: {}", err);
+//                     ApiError::from(err)
+//                 })?
+//                 .try_into_model()
+//                 .with_context(|| "Failed to convert updated meta model")
+//                 .map_err(|err| {
+//                     l_error!(logger, "Model conversion failed: {}", err);
+//                     ApiError::from(err)
+//                 })?;
 
-            l_info!(logger, "Successfully updated meta: id={}", id);
-            api_ok(result)
-        }
-        None => {
-            l_warn!(logger, "Meta not found for update: id={}", id);
-            Err(ApiError::not_found("Meta not found"))
-        }
-    }
-}
+//             l_info!(logger, "Successfully updated meta: id={}", id);
+//             api_ok(result)
+//         }
+//         None => {
+//             l_warn!(logger, "Meta not found for update: id={}", id);
+//             Err(ApiError::not_found("Meta not found"))
+//         }
+//     }
+// }
 
 #[delete("/<id>")]
 pub async fn delete(

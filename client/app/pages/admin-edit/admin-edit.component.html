@@ -23,8 +23,8 @@
           <r-input label="文章标题" [(ngModel)]="postForm.title" placeholder="请输入文章标题" required class="w-full" />
         </div>
         <div>
-          <!--  [(ngModel)]="postForm.banner" -->
-          <r-input label="文章封面" placeholder="输入封面图片URL" class="w-full" />
+
+          <r-input [(ngModel)]="postForm.banner" label="文章封面" placeholder="输入封面图片URL" class="w-full" />
         </div>
       </div>
 
@@ -44,9 +44,8 @@
             }
           </div>
           <div class="flex flex-wrap gap-2 mt-2">
-            @for (category of [2342,545454]; track category) {
-            <!-- (close)="removeCategory(category)" -->
-            <r-tag type="primary" closeable>
+            @for (category of postForm.categories; track category) {
+            <r-tag closeable (close)="removeCategory(category)">
               {{ category }}
             </r-tag>
             }
@@ -68,10 +67,9 @@
             }
           </div>
           <div class="flex flex-wrap gap-2 mt-2">
-            @for (tag of [2,3,5]; track tag) {
-            <!--  (close)="removeTag(tag)" -->
-            <r-tag type="primary" closeable>
-              {{ tag }}
+            @for (tag of postForm.tags; track tag) {
+            <r-tag closeable (close)="removeTag(tag)">
+              #{{ tag }}
             </r-tag>
             }
           </div>
@@ -82,13 +80,13 @@
         <div>
           <r-input label="密码保护" [(ngModel)]="postForm.password" placeholder="留空则不设置密码" class="w-full" />
         </div>
-        <div>
-          <r-checkbox [(ngModel)]="postForm.hide" type="primary" class="mt-8">
+        <div class="mt-8">
+          <r-checkbox [(ngModel)]="postForm.hide" type="primary">
             隐藏文章
           </r-checkbox>
         </div>
-        <div>
-          <r-checkbox [(ngModel)]="postForm.allow_comment" type="primary" class="mt-8">
+        <div class="mt-8">
+          <r-checkbox [(ngModel)]="postForm.allow_comment" type="primary">
             允许评论
           </r-checkbox>
         </div>

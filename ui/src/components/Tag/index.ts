@@ -9,6 +9,7 @@ export default class RTag extends LitElement {
   @property({ type: String }) public rounded: Sizes = 'sm'
   @property({ type: Boolean }) public bordered = false
   @property({ type: Boolean }) public closeable = false
+  @property({ type: Boolean }) public hovered = false
 
   private handleClose() {
     this.dispatchEvent(
@@ -29,6 +30,7 @@ export default class RTag extends LitElement {
             ${this.type === 'default' ? 'bg-gray-100 text-gray-800' : `bg-${this.type}-100 text-${this.type}-800`}
             ${RTag.reflect[this.size as this['size']]}
             ${this.bordered ? 'border border-gray-300' : ''}
+            ${this.hovered ? 'hover:cursor-pointer' : ''}
           "
         >
           <div class="flex items-center justify-center">

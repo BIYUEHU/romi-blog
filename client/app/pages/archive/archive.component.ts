@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { ResMetaData, ResPostData } from '../../models/api.model'
+import { ResPostData } from '../../models/api.model'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
@@ -11,10 +11,7 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './archive.component.html'
 })
-export class ArchiveComponent
-  extends romiComponentFactory<[ResPostData[], ResMetaData[], ResMetaData[]]>('archive')
-  implements OnInit
-{
+export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archive') implements OnInit {
   public groupedPosts: [
     string,
     {
@@ -24,16 +21,14 @@ export class ArchiveComponent
     }[]
   ][] = []
 
+  public tags: string[] = []
+
+  public categories: string[] = []
+
   public async ngOnInit() {
     this.setData(
-      (set) =>
-        Promise.all([
-          new Promise<ResPostData[]>((resolve) => this.apiService.getPosts().subscribe((posts) => resolve(posts))),
-          new Promise<ResMetaData[]>((resolve) => this.apiService.getMetas().subscribe((tags) => resolve(tags)))
-        ]).then(([posts, metas]) =>
-          set([posts, metas.filter(({ is_category }) => is_category), metas.filter(({ is_category }) => !is_category)])
-        ),
-      ([posts]) => {
+      (set) => this.apiService.getPosts().subscribe((posts) => set(posts)),
+      (posts) => {
         this.groupedPosts = posts.reduce((acc, post) => {
           const date = new Date(post.created * 1000)
           const year = date.getFullYear().toString()
@@ -46,6 +41,10 @@ export class ArchiveComponent
           })
           return acc
         }, this.groupedPosts)
+        // biome-ignore lint:
+        this.tags = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.tags])), [] as string[])
+        // biome-ignore lint:
+        this.categories = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.categories])), [] as string[])
       }
     )
   }
