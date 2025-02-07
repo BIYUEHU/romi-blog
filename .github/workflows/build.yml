@@ -28,7 +28,7 @@ jobs:
 
 
       - name: Build backend
-        run: cargo build
+        run: cargo build --release
 
       - name: Upload artifact (Linux)
         if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
