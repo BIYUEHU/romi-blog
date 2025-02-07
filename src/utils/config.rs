@@ -11,10 +11,17 @@ pub struct RomiConfig {
 }
 
 pub fn load_config() -> Result<RomiConfig> {
+    let current_dir = std::env::current_dir().context("Failed to get current directory")?;
     let config: RomiConfig = Config::builder()
-        .add_source(File::new("romi.toml", FileFormat::Toml))
+        .add_source(File::new(
+            current_dir.join("romi.toml").to_str().unwrap(),
+            FileFormat::Toml,
+        ))
         .build()
-        .context("Cannot find romi.toml at current directory")?
+        .context(format!(
+            "Cannot find romi.toml at current directory: {}",
+            current_dir.display()
+        ))?
         .try_deserialize()
         .map_err(|e| anyhow::anyhow!("Failed to deserialize config: {}", e,))?;
     Ok(config)
