@@ -20,8 +20,11 @@ async fn get_hitokoto(
     match if length.is_some() {
         romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
             DbBackend::MySql,
-            r#"SELECT * FROM romi_hitokotos WHERE char_length(msg) <= $1 ORDER BY RAND() limit 1"#,
-            [length.unwrap().into()],
+            format!(
+                "SELECT * FROM romi_hitokotos WHERE char_length(msg) <= {} ORDER BY RAND() limit 1",
+                length.unwrap_or(2333)
+            ),
+            [],
         ))
     } else {
         romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
@@ -32,7 +35,7 @@ async fn get_hitokoto(
     }
     .one(db)
     .await
-    .with_context(|| "Failed to fetch hitokoto")?
+    .context("Failed to fetch hitokoto")?
     {
         Some(model) => api_ok(ResHitokotoData {
             id: model.id,
@@ -80,7 +83,7 @@ pub async fn create(
     }
     .insert(conn.into_inner())
     .await
-    .with_context(|| "Failed to create hitokoto")?;
+    .context("Failed to create hitokoto")?;
 
     l_info!(logger, "Successfully created hitokoto: id={}", result.id);
     api_ok(result)
@@ -112,10 +115,9 @@ pub async fn update(
             let result = active_model
                 .save(db)
                 .await
-                .with_context(|| format!("Failed to update hitokoto {}", id))
-                .map_err(|err| ApiError::from(err))?
+                .with_context(|| format!("Failed to update hitokoto {}", id))?
                 .try_into_model()
-                .with_context(|| "Failed to convert hitokoto to model")?;
+                .context("Failed to convert hitokoto to model")?;
 
             l_info!(logger, "Successfully updated hitokoto: id={}", id);
             api_ok(result)
@@ -145,10 +147,9 @@ pub async fn like(
             let result = active_model
                 .save(db)
                 .await
-                .with_context(|| format!("Failed to update hitokoto {}", id))
-                .map_err(|err| ApiError::from(err))?
+                .with_context(|| format!("Failed to update hitokoto {}", id))?
                 .try_into_model()
-                .with_context(|| "Failed to convert hitokoto to model")?;
+                .context("Failed to convert hitokoto to model")?;
 
             l_info!(logger, "Successfully liked hitokoto: id={}", id);
             api_ok(result)
@@ -164,8 +165,7 @@ pub async fn delete(id: u32, logger: &State<Logger>, conn: Connection<'_, Db>) -
     romi_hitokotos::Entity::delete_by_id(id)
         .exec(conn.into_inner())
         .await
-        .with_context(|| format!("Failed to delete hitokoto {}", id))
-        .map_err(|err| ApiError::from(err))?;
+        .with_context(|| format!("Failed to delete hitokoto {}", id))?;
 
     l_info!(logger, "Successfully deleted hitokoto: id={}", id);
     api_ok(())

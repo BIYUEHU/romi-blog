@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <div class="bg-text-100 rounded-lg border border-text-200 p-4">
+  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
     <div class="flex flex-wrap items-center gap-4">
       <div class="flex-1">
         <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索文章标题..." class="w-full" />
@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div class="bg-text-100 rounded-lg border border-text-200 overflow-y-hidden">
+  <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
     @if (isLoading) {
     <div class="p-8 text-center">
       <r-loading label="加载中..." />
@@ -31,9 +31,9 @@
     <table class="min-w-full divide-y divide-text-200 overflow-x-auto">
       <thead class="bg-text-200">
       </thead>
-      <tbody class="bg-text-100 divide-y divide-text-200">
+      <tbody class="bg-text-200 divide-y divide-text-200">
         @for (post of pagedPosts; track post.id) {
-        <tr class="hover:bg-text-100">
+        <tr class="hover:bg-text-200">
           <td class="px-6 py-4">
             <div class="flex items-center">
               @if (post.banner) {
@@ -44,7 +44,7 @@
                   {{ post.title.slice(0, 20) }}
                 </a>
                 <div class="text-sm text-gray-500">
-                  {{ post.created | date:'YYYY-MM-dd HH:mm' }}
+                  {{ post.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
                 </div>
               </div>
             </div>
@@ -62,6 +62,16 @@
             } @else {
             <p class="text-sm text-red-500">
               禁止评论</p>
+            }
+          </td>
+          <td class="px-6 py-4">
+            @if (post.password) {
+            <p class="text-sm text-gray-500">
+              已隐藏
+            </p>
+            } @else {
+            <p class="text-sm text-pink-500">
+              未隐藏</p>
             }
           </td>
           <td class="px-6 py-4">

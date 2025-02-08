@@ -13,7 +13,7 @@
 
   <div class="w-85% mx-auto line-height-loose mt-5">
     <r-divider class="mx-auto"></r-divider>
-    <div class="flex my-4 gap-4">
+    <div class="flex my-4 gap-4 flex-wrap">
       @for (item of
       post.categories; track $index) {
       <r-tag hovered [routerLink]="['/category', item]">
@@ -49,23 +49,26 @@
   </div>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
-    @for (post of relatedPosts; track $index) {
-    <a [href]="post.url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
-      <div [class]="
-          [
-            'flex items-center gap-2 text-gray-500 mb-2 justify-end',
-            post.type === 'prev' ? '' : 'justify-end'
-          ].join(' ')
-        ">
-        <span> @if (post.type === 'prev' ) { 上一篇 } @else { 下一篇 } </span>
+    @if (relatedPosts[0]) {
+    <a [href]="relatedPosts[0].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+      <div class="flex items-center gap-2 text-gray-500 mb-2">
+        <span>上一篇</span>
       </div>
-      <div [class]="
-          [
-            'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors',
-            post.type === 'prev' ? '' : 'text-right'
-          ].join(' ')
-        ">
-        {{ post.title }}
+      <div class="'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors">
+        {{ relatedPosts[0].title }}
+      </div>
+    </a>
+    } @else {
+    <div class="group p-4 rounded-lg transition-colors"></div>
+    }
+
+    @if (relatedPosts[1]) {
+    <a [href]="relatedPosts[1].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+      <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
+        <span>下一篇</span>
+      </div>
+      <div class="text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors text-right">
+        {{ relatedPosts[1].title }}
       </div>
     </a>
     }

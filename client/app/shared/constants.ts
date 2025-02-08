@@ -1,7 +1,7 @@
 import { isDevMode } from '@angular/core'
 
 export const API_BASE_URL = isDevMode()
-  ? 'http://localhost:8000/api'
+  ? 'http://192.168.1.4:8000/api'
   : typeof process !== 'undefined'
     ? `http://127.0.0.1:${Number((process.env as { PORT: string }).PORT ?? 4200) - 1}/api`
     : '/api'

@@ -30,7 +30,7 @@ pub async fn login(
         .filter(romi_users::Column::Username.eq(&credentials.username))
         .one(db)
         .await
-        .with_context(|| "Failed to fetch user")?
+        .context("Failed to fetch user")?
     {
         Some(user) => user,
         None => return Err(ApiError::unauthorized("Invalid credentials")),
@@ -93,11 +93,7 @@ pub async fn fetch_all(
         .filter(romi_users::Column::IsDeleted.ne("1"))
         .all(db)
         .await
-        .with_context(|| "Failed to fetch users")
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch users: {}", err);
-            ApiError::from(err)
-        })?;
+        .context("Failed to fetch users")?;
 
     api_ok(
         users
@@ -129,11 +125,8 @@ pub async fn fetch(
         .filter(romi_users::Column::IsDeleted.ne("1"))
         .one(db)
         .await
-        .with_context(|| format!("Failed to fetch user {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch user: {}", err);
-            ApiError::from(err)
-        })? {
+        .with_context(|| format!("Failed to fetch user {}", id))?
+    {
         Some(user) => api_ok(ResUserData {
             uid: user.uid,
             username: user.username,
@@ -179,19 +172,9 @@ pub async fn create(
     }
     .save(db)
     .await
-    .with_context(|| "Failed to create user")
-    .map_err(|err| {
-        l_error!(logger, "Failed to create user: {}", err);
-        ApiError::from(err)
-    })?;
+    .context("Failed to create user")?;
 
-    let model = result
-        .try_into_model()
-        .with_context(|| "Model conversion failed")
-        .map_err(|err| {
-            l_error!(logger, "Model conversion failed: {}", err);
-            ApiError::from(err)
-        })?;
+    let model = result.try_into_model().context("Model conversion failed")?;
 
     api_ok(ResUserData {
         uid: model.uid,
@@ -217,11 +200,8 @@ pub async fn update(
     match romi_users::Entity::find_by_id(id)
         .one(db)
         .await
-        .with_context(|| format!("Failed to fetch user {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch user for update: {}", err);
-            ApiError::from(err)
-        })? {
+        .with_context(|| format!("Failed to fetch user {}", id))?
+    {
         Some(model) => {
             let mut active_model = model.into_active_model();
             active_model.username = ActiveValue::Set(user.username.clone());
@@ -232,17 +212,9 @@ pub async fn update(
             let result = active_model
                 .save(db)
                 .await
-                .with_context(|| format!("Failed to update user {}", id))
-                .map_err(|err| {
-                    l_error!(logger, "Failed to update user: {}", err);
-                    ApiError::from(err)
-                })?
+                .with_context(|| format!("Failed to update user {}", id))?
                 .try_into_model()
-                .with_context(|| "Failed to convert updated user model")
-                .map_err(|err| {
-                    l_error!(logger, "Model conversion failed: {}", err);
-                    ApiError::from(err)
-                })?;
+                .context("Failed to convert updated user model")?;
 
             api_ok(ResUserData {
                 uid: result.uid,
@@ -269,11 +241,7 @@ pub async fn delete(id: u32, coon: Connection<'_, Db>, logger: &State<Logger>) -
     romi_users::Entity::delete_by_id(id)
         .exec(db)
         .await
-        .with_context(|| format!("Failed to delete user {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to delete user: {}", err);
-            ApiError::from(err)
-        })?;
+        .with_context(|| format!("Failed to delete user {}", id))?;
 
     l_info!(logger, "Successfully deleted user: id={}", id);
     api_ok(())

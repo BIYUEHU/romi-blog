@@ -1,10 +1,15 @@
+use super::config::RomiConfig;
+use crate::{
+    guards::client_info::ClientInfo,
+    utils::api::{ApiError, ApiErrorReal},
+};
 use rocket::{
     fairing::{Fairing, Info, Kind, Result},
+    request::{FromRequest, Outcome},
     Build, Data, Orbit, Request, Response, Rocket,
 };
 use roga::*;
-
-use super::config::RomiConfig;
+use std::io;
 
 #[derive(Clone)]
 pub struct Recorder {
@@ -44,24 +49,58 @@ impl Fairing for Recorder {
     }
 
     async fn on_request(&self, req: &mut Request<'_>, _: &mut Data<'_>) {
+        let (ip, user_agent) = match ClientInfo::from_request(req).await {
+            Outcome::Success(client_info) => (client_info.ip, client_info.user_agent),
+            _ => ("unknown".to_string(), "unknown".to_string()),
+        };
+
         l_record!(
             self.logger
                 .clone()
                 .with_label("Request")
                 .with_label(req.method().to_string().to_uppercase()),
-            "Calling {} with headers: {:?}",
+            "Calling {} with ip: {}, user_agent: {}",
             req.uri(),
-            req.headers()
+            ip,
+            user_agent
         );
     }
 
     async fn on_response<'r>(&self, req: &'r Request<'_>, res: &mut Response<'r>) {
+        let mut error = String::new();
+        let body = res
+            .body_mut()
+            .to_string()
+            .await
+            .map(|body| {
+                if !body.contains("raw_error") {
+                    return body;
+                }
+                if let Ok(ApiError {
+                    raw_error: Some(raw_error),
+                    code,
+                    msg,
+                }) = serde_json::from_str::<ApiError>(&body)
+                {
+                    error = raw_error.clone();
+                    serde_json::to_string(&ApiErrorReal { code, msg }).unwrap_or("".into())
+                } else {
+                    body
+                }
+            })
+            .unwrap_or("".into());
+
+        if !error.is_empty() {
+            l_error!(self.logger.clone(), error);
+        }
+
         l_record!(
             self.logger.clone().with_label("Response"),
             "Returnning {} with status: {}",
             req.uri(),
             res.status()
         );
+        res.set_sized_body(body.len(), io::Cursor::new(body));
     }
 
     async fn on_shutdown(&self, _rocket: &Rocket<Orbit>) {

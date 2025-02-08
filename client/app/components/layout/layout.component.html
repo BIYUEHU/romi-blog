@@ -1,7 +1,8 @@
-<div class="h-full a-accent-color">
+<div class="min-h-screen a-accent-color">
   <app-header />
   <div class="flex-1 bg-text-100 w-full text-bg-100">
-    <div class="bg-bg-100 max-h-35vh h-350px pt-14 overflow-hidden relative mb-6">
+    <div
+      [class]="['bg-bg-100 max-h-60vh min-h-350px pt-14 overflow-hidden relative mb-6 h-', headerImageHeight, 'px'].join('')">
       <div class="brightness-60 absolute left-0 top-0 w-full h-full">
         <img class="object-cover left-0 top-0 w-full h-full" [src]="headerData.imageUrl" alt="Header Image" />
       </div>

@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <div class="bg-text-100 rounded-lg border border-text-200 p-6">
+  <div class="bg-text-200 rounded-lg border border-text-200 p-6">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl text-bg-200">{{ isEdit ? '编辑文章' : '新建文章' }}</h2>
       <div class="flex gap-2">
@@ -18,7 +18,7 @@
     </div>
     } @else {
     <div class="space-y-6">
-      <div class="grid grid-cols-3 gap-6">
+      <div class="grid  grid-cols-1 lg:grid-cols-3 lg:gap-6">
         <div class="col-span-2">
           <r-input label="文章标题" [(ngModel)]="postForm.title" placeholder="请输入文章标题" required class="w-full" />
         </div>
@@ -28,13 +28,13 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
         <div>
           <label class="block text-sm text-bg-200 mb-2">分类</label>
           <div class="relative">
             <r-input [(ngModel)]="categoryInput" (input)="searchCategories()" placeholder="输入以搜索或添加分类" class="w-full" />
             @if (categoryInput && filteredCategories.length > 0) {
-            <div class="absolute z-10 w-full mt-1 bg-text-100 border border-text-200 rounded-lg shadow-lg">
+            <div class="absolute z-10 w-full mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
               @for (category of filteredCategories; track category) {
               <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addCategory(category)">
                 {{ category }}
@@ -57,7 +57,7 @@
           <div class="relative">
             <r-input [(ngModel)]="tagInput" (input)="searchTags()" placeholder="输入以搜索或添加标签" class="w-full" />
             @if (tagInput && filteredTags.length > 0) {
-            <div class="absolute z-10 w-full mt-1 bg-text-100 border border-text-200 rounded-lg shadow-lg">
+            <div class="absolute z-10 w-full mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
               @for (tag of filteredTags; track tag) {
               <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addTag(tag)">
                 {{ tag }}
@@ -76,7 +76,10 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-4 lg:gap-6">
+        <div>
+          <r-input label="创建时间" type="datetime-local" [(ngModel)]="postForm.created" class="w-full" />
+        </div>
         <div>
           <r-input label="密码保护" [(ngModel)]="postForm.password" placeholder="留空则不设置密码" class="w-full" />
         </div>

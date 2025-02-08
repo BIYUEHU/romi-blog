@@ -1,28 +1,28 @@
-<aside class="w-20 2xl:w-60 h-screen bg-primary-100 text-bg-100 fixed left-0 top-0">
+<aside class="w-57 h-full bg-primary-100 text-bg-100">
   <div class="h-14 flex items-center px-6 border-b border-primary-200/30">
     <a [routerLink]="['/admin']" class="text-xl font-bold text-bg-100 hover:text-primary-200 transition-colors">
       Romi Admin
     </a>
   </div>
 
-  <nav class="py-4">
+  <nav class="py-4 overflow-y-auto">
     @for (item of menuItems; track item.text) {
     <div class="mb-2">
       @if (item.children) {
       <div class="px-4 py-2 text-sm text-bg-200/80">{{ item.text }}</div>
       <div class="space-y-1">
         @for (child of item.children; track child.text) {
-        <a [routerLink]="child.link" routerLinkActive="bg-primary-200/20"
+        <a [routerLink]="child.link" routerLinkActive="bg-primary-200/20" (click)="onMenuClick()"
           class="flex items-center gap-3 px-6 py-2 text-bg-100/90 hover:bg-primary-200/10 transition-colors">
-          <i [class]="child.icon"></i>
+          <i [class]="[child.icon, 'text-xl']"></i>
           <span>{{ child.text }}</span>
         </a>
         }
       </div>
       } @else {
-      <a [routerLink]="item.link" routerLinkActive="bg-primary-200/20"
+      <a [routerLink]="item.link" routerLinkActive="bg-primary-200/20" (click)="onMenuClick()"
         class="flex items-center gap-3 px-6 py-2 text-bg-100/90 hover:bg-primary-200/10 transition-colors">
-        <i [class]="item.icon"></i>
+        <i [class]="[item.icon, 'text-xl']"></i>
         <span>{{ item.text }}</span>
       </a>
       }

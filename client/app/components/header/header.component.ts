@@ -1,7 +1,5 @@
 import { Component, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { BrowserService } from '../../services/browser.service'
-import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs'
 
 @Component({
   selector: 'app-header',
@@ -10,7 +8,7 @@ import { Subject, debounceTime, fromEvent, takeUntil } from 'rxjs'
   templateUrl: './header.component.html'
 })
 export class HeaderComponent {
-  private destroy$ = new Subject<void>()
+  private lastSwitchMenu = 0
 
   public navItems = [
     { text: '首页', link: '/' },
@@ -40,6 +38,8 @@ export class HeaderComponent {
   public isMenuOpen = false
 
   public toggleMenu() {
+    if (Date.now() - this.lastSwitchMenu < 200) return
+    this.lastSwitchMenu = Date.now()
     this.isMenuOpen = !this.isMenuOpen
     if (this.isMenuOpen) {
       const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth

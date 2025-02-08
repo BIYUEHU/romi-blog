@@ -88,6 +88,7 @@ async fn bootstrap() {
     }
 
     rocket::custom(Config {
+        address: config.address.parse().unwrap(),
         port: config.port,
         log_level: rocket::config::LogLevel::Off,
         ..Config::debug_default()

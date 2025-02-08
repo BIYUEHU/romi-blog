@@ -22,6 +22,8 @@ export class LayoutComponent implements OnInit {
 
   public showBackTop = false
 
+  public headerImageHeight = 350
+
   public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
 
   public constructor(
@@ -43,6 +45,9 @@ export class LayoutComponent implements OnInit {
       ...this.initHeaderData,
       ...data
     }
+    this.headerImageHeight =
+      (this.headerData.title?.length ??
+        0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
   }
 
   private handleRouteEvent(event: object) {

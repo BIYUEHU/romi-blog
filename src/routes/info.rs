@@ -24,7 +24,6 @@ pub async fn fetch_dashboard(
     l_info!(logger, "Fetching dashboard data");
     let db = conn.into_inner();
 
-    // 并行获取所有计数
     let (posts_count, categories_count, tags_count, comments_count, users_count) = try_join!(
         romi_posts::Entity::find().count(db),
         romi_metas::Entity::find()
@@ -36,11 +35,7 @@ pub async fn fetch_dashboard(
         romi_comments::Entity::find().count(db),
         romi_users::Entity::find().count(db),
     )
-    .with_context(|| "Failed to fetch dashboard counts")
-    .map_err(|err| {
-        l_error!(logger, "F ailed to fetch dashboard counts: {}", err);
-        ApiError::from(err)
-    })?;
+    .context("Failed to fetch dashboard counts")?;
     Ok(Json(ResDashboardData {
         posts_count,
         categories_count,
@@ -75,18 +70,12 @@ pub async fn fetch_settings(
         .filter(romi_fields::Column::Key.eq("settings"))
         .one(db)
         .await
-        .with_context(|| "Failed to fetch settings")
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch settings: {}", err);
-            ApiError::from(err)
-        })?;
+        .context("Failed to fetch settings")?;
 
     if let Some(settings) = settings {
         api_ok(
-            serde_json::from_str::<ResSettingsData>(&settings.value).map_err(|err| {
-                l_error!(logger, "Failed to parse settings: {}", err);
-                ApiError::default()
-            })?,
+            serde_json::from_str::<ResSettingsData>(&settings.value)
+                .context("Failed to parse settings")?,
         )
     } else {
         l_error!(logger, "Settings not found");

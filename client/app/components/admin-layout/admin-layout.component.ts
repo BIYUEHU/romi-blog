@@ -1,12 +1,11 @@
-import { Component } from '@angular/core'
+import { Component, HostListener, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { Router, RouterOutlet } from '@angular/router'
+import { RouterOutlet } from '@angular/router'
 import { AdminHeaderComponent } from '../admin-header/admin-header.component'
 import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 import { AdminFooterComponent } from '../admin-footer/admin-footer.component'
-import { UserAuthData } from '../../models/api.model'
-import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-layout',
@@ -16,8 +15,18 @@ import { BrowserService } from '../../services/browser.service'
 })
 export class AdminLayoutComponent {
   public isView = false
+  public isSidebarOpen$
 
-  public constructor(private readonly browserService: BrowserService) {
+  public constructor(
+    private readonly browserService: BrowserService,
+    private readonly notifyService: NotifyService
+  ) {
     this.isView = this.browserService.isBrowser
+    this.isSidebarOpen$ = this.notifyService.isSidebarOpen$
+  }
+
+  @HostListener('window:resize')
+  public onResize() {
+    if (window.innerWidth < 1024) this.notifyService.closeSidebar()
   }
 }

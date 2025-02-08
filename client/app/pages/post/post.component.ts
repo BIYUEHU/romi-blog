@@ -9,7 +9,6 @@ import {
 } from '@angular/core'
 import { DomSanitizer, type SafeHtml } from '@angular/platform-browser'
 import { ActivatedRoute, RouterLink } from '@angular/router'
-import { ApiService } from '../../services/api.service'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import MarkdownIt from 'markdown-it'
 import { BundledLanguage, HighlighterGeneric, BundledTheme, createHighlighter } from 'shiki'
@@ -19,7 +18,6 @@ import { NotifyService } from '../../services/notify.service'
 import { DatePipe } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { CacheService } from '../../services/cache.service'
-import { BrowserService } from '../../services/browser.service'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
@@ -33,7 +31,7 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
 export class PostComponent extends romiComponentFactory<ResPostSingleData>('post') {
   public post: (Omit<ResPostSingleData, 'tags'> & ResPostSingleDataExtra) | null = null
 
-  public relatedPosts: RelatedPost[] = []
+  public relatedPosts: [RelatedPost?, RelatedPost?] = []
 
   public renderedContent: SafeHtml = ''
 

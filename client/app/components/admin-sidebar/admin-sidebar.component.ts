@@ -1,18 +1,12 @@
 import { Component } from '@angular/core'
 import { RouterLink, RouterLinkActive } from '@angular/router'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-sidebar',
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
-  templateUrl: './admin-sidebar.component.html',
-  styles: [
-    `
-    :host {
-      display: block;
-    }
-  `
-  ]
+  templateUrl: './admin-sidebar.component.html'
 })
 export class AdminSidebarComponent {
   public menuItems = [
@@ -45,4 +39,10 @@ export class AdminSidebarComponent {
       ]
     }
   ]
+
+  public constructor(private readonly notifyService: NotifyService) {}
+
+  public onMenuClick() {
+    if (window.innerWidth < 1024) this.notifyService.closeSidebar()
+  }
 }

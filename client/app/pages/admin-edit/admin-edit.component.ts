@@ -17,7 +17,7 @@ import Vditor from 'vditor'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
   private readonly editorOptions: IOptions = {
-    height: 600,
+    height: '50rem',
     mode: 'ir',
     typewriterMode: true,
     theme: 'classic',
@@ -83,14 +83,14 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       }, 0)
   }
 
-  public postForm: ReqPostData = {
+  public postForm: Omit<ReqPostData, 'created'> & { created: string } = {
     title: '',
     text: '',
     password: null,
     hide: false,
     allow_comment: true,
-    created: Math.floor(Date.now() / 1000),
-    modified: Math.floor(Date.now() / 1000),
+    created: '',
+    modified: Date.now(),
     tags: [],
     categories: [],
     banner: null
@@ -116,7 +116,12 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       this.isLoading = true
       this.apiService.getPost(id).subscribe({
         next: (post) => {
-          this.postForm = post
+          const created = new Date(post.created * 1000)
+          const addZero = (num: number) => (num < 10 ? `0${num}` : num)
+          this.postForm = {
+            ...post,
+            created: `${created.getFullYear()}-${addZero(created.getMonth() + 1)}-${addZero(created.getDate())}T${addZero(created.getHours())}:${addZero(created.getMinutes())}`
+          }
           this.isLoading = false
         },
         error: (error) => {
@@ -197,9 +202,15 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       return
     }
 
+    const form = {
+      ...this.postForm,
+      created: Math.floor(new Date(this.postForm.created).getTime() / 1000),
+      modified: Math.floor(Date.now() / 1000)
+    }
+
     const request = this.isEdit
-      ? this.apiService.updatePost(Number(this.route.snapshot.paramMap.get('id')), this.postForm)
-      : this.apiService.createPost(this.postForm)
+      ? this.apiService.updatePost(Number(this.route.snapshot.paramMap.get('id')), form)
+      : this.apiService.createPost(form)
 
     request.subscribe({
       next: () => {

@@ -10,7 +10,8 @@ import {
   UserAuthData,
   ResSettingsData,
   ResDashboardData,
-  ReqPostData
+  ReqPostData,
+  ReqMetaData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -36,7 +37,7 @@ export class ApiService {
     return this.http.post<void>(`${this.apiUrl}/post`, data)
   }
 
-  public updatePost(id: number, data: Partial<ReqPostData>) {
+  public updatePost(id: number, data: ReqPostData) {
     return this.http.put<void>(`${this.apiUrl}/post/${id}`, data)
   }
 
@@ -50,6 +51,14 @@ export class ApiService {
 
   public getMetas() {
     return this.http.get<ResMetaData[]>(`${this.apiUrl}/meta`)
+  }
+
+  public createMeta(data: ReqMetaData) {
+    return this.http.post<void>(`${this.apiUrl}/meta`, data)
+  }
+
+  public deleteMeta(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/meta/${id}`)
   }
 
   public login(username: string, password: string) {

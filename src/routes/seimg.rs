@@ -46,12 +46,12 @@ pub async fn fetch(
         romi_seimgs::Entity::find()
             .from_raw_sql(Statement::from_sql_and_values(
                 DbBackend::MySql,
-                r#"SELECT * FROM romi_seimgs ORDER BY RAND() limit $1"#,
-                [limit.into()],
+                format!("SELECT * FROM romi_seimgs ORDER BY RAND() limit {}", limit),
+                [],
             ))
             .all(conn.into_inner())
             .await
-            .with_context(|| "Failed to fetch seimg")?
+            .context("Failed to fetch seimg")?
             .into_iter()
             .map(|img| ResSeimgData {
                 pid: img.pixiv_pid,
@@ -98,7 +98,7 @@ pub async fn create(
     }
     .insert(conn.into_inner())
     .await
-    .with_context(|| "Failed to create seimg")?;
+    .context("Failed to create seimg")?;
 
     l_info!(logger, "Successfully created seimg: id={}", result.id);
     api_ok(result)

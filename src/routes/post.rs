@@ -69,11 +69,7 @@ pub async fn fetch_all(
             romi_posts::Entity::find()
                 .all(db)
                 .await
-                .with_context(|| "Failed to fetch posts")
-                .map_err(|err| {
-                    l_error!(logger, "Failed to fetch posts: {}", err);
-                    err
-                })?
+                .context("Failed to fetch posts")?
                 .iter()
                 .rev()
                 .filter(|data| is_admin || data.hide.ne(&1.to_string()))
@@ -123,19 +119,12 @@ pub async fn fetch(
     match romi_posts::Entity::find_by_id(id)
         .one(db)
         .await
-        .with_context(|| format!("Failed to fetch post {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch post: {}", err);
-            err
-        })? {
+        .with_context(|| format!("Failed to fetch post {}", id))?
+    {
         Some(model) => {
             let (tags, categories) = get_post_metas(id, db)
                 .await
-                .with_context(|| format!("Failed to fetch metas of post {}", id))
-                .map_err(|err| {
-                    l_error!(logger, "Failed to fetch metas of post: {}", err);
-                    err
-                })?;
+                .with_context(|| format!("Failed to fetch metas of post {}", id))?;
             let response = ResPostSingleData {
                 id: model.pid.clone(),
                 title: model.title.clone(),
@@ -230,10 +219,7 @@ pub async fn create(
     l_info!(logger, "Creating new post: {}", post.title);
     let db = conn.into_inner();
 
-    let txn = db
-        .begin()
-        .await
-        .with_context(|| "Failed to begin transaction")?;
+    let txn = db.begin().await.context("Failed to begin transaction")?;
 
     let post_model = romi_posts::ActiveModel {
         pid: ActiveValue::not_set(),
@@ -249,7 +235,7 @@ pub async fn create(
     }
     .save(&txn)
     .await
-    .with_context(|| "Failed to create post")?;
+    .context("Failed to create post")?;
 
     let post_id = post_model.clone().pid.unwrap();
 
@@ -257,7 +243,7 @@ pub async fn create(
         handle_metas(post.categories.clone(), true, &txn),
         handle_metas(post.tags.clone(), false, &txn)
     )
-    .with_context(|| "Failed to handle metas")?;
+    .context("Failed to handle metas")?;
 
     let relations: Vec<romi_relationships::ActiveModel> = category_mids
         .into_iter()
@@ -272,16 +258,14 @@ pub async fn create(
         romi_relationships::Entity::insert_many(relations)
             .exec(db)
             .await
-            .with_context(|| "Failed to create relationships")?;
+            .context("Failed to create relationships")?;
     }
 
-    txn.commit()
-        .await
-        .with_context(|| "Failed to commit transaction")?;
+    txn.commit().await.context("Failed to commit transaction")?;
 
     let result = post_model
         .try_into_model()
-        .with_context(|| "Failed to convert model")?;
+        .context("Failed to convert model")?;
     l_info!(logger, "Successfully created post: id={}", result.pid);
     api_ok(())
 }
@@ -297,10 +281,7 @@ pub async fn update(
     l_info!(logger, "Updating post: id={}", id);
     let db = conn.into_inner();
 
-    let txn = db
-        .begin()
-        .await
-        .with_context(|| "Failed to begin transaction")?;
+    let txn = db.begin().await.context("Failed to begin transaction")?;
 
     let post_model = match romi_posts::Entity::find_by_id(id)
         .one(&txn)
@@ -327,7 +308,7 @@ pub async fn update(
             active_model
                 .save(&txn)
                 .await
-                .with_context(|| "Failed to update post")?
+                .context("Failed to update post")?
         }
         None => return Err(ApiError::not_found("Post not found")),
     };
@@ -337,7 +318,7 @@ pub async fn update(
             .filter(romi_relationships::Column::Pid.eq(id))
             .all(&txn)
             .await
-            .with_context(|| "Failed to fetch existing relations")?
+            .context("Failed to fetch existing relations")?
             .iter()
             .map(|model| async {
                 romi_metas::Entity::find_by_id(model.mid)
@@ -391,7 +372,7 @@ pub async fn update(
             &txn
         )
     )
-    .with_context(|| "Failed to handle metas")?;
+    .context("Failed to handle metas")?;
 
     romi_relationships::Entity::delete_many()
         .filter(romi_relationships::Column::Pid.eq(id))
@@ -406,7 +387,7 @@ pub async fn update(
         )
         .exec(&txn)
         .await
-        .with_context(|| "Failed to delete old relations")?;
+        .context("Failed to delete old relations")?;
 
     let new_relations: Vec<romi_relationships::ActiveModel> = new_category_mids
         .into_iter()
@@ -421,16 +402,14 @@ pub async fn update(
         romi_relationships::Entity::insert_many(new_relations)
             .exec(&txn)
             .await
-            .with_context(|| "Failed to create new relations")?;
+            .context("Failed to create new relations")?;
     }
 
-    txn.commit()
-        .await
-        .with_context(|| "Failed to commit transaction")?;
+    txn.commit().await.context("Failed to commit transaction")?;
 
     post_model
         .try_into_model()
-        .with_context(|| "Failed to convert model")?;
+        .context("Failed to convert model")?;
     l_info!(logger, "Successfully updated post: id={}", id);
 
     api_ok(())
@@ -449,7 +428,7 @@ pub async fn delete(
     romi_posts::Entity::delete_by_id(id)
         .exec(db)
         .await
-        .with_context(|| "Failed to delete post")?;
+        .context("Failed to delete post")?;
 
     let db_clone = db.clone();
     let logger_clone = (*logger).clone();

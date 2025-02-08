@@ -25,21 +25,13 @@ pub async fn fetch_all(
         romi_comments::Entity::find()
             .all(db)
             .await
-            .with_context(|| "Failed to fetch comments")
-            .map_err(|err| {
-                l_error!(logger, "Failed to fetch comments: {}", err);
-                ApiError::from(err)
-            })?
+            .context("Failed to fetch comments")?
             .iter()
             .map(|comment| async {
                 let user = romi_users::Entity::find_by_id(comment.clone().uid)
                     .one(db)
                     .await
-                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))
-                    .map_err(|err| {
-                        l_error!(logger, "Failed to fetch user: {}", err);
-                        ApiError::from(err)
-                    })?;
+                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))?;
 
                 user.map(|user| ResCommentData {
                     cid: comment.cid,
@@ -71,21 +63,13 @@ pub async fn fetch_by_post(
         romi_comments::Entity::find()
             .all(db)
             .await
-            .with_context(|| format!("Failed to fetch comments for post {}", pid))
-            .map_err(|err| {
-                l_error!(logger, "Failed to fetch comments: {}", err);
-                ApiError::from(err)
-            })?
+            .with_context(|| format!("Failed to fetch comments for post {}", pid))?
             .iter()
             .map(|comment| async {
                 let user = romi_users::Entity::find_by_id(comment.uid)
                     .one(db)
                     .await
-                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))
-                    .map_err(|err| {
-                        l_error!(logger, "Failed to fetch user: {}", err);
-                        ApiError::from(err)
-                    })?;
+                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))?;
 
                 user.map(|user| ResCommentData {
                     cid: comment.cid,
@@ -138,28 +122,14 @@ pub async fn create(
     }
     .save(db)
     .await
-    .with_context(|| "Failed to create comment")
-    .map_err(|err| {
-        l_error!(logger, "Failed to create comment: {}", err);
-        ApiError::from(err)
-    })?;
+    .context("Failed to create comment")?;
 
-    let model = result
-        .try_into_model()
-        .with_context(|| "Model conversion failed")
-        .map_err(|err| {
-            l_error!(logger, "Model conversion failed: {}", err);
-            ApiError::from(err)
-        })?;
+    let model = result.try_into_model().context("Model conversion failed")?;
 
     let user = romi_users::Entity::find_by_id(model.uid)
         .one(db)
         .await
-        .with_context(|| format!("Failed to fetch user {}", model.uid))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch user: {}", err);
-            ApiError::from(err)
-        })?
+        .context("Failed to fetch user for comment")?
         .ok_or_else(|| ApiError::not_found("User not found"))?;
 
     api_ok(ResCommentData {
@@ -186,11 +156,7 @@ pub async fn delete(
     romi_comments::Entity::delete_by_id(id)
         .exec(db)
         .await
-        .with_context(|| format!("Failed to delete comment {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to delete comment: {}", err);
-            ApiError::from(err)
-        })?;
+        .with_context(|| format!("Failed to delete comment {}", id))?;
 
     api_ok(())
 }

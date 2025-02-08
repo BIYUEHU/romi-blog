@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <div class="bg-text-100 rounded-lg p-6 border border-gray-200">
+  <div class="bg-text-200 rounded-lg p-6 border ">
     <h2 class="text-xl font-bold text-gray-800 mb-2">
       👋 Welcome back, {{ username }}
     </h2>
@@ -10,8 +10,7 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     @for (card of statCards; track card.title) {
-    <a [routerLink]="card.link"
-      class="block p-6 bg-text-100 rounded-lg border border-gray-200 hover:shadow-md transition-shadow">
+    <a [routerLink]="card.link" class="block p-6 bg-text-200 rounded-lg border hover:shadow-md transition-shadow">
       <div class="flex items-center gap-4">
         <div [class]="[
             'w-12 h-12 rounded-lg flex items-center justify-center',
@@ -29,7 +28,7 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-text-100 rounded-lg border border-accent-300 overflow-hidden">
+    <div class="bg-text-200 rounded-lg border border-accent-300 overflow-hidden">
       <div class="px-6 py-4 border-b border-accent-300 flex justify-between items-center">
         <h3 class="font-bold text-gray-800">最近文章</h3>
         <a [routerLink]="['/admin/posts']" class="text-sm text-primary-100 hover:text-primary-200">
@@ -38,7 +37,7 @@
       </div>
       <div class="divide-y divide-text-300">
         @for (post of recentPosts; track post.id) {
-        <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50">
+        <div class="px-6 py-4 flex items-center justify-between">
           <div class="flex-1 max-w-75%">
             <h4 class="text-gray-800 font-medium truncate">{{ post.title }}</h4>
             <div class="text-sm text-gray-500 mt-1">
@@ -54,8 +53,8 @@
       </div>
     </div>
 
-    <div class="bg-text-100 rounded-lg border border-gray-200 overflow-hidden">
-      <div class="px-6 py-4 border-b border-gray-200">
+    <div class="bg-text-200 rounded-lg border overflow-hidden">
+      <div class="px-6 py-4 border-b">
         <h3 class="font-bold text-gray-800">系统信息</h3>
       </div>
       <div class="px-6 py-4 space-y-4">

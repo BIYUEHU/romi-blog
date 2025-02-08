@@ -4,6 +4,7 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct RomiConfig {
+    pub address: String,
     pub port: u16,
     pub database_url: String,
     pub ssr_entry: String,

@@ -17,31 +17,28 @@ export class CacheService {
     private readonly browserService: BrowserService
   ) {}
 
-  public getRelatedPosts(currentId: number): Observable<RelatedPost[]> {
+  public getRelatedPosts(currentId: number): Observable<[RelatedPost?, RelatedPost?]> {
     return this.getPostsData().pipe(
       map((posts) => {
         const currentIndex = posts.findIndex((post) => post.id === currentId)
-        if (currentIndex === -1) return []
-
-        const relatedPosts: RelatedPost[] = []
-
-        if (currentIndex > 0) {
-          relatedPosts.push({
-            url: `/post/${posts[currentIndex - 1].id}`,
-            title: posts[currentIndex - 1].title,
-            type: 'prev'
-          })
-        }
-
-        if (currentIndex < posts.length - 1) {
-          relatedPosts.push({
-            url: `/post/${posts[currentIndex + 1].id}`,
-            title: posts[currentIndex + 1].title,
-            type: 'next'
-          })
-        }
-
-        return relatedPosts
+        return currentIndex === -1
+          ? []
+          : [
+              currentIndex > 0
+                ? {
+                    url: `/post/${posts[currentIndex - 1].id}`,
+                    title: posts[currentIndex - 1].title,
+                    type: 'prev'
+                  }
+                : undefined,
+              currentIndex < posts.length - 1
+                ? {
+                    url: `/post/${posts[currentIndex + 1].id}`,
+                    title: posts[currentIndex + 1].title,
+                    type: 'next'
+                  }
+                : undefined
+            ]
       })
     )
   }

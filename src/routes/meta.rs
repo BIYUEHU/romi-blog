@@ -7,7 +7,10 @@ use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
-use sea_orm::{ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, TryIntoModel};
+use sea_orm::{
+    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, TransactionTrait,
+    TryIntoModel,
+};
 use sea_orm_rocket::Connection;
 
 #[get("/")]
@@ -21,11 +24,7 @@ pub async fn fetch_all(
         romi_metas::Entity::find()
             .all(conn.into_inner())
             .await
-            .with_context(|| "Failed to fetch metas")
-            .map_err(|err| {
-                l_error!(logger, "Failed to fetch metas: {}", err);
-                ApiError::from(err)
-            })?
+            .context("Failed to fetch metas")?
             .into_iter()
             .map(|meta| ResMetaData {
                 mid: meta.mid,
@@ -48,11 +47,7 @@ pub async fn fetch(
     let meta = romi_metas::Entity::find_by_id(id)
         .one(conn.into_inner())
         .await
-        .with_context(|| format!("Failed to fetch meta {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to fetch meta: {}", err);
-            ApiError::from(err)
-        })?;
+        .with_context(|| format!("Failed to fetch meta {}", id))?;
 
     match meta {
         Some(meta) => {
@@ -90,17 +85,9 @@ pub async fn create(
     }
     .save(conn.into_inner())
     .await
-    .with_context(|| "Failed to create meta")
-    .map_err(|err| {
-        l_error!(logger, "Failed to create meta: {}", err);
-        ApiError::from(err)
-    })?
+    .context("Failed to create meta")?
     .try_into_model()
-    .with_context(|| "Failed to convert meta model")
-    .map_err(|err| {
-        l_error!(logger, "Model conversion failed: {}", err);
-        ApiError::from(err)
-    })?;
+    .context("Failed to convert meta model")?;
 
     l_info!(logger, "Successfully created meta: id={}", result.mid);
     api_ok(result)
@@ -142,7 +129,7 @@ pub async fn create(
 //                     ApiError::from(err)
 //                 })?
 //                 .try_into_model()
-//                 .with_context(|| "Failed to convert updated meta model")
+//                 .context("Failed to convert updated meta model")
 //                 .map_err(|err| {
 //                     l_error!(logger, "Model conversion failed: {}", err);
 //                     ApiError::from(err)
@@ -168,25 +155,63 @@ pub async fn delete(
     l_info!(logger, "Deleting meta: id={}", id);
     let db = conn.into_inner();
 
-    romi_relationships::Entity::delete_many()
-        .filter(romi_relationships::Column::Mid.eq(id))
-        .exec(db)
+    let meta = romi_metas::Entity::find_by_id(id)
+        .one(db)
         .await
-        .with_context(|| format!("Failed to delete relationships for meta {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to delete relationships: {}", err);
-            ApiError::from(err)
-        })?;
+        .with_context(|| format!("Failed to fetch meta {}", id))?
+        .ok_or_else(|| ApiError::not_found("Meta not found"))?;
+
+    let txn = db.begin().await.context("Failed to begin transaction")?;
 
     romi_metas::Entity::delete_by_id(id)
-        .exec(db)
+        .exec(&txn)
         .await
-        .with_context(|| format!("Failed to delete meta {}", id))
-        .map_err(|err| {
-            l_error!(logger, "Failed to delete meta: {}", err);
-            ApiError::from(err)
-        })?;
+        .with_context(|| format!("Failed to delete meta {}", id))?;
 
-    l_info!(logger, "Successfully deleted meta: id={}", id);
-    api_ok("Meta deleted".to_string())
+    txn.commit().await.context("Failed to commit transaction")?;
+
+    let db_clone = db.clone();
+    let meta_type = if meta.is_category == "1" {
+        "category"
+    } else {
+        "tag"
+    };
+    let logger_clone = (*logger).clone();
+
+    tokio::spawn(async move {
+        match romi_relationships::Entity::delete_many()
+            .filter(romi_relationships::Column::Mid.eq(id))
+            .exec(&db_clone)
+            .await
+        {
+            Ok(result) => {
+                l_info!(
+                    logger_clone,
+                    "Successfully deleted {} relationships for {} {}",
+                    result.rows_affected,
+                    meta_type,
+                    id
+                );
+            }
+            Err(err) => {
+                l_error!(
+                    logger_clone,
+                    "Failed to delete relationships for {} {}: {}",
+                    meta_type,
+                    id,
+                    err
+                );
+            }
+        }
+    });
+
+    l_info!(
+        logger,
+        "Successfully deleted {} {}: id={}",
+        meta_type,
+        meta.name,
+        id
+    );
+
+    api_ok(format!("{} '{}' deleted", meta_type, meta.name))
 }

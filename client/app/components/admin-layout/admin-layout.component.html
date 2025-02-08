@@ -1,14 +1,25 @@
-<div class="min-h-screen bg-text-300 flex">
-  <app-admin-sidebar class="max-w-30% w-20 2xl:w-60 flex-shrink-0" />
-  <div class="flex-1 flex flex-col min-w-70%">
-    <app-admin-header />
-    <main class="flex-1 p-6 overflow-auto">
-      <div class="max-w-80% w-360 mx-auto">
-        @if (isView) {
-        <router-outlet />
-        }
-      </div>
-    </main>
-    <app-admin-footer />
+<div [class]="['min-h-screen bg-text-300', (isSidebarOpen$ | async) ? 'overflow-hidden' : '']">
+  <div class="flex">
+
+    <div [class]="[
+    'fixed lg:relative lg:flex z-40 transition-transform duration-300 ease-in-out w-full h-full',
+  ]">
+      @if (isSidebarOpen$ | async) {
+      <app-admin-sidebar />
+      }
+    </div>
+
+
+    <div class="flex-1 flex flex-col min-w-0 h-screen">
+      <app-admin-header />
+      <main class="flex-1 p-4 lg:p-6 overflow-auto">
+        <div class="max-w-full lg:max-w-80% w-full lg:w-360 mx-auto">
+          @if (isView) {
+          <router-outlet />
+          }
+        </div>
+      </main>
+      <app-admin-footer />
+    </div>
   </div>
 </div>

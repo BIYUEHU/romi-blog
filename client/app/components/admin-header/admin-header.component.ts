@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common'
 import { Component } from '@angular/core'
-import { Router, RouterLink } from '@angular/router'
+import { RouterLink } from '@angular/router'
 import { AuthService } from '../../services/auth.service'
 import { UserAuthData } from '../../models/api.model'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-header',
@@ -15,15 +16,21 @@ export class AdminHeaderComponent {
 
   public createDate = new Date()
 
-  public constructor(private readonly authService: AuthService) {
+  public isSidebarOpen$
+
+  public constructor(
+    private readonly authService: AuthService,
+    private readonly notifyService: NotifyService
+  ) {
     this.authService.user$.subscribe((user) => {
       this.user = user
     })
     this.createDate = new Date((this.user?.created ?? 0) * 1000)
+    this.isSidebarOpen$ = this.notifyService.isSidebarOpen$
   }
 
   public toggleSidebar() {
-    // 实现侧边栏切换逻辑
+    this.notifyService.toggleSidebar()
   }
 
   public logout() {

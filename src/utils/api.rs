@@ -4,45 +4,52 @@ use rocket::{
     serde::json::Json,
     Request, Response,
 };
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ApiError {
     pub code: u16,
+    pub msg: String,
+    pub raw_error: Option<String>,
+}
 
+#[derive(Debug, Serialize)]
+pub struct ApiErrorReal {
+    pub code: u16,
     pub msg: String,
 }
 
 impl ApiError {
-    pub fn new<T: Into<String>>(code: u16, msg: T) -> Self {
+    pub fn new<T: Into<String>>(code: u16, msg: T, raw_error: Option<String>) -> Self {
         Self {
             code,
             msg: msg.into(),
+            raw_error,
         }
     }
 
     pub fn bad_request<T: Into<String>>(msg: T) -> Self {
-        Self::new(400, msg)
+        Self::new(400, msg, None)
     }
 
     pub fn unauthorized<T: Into<String>>(msg: T) -> Self {
-        Self::new(401, msg)
+        Self::new(401, msg, None)
     }
 
     pub fn forbidden<T: Into<String>>(msg: T) -> Self {
-        Self::new(403, msg)
+        Self::new(403, msg, None)
     }
 
     pub fn not_found<T: Into<String>>(msg: T) -> Self {
-        Self::new(404, msg)
+        Self::new(404, msg, None)
     }
 
     pub fn unprocessable_entity<T: Into<String>>(msg: T) -> Self {
-        Self::new(422, msg)
+        Self::new(422, msg, None)
     }
 
     pub fn internal<T: Into<String>>(msg: T) -> Self {
-        Self::new(500, msg)
+        Self::new(500, msg, None)
     }
 }
 
@@ -54,7 +61,10 @@ impl Default for ApiError {
 
 impl From<anyhow::Error> for ApiError {
     fn from(error: anyhow::Error) -> Self {
-        Self::internal(error.to_string())
+        Self {
+            raw_error: Some(format!("{:#}", error)),
+            ..ApiError::default()
+        }
     }
 }
 
