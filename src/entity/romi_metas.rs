@@ -7,7 +7,6 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub mid: u32,
     pub name: String,
-    pub count: String,
     #[sea_orm(column_name = "isCategory")]
     pub is_category: String,
 }

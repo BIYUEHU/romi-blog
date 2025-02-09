@@ -24,14 +24,14 @@
         <div
           class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
           @for (child of item.children; track child.text) {
-          <a [routerLink]="child.link" class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
+          <a [href]="child.link" class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
             {{ child.text }}
           </a>
           }
         </div>
       </div>
       } @else {
-      <a [routerLink]="item.link" class="text-primary-100 hover:text-text-200">
+      <a [href]="item.link" class="text-primary-100 hover:text-text-200">
         {{ item.text }}
       </a>
       }
@@ -44,7 +44,7 @@
       <div class="grid grid-cols-2 gap-4 p-3">
         @for (item of navItems; track $index) {
         @if (!item.children) {
-        <a [routerLink]="item.link"
+        <a [href]="item.link"
           class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
           (click)="toggleMenu()">
           {{ item.text }}
@@ -59,7 +59,7 @@
         <h3 class="text-primary-100 text-lg mb-2 text-center">{{ item.text }}</h3>
         <div class="grid grid-cols-2 gap-4">
           @for (child of item.children; track child.text) {
-          <a [routerLink]="child.link"
+          <a [href]="child.link"
             class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
             (click)="toggleMenu()">
             {{ child.text }}

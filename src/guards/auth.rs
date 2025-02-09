@@ -14,6 +14,7 @@ pub struct AuthUser {
     pub url: Option<String>,
     pub is_admin: bool,
     pub exp: u64,
+    pub status: u8,
 }
 
 #[rocket::async_trait]
@@ -23,10 +24,12 @@ impl<'r> FromRequest<'r> for AuthUser {
     async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         match Access::from_request(req).await {
             Outcome::Success(access) => match access.user {
-                Some(user) => Outcome::Success(user),
-                None => Outcome::Error((
+                Some(user) if user.status == 0 => Outcome::Success(user),
+                _ => Outcome::Error((
                     Status::Unauthorized,
-                    ApiError::unauthorized("No token provided or token is invalid"),
+                    ApiError::unauthorized(
+                        "No token provided or token is invalid or account is disabled",
+                    ),
                 )),
             },
             Outcome::Error(e) => Outcome::Error(e),

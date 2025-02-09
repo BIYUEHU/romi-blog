@@ -1,11 +1,11 @@
 @if (errorMessage) {
-<r-alert type="error" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center">
+<r-alert type="error" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center z-50">
   {{ errorMessage }}
 </r-alert>
 }
 
 @if (isSuccess) {
-<r-alert type="success" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center">
+<r-alert type="success" class="fixed top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-center z-50">
   欢迎回来，了不起的 <span class="font-bold text-primary-100"> {{ username}} </span> 先生
 </r-alert>
 }

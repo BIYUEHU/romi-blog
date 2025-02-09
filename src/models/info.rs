@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-#[derive(Serialize, Deserialize, TS)]
+#[derive(Clone, Serialize, Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResSettingsData {
     pub site_title: String,
@@ -22,6 +22,9 @@ pub struct ResDashboardData {
     pub tags_count: u64,
     pub comments_count: u64,
     pub users_count: u64,
+    pub hitokotos_count: u64,
+    pub news_count: u64,
+    pub seimgs_count: u64,
     pub version: String,
     pub os_info: String,
     pub home_dir: String,

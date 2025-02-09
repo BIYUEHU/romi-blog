@@ -1,10 +1,14 @@
 use std::env;
 use std::process::Command;
 
-use crate::entity::{romi_comments, romi_fields, romi_metas, romi_posts, romi_users};
+use crate::entity::{
+    romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
+    romi_seimgs, romi_users,
+};
 use crate::guards::admin::AdminUser;
 use crate::models::info::{ResDashboardData, ResSettingsData};
-use crate::utils::api::{api_ok, ApiError, ApiResult};
+use crate::utils::api::{api_ok, ApiResult};
+use crate::utils::cache::Cache;
 use crate::utils::pool::Db;
 use anyhow::Context;
 use futures::try_join;
@@ -24,7 +28,17 @@ pub async fn fetch_dashboard(
     l_info!(logger, "Fetching dashboard data");
     let db = conn.into_inner();
 
-    let (posts_count, categories_count, tags_count, comments_count, users_count) = try_join!(
+    let (
+        posts_count,
+        categories_count,
+        tags_count,
+        comments_count_1,
+        comments_count_2,
+        users_count,
+        hitokotos_count,
+        seimgs_count,
+        news_count,
+    ) = try_join!(
         romi_posts::Entity::find().count(db),
         romi_metas::Entity::find()
             .filter(romi_metas::Column::IsCategory.eq("1"))
@@ -33,15 +47,22 @@ pub async fn fetch_dashboard(
             .filter(romi_metas::Column::IsCategory.ne("1"))
             .count(db),
         romi_comments::Entity::find().count(db),
+        romi_news_comments::Entity::find().count(db),
         romi_users::Entity::find().count(db),
+        romi_hitokotos::Entity::find().count(db),
+        romi_seimgs::Entity::find().count(db),
+        romi_news::Entity::find().count(db),
     )
     .context("Failed to fetch dashboard counts")?;
     Ok(Json(ResDashboardData {
         posts_count,
         categories_count,
         tags_count,
-        comments_count,
+        comments_count: comments_count_1 + comments_count_2,
         users_count,
+        hitokotos_count,
+        seimgs_count,
+        news_count,
         version: env!("CARGO_PKG_VERSION").into(),
         os_info: format!(
             "{} {}",
@@ -60,25 +81,9 @@ pub async fn fetch_dashboard(
 #[get("/settings")]
 pub async fn fetch_settings(
     logger: &State<Logger>,
+    cache: &State<Cache>,
     conn: Connection<'_, Db>,
 ) -> ApiResult<ResSettingsData> {
     l_info!(logger, "Fetching site settings");
-    let db = conn.into_inner();
-
-    // 获取设置数据
-    let settings = romi_fields::Entity::find()
-        .filter(romi_fields::Column::Key.eq("settings"))
-        .one(db)
-        .await
-        .context("Failed to fetch settings")?;
-
-    if let Some(settings) = settings {
-        api_ok(
-            serde_json::from_str::<ResSettingsData>(&settings.value)
-                .context("Failed to parse settings")?,
-        )
-    } else {
-        l_error!(logger, "Settings not found");
-        Err(ApiError::default())
-    }
+    api_ok(cache.get_settings(conn.into_inner()).await?)
 }

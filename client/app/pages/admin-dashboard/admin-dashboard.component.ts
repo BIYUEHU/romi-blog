@@ -56,6 +56,34 @@ export class AdminDashboardComponent implements OnInit {
       icon: 'i-mdi:comment',
       color: 'bg-blue-500',
       link: '/admin/comments'
+    },
+    {
+      title: '用户数量',
+      value: 0,
+      icon: 'i-mdi:account',
+      color: 'bg-purple-500',
+      link: '/admin/users'
+    },
+    {
+      title: '一言数量',
+      value: 0,
+      icon: 'i-mdi:yin-yang',
+      color: 'bg-pink-500',
+      link: '/admin/hitokotos'
+    },
+    {
+      title: '色图数量',
+      value: 0,
+      icon: 'i-mdi:palette',
+      color: 'bg-red-500',
+      link: '/admin/seimgs'
+    },
+    {
+      title: '动态数量',
+      value: 0,
+      icon: 'i-mdi:newspaper',
+      color: 'bg-gray-500',
+      link: '/admin/news'
     }
   ]
 
@@ -85,15 +113,14 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    if (!this.browserService.isBrowser) return
     this.authService.user$.subscribe((user) => {
       this.username = user?.username ?? ''
     })
 
-    if (this.browserService.isBrowser) {
-      setInterval(() => {
-        this.currentTime = new Date()
-      }, 1000)
-    }
+    setInterval(() => {
+      this.currentTime = new Date()
+    }, 1000)
 
     this.apiService.getDashboard().subscribe((data) => {
       this.statCards = this.statCards.map((card) => ({
@@ -121,12 +148,19 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private getStatKey(title: string): keyof ResDashboardData {
-    const keyMap: Record<string, keyof ResDashboardData> = {
-      文章数量: 'posts_count',
-      分类数量: 'categories_count',
-      标签数量: 'tags_count',
-      评论数量: 'comments_count'
-    }
-    return keyMap[title] || 'posts_count'
+    return (
+      (
+        {
+          文章数量: 'posts_count',
+          分类数量: 'categories_count',
+          标签数量: 'tags_count',
+          评论数量: 'comments_count',
+          用户数量: 'users_count',
+          一言数量: 'hitokotos_count',
+          色图数量: 'seimgs_count',
+          动态数量: 'news_count'
+        } as const
+      )[title] || 'posts_count'
+    )
   }
 }

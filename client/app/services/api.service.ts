@@ -11,7 +11,12 @@ import {
   ResSettingsData,
   ResDashboardData,
   ReqPostData,
-  ReqMetaData
+  ReqMetaData,
+  ResUserData,
+  ReqUserData,
+  ResCommentData,
+  ReqCommentData,
+  ReqHitokotoData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -33,7 +38,7 @@ export class ApiService {
     return this.http.get<ResPostSingleData>(`${this.apiUrl}/post/${id}`)
   }
 
-  public createPost(data: Partial<ReqPostData>) {
+  public createPost(data: ReqPostData) {
     return this.http.post<void>(`${this.apiUrl}/post`, data)
   }
 
@@ -43,10 +48,6 @@ export class ApiService {
 
   public deletePost(id: number) {
     return this.http.delete<void>(`${this.apiUrl}/post/${id}`)
-  }
-
-  public getHitokoto() {
-    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto`)
   }
 
   public getMetas() {
@@ -79,6 +80,66 @@ export class ApiService {
           return of(null)
         })
       )
+  }
+
+  public getUsers() {
+    return this.http.get<ResUserData[]>(`${this.apiUrl}/user`)
+  }
+
+  public getUser(id: number) {
+    return this.http.get<ResUserData>(`${this.apiUrl}/user/${id}`)
+  }
+
+  public createUser(data: ReqUserData) {
+    return this.http.post<void>(`${this.apiUrl}/user`, data)
+  }
+
+  public updateUser(id: number, data: ReqUserData) {
+    return this.http.put<void>(`${this.apiUrl}/user/${id}`, data)
+  }
+
+  public deleteUser(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/user/${id}`)
+  }
+
+  public getComments() {
+    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment`)
+  }
+
+  public getCommentsByPost(id: number) {
+    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment/${id}`)
+  }
+
+  public sendComment(id: string, text: string) {
+    return this.http.post<void>(`${this.apiUrl}/comment`, { pid: id, text })
+  }
+
+  public deleteComment(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/comment/${id}`)
+  }
+
+  public getHitokoto() {
+    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto`)
+  }
+
+  public getHitokotos(isPublic: boolean) {
+    return this.http.get<ResHitokotoData[]>(`${this.apiUrl}/hitokoto/${isPublic ? 'public' : 'all'}`)
+  }
+
+  public createHitokoto(data: ReqHitokotoData) {
+    return this.http.post<void>(`${this.apiUrl}/hitokoto`, data)
+  }
+
+  public updateHitokoto(id: number, data: ReqHitokotoData) {
+    return this.http.put<void>(`${this.apiUrl}/hitokoto/${id}`, data)
+  }
+
+  public deleteHitokoto(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/hitokoto/${id}`)
+  }
+
+  public getHitokotoById(id: number) {
+    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto/${id}`)
   }
 
   public getSettings() {

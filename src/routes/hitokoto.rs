@@ -1,4 +1,5 @@
 use crate::entity::romi_hitokotos;
+use crate::guards::admin::AdminUser;
 use crate::models::hitokoto::{ReqHitokotoData, ResHitokotoData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
@@ -7,8 +8,8 @@ use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
 use sea_orm::{
-    ActiveModelTrait, ActiveValue, DatabaseConnection, DbBackend, EntityTrait, IntoActiveModel,
-    Statement, TryIntoModel,
+    ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend, EntityTrait,
+    IntoActiveModel, QueryFilter, Statement, TryIntoModel,
 };
 use sea_orm_rocket::Connection;
 
@@ -61,12 +62,86 @@ pub async fn fetch(
     conn: Connection<'_, Db>,
 ) -> ApiResult<ResHitokotoData> {
     l_info!(logger, "Fetching random hitokoto");
-    let db = conn.into_inner();
-    get_hitokoto(length, &db, true).await
+    get_hitokoto(length, &conn.into_inner(), true).await
+}
+
+#[get("/<id>")]
+pub async fn fetch_by_id(
+    id: u32,
+    logger: &State<Logger>,
+    conn: Connection<'_, Db>,
+) -> ApiResult<ResHitokotoData> {
+    l_info!(logger, "Fetching hitokoto by id: id={}", id);
+
+    match romi_hitokotos::Entity::find_by_id(id)
+        .one(conn.into_inner())
+        .await
+        .context("Failed to fetch hitokoto")?
+    {
+        Some(model) => api_ok(ResHitokotoData {
+            id: model.id,
+            msg: model.msg,
+            from: model.from,
+            r#type: model.r#type.parse().unwrap_or(0),
+            likes: model.likes,
+        }),
+        None => Err(ApiError::not_found(format!("Hitokoto {} not found", id))),
+    }
+}
+
+#[get("/public")]
+pub async fn fetch_public(
+    logger: &State<Logger>,
+    conn: Connection<'_, Db>,
+) -> ApiResult<Vec<ResHitokotoData>> {
+    l_info!(logger, "Fetching public hitokoto");
+
+    api_ok(
+        romi_hitokotos::Entity::find()
+            .filter(romi_hitokotos::Column::IsPublic.eq(&1.to_string()))
+            .all(conn.into_inner())
+            .await
+            .context("Failed to fetch hitokoto")?
+            .into_iter()
+            .map(|model| ResHitokotoData {
+                id: model.id,
+                msg: model.msg,
+                from: model.from,
+                r#type: model.r#type.parse().unwrap_or(0),
+                likes: model.likes,
+            })
+            .collect(),
+    )
+}
+
+#[get("/all")]
+pub async fn fetch_all(
+    _admin_user: AdminUser,
+    logger: &State<Logger>,
+    conn: Connection<'_, Db>,
+) -> ApiResult<Vec<ResHitokotoData>> {
+    l_info!(logger, "Fetching all hitokotos");
+
+    api_ok(
+        romi_hitokotos::Entity::find()
+            .all(conn.into_inner())
+            .await
+            .context("Failed to fetch hitokotos")?
+            .into_iter()
+            .map(|model| ResHitokotoData {
+                id: model.id,
+                msg: model.msg,
+                from: model.from,
+                r#type: model.r#type.parse().unwrap_or(0),
+                likes: model.likes,
+            })
+            .collect(),
+    )
 }
 
 #[post("/", data = "<hitokoto>")]
 pub async fn create(
+    _admin_user: AdminUser,
     hitokoto: Json<ReqHitokotoData>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
@@ -91,6 +166,7 @@ pub async fn create(
 
 #[put("/<id>", data = "<hitokoto>")]
 pub async fn update(
+    _admin_user: AdminUser,
     id: u32,
     hitokoto: Json<ReqHitokotoData>,
     logger: &State<Logger>,
@@ -159,7 +235,12 @@ pub async fn like(
 }
 
 #[delete("/<id>")]
-pub async fn delete(id: u32, logger: &State<Logger>, conn: Connection<'_, Db>) -> ApiResult<()> {
+pub async fn delete(
+    _admin_user: AdminUser,
+    id: u32,
+    logger: &State<Logger>,
+    conn: Connection<'_, Db>,
+) -> ApiResult<()> {
     l_info!(logger, "Deleting hitokoto: id={}", id);
 
     romi_hitokotos::Entity::delete_by_id(id)

@@ -8,6 +8,7 @@ pub struct ReqUserData {
     pub password: String,
     pub email: String,
     pub url: Option<String>,
+    pub status: u8,
 }
 
 #[derive(Serialize, TS)]
@@ -19,6 +20,7 @@ pub struct ResUserData {
     pub created: u32,
     pub last_login: u32,
     pub is_admin: bool,
+    pub status: u8,
     pub url: Option<String>,
 }
 

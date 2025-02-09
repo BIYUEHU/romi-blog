@@ -1,5 +1,6 @@
+use std::env;
+
 use crate::utils::api::ApiError;
-use crate::FREE_HONG_KONG;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use rocket::request::{FromRequest, Outcome, Request};
 use serde::{Deserialize, Serialize};
@@ -40,7 +41,7 @@ impl<'r> FromRequest<'r> for Access {
 
         match decode::<AuthUser>(
             &token,
-            &DecodingKey::from_secret(FREE_HONG_KONG.as_bytes()),
+            &DecodingKey::from_secret(env::var("FREE_HONG_KONG_SECRET").unwrap().as_bytes()),
             &Validation::new(Algorithm::HS256),
         ) {
             Ok(token_data) => Outcome::Success(Access {

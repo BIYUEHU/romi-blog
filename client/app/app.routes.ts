@@ -11,6 +11,10 @@ import { AdminPostsComponent } from './pages/admin-posts/admin-posts.component'
 import { AuthGuard } from './guards/auth.guard'
 import { AdminLoginComponent } from './pages/admin-login/admin-login.component'
 import { AdminEditComponent } from './pages/admin-edit/admin-edit.component'
+import { AdminMetasComponent } from './pages/admin-metas/admin-metas.component'
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component'
+import { AdminCommentsComponent } from './pages/admin-comments/admin-comments.component'
+import { AdminHitokotosComponent } from './pages/admin-hitokotos/admin-hitokotos.component'
 // import { AboutComponent } from './pages/about/about.component'
 // import { FriendsComponent } from './pages/friends/friends.component'
 
@@ -73,6 +77,22 @@ export const routes: Routes = [
       {
         path: 'edit/:id',
         component: AdminEditComponent
+      },
+      {
+        path: 'metas',
+        component: AdminMetasComponent
+      },
+      {
+        path: 'users',
+        component: AdminUsersComponent
+      },
+      {
+        path: 'comments',
+        component: AdminCommentsComponent
+      },
+      {
+        path: 'hitokotos',
+        component: AdminHitokotosComponent
       }
     ]
   },

@@ -41,7 +41,6 @@ CREATE TABLE `romi_posts` (
 CREATE TABLE `romi_metas` (
     `mid` int(10) UNSIGNED NOT NULL,
     `name` varchar(32) NOT NULL,
-    `count` varchar(10) NOT NULL DEFAULT '0',
     `isCategory` char(1) NOT NULL DEFAULT '0'
 );
 

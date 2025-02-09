@@ -30,6 +30,15 @@
     } @else {
     <table class="min-w-full divide-y divide-text-200 overflow-x-auto">
       <thead class="bg-text-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">标题</th>
+          <th class="hidden 2xl:inline px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">摘要
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">评论</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">可见性</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">密码</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
+        </tr>
       </thead>
       <tbody class="bg-text-200 divide-y divide-text-200">
         @for (post of pagedPosts; track post.id) {
@@ -56,32 +65,23 @@
           </td>
           <td class="px-6 py-4">
             @if (post.allow_comment){
-            <p class="text-sm text-green-500">
-              允许评论
-            </p>
+            <r-tag type="success">允许</r-tag>
             } @else {
-            <p class="text-sm text-red-500">
-              禁止评论</p>
+            <r-tag type="error">禁止</r-tag>
             }
           </td>
           <td class="px-6 py-4">
             @if (post.password) {
-            <p class="text-sm text-gray-500">
-              已隐藏
-            </p>
+            <r-tag>隐藏</r-tag>
             } @else {
-            <p class="text-sm text-pink-500">
-              未隐藏</p>
+            <r-tag type="secondary">正常</r-tag>
             }
           </td>
           <td class="px-6 py-4">
             @if (post.password) {
-            <p class="text-sm text-yellow-500">
-              已加密
-            </p>
+            <r-tag type="warning">加密</r-tag>
             } @else {
-            <p class="text-sm text-indigo-500">
-              未加密</p>
+            <r-tag type="info">公开</r-tag>
             }
           </td>
           <td class="px-6 py-4 text-sm">
@@ -102,10 +102,10 @@
 
     @if (pages.length > 1) {
     <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
-      <div class="text-sm text-gray-500">
+      <div class="text-sm text-gray-500 m-2">
         共 {{ totalPosts }} 篇文章
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 flex-wrap">
         @for (page of pages; track page) {
         @if (currentPage === page) {
         <r-button type="primary">{{ page }}</r-button>

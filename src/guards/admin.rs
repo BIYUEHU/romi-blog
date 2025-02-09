@@ -6,7 +6,7 @@ use rocket::{
     Request,
 };
 
-pub struct AdminUser();
+pub struct AdminUser(pub AuthUser);
 
 #[rocket::async_trait]
 impl<'r> FromRequest<'r> for AdminUser {
@@ -26,6 +26,6 @@ impl<'r> FromRequest<'r> for AdminUser {
             ));
         }
 
-        Outcome::Success(AdminUser())
+        Outcome::Success(AdminUser(auth_user))
     }
 }

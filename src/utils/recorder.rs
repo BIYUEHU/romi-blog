@@ -67,7 +67,6 @@ impl Fairing for Recorder {
     }
 
     async fn on_response<'r>(&self, req: &'r Request<'_>, res: &mut Response<'r>) {
-        let mut error = String::new();
         let body = res
             .body_mut()
             .to_string()
@@ -77,22 +76,18 @@ impl Fairing for Recorder {
                     return body;
                 }
                 if let Ok(ApiError {
-                    raw_error: Some(raw_error),
+                    raw_error,
                     code,
                     msg,
                 }) = serde_json::from_str::<ApiError>(&body)
                 {
-                    error = raw_error.clone();
+                    l_error!(self.logger.clone(), raw_error.unwrap_or(msg.clone()));
                     serde_json::to_string(&ApiErrorReal { code, msg }).unwrap_or("".into())
                 } else {
                     body
                 }
             })
             .unwrap_or("".into());
-
-        if !error.is_empty() {
-            l_error!(self.logger.clone(), error);
-        }
 
         l_record!(
             self.logger.clone().with_label("Response"),

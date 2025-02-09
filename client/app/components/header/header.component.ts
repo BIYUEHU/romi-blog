@@ -30,9 +30,9 @@ export class HeaderComponent {
         { text: '角色', link: '/characters' }
       ]
     },
-    { text: '关于', link: '/about' },
-    { text: '友链', link: '/friends' },
-    { text: '作品', link: '/works' }
+    { text: '关于', link: '/post/25' },
+    { text: '友链', link: '/post/6' },
+    { text: '日志', link: '/post/26' }
   ]
 
   public isMenuOpen = false

@@ -41,7 +41,7 @@
           <div class="flex-1 max-w-75%">
             <h4 class="text-gray-800 font-medium truncate">{{ post.title }}</h4>
             <div class="text-sm text-gray-500 mt-1">
-              {{ post.created | date: 'YYYY-MM-dd HH:mm' }}
+              {{ post.created * 1000 | date: 'YYYY-MM-dd HH:mm' }}
             </div>
           </div>
           <div class="flex items-center gap-2">

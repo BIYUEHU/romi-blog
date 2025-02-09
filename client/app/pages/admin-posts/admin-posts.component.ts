@@ -18,7 +18,10 @@ export class AdminPostsComponent implements OnInit {
   public filterStatus = ''
   public currentPage = 1
   public totalPosts = 0
-  public pages: number[] = []
+  public get pages() {
+    const totalPages = Math.ceil(this.totalPosts / this.pageSize)
+    return Array.from({ length: totalPages }, (_, i) => i + 1)
+  }
   public pageSize = 10
 
   public posts: ResPostData[] = []
@@ -40,7 +43,6 @@ export class AdminPostsComponent implements OnInit {
       next: (data) => {
         this.posts = data
         this.totalPosts = this.posts.length
-        this.updatePagination()
         this.isLoading = false
       },
       error: (error) => {
@@ -57,7 +59,6 @@ export class AdminPostsComponent implements OnInit {
         next: () => {
           this.posts = this.posts.filter((post) => post.id !== id)
           this.totalPosts = this.posts.length
-          this.updatePagination()
           // 可以添加成功提示
         },
         error: (error) => {
@@ -70,11 +71,6 @@ export class AdminPostsComponent implements OnInit {
 
   public goToPage(page: number) {
     this.currentPage = page
-  }
-
-  private updatePagination() {
-    const totalPages = Math.ceil(this.totalPosts / this.pageSize)
-    this.pages = Array.from({ length: totalPages }, (_, i) => i + 1)
   }
 
   public get pagedPosts() {

@@ -19,9 +19,11 @@ export class AdminSidebarComponent {
       text: '内容管理',
       children: [
         { text: '文章管理', link: '/admin/posts', icon: 'i-mdi:file-document' },
-        { text: '分类管理', link: '/admin/categories', icon: 'i-mdi:folder' },
-        { text: '标签管理', link: '/admin/tags', icon: 'i-mdi:tag' },
-        { text: '评论管理', link: '/admin/comments', icon: 'i-mdi:comment' }
+        { text: '字段管理', link: '/admin/metas', icon: 'i-mdi:tag' },
+        { text: '评论管理', link: '/admin/comments', icon: 'i-mdi:comment' },
+        { text: '用户管理', link: '/admin/users', icon: 'i-mdi:account-multiple' },
+        { text: '一言管理', link: '/admin/hitokotos', icon: 'i-mdi:format-quote-close' },
+        { text: '动态管理', link: '/admin/dynamics', icon: 'i-mdi:newspaper' }
       ]
     },
     {
@@ -32,10 +34,12 @@ export class AdminSidebarComponent {
       ]
     },
     {
-      text: '系统设置',
+      text: '系统管理',
       children: [
         { text: '站点设置', link: '/admin/settings', icon: 'i-mdi:cog' },
-        { text: '个人资料', link: '/admin/profile', icon: 'i-mdi:account' }
+        { text: '安全设置', link: '/admin/security', icon: 'i-mdi:shield-key' },
+        { text: '个人资料', link: '/admin/profile', icon: 'i-mdi:account' },
+        { text: '网站日志', link: '/admin/logs', icon: 'i-mdi:file-document-outline' }
       ]
     }
   ]

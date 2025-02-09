@@ -16,14 +16,17 @@ use roga::*;
 use routes::{comment, global, info, user};
 use routes::{hitokoto, meta, post, seimg};
 use sea_orm_rocket::Database;
+use std::env;
 use std::fs::exists;
 use transport::console::ConsoleTransport;
+use utils::cache::Cache;
 use utils::catcher;
 use utils::config::load_config;
 use utils::cros::get_cors;
 use utils::pool::Db;
 use utils::recorder::Recorder;
 use utils::ssr::SSR;
+use uuid::Uuid;
 
 pub const FREE_HONG_KONG: &'static str =
     "香港に栄光あれ\n光复香港，时代革命\nFree Hong Kong, revolution now";
@@ -46,6 +49,11 @@ async fn bootstrap() {
             })
             .unwrap();
     }
+
+    env::set_var(
+        "FREE_HONG_KONG_SECRET",
+        format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
+    );
 
     let config = load_config()
         .map_err(|e| l_fatal!(&logger, "{}", e))
@@ -96,6 +104,7 @@ async fn bootstrap() {
     .attach(Db::init())
     .attach(get_cors())
     .attach(Recorder::new(logger.clone(), config.clone()))
+    .manage(Cache::new())
     .manage(SSR::new(
         config.ssr_entry.clone(),
         config.port + 1,
@@ -146,6 +155,9 @@ async fn bootstrap() {
         "/api/hitokoto",
         routes![
             hitokoto::fetch,
+            hitokoto::fetch_by_id,
+            hitokoto::fetch_public,
+            hitokoto::fetch_all,
             hitokoto::create,
             hitokoto::update,
             hitokoto::like,

@@ -48,7 +48,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       '|',
       'undo',
       'redo',
-      'fullscreen'
+      'fullscreen',
+      'edit-mode'
     ],
     toolbarConfig: {
       pin: true

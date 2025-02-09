@@ -46,7 +46,6 @@ pub async fn fetch_all(
             }),
     )
     .await
-    .map_err(ApiError::from)
     .map(api_ok)?
 }
 
@@ -84,7 +83,6 @@ pub async fn fetch_by_post(
             }),
     )
     .await
-    .map_err(ApiError::from)
     .map(api_ok)?
 }
 

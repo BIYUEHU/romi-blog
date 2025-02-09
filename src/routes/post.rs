@@ -77,11 +77,16 @@ pub async fn fetch_all(
                     let (tags, categories) = get_post_metas(data.pid.clone(), db)
                         .await
                         .unwrap_or((vec![], vec![]));
+                    let password = data.password.clone().filter(|p| !p.is_empty());
 
                     ResPostData {
                         id: data.pid.clone(),
                         title: data.title.clone(),
-                        summary: summary_markdown(data.text.as_str(), 70),
+                        summary: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                            summary_markdown(data.text.as_str(), 70)
+                        } else {
+                            "".into()
+                        },
                         created: data.created,
                         modified: data.modified,
                         banner: data.banner.clone(),
@@ -91,12 +96,12 @@ pub async fn fetch_all(
                         likes: data.likes,
                         comments: data.comments,
                         allow_comment: data.allow_comment.eq(&1.to_string()),
-                        password: data.password.clone().filter(|p| !p.is_empty()).map(|p| {
-                            if access.level.eq(&AccessLevel::Admin) {
-                                p
-                            } else {
-                                "password".to_string()
-                            }
+                        password: password.map(|p| {
+                            access
+                                .level
+                                .eq(&AccessLevel::Admin)
+                                .then(|| p)
+                                .unwrap_or("password".into())
                         }),
                         hide: data.hide.eq(&1.to_string()),
                     }
@@ -125,18 +130,24 @@ pub async fn fetch(
             let (tags, categories) = get_post_metas(id, db)
                 .await
                 .with_context(|| format!("Failed to fetch metas of post {}", id))?;
+            let password = model.password.clone().filter(|p| !p.is_empty());
+
             let response = ResPostSingleData {
                 id: model.pid.clone(),
                 title: model.title.clone(),
                 created: model.created,
                 modified: model.modified,
-                text: model.text.clone(),
-                password: model.password.clone().filter(|p| !p.is_empty()).map(|p| {
-                    if access.level.eq(&AccessLevel::Admin) {
-                        p
-                    } else {
-                        "password".to_string()
-                    }
+                text: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                    model.text.clone()
+                } else {
+                    "".into()
+                },
+                password: password.map(|p| {
+                    access
+                        .level
+                        .eq(&AccessLevel::Admin)
+                        .then(|| p)
+                        .unwrap_or("password".into())
                 }),
                 hide: model.hide.eq(&1.to_string()),
                 allow_comment: model.allow_comment.eq(&1.to_string()),
@@ -188,7 +199,6 @@ async fn handle_metas(
             .map(|name| romi_metas::ActiveModel {
                 mid: ActiveValue::not_set(),
                 name: ActiveValue::set(name),
-                count: ActiveValue::set("0".to_string()),
                 is_category: ActiveValue::set(is_category_str.to_string()),
             })
             .collect();

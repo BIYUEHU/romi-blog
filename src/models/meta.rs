@@ -13,6 +13,6 @@ pub struct ReqMetaData {
 pub struct ResMetaData {
     pub mid: u32,
     pub name: String,
-    pub count: i32,
+    pub count: u64,
     pub is_category: bool,
 }

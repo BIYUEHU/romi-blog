@@ -5,13 +5,16 @@
     <r-divider thickness="1"></r-divider>
   </div>
 
+  @if (!post.hide) {
   <div
-    class="text-size-lg line-height-loose w-85% mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
+    class="text-size-lg line-height-loose mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
     <strong> 本文链接：</strong><a [href]="post.url" class="text-bg-300 underline">{{ post.url }}</a><br />
     <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
   </div>
+  }
 
-  <div class="w-85% mx-auto line-height-loose mt-5">
+  @if (post.categories.length + post.tags.length > 0) {
+  <div class="mx-auto line-height-loose mt-5">
     <r-divider class="mx-auto"></r-divider>
     <div class="flex my-4 gap-4 flex-wrap">
       @for (item of
@@ -28,8 +31,9 @@
     </div>
     <r-divider class="mx-auto"></r-divider>
   </div>
+  }
 
-  <div class="w-85% mx-auto flex gap-4 mt-6">
+  <div class="mx-auto flex gap-4 mt-6">
     <r-button size="lg">
       点个赞
     </r-button>
@@ -39,15 +43,9 @@
     <r-button size="lg" type="warning">
       分享到...
     </r-button>
-    <!-- <div class="flex gap-4">
-      @for (item of ['like',"wechat", "bilibili", "link",]; track $index) {
-      <div class="w-9 h-9 rounded-full bg-text-200 hover:bg-text-200 flex transition-colors">
-        <img [src]="['/assets/', item, '.svg'].join('')" />
-      </div>
-      }
-    </div> -->
   </div>
 
+  @if (relatedPosts[0] || relatedPosts[1]) {
   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
     @if (relatedPosts[0]) {
     <a [href]="relatedPosts[0].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
@@ -73,6 +71,7 @@
     </a>
     }
   </div>
+  }
 
   <div class="mt-8 mb-6">
     <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
@@ -98,7 +97,7 @@
           <div class="flex items-center gap-2">
             <span class="font-medium">{{ comment.author.username }}</span>
             <span class="text-gray-400 text-sm">{{
-              comment.created | date : "yyyy-MM-dd HH:mm"
+              comment.created * 1000 | date : "yyyy-MM-dd HH:mm"
               }}</span>
           </div>
           <p class="mt-2 text-gray-700">{{ comment.text }}</p>

@@ -1,0 +1,129 @@
+<div class="space-y-6">
+  <!-- 搜索和添加区域 -->
+  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
+    <div class="flex flex-wrap items-center gap-4 mb-4">
+      <div class="flex-1">
+        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索一言内容或来源..." class="w-full" />
+      </div>
+
+      <select [(ngModel)]="filterType"
+        class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+        <option [value]="0">所有类型</option>
+        @for (type of types; track type.value) {
+        <option [value]="type.value">{{ type.label }}</option>
+        }
+      </select>
+    </div>
+
+    @if (!editingHitokoto) {
+    <div class="space-y-4 border-t border-text-300 pt-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="一言内容" />
+        <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源" />
+      </div>
+      <div class="flex items-center justify-between">
+        <select [(ngModel)]="newHitokoto.type"
+          class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+          @for (type of types; track type.value) {
+          <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+        <r-button (click)="createHitokoto()" type="primary">
+          添加一言
+        </r-button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- 一言列表 -->
+  <div class="bg-text-200 rounded-lg border border-text-200 overflow-hidden">
+    @if (isLoading) {
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
+    } @else if (filteredHitokotos.length === 0) {
+    <div class="p-8 text-center text-accent-100">
+      暂无一言
+    </div>
+    } @else {
+    <div class="divide-y divide-text-300">
+      @for (hitokoto of pagedHitokotos; track hitokoto.id) {
+      <div class="p-6 hover:bg-text-300">
+        @if (editingHitokoto?.id === hitokoto.id) {
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="一言内容" />
+            <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源" />
+          </div>
+          <div class="flex items-center justify-between">
+            <select [(ngModel)]="newHitokoto.type"
+              class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+              @for (type of types; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+              }
+            </select>
+            <div class="flex items-center gap-2">
+              <r-button (click)="cancelEdit()">
+                取消
+              </r-button>
+              <r-button (click)="updateHitokoto()" type="primary">
+                保存
+              </r-button>
+            </div>
+          </div>
+        </div>
+        } @else {
+        <div class="flex items-start justify-between gap-4">
+          <div class="flex-1 space-y-2">
+            <p class="text-bg-200">{{ hitokoto.msg }}</p>
+            <div class="flex items-center gap-4 text-sm">
+              @if (hitokoto.from) {
+              <span class="text-accent-100">——{{ hitokoto.from }}</span>
+              }
+              <span>
+                <r-tag [type]="['secondary','info', 'success', 'warning'][hitokoto.type - 1]">
+                  {{ types[hitokoto.type - 1].label }}
+                </r-tag>
+              </span>
+              <span class="text-accent-100">
+                {{ hitokoto.likes }} 次点赞
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <r-button (click)="startEdit(hitokoto)" type="primary">
+              编辑
+            </r-button>
+            <r-button (click)="deleteHitokoto(hitokoto.id)" type="error">
+              删除
+            </r-button>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- 分页 -->
+    @if (pages.length > 1) {
+    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
+      <div class="text-sm text-accent-100 m-2">
+        共 {{ filteredHitokotos.length }} 条一言
+      </div>
+      <div class="flex items-center gap-1 flex-wrap">
+        @for (page of pages; track page) {
+        @if (currentPage === page) {
+        <r-button type="primary">{{ page }}</r-button>
+        } @else {
+        <r-button (click)="goToPage(page)">
+          {{ page }}
+        </r-button>
+        }
+        }
+      </div>
+    </div>
+    }
+    }
+  </div>
+</div>

@@ -4,12 +4,13 @@ use crate::models::meta::{ReqMetaData, ResMetaData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
 use anyhow::Context;
+use futures::future::try_join_all;
 use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
 use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, TransactionTrait,
-    TryIntoModel,
+    ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter,
+    TransactionTrait, TryIntoModel,
 };
 use sea_orm_rocket::Connection;
 
@@ -20,19 +21,29 @@ pub async fn fetch_all(
 ) -> ApiResult<Vec<ResMetaData>> {
     l_info!(logger, "Fetching all metas");
 
+    let db = conn.into_inner();
+
     api_ok(
-        romi_metas::Entity::find()
-            .all(conn.into_inner())
-            .await
-            .context("Failed to fetch metas")?
-            .into_iter()
-            .map(|meta| ResMetaData {
-                mid: meta.mid,
-                name: meta.name,
-                count: meta.count.parse().unwrap_or(0),
-                is_category: meta.is_category.eq(&1.to_string()),
-            })
-            .collect(),
+        try_join_all(
+            romi_metas::Entity::find()
+                .all(db)
+                .await
+                .context("Failed to fetch metas")?
+                .iter()
+                .map(|meta| async {
+                    Ok::<ResMetaData, ApiError>(ResMetaData {
+                        mid: meta.mid,
+                        name: meta.clone().name,
+                        count: romi_relationships::Entity::find()
+                            .filter(romi_relationships::Column::Mid.eq(meta.mid))
+                            .count(db)
+                            .await
+                            .context("Failed to count relationships")?,
+                        is_category: meta.clone().is_category.eq(&1.to_string()),
+                    })
+                }),
+        )
+        .await?,
     )
 }
 
@@ -43,9 +54,10 @@ pub async fn fetch(
     conn: Connection<'_, Db>,
 ) -> ApiResult<ResMetaData> {
     l_info!(logger, "Fetching meta: id={}", id);
+    let db = conn.into_inner();
 
     let meta = romi_metas::Entity::find_by_id(id)
-        .one(conn.into_inner())
+        .one(db)
         .await
         .with_context(|| format!("Failed to fetch meta {}", id))?;
 
@@ -54,7 +66,11 @@ pub async fn fetch(
             let response = ResMetaData {
                 mid: meta.mid,
                 name: meta.clone().name,
-                count: meta.clone().count.parse().unwrap_or(0),
+                count: romi_relationships::Entity::find()
+                    .filter(romi_relationships::Column::Mid.eq(id))
+                    .count(db)
+                    .await
+                    .context("Failed to count relationships")?,
                 is_category: meta.is_category.eq(&1.to_string()),
             };
 
@@ -76,14 +92,28 @@ pub async fn create(
     conn: Connection<'_, Db>,
 ) -> ApiResult<romi_metas::Model> {
     l_info!(logger, "Creating new meta: {}", meta.name);
+    let db = conn.into_inner();
+
+    if romi_metas::Entity::find()
+        .filter(romi_metas::Column::Name.eq(meta.name.clone()))
+        .filter(
+            romi_metas::Column::IsCategory.eq(if meta.is_category { "1" } else { "0" }.to_string()),
+        )
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to check if meta name exists: {}", meta.name))?
+        .is_some()
+    {
+        l_warn!(logger, "Meta name already exists: {}", meta.name);
+        return Err(ApiError::bad_request("Meta name already exists"));
+    }
 
     let result = romi_metas::ActiveModel {
         mid: ActiveValue::not_set(),
         name: ActiveValue::set(meta.name.clone()),
-        count: ActiveValue::set(0.to_string()),
         is_category: ActiveValue::set(if meta.is_category { "1" } else { "0" }.to_string()),
     }
-    .save(conn.into_inner())
+    .save(db)
     .await
     .context("Failed to create meta")?
     .try_into_model()

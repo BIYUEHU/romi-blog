@@ -9,8 +9,7 @@ import { BrowserService } from '../services/browser.service'
 export class AuthGuard implements CanActivate {
   public constructor(
     private readonly authService: AuthService,
-    private readonly browserService: BrowserService,
-    private readonly router: Router
+    private readonly browserService: BrowserService
   ) {}
 
   public canActivate(): boolean {
