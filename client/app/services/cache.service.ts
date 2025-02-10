@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core'
 import { ApiService } from './api.service'
 import { RelatedPost, ResPostData } from '../models/api.model'
 import { Observable, of, map, tap } from 'rxjs'
-import { CommentData, generateCommentsList } from '../utils/generateCommentsList'
 import { BrowserService } from './browser.service'
 
 @Injectable({
@@ -81,17 +80,5 @@ export class CacheService {
       timestamp: Date.now()
     }
     localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheData))
-  }
-
-  public getCommentsList(id: number): CommentData[] {
-    const { localStorage } = this.browserService
-    if (!localStorage) return []
-    const cached = localStorage.getItem(`comments-${id}`)
-    if (cached) {
-      return JSON.parse(cached)
-    }
-    const data = generateCommentsList()
-    localStorage.setItem(`comments-${id}`, JSON.stringify(data))
-    return data
   }
 }

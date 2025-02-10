@@ -3,6 +3,7 @@ import { LayoutUsingComponent } from '../layout-using/layout-using.component'
 import { PostContentComponent } from '../post-content/post-content.component'
 import { Router } from '@angular/router'
 import { LinksComponent } from '../../pages/links/links.component'
+import { NotFoundComponent } from '../../pages/not-found/not-found.component'
 
 type DependentPage = {
   name: string
@@ -23,7 +24,7 @@ type DependentPage = {
 @Component({
   selector: 'app-control',
   standalone: true,
-  imports: [LayoutUsingComponent, PostContentComponent, LinksComponent],
+  imports: [LayoutUsingComponent, PostContentComponent, LinksComponent, NotFoundComponent],
   templateUrl: './control.component.html'
 })
 export class ControlComponent {

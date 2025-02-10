@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router'
+import { NavigationStart, Router, RouterLink } from '@angular/router'
 import { HeaderComponent } from '../header/header.component'
 import { FooterComponent } from '../footer/footer.component'
 import { NotifyService } from '../../services/notify.service'

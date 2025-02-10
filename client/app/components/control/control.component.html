@@ -7,7 +7,11 @@
       [hideComments]="dependentPageUsing.hideComments" />
     } @else if (dependentPageUsing.template === 'links') {
     <app-links [id]="dependentPageUsing.using" />
+    } @else {
+    <app-not-found />
     }
+    } @else {
+    <app-not-found />
     }
   </div>
 </app-layout-using>
