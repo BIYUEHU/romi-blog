@@ -1,0 +1,42 @@
+<div class="min-h-screen a-accent-color">
+  <app-header />
+  <div class="flex-1 bg-text-100 w-full text-bg-100">
+    <div
+      [class]="['bg-bg-100 max-h-60vh min-h-350px pt-14 overflow-hidden relative mb-6 h-', headerImageHeight, 'px'].join('')">
+      <div class="brightness-60 absolute left-0 top-0 w-full h-full">
+        <img class="object-cover left-0 top-0 w-full h-full" [src]="headerData.imageUrl" alt="Header Image" />
+      </div>
+      <div class="absolute left-0 top-3vh w-full h-full flex items-center justify-center">
+        <div class="max-w-85% text-center text-primary-200">
+          <h1 class="text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
+            {{ headerData.title }}
+          </h1>
+          <div class="text-5">
+            @for (item of headerData.subTitle; track $index) {
+            <div class="font-sans">{{ item }}</div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center font-fold text-bg-200 mb-4 max-w-90% mx-auto">
+      当前博客正在逐步重构中，观察进度可前往
+      <a target="_blank" href="https://github.com/biyuehu/romichan">biyuehu/romichan</a>，旧博客：<a target="_blank"
+        href="https://old.hotaru.icu">old.hotaru.icu</a>
+    </div>
+    <div class="max-w-[1200px] mx-auto px-4">
+      <ng-content select="[main]"></ng-content>
+    </div>
+  </div>
+  <app-footer />
+  @if (showBackTop) {
+  <button (click)="scrollToTop()"
+    class="fixed right-12 bottom-24 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-1 border-text-300 border-solid">
+    <i class="i-mdi-arrow-up-thick text-xl"></i>
+  </button>
+  }
+  <button [routerLink]="['/admin']"
+    class="fixed right-12 bottom-12 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-1 border-text-300 border-solid">
+    <i class="i-mdi-settings-outline text-xl"></i>
+  </button>
+</div>

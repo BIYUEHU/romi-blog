@@ -27,12 +27,13 @@ export class HeaderComponent {
         { text: '歌单', link: '/music' },
         { text: '追番', link: '/anime' },
         { text: 'GAL', link: '/gal' },
-        { text: '角色', link: '/characters' }
+        { text: '角色', link: 'https://m.hotaru.icu' }
+        // { text: '角色', link: '/characters' }
       ]
     },
-    { text: '关于', link: '/post/25' },
-    { text: '友链', link: '/post/6' },
-    { text: '日志', link: '/post/26' }
+    { text: '关于', link: '/about' },
+    { text: '友链', link: '/links' },
+    { text: '日志', link: '/log' }
   ]
 
   public isMenuOpen = false

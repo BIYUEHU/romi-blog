@@ -135,6 +135,7 @@ a:hover {
   }
 
   img,
+  .romi-img,
   svg,
   video {
     border-radius: 8px;

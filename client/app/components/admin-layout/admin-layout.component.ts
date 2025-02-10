@@ -1,5 +1,5 @@
-import { Component, HostListener, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
+import { Component, HostListener } from '@angular/core'
+import { AsyncPipe } from '@angular/common'
 import { RouterOutlet } from '@angular/router'
 import { AdminHeaderComponent } from '../admin-header/admin-header.component'
 import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
@@ -10,7 +10,7 @@ import { NotifyService } from '../../services/notify.service'
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
+  imports: [AsyncPipe, RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
   templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {

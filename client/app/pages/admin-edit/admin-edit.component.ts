@@ -1,5 +1,4 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ApiService } from '../../services/api.service'
@@ -7,11 +6,12 @@ import type { ReqPostData } from '../../models/api.model'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import Vditor from 'vditor'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-edit',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective],
+  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-edit.component.html'
 })
@@ -107,11 +107,12 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly notifyService: NotifyService
   ) {}
 
   public ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id')
+    const id = Number(this.route.snapshot.paramMap.get('id'))
     if (id && !Number.isNaN(Number(id))) {
       this.isEdit = true
       this.isLoading = true
@@ -199,7 +200,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public savePost() {
     this.postForm.text = this.editor?.getValue() ?? this.postForm.text
     if (!this.postForm.title || !this.postForm.text) {
-      // 可以添加错误提示
+      this.notifyService.showMessage('标题和内容不能为空', 'warning')
       return
     }
 
@@ -213,15 +214,9 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       ? this.apiService.updatePost(Number(this.route.snapshot.paramMap.get('id')), form)
       : this.apiService.createPost(form)
 
-    request.subscribe({
-      next: () => {
-        // 可以添加成功提示
-        this.goBack()
-      },
-      error: (error) => {
-        console.error('Failed to save post:', error)
-        // 可以添加错误提示
-      }
+    request.subscribe(() => {
+      this.notifyService.showMessage('文章保存成功', 'success')
+      this.goBack()
     })
   }
 

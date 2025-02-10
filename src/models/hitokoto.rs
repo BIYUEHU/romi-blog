@@ -7,6 +7,7 @@ pub struct ReqHitokotoData {
     pub msg: String,
     pub from: String,
     pub r#type: u32,
+    pub is_public: bool,
 }
 
 #[derive(Serialize, TS)]
@@ -17,4 +18,5 @@ pub struct ResHitokotoData {
     pub from: String,
     pub r#type: u32,
     pub likes: i32,
+    pub is_public: bool,
 }

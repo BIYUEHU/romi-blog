@@ -1,0 +1,39 @@
+<div class="space-y-6">
+  <!-- 搜索区域 -->
+  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
+    <ng-content select="[search-area]"></ng-content>
+  </div>
+
+  <!-- 列表区域 -->
+  <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
+    @if (isLoading) {
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
+    } @else if (items.length === 0) {
+    <div class="p-8 text-center text-accent-100">
+      暂无数据
+    </div>
+    } @else {
+    <ng-content select="[list-content]"></ng-content>
+
+    <!-- 分页 -->
+    @if (pages.length > 1) {
+    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
+      <div class="text-sm text-accent-100 m-2">
+        共 {{ items.length }} 条数据
+      </div>
+      <div class="flex items-center gap-1 flex-wrap">
+        @for (page of pages; track page) {
+        @if (currentPage === page) {
+        <r-button type="primary">{{ page }}</r-button>
+        } @else {
+        <r-button (click)="pageChange.emit(page)">{{ page }}</r-button>
+        }
+        }
+      </div>
+    </div>
+    }
+    }
+  </div>
+</div>

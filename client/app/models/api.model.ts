@@ -2,13 +2,6 @@ import { AuthUser } from './api.model'
 
 export * from '../../output'
 
-// TODO: improve backend api and here is temporary solution
-export interface ResPostSingleDataExtra {
-  url: string
-  commentsList: { created: number; author: Author; id: number; reply: number; text: string }[]
-  tags: [string, string][]
-}
-
 export interface Author {
   username: string
   avatar: string

@@ -6,7 +6,7 @@
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0",
+    "start": "ng serve --host 0.0.0.0 --disable-host-check",
     "dev": "tsx scripts/dev",
     "ui": "cd ui && pnpm dev",
     "build": "cargo test export_bindings && cd ui && pnpm build && ng build",

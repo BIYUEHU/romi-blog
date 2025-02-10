@@ -1,23 +1,24 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
 import { ResUserData, ReqUserData } from '../../../output'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { AuthService } from '../../services/auth.service'
 import { UserAuthData } from '../../models/api.model'
+import {
+  AbstractAdminBaseListComponent,
+  AdminBaseListComponent
+} from '../../components/admin-base-list/admin-base-list.component'
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebComponentInputAccessorDirective],
+  imports: [DatePipe, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-users.component.html'
 })
-export class AdminUsersComponent implements OnInit {
-  public users: ResUserData[] = []
-  public isLoading = true
-  public searchQuery = ''
+export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserData> implements OnInit {
   public editingUser: ResUserData | true | null = null
   public editForm: ReqUserData = {
     username: '',
@@ -28,64 +29,22 @@ export class AdminUsersComponent implements OnInit {
   }
   public admin: UserAuthData | null = null
 
-  // 在 AdminUsersComponent 类中添加这些属性
-  public currentPage = 1
-  public pageSize = 10
-  public pages: number[] = []
-
-  // 添加这些方法
-  private updatePagination() {
-    const totalPages = Math.ceil(this.filteredUsers.length / this.pageSize)
-    this.pages = Array.from({ length: totalPages }, (_, i) => i + 1)
-  }
-
-  public goToPage(page: number) {
-    this.currentPage = page
-  }
-
-  // TODO: 实现分页功能
-
-  // 修改 loadUsers 方法，添加更新分页的调用
-  // private loadUsers() {
-  //   this.isLoading = true
-  //   this.apiService.getUsers().subscribe({
-  //     next: (data) => {
-  //       this.users = data
-  //       this.updatePagination() // 添加这行
-  //       this.isLoading = false
-  //     },
-  //     error: (error) => {
-  //       console.error('Failed to load users:', error)
-  //       this.isLoading = false
-  //     }
-  //   })
-  // }
-
-  // 添加这个 getter 方法
-  public get pagedUsers() {
-    const filtered = this.filteredUsers
-    const start = (this.currentPage - 1) * this.pageSize
-    return filtered.slice(start, start + this.pageSize)
-  }
-
-  public constructor(
+  constructor(
     private readonly apiService: ApiService,
     private readonly authService: AuthService
   ) {
+    super()
+    this.emptyMessage = '暂无用户'
     this.authService.user$.subscribe((user) => {
       this.admin = user
     })
   }
 
-  public ngOnInit() {
-    this.loadUsers()
-  }
-
-  private loadUsers() {
+  protected loadItems(): void {
     this.isLoading = true
     this.apiService.getUsers().subscribe({
       next: (data) => {
-        this.users = data
+        this.items = data
         this.isLoading = false
       },
       error: (error) => {
@@ -95,12 +54,17 @@ export class AdminUsersComponent implements OnInit {
     })
   }
 
-  public get filteredUsers() {
-    return this.users.filter(
-      (user) =>
-        user.username.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
-    )
+  protected searchPredicate(user: ResUserData, query: string): boolean {
+    return user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
+  }
+
+  protected deleteItem(id: number): void {
+    if (this.confirmDelete()) {
+      this.apiService.deleteUser(id).subscribe(() => {
+        this.notifyService.showMessage('删除成功', 'secondary')
+        this.items = this.items.filter((user) => user.uid !== id)
+      })
+    }
   }
 
   public startEdit(user?: ResUserData) {
@@ -124,7 +88,7 @@ export class AdminUsersComponent implements OnInit {
       !this.editForm.email.trim() ||
       (!this.editForm.password.trim() && this.editingUser === true)
     ) {
-      // TODO: show error message
+      this.notifyService.showMessage('请填写所有必填项', 'warning')
       return
     }
 
@@ -137,14 +101,16 @@ export class AdminUsersComponent implements OnInit {
         })
         .subscribe({
           next: () => {
+            this.notifyService.showMessage('更新成功', 'success')
             if ((this.editingUser as ResUserData).uid === this.admin?.id) {
               this.authService.logout()
             }
-            this.loadUsers()
+            this.loadItems()
             this.editingUser = null
           },
           error: (error) => {
             console.error('Failed to update user:', error)
+            this.notifyService.showMessage('更新失败', 'error')
           }
         })
     } else {
@@ -156,26 +122,19 @@ export class AdminUsersComponent implements OnInit {
         })
         .subscribe({
           next: () => {
-            this.loadUsers()
+            this.notifyService.showMessage('创建成功', 'success')
+            this.loadItems()
             this.editingUser = null
           },
           error: (error) => {
             console.error('Failed to create user:', error)
+            this.notifyService.showMessage('创建失败', 'error')
           }
         })
     }
   }
 
-  public deleteUser(id: number, username: string) {
-    if (confirm(`确定要删除用户"${username}"吗？`)) {
-      this.apiService.deleteUser(id).subscribe({
-        next: () => {
-          this.users = this.users.filter((user) => user.uid !== id)
-        },
-        error: (error) => {
-          console.error('Failed to delete user:', error)
-        }
-      })
-    }
+  public ngOnInit(): void {
+    this.loadItems()
   }
 }

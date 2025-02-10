@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import {
   ResMetaData,
   type ResHitokotoData,
@@ -30,11 +30,15 @@ export class ApiService {
 
   public constructor(private readonly http: HttpClient) {}
 
+  private getSkipErrorHandlerHeaders() {
+    return new HttpHeaders().set('Skip-Error-Handler', 'true')
+  }
+
   public getPosts() {
     return this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
   }
 
-  public getPost(id: string) {
+  public getPost(id: number) {
     return this.http.get<ResPostSingleData>(`${this.apiUrl}/post/${id}`)
   }
 
@@ -44,6 +48,18 @@ export class ApiService {
 
   public updatePost(id: number, data: ReqPostData) {
     return this.http.put<void>(`${this.apiUrl}/post/${id}`, data)
+  }
+
+  public likePost(id: number) {
+    return this.http.post<void>(`${this.apiUrl}/post/${id}/like`, null, {
+      headers: this.getSkipErrorHandlerHeaders()
+    })
+  }
+
+  public viewPost(id: number) {
+    return this.http.post<void>(`${this.apiUrl}/post/${id}/view`, null, {
+      headers: this.getSkipErrorHandlerHeaders()
+    })
   }
 
   public deletePost(id: number) {
@@ -64,10 +80,16 @@ export class ApiService {
 
   public login(username: string, password: string) {
     return this.http
-      .post<LoginResponse>(`${this.apiUrl}/user/login`, {
-        username,
-        password
-      })
+      .post<LoginResponse>(
+        `${this.apiUrl}/user/login`,
+        {
+          username,
+          password
+        },
+        {
+          headers: this.getSkipErrorHandlerHeaders()
+        }
+      )
       .pipe(
         map((res) => {
           try {
@@ -110,8 +132,8 @@ export class ApiService {
     return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment/${id}`)
   }
 
-  public sendComment(id: string, text: string) {
-    return this.http.post<void>(`${this.apiUrl}/comment`, { pid: id, text })
+  public sendComment(pid: number, text: string) {
+    return this.http.post<void>(`${this.apiUrl}/comment`, { pid, text })
   }
 
   public deleteComment(id: number) {
@@ -132,6 +154,12 @@ export class ApiService {
 
   public updateHitokoto(id: number, data: ReqHitokotoData) {
     return this.http.put<void>(`${this.apiUrl}/hitokoto/${id}`, data)
+  }
+
+  public likeHitokoto(id: number) {
+    return this.http.post<void>(`${this.apiUrl}/hitokoto/${id}/like`, null, {
+      headers: this.getSkipErrorHandlerHeaders()
+    })
   }
 
   public deleteHitokoto(id: number) {

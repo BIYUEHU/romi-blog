@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, LoadingComponent, RouterLink],
+  imports: [DatePipe, LoadingComponent, RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-list.component.html'
 })

@@ -1,0 +1,208 @@
+<div class="max-w-98% w-4xl mx-auto flex-1">
+  @if (post) {
+  <div class="flex gap-8">
+    <!-- 主内容区 -->
+    <div class="flex-1 w-full">
+      <ng-content select="[post-brefore]"></ng-content>
+
+      <div class="max-w-full w-230 post-body mt-2 p-5 rounded-xl hover:shadow-sm" [innerHTML]="renderedContent"></div>
+
+      <ng-content select="[post-after]"></ng-content>
+
+      @if (!hideComments || !hideCopyright || !hideOptions || !hideRelatedPosts) {
+      <div class="w-35% mx-auto my-8">
+        <r-divider thickness="1"></r-divider>
+      </div>
+      }
+
+      @if (!hideCopyright) {
+      <div
+        class="text-size-lg line-height-loose mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
+        <strong> 本文链接：</strong><a [href]="post.url" class="text-bg-300 underline">{{ post.url }}</a><br />
+        <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
+      </div>
+      }
+
+      @if (!hideOptions) {
+      @if (post.categories.length + post.tags.length > 0) {
+      <div class="mx-auto line-height-loose mt-5">
+        <r-divider class="mx-auto"></r-divider>
+        <div class="flex my-4 gap-4 flex-wrap">
+          @for (item of
+          post.categories; track $index) {
+          <r-tag hovered [routerLink]="['/category', item]">
+            {{ item }}
+          </r-tag>
+          }
+          @for (item of post.tags; track $index) {
+          <r-tag hovered [routerLink]="['/tag', item[0]]" [type]="item[1]">
+            #{{ item[0] }}
+          </r-tag>
+          }
+        </div>
+        <r-divider class="mx-auto"></r-divider>
+      </div>
+      }
+
+      <div class="mx-auto flex gap-4 mt-6">
+        <r-button size="lg">
+          点个赞
+        </r-button>
+        <r-button size="lg" type="success">
+          赏杯咖啡
+        </r-button>
+        <r-button size="lg" type="warning">
+          分享到...
+        </r-button>
+      </div>
+      }
+
+      @if (!hideRelatedPosts && !post.hide && (relatedPosts[0] || relatedPosts[1])) {
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
+        @if (relatedPosts[0]) {
+        <a [href]="relatedPosts[0].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+          <div class="flex items-center gap-2 text-gray-500 mb-2">
+            <span>上一篇</span>
+          </div>
+          <div class="'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors">
+            {{ relatedPosts[0].title }}
+          </div>
+        </a>
+        } @else {
+        <div class="group p-4 rounded-lg transition-colors"></div>
+        }
+
+        @if (relatedPosts[1]) {
+        <a [href]="relatedPosts[1].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+          <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
+            <span>下一篇</span>
+          </div>
+          <div class="text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors text-right">
+            {{ relatedPosts[1].title }}
+          </div>
+        </a>
+        }
+      </div>
+      }
+
+      @if (!hideComments) {
+      @if (post.allow_comment) {
+      <div class="mt-8 mb-6">
+        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
+
+        @if (isNotLoggedIn) {
+        <div class="p-6 bg-text-300 rounded-lg text-center">
+          <p class="text-accent-100 mb-4">登录后才能发表评论</p>
+          <r-button [routerLink]="['/admin/login']" type="primary">
+            去登录
+          </r-button>
+        </div>
+        } @else {
+        <div class="mb-8">
+          @if (replyingTo) {
+          <div class="mb-2 flex items-center gap-2">
+            <span class="text-accent-100">回复 {{ "@" }}{{ replyingTo.username }}:</span>
+            <r-button type="primary" size="sm" (click)="cancelReply()">
+              取消回复
+            </r-button>
+          </div>
+          }
+          <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="commentText" placeholder="写下你的想法..."></r-input>
+          <div class="flex flex-wrap justify-between mt-4 gap-4 items-center">
+            <div class="text-accent-100">
+              当前登录：{{ currentUser?.username }}
+            </div>
+            <r-button (click)="addComment()" type="primary">发表评论</r-button>
+          </div>
+        </div>
+        }
+
+        <h3 class="text-2xl font-bold mb-8 flex items-center gap-2">
+          共 {{ comments.length }} 条评论
+        </h3>
+
+        @if (comments.length > 0) {
+        <div class="space-y-6 mb-6">
+          @for (comment of pagedComments; track comment.cid) {
+          <div class="flex gap-4">
+            <img [src]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username" alt="avatar"
+              class="w-10 h-10 rounded-full bg-text-200 flex-shrink-0 overflow-hidden" />
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                @if (comment.user_url) {
+                <a [href]="comment.user_url" target="_blank" class="text-sm text-primary-100 hover:text-primary-200">
+                  {{ '@' + comment.username }}
+                </a>
+                } @else {
+                <span class="font-medium">{{ comment.username }}</span>
+                }
+                <span class="text-accent-100 text-sm">
+                  {{ comment.created * 1000 | date : "yyyy-MM-dd HH:mm" }}
+                </span>
+              </div>
+              <p class="mt-2 text-bg-200">
+                @if (comment.replyTo) {
+                <span class="text-primary-100">回复 {{ '@' +comment.replyTo }}：</span>
+                }
+                {{ comment.text }}
+              </p>
+              <div class="mt-2">
+                <r-button type="primary" size="sm" (click)="setReplyTo(comment.username, comment.cid)">
+                  回复
+                </r-button>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+        @if (pages.length > 1) {
+        <div class="flex items-center justify-between mt-6">
+          <div class="text-sm text-accent-100">
+            共 {{ comments.length }} 条评论
+          </div>
+          <div class="flex items-center gap-2">
+            @for (page of pages; track page) {
+            @if (currentPage === page) {
+            <r-button type="primary">{{ page }}</r-button>
+            } @else {
+            <r-button (click)="goToPage(page)">
+              {{ page }}
+            </r-button>
+            }
+            }
+          </div>
+        </div>
+        }
+        }
+      </div>
+      } @else {
+      <div class="mt-8 mb-6">
+        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
+        <div class="p-6 bg-text-200 rounded-lg text-center">
+          <p class="text-accent-100 mb-4">评论已关闭</p>
+        </div>
+      </div>
+      }}
+    </div>
+
+    @if (!hideToc && toc.length > 0) {
+    <div class="hidden 2xl:block w-60 flex-shrink-0">
+      <div class="sticky top-12% p-4 bg-text-200 rounded-lg">
+        <h3 class="text-lg font-medium text-bg-200 mb-4">目录</h3>
+        <nav class="space-y-2 max-h-70vh">
+          @for (item of toc; track $index) {
+          <a [href]="post.url + '#' + item.text" class="block text-accent-100 hover:text-primary-100 transition-colors"
+            [style.padding-left]="(item.level - 1) * 12 + 'px'">
+            {{ item.text }}
+          </a>
+          }
+        </nav>
+      </div>
+    </div>
+    }
+  </div>
+  } @else {
+  <app-loading />
+  }
+</div>

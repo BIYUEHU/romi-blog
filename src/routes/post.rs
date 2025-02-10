@@ -293,7 +293,7 @@ pub async fn update(
 
     let txn = db.begin().await.context("Failed to begin transaction")?;
 
-    let post_model = match romi_posts::Entity::find_by_id(id)
+    match romi_posts::Entity::find_by_id(id)
         .one(&txn)
         .await
         .with_context(|| format!("Failed to fetch post {} for update", id))?
@@ -318,7 +318,7 @@ pub async fn update(
             active_model
                 .save(&txn)
                 .await
-                .context("Failed to update post")?
+                .context("Failed to update post")?;
         }
         None => return Err(ApiError::not_found("Post not found")),
     };
@@ -417,11 +417,57 @@ pub async fn update(
 
     txn.commit().await.context("Failed to commit transaction")?;
 
-    post_model
-        .try_into_model()
-        .context("Failed to convert model")?;
     l_info!(logger, "Successfully updated post: id={}", id);
+    api_ok(())
+}
 
+#[put("/like/<id>")]
+pub async fn like(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
+    l_info!(logger, "Liking post: id={}", id);
+    let db = conn.into_inner();
+
+    match romi_posts::Entity::find_by_id(id)
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to fetch post {} for like", id))?
+    {
+        Some(model) => {
+            let mut active_model = model.clone().into_active_model();
+            active_model.likes = ActiveValue::set(model.likes + 1);
+            active_model
+                .save(db)
+                .await
+                .context("Failed to update post")?;
+        }
+        None => return Err(ApiError::not_found("Post not found")),
+    };
+
+    l_info!(logger, "Successfully liked post: id={}", id);
+    api_ok(())
+}
+
+#[put("/view/<id>")]
+pub async fn view(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
+    l_info!(logger, "Viewing post: id={}", id);
+    let db = conn.into_inner();
+
+    match romi_posts::Entity::find_by_id(id)
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to fetch post {} for view", id))?
+    {
+        Some(model) => {
+            let mut active_model = model.clone().into_active_model();
+            active_model.views = ActiveValue::set(model.views + 1);
+            active_model
+                .save(db)
+                .await
+                .context("Failed to update post")?;
+        }
+        None => return Err(ApiError::not_found("Post not found")),
+    };
+
+    l_info!(logger, "Successfully viewed post: id={}", id);
     api_ok(())
 }
 

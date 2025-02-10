@@ -1,12 +1,12 @@
 <div class="space-y-6">
   <div class="bg-text-200 rounded-lg border border-text-200 p-4">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex-1">
+    <div class="flex flex-wrap items-center gap-1">
+      <div class="flex flex-1 min-w-40">
         <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索标签或分类..." class="w-full" />
       </div>
 
       <div class="flex flex-wrap gap-1 lg:gap-2 items-center">
-        <r-input type="text" [(ngModel)]="newMetaName" placeholder="新建标签/分类名称" class="w-full lg:w-48" />
+        <r-input type="text" [(ngModel)]="newMetaName" placeholder="新建标签/分类名称" class="min-w-40 lg:w-48" />
         <div>
           <r-button (click)="isAddingCategory = false; createMeta()" type="primary" class="transition-colors">
             添加标签

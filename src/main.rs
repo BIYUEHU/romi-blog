@@ -13,7 +13,7 @@ mod utils;
 use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
-use routes::{comment, global, info, user};
+use routes::{comment, global, info, news, user};
 use routes::{hitokoto, meta, post, seimg};
 use sea_orm_rocket::Database;
 use std::env;
@@ -118,6 +118,8 @@ async fn bootstrap() {
             post::fetch_all,
             post::create,
             post::update,
+            post::like,
+            post::view,
             post::delete
         ],
     )
@@ -162,6 +164,16 @@ async fn bootstrap() {
             hitokoto::update,
             hitokoto::like,
             hitokoto::delete
+        ],
+    )
+    .mount(
+        "/api/news",
+        routes![
+            news::fetch,
+            news::fetch_all,
+            news::create,
+            news::update,
+            news::delete
         ],
     )
     .mount(

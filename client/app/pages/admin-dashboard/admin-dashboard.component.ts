@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
@@ -7,6 +6,7 @@ import { version } from '../../../../package.json'
 import { CacheService } from '../../services/cache.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
+import { DatePipe } from '@angular/common'
 
 interface StatCard {
   title: string
@@ -19,7 +19,7 @@ interface StatCard {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [DatePipe, RouterLink],
   templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
@@ -41,14 +41,14 @@ export class AdminDashboardComponent implements OnInit {
       value: 0,
       icon: 'i-mdi:folder',
       color: 'bg-green-500',
-      link: '/admin/categories'
+      link: '/admin/metas'
     },
     {
       title: '标签数量',
       value: 0,
       icon: 'i-mdi:tag',
       color: 'bg-yellow-500',
-      link: '/admin/tags'
+      link: '/admin/metas'
     },
     {
       title: '评论数量',

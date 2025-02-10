@@ -1,38 +1,30 @@
-<div class="space-y-6">
-  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex-1">
-        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索文章标题..." class="w-full" />
-      </div>
-
-      <select [(ngModel)]="filterStatus"
-        class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
-        <option value="">所有状态</option>
-        <option value="published">已发布</option>
-        <option value="draft">草稿</option>
-      </select>
-
-      <r-button [routerLink]="['/admin/edit/new']" type="primary" class="transition-colors">
-        新建文章
-      </r-button>
+<app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
+  (pageChange)="goToPage($event)">
+  <div search-area class="flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索文章标题..." class="w-full" />
     </div>
+
+    <select [(ngModel)]="filterStatus"
+      class="px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+      <option value="">所有状态</option>
+      <option value="published">已发布</option>
+      <option value="draft">草稿</option>
+    </select>
+
+    <r-button [routerLink]="['/admin/edit/new']" type="primary">
+      新建文章
+    </r-button>
   </div>
 
-  <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
-    @if (isLoading) {
-    <div class="p-8 text-center">
-      <r-loading label="加载中..." />
-    </div>
-    } @else if (posts.length === 0) {
-    <div class="p-8 text-center text-gray-500">
-      暂无文章
-    </div>
-    } @else {
+  <div list-content>
     <table class="min-w-full divide-y divide-text-200 overflow-x-auto">
       <thead class="bg-text-200">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">标题</th>
-          <th class="hidden 2xl:inline px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">摘要
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            摘要
           </th>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">评论</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">可见性</th>
@@ -41,15 +33,15 @@
         </tr>
       </thead>
       <tbody class="bg-text-200 divide-y divide-text-200">
-        @for (post of pagedPosts; track post.id) {
+        @for (post of pagedItems; track post.id) {
         <tr class="hover:bg-text-200">
           <td class="px-6 py-4">
             <div class="flex items-center">
               @if (post.banner) {
               <img [src]="post.banner" class="hidden 2xl:inline h-12 object-cover rounded mr-3" alt="Post banner" />
               }
-              <div class="">
-                <a target="_blank" [routerLink]="['/post/', post.id]" class="text-sm font-medium text-bg-200 truncate">
+              <div>
+                <a [routerLink]="['/post/', post.id]" target="_blank" class="text-sm font-medium text-bg-200 truncate">
                   {{ post.title.slice(0, 20) }}
                 </a>
                 <div class="text-sm text-gray-500">
@@ -58,38 +50,34 @@
               </div>
             </div>
           </td>
-          <td class="hidden 2xl:inline-block px-6 py-4">
+          <td class="hidden 2xl:table-cell px-6 py-4">
             <p class="text-sm text-gray-500 line-clamp-2">
               {{ post.summary }}
             </p>
           </td>
           <td class="px-6 py-4">
-            @if (post.allow_comment){
+            @if (post.allow_comment) {
             <r-tag type="success">允许</r-tag>
             } @else {
             <r-tag type="error">禁止</r-tag>
             }
           </td>
           <td class="px-6 py-4">
-            @if (post.password) {
-            <r-tag>隐藏</r-tag>
-            } @else {
-            <r-tag type="secondary">正常</r-tag>
-            }
+            <r-tag [type]="post.hide ? 'default' : 'secondary'">
+              {{ post.hide ? '隐藏' : '正常' }}
+            </r-tag>
           </td>
           <td class="px-6 py-4">
-            @if (post.password) {
-            <r-tag type="warning">加密</r-tag>
-            } @else {
-            <r-tag type="info">公开</r-tag>
-            }
+            <r-tag [type]="post.password ? 'warning' : 'info'">
+              {{ post.password ? '加密' : '公开' }}
+            </r-tag>
           </td>
           <td class="px-6 py-4 text-sm">
             <div class="flex items-center gap-2">
               <r-button [routerLink]="['/admin/edit', post.id]" type="primary">
                 编辑
               </r-button>
-              <r-button (click)="deletePost(post.id)" type="error">
+              <r-button (click)="deleteItem(post.id)" type="error">
                 删除
               </r-button>
             </div>
@@ -98,25 +86,5 @@
         }
       </tbody>
     </table>
-    }
-
-    @if (pages.length > 1) {
-    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
-      <div class="text-sm text-gray-500 m-2">
-        共 {{ totalPosts }} 篇文章
-      </div>
-      <div class="flex items-center gap-1 flex-wrap">
-        @for (page of pages; track page) {
-        @if (currentPage === page) {
-        <r-button type="primary">{{ page }}</r-button>
-        } @else {
-        <r-button (click)="goToPage(page)">
-          {{ page }}
-        </r-button>
-        }
-        }
-      </div>
-    </div>
-    }
   </div>
-</div>
+</app-admin-base-list>

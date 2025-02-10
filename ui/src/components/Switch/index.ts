@@ -27,13 +27,7 @@ export default class RSwitch extends LitElement {
 
   private handleChange() {
     this.value = !this.value
-    this.dispatchEvent(
-      new CustomEvent('update:modelValue', {
-        detail: { value: this.value },
-        bubbles: true,
-        composed: true
-      })
-    )
+    this.dispatchEvent(new CustomEvent('change', { detail: { value: this.value }, bubbles: true, composed: true }))
   }
 
   public override render() {

@@ -1,0 +1,35 @@
+<app-post-content [id]="id" [hideOptions]="true" [hideSubTitle]="true" [hideRelatedPosts]="true" [hideCopyright]="true"
+  [hideToc]="true">
+  <div post-after class="mt-8">
+    <h1 class="text-2xl font-bold text-bg-200 mb-6 flex items-center gap-2">
+      友链列表
+    </h1>
+    <!-- @if (isLoading) { -->
+    <!-- <div class="text-center py-12"> -->
+    <!-- <r-loading label="加载中..." /> -->
+    <!-- </div> -->
+    <!-- } @else --> @if (links.length === 0) {
+    <div class="text-center py-12 text-accent-100">
+      暂无友链
+    </div>
+    } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (item of links; track $index) {
+      <a [href]="item.link" target="_blank"
+        class="block p-4 bg-text-200 rounded-lg hover:bg-text-300 transition-colors">
+        <div class="flex items-center gap-4">
+          <img [src]="item.avatar || 'https://api.dicebear.com/7.x/identicon/svg?seed=' + item.name" [alt]="item.name"
+            class="w-12 h-12 rounded-lg object-cover bg-text-200" />
+          <div class="flex-1 min-w-0">
+            <h3 class="font-medium text-bg-200 truncate">{{ item.name }}</h3>
+            @if (item.description) {
+            <p class="text-sm text-accent-100 truncate">{{ item.description }}</p>
+            }
+          </div>
+        </div>
+      </a>
+      }
+    </div>
+    }
+  </div>
+</app-post-content>

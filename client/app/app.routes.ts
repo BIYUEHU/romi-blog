@@ -15,6 +15,7 @@ import { AdminMetasComponent } from './pages/admin-metas/admin-metas.component'
 import { AdminUsersComponent } from './pages/admin-users/admin-users.component'
 import { AdminCommentsComponent } from './pages/admin-comments/admin-comments.component'
 import { AdminHitokotosComponent } from './pages/admin-hitokotos/admin-hitokotos.component'
+import { ControlComponent } from './components/control/control.component'
 // import { AboutComponent } from './pages/about/about.component'
 // import { FriendsComponent } from './pages/friends/friends.component'
 
@@ -98,7 +99,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    component: ControlComponent,
     pathMatch: 'full'
   }
 ]

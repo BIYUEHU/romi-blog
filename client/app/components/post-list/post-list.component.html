@@ -21,7 +21,7 @@
   </div>
 
   @if (totalPages > 1) {
-  <div class="flex justify-center items-center gap-2 mt-8 mb-4">
+  <div class="flex justify-center items-center gap-2 mt-8 mb-4 flex-wrap">
     @for (item of getPageNumbers(); track $index) {
     <span>
       @if (item === 'prev') {

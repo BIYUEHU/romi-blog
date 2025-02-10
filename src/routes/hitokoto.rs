@@ -44,6 +44,7 @@ async fn get_hitokoto(
             from: model.from,
             r#type: model.r#type.parse().unwrap_or(0),
             likes: model.likes,
+            is_public: model.is_public == "1".to_string(),
         }),
         None => {
             if length.is_some() && is_first {
@@ -84,6 +85,7 @@ pub async fn fetch_by_id(
             from: model.from,
             r#type: model.r#type.parse().unwrap_or(0),
             likes: model.likes,
+            is_public: model.is_public == "1".to_string(),
         }),
         None => Err(ApiError::not_found(format!("Hitokoto {} not found", id))),
     }
@@ -109,6 +111,7 @@ pub async fn fetch_public(
                 from: model.from,
                 r#type: model.r#type.parse().unwrap_or(0),
                 likes: model.likes,
+                is_public: true,
             })
             .collect(),
     )
@@ -134,6 +137,7 @@ pub async fn fetch_all(
                 from: model.from,
                 r#type: model.r#type.parse().unwrap_or(0),
                 likes: model.likes,
+                is_public: model.is_public == "1".to_string(),
             })
             .collect(),
     )
@@ -154,7 +158,7 @@ pub async fn create(
         from: ActiveValue::set(hitokoto.from.clone()),
         r#type: ActiveValue::set(hitokoto.r#type.clone().to_string()),
         likes: ActiveValue::set(0),
-        is_public: ActiveValue::set("1".to_string()),
+        is_public: ActiveValue::set((if hitokoto.is_public { 1 } else { 0 }).to_string()),
     }
     .insert(conn.into_inner())
     .await
@@ -186,7 +190,8 @@ pub async fn update(
             active_model.msg = ActiveValue::set(hitokoto.msg.clone());
             active_model.from = ActiveValue::set(hitokoto.from.clone());
             active_model.r#type = ActiveValue::set(hitokoto.r#type.clone().to_string());
-            active_model.is_public = ActiveValue::set("1".to_string());
+            active_model.is_public =
+                ActiveValue::set((if hitokoto.is_public { 1 } else { 0 }).to_string());
 
             let result = active_model
                 .save(db)

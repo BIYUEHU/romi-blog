@@ -1,79 +1,42 @@
-<div class="space-y-6">
-  <!-- 搜索区域 -->
-  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex-1">
-        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索评论内容或用户名..." class="w-full" />
-      </div>
+<app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
+  (pageChange)="goToPage($event)">
+  <div search-area class="flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索评论内容或用户名..." class="w-full" />
     </div>
   </div>
 
-  <!-- 评论列表 -->
-  <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
-    @if (isLoading) {
-    <div class="p-8 text-center">
-      <r-loading label="加载中..." />
-    </div>
-    } @else if (comments.length === 0) {
-    <div class="p-8 text-center text-accent-100">
-      暂无评论
-    </div>
-    } @else {
-    <div class="divide-y divide-text-300">
-      @for (comment of pagedComments; track comment.cid) {
-      <div class="p-6 hover:bg-text-300">
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex-1 space-y-2">
-            <!-- 评论内容 -->
-            <p class="text-bg-200 w-50 lg:w-150 break-words">{{ formatText(comment.text) }}</p>
+  <div list-content class="divide-y divide-text-300">
+    @for (comment of pagedItems; track comment.cid) {
+    <div class="p-6 hover:bg-text-300">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 space-y-2">
+          <p class="text-bg-200 w-50 lg:w-150 break-words">{{ formatText(comment.text) }}</p>
 
-            <!-- 评论信息 -->
-            <div class="flex items-center gap-4 text-sm">
-              <div class="flex items-center gap-2 text-accent-100">
-                @if (comment.user_url) {
-                <a [href]="comment.user_url" target="_blank" class="text-primary-100 hover:text-primary-200">
-                  {{ comment.username }}
-                </a>
-                } @else {
-                <span>{{ comment.username }}</span>
-                }
-              </div>
+          <div class="flex items-center gap-4 text-sm">
+            <div class="flex items-center gap-2 text-accent-100">
+              @if (comment.user_url) {
+              <a [href]="comment.user_url" target="_blank" class="text-primary-100 hover:text-primary-200">
+                {{ comment.username }}
+              </a>
+              } @else {
+              <span>{{ comment.username }}</span>
+              }
+            </div>
 
-              <div class="text-accent-100">
-                {{ comment.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
-              </div>
+            <div class="text-accent-100">
+              {{ comment.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
             </div>
           </div>
+        </div>
 
-          <!-- 操作按钮 -->
-          <div>
-            <r-button [routerLink]="['/post', comment.pid]" type="secondary">查看文章</r-button>
-            <r-button (click)="deleteComment(comment.cid)" type="error">删除评论</r-button>
-          </div>
+        <!-- 操作按钮 -->
+        <div>
+          <r-button [routerLink]="['/post', comment.pid]" type="secondary">查看文章</r-button>
+          <r-button (click)="deleteItem(comment.cid)" type="error">删除评论</r-button>
         </div>
       </div>
-      }
     </div>
-
-    <!-- 分页 -->
-    @if (pages.length > 1) {
-    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
-      <div class="text-sm text-accent-100 m-2">
-        共 {{ filteredComments.length }} 条评论
-      </div>
-      <div class="flex items-center gap-1 flex-wrap">
-        @for (page of pages; track page) {
-        @if (currentPage === page) {
-        <r-button type="primary">{{ page }}</r-button>
-        } @else {
-        <r-button (click)="goToPage(page)">
-          {{ page }}
-        </r-button>
-        }
-        }
-      </div>
-    </div>
-    }
     }
   </div>
-</div>
+</app-admin-base-list>

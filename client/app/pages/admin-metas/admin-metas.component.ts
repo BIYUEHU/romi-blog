@@ -1,14 +1,14 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
 import { ResMetaData } from '../../../output'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-meta',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebComponentInputAccessorDirective],
+  imports: [FormsModule, WebComponentInputAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-metas.component.html'
 })
@@ -19,7 +19,10 @@ export class AdminMetasComponent implements OnInit {
   public newMetaName = ''
   public isAddingCategory = false
 
-  public constructor(private apiService: ApiService) {}
+  public constructor(
+    private readonly apiService: ApiService,
+    private readonly notifyService: NotifyService
+  ) {}
 
   public ngOnInit() {
     this.loadMetas()
@@ -27,15 +30,9 @@ export class AdminMetasComponent implements OnInit {
 
   private loadMetas() {
     this.isLoading = true
-    this.apiService.getMetas().subscribe({
-      next: (data) => {
-        this.metas = data
-        this.isLoading = false
-      },
-      error: (error) => {
-        console.error('Failed to load metas:', error)
-        this.isLoading = false
-      }
+    this.apiService.getMetas().subscribe((data) => {
+      this.metas = data
+      this.isLoading = false
     })
   }
 
@@ -52,33 +49,28 @@ export class AdminMetasComponent implements OnInit {
   }
 
   public createMeta() {
-    if (!this.newMetaName.trim()) return
+    if (!this.newMetaName.trim()) {
+      this.notifyService.showMessage('请输入名称', 'warning')
+      return
+    }
 
     const data = {
       name: this.newMetaName.trim(),
       is_category: this.isAddingCategory
     }
 
-    this.apiService.createMeta(data).subscribe({
-      next: () => {
-        this.loadMetas()
-        this.newMetaName = ''
-      },
-      error: (error) => {
-        console.error('Failed to create meta:', error)
-      }
+    this.apiService.createMeta(data).subscribe(() => {
+      this.notifyService.showMessage('创建成功', 'success')
+      this.loadMetas()
+      this.newMetaName = ''
     })
   }
 
   public deleteMeta(id: number, name: string) {
     if (confirm(`确定要删除"${name}"吗？`)) {
-      this.apiService.deleteMeta(id).subscribe({
-        next: () => {
-          this.metas = this.metas.filter((meta) => meta.mid !== id)
-        },
-        error: (error) => {
-          console.error('Failed to delete meta:', error)
-        }
+      this.apiService.deleteMeta(id).subscribe(() => {
+        this.notifyService.showMessage('删除成功', 'secondary')
+        this.metas = this.metas.filter((meta) => meta.mid !== id)
       })
     }
   }

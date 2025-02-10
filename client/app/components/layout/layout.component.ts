@@ -1,62 +1,11 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { NavigationStart, Router, RouterLink, RouterOutlet } from '@angular/router'
-import { HeaderComponent } from '../header/header.component'
-import { FooterComponent } from '../footer/footer.component'
-import { NotifyService } from '../../services/notify.service'
-import { BrowserService } from '../../services/browser.service'
+import { Component } from '@angular/core'
+import { RouterOutlet } from '@angular/router'
+import { LayoutUsingComponent } from '../layout-using/layout-using.component'
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, FooterComponent, CommonModule, RouterLink],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [RouterOutlet, LayoutUsingComponent],
   templateUrl: './layout.component.html'
 })
-export class LayoutComponent implements OnInit {
-  private initHeaderData = {
-    title: 'Arimura Sena',
-    subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
-    imageUrl: 'https://api.hotaru.icu/ial/background?id=2'
-  }
-
-  public showBackTop = false
-
-  public headerImageHeight = 350
-
-  public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
-
-  public constructor(
-    private readonly router: Router,
-    private readonly notifyService: NotifyService,
-    private readonly browserService: BrowserService
-  ) {}
-
-  public ngOnInit() {
-    this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
-    this.router.events.subscribe((event) => this.handleRouteEvent(event))
-    this.browserService.windowRef?.window.addEventListener('scroll', (e) => {
-      this.showBackTop = window.scrollY > 100
-    })
-  }
-
-  private updateHeaderContent(data: Partial<typeof this.initHeaderData>) {
-    this.headerData = {
-      ...this.initHeaderData,
-      ...data
-    }
-    this.headerImageHeight =
-      (this.headerData.title?.length ??
-        0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
-  }
-
-  private handleRouteEvent(event: object) {
-    if (event instanceof NavigationStart) {
-      this.updateHeaderContent({})
-    }
-  }
-
-  public scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-}
+export class LayoutComponent {}

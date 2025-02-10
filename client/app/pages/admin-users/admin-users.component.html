@@ -1,7 +1,80 @@
+<app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
+  (pageChange)="goToPage($event)">
+  <div search-area class="flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索用户名或邮箱..." class="w-full" />
+    </div>
+
+    <r-button (click)="startEdit()" type="primary">
+      新建用户
+    </r-button>
+  </div>
+
+  <div list-content>
+    <table class="min-w-full divide-y divide-text-200">
+      <thead class="bg-text-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">用户信息</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">状态</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">注册时间</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">最后登录</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
+        </tr>
+      </thead>
+      <tbody class="bg-text-200 divide-y divide-text-200">
+        @for (user of pagedItems; track user.uid) {
+        <tr class="hover:bg-text-300">
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-bg-200">{{ user.username }}</span>
+                @if (user.is_admin) {
+                <span class="px-2 py-0.5 text-xs rounded-full bg-primary-100 text-text-100">管理员</span>
+                }
+              </div>
+              <div class="text-sm text-accent-100">{{ user.email }}</div>
+              @if (user.url) {
+              <a [href]="user.url" target="_blank" class="text-sm text-primary-100 hover:text-primary-200">
+                {{ user.url.slice(0, 20) }}
+              </a>
+              }
+            </div>
+          </td>
+          <td class="px-6 py-4">
+            <r-tag [type]="['success', 'error', 'warning'][user.status]">
+              {{['正常', '禁用', '待验证'][user.status] }}
+            </r-tag>
+          </td>
+          <td class="px-6 py-4 text-sm text-accent-100">
+            {{ user.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
+          </td>
+          <td class="px-6 py-4 text-sm text-accent-100">
+            {{ user.last_login * 1000 | date:'YYYY-MM-dd HH:mm' }}
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <r-button (click)="startEdit(user)" type="primary">
+                编辑
+              </r-button>
+              <r-button (click)="deleteItem(user.uid)" type="error"
+                [disabled]="user.is_admin || user.uid === admin?.id">
+                删除
+              </r-button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-admin-base-list>
+
 @if (editingUser) {
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
   <div class="bg-text-200 rounded-lg p-6 w-full max-w-md">
-    <h2 class="text-lg font-medium text-bg-200 mb-4">{{ editingUser !== true ? '编辑用户' : '新建用户' }}</h2>
+    <h2 class="text-lg font-medium text-bg-200 mb-4">
+      {{ editingUser !== true ? '编辑用户' : '新建用户' }}
+    </h2>
 
     <div class="space-y-4">
       <div>
@@ -51,108 +124,3 @@
   </div>
 </div>
 }
-<div class="space-y-6">
-
-  <!-- 搜索区域 -->
-  <div class="bg-text-200 rounded-lg border border-text-200 p-4">
-    <div class="flex flex-wrap items-center gap-4">
-      <div class="flex-1">
-        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索用户名或邮箱..." class="w-full" />
-      </div>
-
-      <r-button (click)="startEdit()" type="primary" class="transition-colors">
-        新建用户
-      </r-button>
-    </div>
-  </div>
-
-  <!-- 用户列表 -->
-  <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
-    @if (isLoading) {
-    <div class="p-8 text-center">
-      <r-loading label="加载中..." />
-    </div>
-    } @else if (users.length === 0) {
-    <div class="p-8 text-center text-accent-100">
-      暂无用户
-    </div>
-    } @else {
-    <table class="min-w-full divide-y divide-text-200">
-      <thead class="bg-text-200">
-        <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">用户信息</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">状态</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">注册时间</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">最后登录</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
-        </tr>
-      </thead>
-      <tbody class="bg-text-200 divide-y divide-text-200">
-        @for (user of pagedUsers; track user.uid) {
-        <tr class="hover:bg-text-300">
-          <td class="px-6 py-4">
-            <div class="flex flex-col">
-              <div class="flex items-center gap-2">
-                <span class="font-medium text-bg-200">{{ user.username }}</span>
-                @if (user.is_admin) {
-                <span class="px-2 py-0.5 text-xs rounded-full bg-primary-100 text-text-100">管理员</span>
-                }
-              </div>
-              <div class="text-sm text-accent-100">{{ user.email }}</div>
-              @if (user.url) {
-              <a [href]="user.url" target="_blank" class="text-sm text-primary-100 hover:text-primary-200">
-                {{ user.url.slice(0, 20) }}
-              </a>
-              }
-            </div>
-          </td>
-          <td class="px-6 py-4">
-            <r-tag [type]="['success', 'error', 'warning'][user.status]">
-              {{['正常', '禁用', '待验证'][user.status] }}
-            </r-tag>
-          </td>
-          <td class="px-6 py-4 text-sm text-accent-100">
-            {{ user.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
-          </td>
-          <td class="px-6 py-4 text-sm text-accent-100">
-            {{ user.last_login * 1000 | date:'YYYY-MM-dd HH:mm' }}
-          </td>
-          <td class="px-6 py-4 text-right">
-            <div class="flex items-center justify-end gap-2">
-              <r-button (click)="startEdit(user)" type="primary">
-                编辑
-              </r-button>
-              <r-button (click)="deleteUser(user.uid, user.username)" type="error"
-                [disabled]="user.is_admin || user.uid === admin?.id">
-                删除
-              </r-button>
-            </div>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-    <!-- 在表格后面，在最后的 } @else 的闭合标签前添加 -->
-    <!-- 分页 -->
-    @if (pages.length > 1) {
-    <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
-      <div class="text-sm text-accent-100">
-        共 {{ filteredUsers.length }} 个用户
-      </div>
-      <div class="flex items-center gap-2">
-        @for (page of pages; track page) {
-        @if (currentPage === page) {
-        <r-button type="primary">{{ page }}</r-button>
-        } @else {
-        <r-button (click)="goToPage(page)">
-          {{ page }}
-        </r-button>
-        }
-        }
-      </div>
-    </div>
-    }
-    }
-  </div>
-
-</div>
