@@ -35,7 +35,10 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
           this.authService.logout()
           return EMPTY
         }
-        if (error.status === 404 && ['/news/', '/post/', '/admin/edit/'].some((url) => request.url.includes(url))) {
+        if (
+          error.status === 404 &&
+          ['/news/', '/post/', '/char', '/admin/edit/'].some((url) => request.url.includes(url))
+        ) {
           location.href = '/404'
           return EMPTY
         }

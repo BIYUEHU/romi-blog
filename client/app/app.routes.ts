@@ -1,3 +1,4 @@
+// TODO: Music player singleton at whole browser
 import type { Routes } from '@angular/router'
 import { LayoutComponent } from './components/layout/layout.component'
 import { HomeComponent } from './pages/home/home.component'
@@ -24,6 +25,10 @@ import { AdminNewsComponent } from './pages/admin-news/admin-news.component'
 import { NewsesComponent } from './pages/newses/newses.component'
 import { NewsComponent } from './pages/news/news.component'
 import { MusicComponent } from './pages/music/music.component'
+import { CharComponent } from './pages/char/char.component'
+import { CharsComponent } from './pages/chars/chars.component'
+import { ProjectComponent } from './pages/project/project.component'
+import { PostsComponent } from './pages/posts/home.component'
 
 export const routes: Routes = [
   {
@@ -40,11 +45,10 @@ export const routes: Routes = [
         component: PostComponent
         // title: 'Article'
       },
-      // {
-      //   path: 'about',
-      //   component: AboutComponent,
-      //   title: 'About'
-      // },
+      {
+        path: 'post',
+        component: PostsComponent
+      },
       {
         path: 'archive',
         component: ArchiveComponent
@@ -80,6 +84,18 @@ export const routes: Routes = [
       {
         path: 'music',
         component: MusicComponent
+      },
+      {
+        path: 'char',
+        component: CharsComponent
+      },
+      {
+        path: 'char/:id',
+        component: CharComponent
+      },
+      {
+        path: 'project',
+        component: ProjectComponent
       }
     ]
   },

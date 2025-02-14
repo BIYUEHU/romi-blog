@@ -22,7 +22,7 @@ export class MusicComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.notifyService.updateHeaderContent({
       title: '歌单列表',
-      subTitle: [`共 ${musicList.length} 首歌曲`]
+      subTitle: [`共 ${musicList.length} 首歌曲`, '内容从网易云歌单中同步']
     })
     if (this.browserService.isBrowser) this.initAplayer()
   }

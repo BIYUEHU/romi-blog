@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import {
+import type {
   AuthUser,
   BangumiData,
   LoginResponse,
@@ -10,15 +10,18 @@ import {
   ReqUserData,
   ResCommentData,
   ResDashboardData,
-  type ResHitokotoData,
+  ResHitokotoData,
   ResMetaData,
-  type ResPostData,
-  type ResPostSingleData,
+  ResPostData,
+  ResPostSingleData,
   ResSettingsData,
   ResUserData,
   UserAuthData,
   ResNewsData,
-  ReqNewsData
+  ReqNewsData,
+  Character,
+  Repository,
+  Video
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -214,5 +217,21 @@ export class ApiService {
 
   public getDashboard() {
     return this.http.get<ResDashboardData>(`${this.apiUrl}/info/dashboard`)
+  }
+
+  public getCharacters() {
+    return this.http.get<{ data: Character[] }>('https://m.hotaru.icu/api/character').pipe(map(({ data }) => data))
+  }
+
+  public getCharacter(id: number) {
+    return this.http.get<{ data: Character }>(`https://m.hotaru.icu/api/character/${id}`).pipe(map(({ data }) => data))
+  }
+
+  public getProjects() {
+    return this.http.get<Repository[]>('https://api.github.com/users/BIYUEHU/repos?sort=updated')
+  }
+
+  public getVideos() {
+    return this.http.get<Video[]>('/data/bilibili.json')
   }
 }
