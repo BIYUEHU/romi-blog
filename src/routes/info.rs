@@ -12,7 +12,6 @@ use crate::utils::cache::Cache;
 use crate::utils::pool::Db;
 use anyhow::Context;
 use futures::try_join;
-use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
 use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
@@ -54,7 +53,7 @@ pub async fn fetch_dashboard(
         romi_news::Entity::find().count(db),
     )
     .context("Failed to fetch dashboard counts")?;
-    Ok(Json(ResDashboardData {
+    api_ok(ResDashboardData {
         posts_count,
         categories_count,
         tags_count,
@@ -75,7 +74,7 @@ pub async fn fetch_dashboard(
             .output()
             .map(|output| String::from_utf8(output.stdout).ok().unwrap_or("".into()))
             .unwrap_or("".into()),
-    }))
+    })
 }
 
 #[get("/settings")]

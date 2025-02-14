@@ -16,8 +16,14 @@ import { AdminUsersComponent } from './pages/admin-users/admin-users.component'
 import { AdminCommentsComponent } from './pages/admin-comments/admin-comments.component'
 import { AdminHitokotosComponent } from './pages/admin-hitokotos/admin-hitokotos.component'
 import { ControlComponent } from './components/control/control.component'
-// import { AboutComponent } from './pages/about/about.component'
-// import { FriendsComponent } from './pages/friends/friends.component'
+import { HitokotosComponent } from './pages/hitokotos/hitokotos.component'
+import { HitokotoComponent } from './pages/hitokoto/hitokoto.component'
+import { AnimeComponent } from './pages/anime/anime.component'
+import { GalComponent } from './pages/gal/gal.component'
+import { AdminNewsComponent } from './pages/admin-news/admin-news.component'
+import { NewsesComponent } from './pages/newses/newses.component'
+import { NewsComponent } from './pages/news/news.component'
+import { MusicComponent } from './pages/music/music.component'
 
 export const routes: Routes = [
   {
@@ -50,6 +56,30 @@ export const routes: Routes = [
       {
         path: 'category/:name',
         component: CategoryComponent
+      },
+      {
+        path: 'hitokotos',
+        component: HitokotosComponent
+      },
+      {
+        path: 'anime',
+        component: AnimeComponent
+      },
+      {
+        path: 'gal',
+        component: GalComponent
+      },
+      {
+        path: 'news',
+        component: NewsesComponent
+      },
+      {
+        path: 'news/:id',
+        component: NewsComponent
+      },
+      {
+        path: 'music',
+        component: MusicComponent
       }
     ]
   },
@@ -94,8 +124,20 @@ export const routes: Routes = [
       {
         path: 'hitokotos',
         component: AdminHitokotosComponent
+      },
+      {
+        path: 'news',
+        component: AdminNewsComponent
       }
     ]
+  },
+  {
+    path: 'hitokoto',
+    component: HitokotoComponent
+  },
+  {
+    path: 'hitokoto/:id',
+    component: HitokotoComponent
   },
   {
     path: '**',

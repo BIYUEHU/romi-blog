@@ -1,0 +1,39 @@
+<app-layout-using [fullBackground]="true" [displayFooter]="false">
+  <div background class="flex flex-col items-center justify-center px-4 my-auto">
+    <h1 class="text-4xl font-bold text-bg-200 mb-12 hidden md:block">
+
+    </h1>
+
+    @if (data) {
+    <div class="text-center space-y-6">
+      <p class="text-xl text-primary-200">
+        {{ data.msg }}
+        @if (data.from) {
+        <span class="text-accent-100"> ——{{ data.from }}</span>
+        }
+      </p>
+
+      <div class="flex items-center justify-center gap-4 text-sm">
+        <r-tag size="lg" [type]="getTagType(data.type)">{{ getTypeName(data.type) }}</r-tag>
+        <r-tag size="lg" type="primary">Likes: {{ data.likes }}</r-tag>
+      </div>
+
+      <div class="flex items-center justify-center gap-2">
+        <r-button size="lg" (click)="likeHitokoto()" [disabled]="isLiked">
+          点赞
+        </r-button>
+        <r-button size="lg" (click)="nextHitokoto()">
+          下一条
+        </r-button>
+        <r-button size="lg" (click)="shareHitokoto()">
+          分享
+        </r-button>
+      </div>
+    </div>
+    } @else {
+    <div class="text-center">
+      <r-loading label="加载中..." />
+    </div>
+    }
+  </div>
+</app-layout-using>

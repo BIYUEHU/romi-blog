@@ -114,7 +114,7 @@ export class PostContentComponent
       const token = tokens[idx]
       const src = token.attrGet('src') || ''
       const alt = token.content || ''
-      return `<a href="${src}" target="_blank" class="inline-block hover:opacity-90 transition-opacity">
+      return `<a href="${src}" target="_blank" class="romi-img inline-block hover:opacity-90 transition-opacity">
       <img src="${src}" alt="${alt}" class="max-w-full rounded-lg" loading="lazy">
     </a>`
     }

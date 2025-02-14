@@ -120,7 +120,8 @@ async fn bootstrap() {
             post::update,
             post::like,
             post::view,
-            post::delete
+            post::delete,
+            post::decrypt
         ],
     )
     .mount(

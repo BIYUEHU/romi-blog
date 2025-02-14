@@ -1,22 +1,24 @@
 import { Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import {
-  ResMetaData,
-  type ResHitokotoData,
-  type ResPostData,
-  type ResPostSingleData,
-  LoginResponse,
   AuthUser,
-  UserAuthData,
-  ResSettingsData,
-  ResDashboardData,
-  ReqPostData,
+  BangumiData,
+  LoginResponse,
+  ReqHitokotoData,
   ReqMetaData,
-  ResUserData,
+  ReqPostData,
   ReqUserData,
   ResCommentData,
-  ReqCommentData,
-  ReqHitokotoData
+  ResDashboardData,
+  type ResHitokotoData,
+  ResMetaData,
+  type ResPostData,
+  type ResPostSingleData,
+  ResSettingsData,
+  ResUserData,
+  UserAuthData,
+  ResNewsData,
+  ReqNewsData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -32,6 +34,10 @@ export class ApiService {
 
   private getSkipErrorHandlerHeaders() {
     return new HttpHeaders().set('Skip-Error-Handler', 'true')
+  }
+
+  private getSkipBringTokenhHeaders() {
+    return new HttpHeaders().set('Skip-Bring-Token', 'true')
   }
 
   public getPosts() {
@@ -93,7 +99,10 @@ export class ApiService {
       .pipe(
         map((res) => {
           try {
-            return { ...jwtDecode<AuthUser>(res.token), token: res.token } as UserAuthData
+            return {
+              ...jwtDecode<AuthUser>(res.token),
+              token: res.token
+            } as UserAuthData
           } catch {
             return null
           }
@@ -140,8 +149,8 @@ export class ApiService {
     return this.http.delete<void>(`${this.apiUrl}/comment/${id}`)
   }
 
-  public getHitokoto() {
-    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto`)
+  public getHitokoto(id?: number) {
+    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto${id ? `/${id}` : ''}`)
   }
 
   public getHitokotos(isPublic: boolean) {
@@ -157,9 +166,7 @@ export class ApiService {
   }
 
   public likeHitokoto(id: number) {
-    return this.http.post<void>(`${this.apiUrl}/hitokoto/${id}/like`, null, {
-      headers: this.getSkipErrorHandlerHeaders()
-    })
+    return this.http.put<void>(`${this.apiUrl}/hitokoto/like/${id}`, {})
   }
 
   public deleteHitokoto(id: number) {
@@ -168,6 +175,37 @@ export class ApiService {
 
   public getHitokotoById(id: number) {
     return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto/${id}`)
+  }
+
+  public getBangumi(offset: number, isAnime: boolean) {
+    return this.http.get<BangumiData>('https://api.bgm.tv/v0/users/himeno/collections', {
+      params: {
+        limit: 50,
+        offset,
+        subject_type: isAnime ? 2 : 4
+      },
+      headers: this.getSkipBringTokenhHeaders()
+    })
+  }
+
+  public getNewses() {
+    return this.http.get<ResNewsData[]>(`${this.apiUrl}/news`)
+  }
+
+  public getNews(id: number) {
+    return this.http.get<ResNewsData>(`${this.apiUrl}/news/${id}`)
+  }
+
+  public createNews(data: ReqNewsData) {
+    return this.http.post<void>(`${this.apiUrl}/news`, data)
+  }
+
+  public updateNews(id: number, data: ReqNewsData) {
+    return this.http.put<void>(`${this.apiUrl}/news/${id}`, data)
+  }
+
+  public deleteNews(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/news/${id}`)
   }
 
   public getSettings() {

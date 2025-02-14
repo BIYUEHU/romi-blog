@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { ResPostData } from '../../models/api.model'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { NotifyService } from '../../services/notify.service'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-category',
@@ -16,6 +17,7 @@ export class CategoryComponent extends romiComponentFactory<ResPostData[]>('home
 
   public constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly notifyService: NotifyService
   ) {
     super()
@@ -26,9 +28,13 @@ export class CategoryComponent extends romiComponentFactory<ResPostData[]>('home
     if (!this.categoryName) return
 
     this.setData(
-      (set) => this.apiService.getPosts().subscribe((data) => set(data)),
+      (set) => this.apiService.getPosts().subscribe((data) => set(sortByCreatedTime(data))),
       (data) => {
         this.data = data.filter((post) => post.categories.includes(this.categoryName))
+        if (this.data.length === 0) {
+          this.router.navigate(['/404'])
+          return
+        }
         this.notifyService.updateHeaderContent({
           title: this.categoryName,
           subTitle: [`共 ${this.data?.length ?? 0} 篇文章`]

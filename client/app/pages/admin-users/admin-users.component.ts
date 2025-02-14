@@ -42,15 +42,9 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
 
   protected loadItems(): void {
     this.isLoading = true
-    this.apiService.getUsers().subscribe({
-      next: (data) => {
-        this.items = data
-        this.isLoading = false
-      },
-      error: (error) => {
-        console.error('Failed to load users:', error)
-        this.isLoading = false
-      }
+    this.apiService.getUsers().subscribe((data) => {
+      this.items = data
+      this.isLoading = false
     })
   }
 
@@ -99,19 +93,13 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           password: this.editForm.password.trim(),
           status: Number(this.editForm.status)
         })
-        .subscribe({
-          next: () => {
-            this.notifyService.showMessage('更新成功', 'success')
-            if ((this.editingUser as ResUserData).uid === this.admin?.id) {
-              this.authService.logout()
-            }
-            this.loadItems()
-            this.editingUser = null
-          },
-          error: (error) => {
-            console.error('Failed to update user:', error)
-            this.notifyService.showMessage('更新失败', 'error')
+        .subscribe(() => {
+          this.notifyService.showMessage('更新成功', 'success')
+          if ((this.editingUser as ResUserData).uid === this.admin?.id) {
+            this.authService.logout()
           }
+          this.loadItems()
+          this.editingUser = null
         })
     } else {
       this.apiService
@@ -120,16 +108,10 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           password: this.editForm.password.trim(),
           status: Number(this.editForm.status)
         })
-        .subscribe({
-          next: () => {
-            this.notifyService.showMessage('创建成功', 'success')
-            this.loadItems()
-            this.editingUser = null
-          },
-          error: (error) => {
-            console.error('Failed to create user:', error)
-            this.notifyService.showMessage('创建失败', 'error')
-          }
+        .subscribe(() => {
+          this.notifyService.showMessage('创建成功', 'success')
+          this.loadItems()
+          this.editingUser = null
         })
     }
   }

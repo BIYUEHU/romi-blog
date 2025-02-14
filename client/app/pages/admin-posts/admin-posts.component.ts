@@ -27,15 +27,9 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
 
   protected loadItems(): void {
     this.isLoading = true
-    this.apiService.getPosts().subscribe({
-      next: (data) => {
-        this.items = data
-        this.isLoading = false
-      },
-      error: (error) => {
-        console.error('Failed to load posts:', error)
-        this.isLoading = false
-      }
+    this.apiService.getPosts().subscribe((data) => {
+      this.items = data
+      this.isLoading = false
     })
   }
 

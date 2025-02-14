@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-post',
@@ -11,9 +12,13 @@ import { PostContentComponent } from '../../components/post-content/post-content
 export class PostComponent implements OnInit {
   public id?: number
 
-  public constructor(private readonly route: ActivatedRoute) {}
+  public constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {}
 
-  public async ngOnInit() {
+  public ngOnInit() {
     this.id = Number(this.route.snapshot.paramMap.get('id'))
+    if (Number.isNaN(this.id) || this.id <= 0) this.router.navigate(['/404'])
   }
 }

@@ -1,0 +1,92 @@
+<div class="max-w-98% w-4xl mx-auto flex-1">
+  <div class="flex gap-8">
+    <!-- 主内容区 -->
+    <div class="flex-1">
+      @if (isAdmin) {
+      <div class="mb-6 bg-text-200 p-4 rounded-xl hover:shadow-sm">
+        <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="newText" placeholder="分享新动态..."></r-input>
+        <div class="flex justify-end mt-4">
+          <r-button (click)="sendNews()" type="primary">发送</r-button>
+        </div>
+      </div>
+      }
+
+      @if (isLoading) {
+      <app-loading />
+      } @else if (groupedNews.length === 0) {
+      <div class="text-center text-accent-100 py-8">暂无动态</div>
+      } @else {
+      <div class="space-y-12">
+        @for (group of groupedNews; track group.year + '-' + group.month) {
+        <div [id]="group.year + '-' + group.month" class="scroll-mt-24">
+          <h2 class="text-2xl font-bold text-primary-100 mb-6">
+            {{ group.year }}年{{ group.month }}月
+          </h2>
+
+          <div class="space-y-6">
+            @for (news of group.news; track news.id) {
+            <div class="bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-shadow">
+              <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                  <div class="text-sm text-accent-100">
+                    {{ news.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+                  </div>
+                  @if (news.hide) {
+                  <r-tag type="error">已隐藏</r-tag>
+                  }
+                </div>
+
+                <div class="text-bg-100 break-all">
+                  @if (news.text.length > 200) {
+                  {{ news.text.slice(0, 200) }}...
+                  <r-button [routerLink]="['/news', news.id]" type="primary" size="sm">
+                    阅读更多
+                  </r-button>
+                  } @else {
+                  {{ news.text }}
+                  }
+                </div>
+
+                @if (news.imgs && news.imgs.length > 0) {
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  @for (img of news.imgs; track $index) {
+                  <a [href]="img" target="_blank" class="block hover:opacity-90 transition-opacity">
+                    <img [src]="img" class="w-full h-40 object-cover rounded-lg" loading="lazy" />
+                  </a>
+                  }
+                </div>
+                }
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+
+      <div class="flex justify-center mt-8">
+        <r-button type="accent" (click)="loadMore()">加载更多</r-button>
+      </div>
+      }
+    </div>
+
+    <div class="hidden 2xl:block w-60 flex-shrink-0">
+      <div class="sticky top-12% p-4 bg-text-200 rounded-lg">
+        <h3 class="text-lg font-medium text-bg-200 mb-4">时间线</h3>
+        <nav class="space-y-2 max-h-70vh overflow-auto">
+          @for (year of toc; track year.year) {
+          <div class="mb-4">
+            <div class="text-primary-100 font-medium mb-2">{{ year.year }}年</div>
+            @for (month of year.months; track month.month) {
+            <a [href]="url + '#' + year.year + '-' + month.month"
+              class="block text-accent-100 hover:text-primary-100 transition-colors ml-4">
+              {{ month.month }}月
+            </a>
+            }
+          </div>
+          }
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

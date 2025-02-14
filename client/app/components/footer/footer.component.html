@@ -6,7 +6,7 @@
       <p>感谢陪伴：{{ currentTime }}</p>
       @if (hitokoto) {
       <p>
-        <a target="_blank" [href]="hitokoto.url">{{
+        <a [routerLink]="'/hitokoto/' + hitokoto.id">{{
           hitokoto.msg
           }}</a>
       </p>

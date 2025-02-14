@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
-import { HttpRequest, HttpHandlerFn } from '@angular/common/http'
-import { EMPTY, catchError, throwError } from 'rxjs'
+import { HttpHandlerFn, HttpRequest } from '@angular/common/http'
+import { catchError, EMPTY, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 import { NotifyService } from '../services/notify.service'
@@ -19,8 +19,10 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
     if (!this.browserService.isBrowser) return next(request)
 
     const skipErrorHandler = request.headers.has('Skip-Error-Handler')
-    const headers = skipErrorHandler ? request.headers.delete('Skip-Error-Handler') : request.headers
-    const token = this.authService.getToken()
+    const skipBringToken = request.headers.has('Skip-Bring-Token')
+    let headers = skipErrorHandler ? request.headers.delete('Skip-Error-Handler') : request.headers
+    headers = skipBringToken ? headers.delete('Skip-Bring-Token') : headers
+    const token = skipBringToken ? null : this.authService.getToken()
 
     return next(
       request.clone({
@@ -31,6 +33,10 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
         if (token && error.status === 401) {
           this.notifyService.showMessage('登录已过期，请重新登录', 'error')
           this.authService.logout()
+          return EMPTY
+        }
+        if (error.status === 404 && ['/news/', '/post/', '/admin/edit/'].some((url) => request.url.includes(url))) {
+          location.href = '/404'
           return EMPTY
         }
         if (skipErrorHandler) return throwError(() => error)

@@ -1,0 +1,35 @@
+<div class="max-w-98% w-4xl mx-auto flex-1">
+  @if (isLoading || !data) {
+  <app-loading />
+  } @else {
+  <div class="bg-text-200 rounded-lg overflow-hidden">
+    <div class="p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="text-accent-100">
+          发布于 {{ data.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+          @if (data.modified !== data.created) {
+          <span class="ml-2">
+            (编辑于 {{ data.modified * 1000 | date:'yyyy-MM-dd HH:mm' }})
+          </span>
+          }
+        </div>
+        @if (data.hide) {
+        <r-tag type="error">已隐藏</r-tag>
+        }
+      </div>
+
+      <div class="text-bg-100 whitespace-pre-wrap break-all text-4">{{ data.text }}</div>
+
+      @if (data.imgs.length > 0) {
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+        @for (img of data.imgs; track $index) {
+        <a [href]="img" target="_blank" class="block hover:opacity-90 transition-opacity">
+          <img [src]="img" class="w-full rounded-lg" loading="lazy" />
+        </a>
+        }
+      </div>
+      }
+    </div>
+  </div>
+  }
+</div>

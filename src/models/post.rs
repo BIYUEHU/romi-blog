@@ -16,6 +16,12 @@ pub struct ReqPostData {
     pub modified: u32,
 }
 
+#[derive(Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqDecryptPostData {
+    pub password: String,
+}
+
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostData {
@@ -52,4 +58,10 @@ pub struct ResPostSingleData {
     pub likes: i32,
     pub comments: i32,
     pub banner: Option<String>,
+}
+
+#[derive(Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResDecryptPostData {
+    pub text: String,
 }

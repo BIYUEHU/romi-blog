@@ -3,3 +3,17 @@
 - [ ] Support more markdown-it plugins
 - [ ] Comments status: 0 resolved; 1 pending; 2 spam
 - [ ] Posts status: 0 published; 1 hide; 2 draft
+- [ ] Support private news
+- [ ] Settings and customization
+- [ ] Website color scheme
+- [ ] Web loggers (filter requests from Node.Js)
+- [ ] RSS feed
+- [ ] Search engine
+- [ ] Post password protection (Include images and comments)
+- [ ] Post view, like
+- [ ] News view, like and comments, private news
+- [ ] Better website title
+- [ ] Refactory music player
+- [ ] Images gallery
+- [ ] Images bed and management system
+- [ ] Rust rerendering html to implement custom footer, header scripts and meta description, tags

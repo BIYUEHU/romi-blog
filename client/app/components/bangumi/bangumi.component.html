@@ -1,0 +1,49 @@
+<div class="max-w-98% w-4xl mx-auto space-y-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    @if (isLoading && !items.length) {
+    <app-loading />
+    }
+
+    @for (item of items; track $index) {
+    <a [href]="'https://bgm.tv/subject/' + item.subject_id" target="_blank"
+      class="bg-text-200 rounded-lg overflow-hidden hover:bg-text-300 transition-colors block hover:cursor-pointer">
+      <div class="flex gap-4 p-4">
+        <img [src]="item.subject.images.medium" [alt]="item.subject.name"
+          class="max-w-45% w-45 h-60 object-cover rounded-lg" />
+
+        <div class="flex-1 space-y-2 min-w-0">
+          <div class="text-lg font-bold text-bg-200 truncate">
+            {{ item.subject.name }}
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            @for (tag of item.tags; track tag) {
+            <r-tag type="accent" size="sm">{{ tag }}</r-tag>
+            }
+          </div>
+
+          <p class="text-primary-100 line-clamp-3">
+            {{ item.subject.short_summary }}
+          </p>
+
+          <div class="text-sm text-primary-100">
+            @if (item.subject.eps) {
+            <span class="font-bold">全 {{ item.subject.eps }} 话</span>
+            <span class="mx-2">•</span>
+            }
+            <span>{{ item.subject.date }}</span>
+          </div>
+        </div>
+      </div>
+    </a>
+    }
+  </div>
+
+  <div class="flex justify-center">
+    @if (isAnime) {
+    <r-button type="secondary" (click)="loadMore()">加载更多</r-button>
+    } @else {
+    <r-button type="warning" (click)="loadMore()">加载更多</r-button>
+    }
+  </div>
+</div>

@@ -23,7 +23,7 @@ export class AdminSidebarComponent {
         { text: '评论管理', link: '/admin/comments', icon: 'i-mdi:comment' },
         { text: '用户管理', link: '/admin/users', icon: 'i-mdi:account-multiple' },
         { text: '一言管理', link: '/admin/hitokotos', icon: 'i-mdi:format-quote-close' },
-        { text: '动态管理', link: '/admin/dynamics', icon: 'i-mdi:newspaper' }
+        { text: '动态管理', link: '/admin/news', icon: 'i-mdi:newspaper' }
       ]
     },
     {

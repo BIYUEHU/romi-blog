@@ -7,6 +7,7 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import Vditor from 'vditor'
 import { NotifyService } from '../../services/notify.service'
+import { formatDate } from '../../utils'
 
 @Component({
   selector: 'app-admin-edit',
@@ -116,20 +117,12 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     if (id && !Number.isNaN(Number(id))) {
       this.isEdit = true
       this.isLoading = true
-      this.apiService.getPost(id).subscribe({
-        next: (post) => {
-          const created = new Date(post.created * 1000)
-          const addZero = (num: number) => (num < 10 ? `0${num}` : num)
-          this.postForm = {
-            ...post,
-            created: `${created.getFullYear()}-${addZero(created.getMonth() + 1)}-${addZero(created.getDate())}T${addZero(created.getHours())}:${addZero(created.getMinutes())}`
-          }
-          this.isLoading = false
-        },
-        error: (error) => {
-          console.error('Failed to load post:', error)
-          this.isLoading = false
+      this.apiService.getPost(id).subscribe((post) => {
+        this.postForm = {
+          ...post,
+          created: formatDate(new Date(post.created * 1000))
         }
+        this.isLoading = false
       })
     } else {
       this.isLoading = false

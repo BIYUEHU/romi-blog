@@ -25,19 +25,20 @@ pub async fn fetch(
         .with_context(|| format!("Failed to fetch news {}", id))?
         .ok_or_else(|| ApiError::not_found("News not found"))?;
 
-    Ok(Json(ResNewsData {
+    api_ok(ResNewsData {
+        id: news.nid,
         created: news.created,
         modified: news.modified,
         text: news.text,
-        hide: news.hide,
+        hide: news.hide.eq(&1.to_string()),
         views: news.views,
         likes: news.likes,
         comments: news.comments,
         imgs: news
             .imgs
-            .map(|imgs| serde_json::from_str(&imgs).unwrap_or_default())
+            .map(|imgs| imgs.split(',').map(|s| s.to_string()).collect())
             .unwrap_or_default(),
-    }))
+    })
 }
 
 #[get("/")]
@@ -63,24 +64,31 @@ pub async fn fetch_all(
         .await
         .with_context(|| "Failed to fetch news list")?;
 
-    Ok(Json(
+    api_ok(
         news_list
             .into_iter()
             .map(|news| ResNewsData {
+                id: news.nid,
                 created: news.created,
                 modified: news.modified,
                 text: news.text,
-                hide: news.hide,
+                hide: news.hide.eq(&1.to_string()),
                 views: news.views,
                 likes: news.likes,
                 comments: news.comments,
                 imgs: news
                     .imgs
-                    .map(|imgs| imgs.split(',').map(|s| s.to_string()).collect())
+                    .map(|imgs| {
+                        imgs.split(',')
+                            .filter_map(|s| {
+                                s.is_empty().then(|| None).unwrap_or(Some(s.to_string()))
+                            })
+                            .collect()
+                    })
                     .unwrap_or_default(),
             })
             .collect(),
-    ))
+    )
 }
 
 #[post("/", data = "<news>")]
@@ -89,7 +97,7 @@ pub async fn create(
     news: Json<ReqNewsData>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
-) -> ApiResult<ResNewsData> {
+) -> ApiResult<()> {
     l_info!(logger, "Creating new news");
     let db = conn.into_inner();
 
@@ -98,13 +106,11 @@ pub async fn create(
         created: ActiveValue::set(news.created),
         modified: ActiveValue::set(news.modified),
         text: ActiveValue::set(news.text.clone()),
-        hide: ActiveValue::set(news.hide.clone()),
+        hide: ActiveValue::set(news.hide.then(|| 1).unwrap_or(0).to_string()),
         views: ActiveValue::set(0),
         likes: ActiveValue::set(0),
         comments: ActiveValue::set(0),
-        imgs: ActiveValue::set(Some(
-            serde_json::to_string(&news.imgs).with_context(|| "Failed to serialize images")?,
-        )),
+        imgs: ActiveValue::set(Some(news.imgs.join(","))),
     }
     .save(db)
     .await
@@ -115,19 +121,7 @@ pub async fn create(
         .with_context(|| "Failed to convert news model")?;
 
     l_info!(logger, "Successfully created news: id={}", news.nid);
-    Ok(Json(ResNewsData {
-        created: news.created,
-        modified: news.modified,
-        text: news.text,
-        hide: news.hide,
-        views: news.views,
-        likes: news.likes,
-        comments: news.comments,
-        imgs: news
-            .imgs
-            .map(|imgs| serde_json::from_str(&imgs).unwrap_or_default())
-            .unwrap_or_default(),
-    }))
+    api_ok(())
 }
 
 #[put("/<id>", data = "<news>")]
@@ -137,11 +131,11 @@ pub async fn update(
     news: Json<ReqNewsData>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
-) -> ApiResult<ResNewsData> {
+) -> ApiResult<()> {
     l_info!(logger, "Updating news: id={}", id);
     let db = conn.into_inner();
 
-    let news_model = match romi_news::Entity::find_by_id(id)
+    match romi_news::Entity::find_by_id(id)
         .one(db)
         .await
         .with_context(|| format!("Failed to fetch news {}", id))?
@@ -151,10 +145,8 @@ pub async fn update(
             active_model.created = ActiveValue::set(news.created);
             active_model.modified = ActiveValue::set(news.modified);
             active_model.text = ActiveValue::set(news.text.clone());
-            active_model.hide = ActiveValue::set(news.hide.clone());
-            active_model.imgs = ActiveValue::set(Some(
-                serde_json::to_string(&news.imgs).with_context(|| "Failed to serialize images")?,
-            ));
+            active_model.hide = ActiveValue::set(news.hide.then(|| 1).unwrap_or(0).to_string());
+            active_model.imgs = ActiveValue::set(Some(news.imgs.join(",")));
 
             active_model
                 .save(db)
@@ -167,24 +159,8 @@ pub async fn update(
         }
     };
 
-    let news = news_model
-        .try_into_model()
-        .with_context(|| "Failed to convert updated news model")?;
-
     l_info!(logger, "Successfully updated news: id={}", id);
-    Ok(Json(ResNewsData {
-        created: news.created,
-        modified: news.modified,
-        text: news.text,
-        hide: news.hide,
-        views: news.views,
-        likes: news.likes,
-        comments: news.comments,
-        imgs: news
-            .imgs
-            .map(|imgs| serde_json::from_str(&imgs).unwrap_or_default())
-            .unwrap_or_default(),
-    }))
+    api_ok(())
 }
 
 #[delete("/<id>")]

@@ -1,9 +1,12 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationStart, Router, RouterLink } from '@angular/router'
 import { HeaderComponent } from '../header/header.component'
 import { FooterComponent } from '../footer/footer.component'
 import { NotifyService } from '../../services/notify.service'
 import { BrowserService } from '../../services/browser.service'
+import musicList from '../../shared/music.json'
+import '../../shared/types'
+import { APlayer } from '../../shared/types'
 
 @Component({
   selector: 'app-layout-using',
@@ -12,7 +15,7 @@ import { BrowserService } from '../../services/browser.service'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './layout-using.component.html'
 })
-export class LayoutUsingComponent implements OnInit {
+export class LayoutUsingComponent implements OnInit, OnDestroy {
   private initHeaderData = {
     title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
@@ -21,9 +24,17 @@ export class LayoutUsingComponent implements OnInit {
 
   public showBackTop = false
 
-  public headerImageHeight = 350
+  public headerImageHeight = 'h-350px'
 
   public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
+
+  @Input()
+  public fullBackground = false
+
+  @Input()
+  public displayFooter = true
+
+  protected aplayer?: APlayer
 
   public constructor(
     private readonly router: Router,
@@ -32,11 +43,16 @@ export class LayoutUsingComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    this.headerImageHeight = this.fullBackground ? 'min-h-screen' : 'h-350px'
+
     this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
-    this.browserService.windowRef?.window.addEventListener('scroll', (e) => {
+    if (!this.browserService.isBrowser) return
+
+    window.addEventListener('scroll', (e) => {
       this.showBackTop = window.scrollY > 100
     })
+    this.togglePlayer(true)
   }
 
   private updateHeaderContent(data: Partial<typeof this.initHeaderData>) {
@@ -44,9 +60,11 @@ export class LayoutUsingComponent implements OnInit {
       ...this.initHeaderData,
       ...data
     }
-    this.headerImageHeight =
+    if (this.fullBackground) return
+    this.headerImageHeight = `h-${
       (this.headerData.title?.length ??
         0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
+    }px`
   }
 
   private handleRouteEvent(event: object) {
@@ -57,5 +75,31 @@ export class LayoutUsingComponent implements OnInit {
 
   public scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  public togglePlayer(isFirst: boolean) {
+    if (this.router.url === '/music') return
+    const playerDisabled = localStorage.getItem('aplayer-diabled') === 'true'
+    if (isFirst && playerDisabled) return
+    if (this.aplayer) {
+      localStorage.setItem('aplayer-diabled', 'true')
+      this.aplayer.destroy()
+      this.aplayer = undefined
+    } else {
+      localStorage.setItem('aplayer-diabled', 'false')
+      this.aplayer = new APlayer({
+        container: document.getElementById('aplayer-global'),
+        autoplay: true,
+        fixed: true,
+        lrcType: 1,
+        order: 'random',
+        theme: 'var(--primary-100)',
+        audio: musicList
+      })
+    }
+  }
+
+  public ngOnDestroy() {
+    this.aplayer?.destroy()
   }
 }

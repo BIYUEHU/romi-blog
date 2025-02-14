@@ -1,7 +1,9 @@
 use crate::entity::{romi_comments, romi_metas, romi_posts, romi_relationships};
 use crate::guards::access::{Access, AccessLevel};
 use crate::guards::admin::AdminUser;
-use crate::models::post::{ReqPostData, ResPostData, ResPostSingleData};
+use crate::models::post::{
+    ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
+};
 use crate::tools::markdown::summary_markdown;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::utils::pool::Db;
@@ -518,4 +520,40 @@ pub async fn delete(
 
     l_info!(logger, "Successfully deleted post: id={}", id);
     api_ok(())
+}
+
+#[post("/decrypt/<id>", data = "<data>")]
+pub async fn decrypt(
+    id: u32,
+    conn: Connection<'_, Db>,
+    logger: &State<Logger>,
+    data: Json<ReqDecryptPostData>,
+) -> ApiResult<ResDecryptPostData> {
+    l_info!(logger, "Decrypting post: id={}", id);
+    let db = conn.into_inner();
+
+    match romi_posts::Entity::find_by_id(id)
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to fetch post {} for decrypt", id))?
+    {
+        Some(model) => {
+            if let Some(password) = model.password {
+                if password == data.password {
+                    l_info!(logger, "Successfully decrypted post: id={}", id);
+                    api_ok(ResDecryptPostData { text: model.text })
+                } else {
+                    l_warn!(logger, "Incorrect password for post: id={}", id);
+                    Err(ApiError::unauthorized("Incorrect password"))
+                }
+            } else {
+                l_warn!(logger, "Post is not password protected: id={}", id);
+                Err(ApiError::unauthorized("Post is not password protected"))
+            }
+        }
+        None => {
+            l_warn!(logger, "Post not found: id={}", id);
+            Err(ApiError::not_found("Post not found"))
+        }
+    }
 }

@@ -69,4 +69,16 @@ GET {{URL}}/api/info/settings/
 ### Get dashboard data
 
 GET {{URL}}/api/info/dashboard/
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJyb21pIiwiY3JlYXRlZCI6MTczODY0MzYwNCwidXJsIjpudWxsLCJpc19hZG1pbiI6dHJ1ZSwiZXhwIjoxNzM4ODI0ODc0fQ.wOcwdN81s_D_nZz4wSbexFR88uGws2E4h_xEN1MCvYU
+Authorization: Bearer
+
+### Test
+
+POST http://music.163.com/api/linux/forward
+Referer: http://music.163.com/
+From:
+
+{
+    "method": "GET",
+    "url": "http://music.163.com/api/song/lyric",
+    "params": {"id":589885,"lv":1}
+}

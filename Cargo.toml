@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "library/roga", "library/migration"]
+members = [".", "library/roga", "library/migration", "library/music-fetcher"]
 
 [package]
 name = "romichan"

@@ -1,0 +1,95 @@
+<app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
+  (pageChange)="goToPage($event)">
+  <div search-area class="flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索动态内容..." class="w-full" />
+    </div>
+    <r-button (click)="startEdit()" type="primary">
+      新建动态
+    </r-button>
+  </div>
+
+  <div list-content>
+    <table class="min-w-full divide-y divide-text-200">
+      <thead class="bg-text-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">动态内容</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">状态</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">创建时间</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">修改时间</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
+        </tr>
+      </thead>
+      <tbody class="bg-text-200 divide-y divide-text-200">
+        @for (news of pagedItems; track news.id) {
+        <tr class="hover:bg-text-300">
+          <td class="px-6 py-4 ">{{ news.text.slice(0, 30) }}</td>
+          <td class="px-6 py-4">
+            <r-tag [type]="news.hide === true ? 'error' : 'success'">
+              {{ news.hide === true ? '隐藏' : '显示' }}
+            </r-tag>
+          </td>
+          <td class="px-6 py-4 text-sm text-accent-100">
+            {{ news.created * 1000 | date:'YYYY-MM-dd HH:mm' }}
+          </td>
+          <td class="px-6 py-4 text-sm text-accent-100">
+            {{ news.modified * 1000 | date:'YYYY-MM-dd HH:mm' }}
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2">
+              <r-button (click)="startEdit(news)" type="primary">
+                编辑
+              </r-button>
+              <r-button (click)="deleteItem(news.id)" type="error">
+                删除
+              </r-button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-admin-base-list>
+
+@if (editingNews) {
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+  <div class="bg-text-200 rounded-lg p-6 w-full max-w-md">
+    <h2 class="text-lg font-medium text-bg-200 mb-4">
+      {{ editingNews !== true ? '编辑动态' : '新建动态' }}
+    </h2>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-bg-200 mb-1">动态内容</label>
+        <r-input as="textarea" rows="12" type="text" [(ngModel)]="editForm.text" class="w-full" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-bg-200 mb-1">状态</label>
+        <select [(ngModel)]="editForm.hide"
+          class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+          <option value="false">显示</option>
+          <option value="true">隐藏</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-bg-200 mb-1">图片 (逗号分隔多个)</label>
+        <r-input type="text" [(ngModel)]="editForm.imgs" class="w-full" />
+      </div>
+
+      <r-input label="创建时间" type="datetime-local" [(ngModel)]="editForm.created" class="w-full" />
+    </div>
+
+    <div class="flex justify-end gap-2 mt-6">
+      <r-button (click)="cancelEdit()">
+        取消
+      </r-button>
+      <r-button (click)="updateNews()" type="primary">
+        保存
+      </r-button>
+    </div>
+  </div>
+</div>
+}

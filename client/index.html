@@ -1,33 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>Romi Blog</title>
-    <base href="/" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1"
-    />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="description" content="Personal blog powered by Angular" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      body {
-        font-family: system-ui, sans-serif;
-      }
-    </style>
-  </head>
-  <body>
-    <app-root></app-root>
-  </body>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Romi Blog</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <meta name="keywords"
+    content="arimura sena, romi blog, personal website, blog, angular, rust, as, 个人网站, 博客, Angular, Rust, AS, anime, acg, 二次元, 动漫, 原神, galgame, 视觉小说, 个人站, 动画, visual-novels, github, developer, coder, 开源, open-source, 前端, 后端, 开发者, 开源, 个人, idealism, 理想主义者, 自由主义者, 民主, 自由, rocket, sea-orm, unocss, web, modern" />
+  <meta name="description"
+    content="Arimura Sena's personal website and blog powered by Angular and Rust | AS 的个人网站和博客，由 Angular 和 Rust 驱动" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+    }
+  </style>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZTYN1EEQ1B"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-ZTYN1EEQ1B');
+  </script>
+</head>
+
+<body>
+  <app-root></app-root>
+  <script>
+    globalThis.consoleCloned = console.log
+    console.log = () => { /* Fucking aplayer */ }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
+  <script>
+    console.log = globalThis.consoleCloned
+  </script>
+</body>
+
 </html>

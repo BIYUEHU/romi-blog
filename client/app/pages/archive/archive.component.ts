@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-archive',
@@ -27,7 +28,7 @@ export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archi
 
   public async ngOnInit() {
     this.setData(
-      (set) => this.apiService.getPosts().subscribe((posts) => set(posts)),
+      (set) => this.apiService.getPosts().subscribe((posts) => set(sortByCreatedTime(posts))),
       (posts) => {
         this.groupedPosts = posts.reduce((acc, post) => {
           const date = new Date(post.created * 1000)

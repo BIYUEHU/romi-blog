@@ -24,8 +24,9 @@ export class NotifyService {
     this.isSidebarOpen = new BehaviorSubject((this.browserService.windowRef?.innerWidth ?? 0) >= 1024)
     this.isSidebarOpen$ = this.isSidebarOpen.asObservable()
     this.isSidebarOpen.subscribe((isOpen) => {
-      if (this.browserService.isBrowser && window.innerWidth < 1024)
+      if (this.browserService.isBrowser && window.innerWidth < 1024) {
         document.body.style.overflow = isOpen ? 'hidden' : ''
+      }
     })
   }
 

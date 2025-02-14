@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { ApiService } from '../../services/api.service'
 import { ResHitokotoData } from '../../models/api.model'
-import { BrowserService } from '../../services/browser.service'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
@@ -14,7 +12,7 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
 export class FooterComponent extends romiComponentFactory<ResHitokotoData>('footer') implements OnInit {
   public currentTime = this.getTimeString()
 
-  public hitokoto?: ResHitokotoData & { url: string }
+  public hitokoto?: ResHitokotoData
 
   public ngOnInit() {
     this.setData(
@@ -22,8 +20,7 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
       (data) => {
         this.hitokoto = {
           ...data,
-          msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`,
-          url: `https://old.hotaru.icu/hitokoto.html?id=${btoa(data.id.toString())}`
+          msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`
         }
       }
     )
@@ -35,9 +32,7 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
   }
 
   public getTimeString() {
-    const date = new Date('2019-01-01T00:00:00Z')
-    const now = new Date()
-    const diff = (now.getTime() - date.getTime()) / 1000
+    const diff = (Date.now() - new Date('2019-01-01T00:00:00Z').getTime()) / 1000
     return `${Math.floor(diff / 86400)} 天 ${Math.floor((diff % 86400) / 3600)} 小时 ${Math.floor((diff % 3600) / 60)} 分钟 ${Math.floor(diff % 60)} 秒`
   }
 

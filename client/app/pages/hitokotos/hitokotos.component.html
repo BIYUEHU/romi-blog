@@ -1,0 +1,41 @@
+<div class="max-w-98% w-4xl mx-auto space-y-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    @if (isLoading) {
+    <div class="col-span-full text-center">
+      <r-loading label="加载中..." />
+    </div>
+    } @else {
+    @for (hitokoto of hitokotos; track $index) {
+    <div [routerLink]="'/hitokoto/' + hitokoto.id"
+      class="bg-text-200 rounded-lg p-4 hover:bg-text-300 hover:cursor-pointer transition-colors relative"
+      [style]="'flex-shrink:0;width:100%;max-width:100%;flex:0 0 auto; border-left: 4px solid ' + getTypeColor(hitokoto.type)">
+      <p class="text-bg-200 mb-4 overflow-y-auto max-h-50 ">{{ hitokoto.msg }}</p>
+
+      <div class="flex items-center justify-between text-sm">
+        <div class="flex items-center gap-4 text-accent-100">
+          @if (hitokoto.from) {
+          <span>{{ hitokoto.from }}</span>
+          }
+          <r-tag [type]="getTagType(hitokoto.type)">
+            {{ getTypeName(hitokoto.type) }}
+          </r-tag>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <i class="i-mdi:thumb-up cursor-pointer transition-colors"
+            [class]="isLiked(hitokoto.id) ? 'text-primary-100' : 'text-accent-100 hover:text-primary-100'"
+            (click)="likeHitokoto(hitokoto.id)"></i>
+          <span class="text-accent-100">{{ hitokoto.likes }}</span>
+        </div>
+      </div>
+    </div>
+    }
+    }
+  </div>
+
+  @if (!isLoading && hitokotos.length > 0) {
+  <div class="flex justify-center">
+    <r-button type="info" (click)="loadMore()">加载更多</r-button>
+  </div>
+  }
+</div>
