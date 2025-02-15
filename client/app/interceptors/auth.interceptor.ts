@@ -4,6 +4,7 @@ import { catchError, EMPTY, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 import { NotifyService } from '../services/notify.service'
+import { LoggerService } from '../services/logger.service'
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
   public constructor(
     private readonly authService: AuthService,
     private readonly browserService: BrowserService,
-    private readonly notifyService: NotifyService
+    private readonly notifyService: NotifyService,
+    private readonly loggerService: LoggerService
   ) {}
 
   public intercept(request: HttpRequest<unknown>, next: HttpHandlerFn) {
@@ -30,6 +32,8 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
       })
     ).pipe(
       catchError((error) => {
+        this.loggerService.label('HTTP').error(error)
+
         if (token && error.status === 401) {
           this.notifyService.showMessage('登录已过期，请重新登录', 'error')
           this.authService.logout()

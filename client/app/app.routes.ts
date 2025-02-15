@@ -1,7 +1,5 @@
-// TODO: Music player singleton at whole browser
 import type { Routes } from '@angular/router'
 import { LayoutComponent } from './components/layout/layout.component'
-import { HomeComponent } from './pages/home/home.component'
 import { PostComponent } from './pages/post/post.component'
 import { ArchiveComponent } from './pages/archive/archive.component'
 import { TagComponent } from './pages/tag/tag.component'
@@ -28,18 +26,13 @@ import { MusicComponent } from './pages/music/music.component'
 import { CharComponent } from './pages/char/char.component'
 import { CharsComponent } from './pages/chars/chars.component'
 import { ProjectComponent } from './pages/project/project.component'
-import { PostsComponent } from './pages/posts/home.component'
+import { PostsComponent } from './pages/posts/posts.component'
 
 export const routes: Routes = [
   {
     path: '',
     component: LayoutComponent,
     children: [
-      {
-        path: '',
-        component: HomeComponent
-        // title: 'Romi Blog - Home'
-      },
       {
         path: 'post/:id',
         component: PostComponent

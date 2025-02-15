@@ -24,6 +24,8 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
 
   public showBackTop = false
 
+  @Input() public imageHeight = ''
+
   public headerImageHeight = 'h-350px'
 
   public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
@@ -36,6 +38,8 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
 
   protected aplayer?: APlayer
 
+  protected aplayerTimer?: number
+
   public constructor(
     private readonly router: Router,
     private readonly notifyService: NotifyService,
@@ -43,7 +47,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit() {
-    this.headerImageHeight = this.fullBackground ? 'min-h-screen' : 'h-350px'
+    this.headerImageHeight = this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
 
     this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
@@ -60,7 +64,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
       ...this.initHeaderData,
       ...data
     }
-    if (this.fullBackground) return
+    if (this.imageHeight || this.fullBackground) return
     this.headerImageHeight = `h-${
       (this.headerData.title?.length ??
         0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
@@ -81,22 +85,34 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
     if (this.router.url === '/music') return
     const playerDisabled = localStorage.getItem('aplayer-diabled') === 'true'
     if (isFirst && playerDisabled) return
+
     if (this.aplayer) {
       localStorage.setItem('aplayer-diabled', 'true')
       this.aplayer.destroy()
       this.aplayer = undefined
-    } else {
-      localStorage.setItem('aplayer-diabled', 'false')
-      this.aplayer = new APlayer({
-        container: document.getElementById('aplayer-global'),
-        autoplay: true,
-        fixed: true,
-        lrcType: 1,
-        order: 'random',
-        theme: 'var(--primary-100)',
-        audio: musicList
-      })
+      return
     }
+
+    const aliveTime = Number(localStorage.getItem('aplayer-alive-time') ?? 0)
+    if (!Number.isNaN(aliveTime) && Date.now() - aliveTime < 1010) return
+
+    localStorage.setItem('aplayer-diabled', 'false')
+    this.aplayer = new APlayer({
+      container: document.getElementById('aplayer-global'),
+      autoplay: true,
+      fixed: true,
+      lrcType: 1,
+      order: 'random',
+      theme: 'var(--primary-100)',
+      audio: musicList
+    })
+    if (this.aplayerTimer) return
+
+    this.aplayerTimer = Number(
+      setInterval(() => {
+        if (this.aplayer) localStorage.setItem('aplayer-alive-time', Date.now().toString())
+      }, 1000)
+    )
   }
 
   public ngOnDestroy() {

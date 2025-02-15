@@ -15,11 +15,7 @@
             <div class="font-sans">{{ item }}</div>
             }
           </div>
-          @if (fullBackground) {
-          <div class="max-w-[1200px] mx-auto px-4">
-            <ng-content select="[background]"></ng-content>
-          </div>
-          }
+          <ng-content select="[background]"></ng-content>
         </div>
       </div>
     </div>
@@ -35,16 +31,16 @@
   @if (!fullBackground) {
   @if (showBackTop) {
   <button (click)="scrollToTop()"
-    class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-1 border-text-300 border-solid">
+    class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-0">
     <i class="i-mdi-arrow-up-thick text-xl"></i>
   </button>
   }
   <button [routerLink]="['/admin']"
-    class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-1 border-text-300 border-solid">
+    class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-0">
     <i class="i-mdi-settings-outline text-xl"></i>
   </button>
   <button (click)="togglePlayer(false)"
-    class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-1 border-text-300 border-solid">
+    class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-primary-200 text-bg-100 rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-primary-100 transition-colors border-0">
     <i class="i-mdi-music-note-outline text-xl"></i>
   </button>
   }

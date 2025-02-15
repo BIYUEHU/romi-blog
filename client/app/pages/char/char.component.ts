@@ -9,7 +9,7 @@ import { NotifyService } from '../../services/notify.service'
 @Component({
   selector: 'app-char',
   standalone: true,
-  imports: [DatePipe, LoadingComponent],
+  imports: [LoadingComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })

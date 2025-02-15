@@ -37,8 +37,8 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
   }
 
   public footerItems = [
-    { link: '/feed', text: 'RSS 订阅', vanilla: true },
-    { link: '/sitemap.xml', text: '网站地图', vanilla: true },
+    { link: '/feed', text: 'RSS 订阅' },
+    { link: '/sitemap.xml', text: '网站地图' },
     { link: '/friends', text: '友情链接' }
   ]
 }

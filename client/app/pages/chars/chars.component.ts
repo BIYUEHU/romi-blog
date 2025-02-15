@@ -1,6 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { DatePipe } from '@angular/common'
 import { Character } from '../../models/api.model'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
@@ -11,7 +10,7 @@ import { FormsModule } from '@angular/forms'
 @Component({
   selector: 'app-chars',
   standalone: true,
-  imports: [RouterLink, DatePipe, LoadingComponent, WebComponentInputAccessorDirective, FormsModule],
+  imports: [RouterLink, LoadingComponent, WebComponentInputAccessorDirective, FormsModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './chars.component.html'
 })

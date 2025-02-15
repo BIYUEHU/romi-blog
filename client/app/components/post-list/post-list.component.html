@@ -1,45 +1,83 @@
-@if (posts) {
 <div class="w-5xl max-w-90% mx-auto flex-1">
+
+  @if (posts) {
+  <!-- 文章网格 -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    @for (post of displayedPosts; track $index) {
-    <a [routerLink]="['/post', post.id]"
-      class="no-underline text-bg-100 left-0 top-0 bg-text-100 border border-solid border-primary-300 border-2 hover:border-primary-200 overflow-hidden hover:shadow-2xl transition-shadow">
+    @for (post of displayedPosts; track post.id) {
+    <article class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
       @if (post.banner) {
-      <img [src]="post.banner" class="w-full h-36 object-cover" [alt]="post.title" />
-      }
-      <div class="p-6">
-        <h1 class="text-xl font-bold mb-2 text-primary-100" [routerLink]="['/post', post.id]">
-          {{ post.title }}
-        </h1>
-        <p class="text-bg-300 text-sm">{{ post.summary }}</p>
-        <div class="mt-4 text-sm text-bg-300">
-          {{ post.created * 1000 | date : "yyyy-MM-dd" }}
-        </div>
+      <div class="aspect-video overflow-hidden">
+        <img [src]="post.banner" [alt]="post.title"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
       </div>
-    </a>
+      }
+
+      <div class="p-6">
+        <!-- 标题和摘要 -->
+        <div class="mb-4">
+          <h2 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors mb-2">
+            <a [routerLink]="['/post', post.id]" class="hover:text-primary-100">
+              {{ post.title }}
+            </a>
+          </h2>
+          <p class="text-accent-100 line-clamp-2">{{ post.summary }}</p>
+        </div>
+
+        <!-- 文章信息 -->
+        <div class="flex items-center gap-4 text-sm text-accent-100">
+          <span class="flex items-center gap-1">
+            <i class="i-mdi-clock-outline"></i>
+            {{ post.created * 1000 | date:'yyyy-MM-dd' }}
+          </span>
+          <span class="flex items-center gap-1">
+            <i class="i-mdi-eye-outline"></i>
+            {{ post.views }}
+          </span>
+          @if (post.allow_comment) {
+          <span class="flex items-center gap-1">
+            <i class="i-mdi-comment-text-multiple-outline"></i>
+            {{ post.comments }}
+          </span>
+          }
+        </div>
+
+        <!-- 标签 -->
+        @if (post.tags.length > 0) {
+        <div class="flex flex-wrap gap-2 mt-4">
+          @for (tag of post.tags; track tag) {
+          <r-tag size="sm" type="accent">{{ tag }}</r-tag>
+          }
+        </div>
+        }
+      </div>
+    </article>
     }
   </div>
 
+  <!-- 分页导航 -->
   @if (totalPages > 1) {
-  <div class="flex justify-center items-center gap-2 mt-8 mb-4 flex-wrap">
+  <div class="flex justify-center items-center gap-2 mt-12 mb-4">
     @for (item of getPageNumbers(); track $index) {
-    <span>
-      @if (item === 'prev') {
-      <r-button (click)="goToPage(currentPage - 1)" class="w-8 h-8 rounded"><- </r-button>
-          } @else if (item === 'next') {
-          <r-button (click)="goToPage(currentPage + 1)" class="w-8 h-8 rounded"> -></r-button>
-          } @else if (item === '...') {
-          <span class="px-2">...</span>
-          } @else {
-          <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'">
-            {{ item }}
-          </r-button>
-          }
-    </span>
-    }
+    @if (item === 'prev') {
+    <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
+      <- </r-button>
+        } @else if (item === 'next') {
+        <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg"
+          [disabled]="currentPage === totalPages">
+          ->
+        </r-button>
+        } @else if (item === '...') {
+        <span class="px-2 text-accent-100">...</span>
+        } @else {
+        <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'"
+          class="w-10 h-10 rounded-lg">
+          {{ item }}
+        </r-button>
+        }
+        }
   </div>
   }
+  } @else {
+  <app-loading />
+  }
 </div>
-} @else {
-<app-loading />
-}

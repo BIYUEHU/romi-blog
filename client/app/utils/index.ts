@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs'
 import { ResNewsData, ResPostData } from '../models/api.model'
 
 export function handlePostList(posts: ResPostData[]) {
@@ -11,4 +12,13 @@ export function formatDate(date: Date) {
 
 export function sortByCreatedTime<T extends ResPostData[] | ResNewsData[]>(posts: T): T {
   return posts.sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime()) as T
+}
+
+export function observableToPromise<T>(observable: Observable<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    observable.subscribe({
+      next: (value) => resolve(value),
+      error: (error) => reject(error)
+    })
+  })
 }

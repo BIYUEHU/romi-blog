@@ -1,11 +1,23 @@
 import { Component } from '@angular/core'
-import { RouterOutlet } from '@angular/router'
+import { Router, RouterOutlet } from '@angular/router'
 import { LayoutUsingComponent } from '../layout-using/layout-using.component'
+import { HomeComponent } from '../../pages/home/home.component'
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, LayoutUsingComponent],
+  imports: [RouterOutlet, LayoutUsingComponent, HomeComponent],
   templateUrl: './layout.component.html'
 })
-export class LayoutComponent {}
+export class LayoutComponent {
+  public isHomePage!: boolean
+
+  public constructor(private readonly router: Router) {
+    this.update()
+    this.router.events.subscribe(() => this.update())
+  }
+
+  public update() {
+    this.isHomePage = this.router.url === '/'
+  }
+}

@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
-import { version } from '../../../../package.json'
 import { CacheService } from '../../services/cache.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { DatePipe } from '@angular/common'
+import { ROMI_METADATA } from '../../shared/constants'
 
 interface StatCard {
   title: string
@@ -98,7 +98,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   public systemInfo = [
-    { label: '前端版本', value: version },
+    { label: '前端版本', value: ROMI_METADATA.pkg.version },
     { label: '系统版本', value: 'Loading...' },
     { label: 'Node.js 版本', value: 'Loading...' },
     { label: '服务器系统', value: 'Loading...' },
@@ -128,7 +128,7 @@ export class AdminDashboardComponent implements OnInit {
         value: Number(data[this.getStatKey(card.title)] || 0)
       }))
       this.systemInfo = [
-        { label: '前端版本', value: version },
+        { label: '前端版本', value: ROMI_METADATA.pkg.version },
         { label: '系统版本', value: data.version },
         { label: 'Node.js 版本', value: data.nodejs_version },
         { label: '服务器系统', value: data.os_info },

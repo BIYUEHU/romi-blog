@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, isDevMode } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import type {
   AuthUser,
@@ -228,7 +228,7 @@ export class ApiService {
   }
 
   public getProjects() {
-    return this.http.get<Repository[]>('https://api.github.com/users/BIYUEHU/repos?sort=updated')
+    return isDevMode() ? of([]) : this.http.get<Repository[]>('https://api.github.com/users/BIYUEHU/repos?sort=updated')
   }
 
   public getVideos() {

@@ -19,11 +19,9 @@
           Sena</a>
       </p>
       <p>
-        @for (item of footerItems; track $index) { @if (item.vanilla) {
-        <a [href]="item.link">{{ item.text }}</a>
-        } @else {
+        @for (item of footerItems; track $index) {
         <a [routerLink]="item.link">{{ item.text }}</a>
-        } @if ($index !== footerItems.length - 1) { • } }
+        @if ($index !== footerItems.length - 1) { • } }
       </p>
     </div>
   </div>

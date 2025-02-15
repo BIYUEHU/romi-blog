@@ -1,24 +1,24 @@
-<div class="w-5xl max-w-90% mx-auto flex-1 space-y-16">
-  <!-- 个人介绍卡片 -->
-  <div class="relative bg-text-200 rounded-xl p-8 overflow-hidden">
+<app-layout-using [imageHeight]="'min-h-screen'">
+  <div background class="bg-black/35 rounded-xl p-8 overflow-hidden hover:bg-black/40 hover:shadow-md">
     <div class="relative z-10 flex items-center gap-8">
-      <img src="你的头像URL" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-primary-100" />
-
-      <div class="flex-1">
-        <h1 class="text-3xl font-bold text-bg-100 mb-4">
-          ICEAGENB
-          <span class="ml-2 text-accent-100 text-lg">Frontend Developer</span>
+      <img src="https://api.hotaru.icu/ial/qqavatar/index.php?qq=FrTFF7fjGbS2Fg%3D%3D&size=640" alt="Avatar"
+        class="hidden md:block w-32 h-32 rounded-full border-4 border-primary-100" />
+      <div class="flex-1 max-w-2xl">
+        <h1 class="text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
+          {{ header.title }}
         </h1>
-        <p class="text-bg-300 leading-relaxed max-w-2xl">
-          热爱编程和开源的前端开发者，喜欢探索新技术，追求代码的优雅和效率。
-          热衷于创造有趣的项目，分享技术经验。
-        </p>
-        <div class="flex gap-4 mt-4">
-          <a href="https://github.com/ICEAGENB" target="_blank"
-            class="text-accent-100 hover:text-primary-100 transition-colors">
-            <i class="ri-github-fill text-2xl"></i>
+        <ul class="text-5 flex items-start flex-wrap gap-2 break-words">
+          @for (subTitle of header.subTitle; track $index) {
+          <li class="font-sans">{{ subTitle }}</li>
+          }
+        </ul>
+        <div class="flex flex-wrap gap-2 mt-4">
+          @for (link of header.links; track $index) {
+          <a [href]="link[2]" target="_blank"
+            class="flex items-center text-accent-100 hover:text-primary-100 transition-colors">
+            <i [class]="link[0] + ' text-2xl'" [title]="link[1]"></i>
           </a>
-          <!-- 其他社交链接 -->
+          }
         </div>
       </div>
     </div>
@@ -27,113 +27,114 @@
     </div>
   </div>
 
-  <!-- 近期博文 -->
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
-      <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      @for (post of posts; track post.id) {
-      <a [routerLink]="['/post', post.id]"
-        class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
-        @if (post.banner) {
-        <div class="aspect-video overflow-hidden">
-          <img [src]="post.banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-            [alt]="post.title" />
-        </div>
-        }
-        <div class="p-6">
-          <h3 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors">
-            {{ post.title }}
-          </h3>
-          <p class="text-accent-100 mt-2 line-clamp-2">{{ post.summary }}</p>
-          <div class="flex items-center gap-4 mt-4 text-sm text-accent-100">
-            <span>{{ post.created * 1000 | date:'yyyy-MM-dd' }}</span>
-            <span>{{ post.views }} 次阅读</span>
-          </div>
-        </div>
-      </a>
-      }
-    </div>
-  </section>
-
-  <!-- 近期动态 -->
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-bg-100">近期动态</h2>
-      <r-button [routerLink]="['/news']" type="primary">查看更多</r-button>
-    </div>
-
-    <div class="space-y-4">
-      @for (item of news; track item.id) {
-      <div class="bg-text-200 rounded-xl p-6 hover:scale-105">
-        <div class="text-bg-100 break-words">{{ item.text.slice(0, 200) }}...</div>
-        <div class="text-accent-100 text-sm mt-4">
-          {{ item.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
-        </div>
+  <div main class="w-5xl max-w-90% mx-auto flex-1 space-y-16">
+    @if (isLoading) {
+    <app-loading />
+    }@else {<section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
+        <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
       </div>
-      }
-    </div>
-  </section>
 
-  <!-- 近期视频 -->
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-bg-100">近期视频</h2>
-      <r-button href="https://space.bilibili.com/你的ID" target="_blank" type="primary">
-        去B站关注
-      </r-button>
-    </div>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      @for (video of videos; track video.aid) {
-      <a [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
-        class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
-        <div class="aspect-video relative overflow-hidden">
-          <img [src]="video.pic" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-          <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
-            {{ video.length }}
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (post of posts; track post.id) {
+        <a [routerLink]="'/post/' + post.id"
+          class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
+          @if (post.banner) {
+          <div class="aspect-video overflow-hidden">
+            <img [src]="post.banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+              [alt]="post.title" />
           </div>
-        </div>
-        <div class="p-4">
-          <h3 class="text-bg-100 font-medium line-clamp-2 group-hover:text-primary-100 transition-colors">
-            {{ video.title }}
-          </h3>
-          <div class="flex items-center gap-4 mt-2 text-sm text-accent-100">
-            <span class="flex items-center gap-1">
-              <i class="i-mdi:clock-outline text-2xl"></i>
-              {{ video.play }}
-            </span>
-            <span class="flex items-center gap-1">
-              <i class="i-mdi:eye-outline text-2xl"></i>
-              {{ video.comment }}
-            </span>
+          }
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors">
+              {{ post.title }}
+            </h3>
+            <p class="text-accent-100 mt-2 line-clamp-2">{{ post.summary }}</p>
+            <div class="flex items-center gap-4 mt-4 text-sm text-accent-100">
+              <span>{{ post.created * 1000 | date:'yyyy-MM-dd' }}</span>
+              <span>{{ post.views }} 次阅读</span>
+            </div>
           </div>
-        </div>
-      </a>
-      }
-    </div>
-  </section>
+        </a>
+        }
+      </div>
+    </section>
 
-  <!-- 最近在听 -->
-  <section>
-    <h2 class="text-2xl font-bold text-bg-100 mb-6">最近在听</h2>
-    <div class="bg-text-200 rounded-xl p-6">
-      <div id="recent-music"></div>
-    </div>
-  </section>
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-bg-100">近期动态</h2>
+        <r-button [routerLink]="'/news/'" type="primary">查看更多</r-button>
+      </div>
 
-  <!-- 近期项目 -->
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-2xl font-bold text-bg-100">近期项目</h2>
-      <r-button [routerLink]="['/projects']" type="primary">查看更多</r-button>
-    </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (item of news; track item.id) {
+        <a [routerLink]="'/news/' + item.id"
+          class="bg-text-200 rounded-xl p-6 hover:scale-101 hover:shadow-md transition-all">
+          <div class="bg-text-200 rounded-xl p-6 hover:scale-105">
+            <div class="text-bg-100 break-words">{{ item.text.slice(0, 150) }}...</div>
+            <div class="text-accent-100 text-sm mt-4">
+              {{ item.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+            </div>
+          </div>
+        </a>
+        }
+      </div>
+    </section>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- 这里使用之前projects组件的仓库卡片样式，只显示最新的2-4个项目 -->
-    </div>
-  </section>
-</div>
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-bg-100">近期视频</h2>
+        <a href="https://space.bilibili.com/293767574" target="_blank">
+          <r-button type="primary">去B站关注</r-button>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @for (video of videos; track video.aid) {
+        <a [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
+          class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
+          <div class="aspect-video relative overflow-hidden">
+            <img [src]="'https://api.hotaru.icu/ial/agent/?url=' + video.pic"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+            <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
+              {{ video.length }}
+            </div>
+          </div>
+          <div class="p-4">
+            <h3 class="text-bg-100 font-medium line-clamp-2 group-hover:text-primary-100 transition-colors">
+              {{ video.title }}
+            </h3>
+            <div class="flex items-center gap-4 mt-2 text-sm text-accent-100">
+              <span class="flex items-center gap-1">
+                <i class="i-mdi:clock-outline text-2xl"></i>
+                {{ video.play }}
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="i-mdi:eye-outline text-2xl"></i>
+                {{ video.comment }}
+              </span>
+            </div>
+          </div>
+        </a>
+        }
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold text-bg-100 mb-6">最近在听</h2>
+      <div class="bg-text-200 rounded-xl p-6">
+        <div id="recent-music"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-bg-100">近期项目</h2>
+        <r-button [routerLink]="'/project'" type="primary">查看更多</r-button>
+      </div>
+
+      <app-project-list [repos]="projects" />
+    </section>}
+  </div>
+</app-layout-using>

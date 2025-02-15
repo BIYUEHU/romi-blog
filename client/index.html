@@ -41,11 +41,12 @@
   <app-root></app-root>
   <script>
     globalThis.consoleCloned = console.log
-    console.log = () => { /* Fucking aplayer */ }
+    console.log = () => { /* Shut up, aplayer! */ }
   </script>
   <script src="https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js"></script>
   <script>
     console.log = globalThis.consoleCloned
+    delete globalThis.consoleCloned
   </script>
 </body>
 

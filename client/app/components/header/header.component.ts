@@ -15,7 +15,7 @@ export class HeaderComponent {
     {
       text: '笔记',
       children: [
-        { text: '文章', link: '/posts' },
+        { text: '文章', link: '/post' },
         { text: '归档', link: '/archive' },
         { text: '动态', link: '/news' },
         { text: '语录', link: '/hitokotos' }
