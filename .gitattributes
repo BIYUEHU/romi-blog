@@ -2,4 +2,4 @@ client/src/app/**/*.component.html            linguist-language=txt
 ui/**/*.*                                     linguist-detectable=false
 client/app/models/api.model.ts                             linguist-language=rust
 # client/app/shared/*.ts                                  linguist-language=rust
-client/services/*.ts                                      linguist-language=rust
+client/app/services/*.ts                                      linguist-language=rust

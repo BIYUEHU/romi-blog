@@ -15,6 +15,10 @@
     "test": "ng test",
     "serve": "node dist/server/server.mjs"
   },
+  "browser": {
+    "node:fs": false,
+    "node:path": false
+  },
   "keywords": [
     "blog",
     "rust",
