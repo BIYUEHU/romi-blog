@@ -10,19 +10,6 @@ export const API_BASE_URL = isDevMode()
     ? `http://127.0.0.1:${Number((process.env as { PORT: string }).PORT ?? 4200) - 1}/api`
     : '/api'
 
-if (typeof process === 'undefined') {
-  // biome-ignore lint:
-  ;(globalThis as any).process = {
-    pid: '',
-    stdout: {
-      write: console.log.bind(console)
-    },
-    stderr: {
-      write: console.error.bind(console)
-    }
-  }
-}
-
 export const POSTS_PER_PAGE = 10
 
 export const SUPPORTS_HIGHLIGHT_LANGUAGES = [
