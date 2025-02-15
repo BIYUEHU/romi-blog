@@ -39,7 +39,7 @@
     </nav>
   </div>
   @if (isMenuOpen) {
-  <div class="fixed w-screen h-screen mt-0 bg-black/50 z-4" (click)="toggleMenu()">
+  <div class="fixed w-screen h-screen mt-0 bg-black/50 z--14" (click)="toggleMenu()">
     <div class="w-full h-full overflow-y-auto">
       <div class="grid grid-cols-2 gap-4 p-3">
         @for (item of navItems; track $index) {

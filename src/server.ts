@@ -45,7 +45,7 @@ export function app(): express.Express {
 }
 
 function run(): void {
-  const port = (process.env as { PORT: string }).PORT
+  const port = (process.env as { PORT: string }).PORT ?? 8001
 
   const server = app()
   server.listen(port, () => {

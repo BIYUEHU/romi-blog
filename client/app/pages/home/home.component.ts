@@ -6,16 +6,13 @@ import { ResNewsData } from '../../models/api.model'
 import { Video } from '../../models/api.model'
 import { APlayer } from '../../shared/types'
 import musicList from '../../shared/music.json'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { observableToPromise } from '../../utils'
-import { Observable } from 'rxjs'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
-
-type HomeData = [ResPostData[], ResNewsData[], Video[], Repository[]]
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 
 @Component({
   selector: 'app-home',
@@ -24,12 +21,11 @@ type HomeData = [ResPostData[], ResNewsData[], Video[], Repository[]]
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
-export class HomeComponent extends romiComponentFactory<HomeData>('home') implements OnInit, OnDestroy {
-  public isLoading = true
-  public posts: ResPostData[] = []
-  public news: ResNewsData[] = []
-  public videos: Video[] = []
-  public projects: Repository[] = []
+export class HomeComponent implements OnInit, OnDestroy {
+  public posts?: ResPostData[]
+  public news?: ResNewsData[]
+  public videos?: Video[]
+  public projects?: Repository[]
   private aplayer?: APlayer
   public header = {
     title: 'Arimura Sena',
@@ -57,11 +53,10 @@ export class HomeComponent extends romiComponentFactory<HomeData>('home') implem
   }
 
   public constructor(
-    private readonly loggerService: LoggerService,
-    private readonly notifyService: NotifyService
-  ) {
-    super()
-  }
+    private readonly notifyService: NotifyService,
+    private readonly apiService: ApiService,
+    private readonly browserService: BrowserService
+  ) {}
 
   private initAplayer() {
     this.aplayer = new APlayer({
@@ -74,32 +69,21 @@ export class HomeComponent extends romiComponentFactory<HomeData>('home') implem
 
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
-    this.setData(
-      (set) =>
-        Promise.all(
-          [
-            this.apiService.getPosts(),
-            this.apiService.getNewses(),
-            this.apiService.getVideos(),
-            this.apiService.getProjects()
-          ].map((item) =>
-            observableToPromise(item as Observable<object>).catch((err) => {
-              this.loggerService.error(err)
-              return []
-            })
-          )
-        ).then((data) => set(data as HomeData)),
-      ([posts, news, videos, projects]) => {
-        this.isLoading = false
-        this.posts = posts.slice(0, 4)
-        this.news = news.slice(0, 4)
-        this.videos = videos.slice(0, 4)
-        this.projects = projects.slice(0, 4)
-        setTimeout(() => {
-          if (this.browserService.isBrowser) this.initAplayer()
-        }, 0)
-      }
-    )
+    this.apiService.getPosts().subscribe((data) => {
+      this.posts = data.slice(0, 4)
+    })
+    this.apiService.getNewses().subscribe((data) => {
+      this.news = data.slice(0, 4)
+    })
+    this.apiService.getVideos().subscribe((data) => {
+      this.videos = data.slice(0, 4)
+    })
+    this.apiService.getProjects().subscribe((data) => {
+      this.projects = data.slice(0, 4)
+    })
+    setTimeout(() => {
+      if (this.browserService.isBrowser) this.initAplayer()
+    }, 0)
   }
 
   public ngOnDestroy() {

@@ -28,15 +28,14 @@
   </div>
 
   <div main class="w-5xl max-w-90% mx-auto flex-1 space-y-16">
-    @if (isLoading) {
-    <app-loading />
-    }@else {<section>
+    <section>
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
         <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @if (posts) {
         @for (post of posts; track post.id) {
         <a [routerLink]="'/post/' + post.id"
           class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
@@ -58,6 +57,9 @@
           </div>
         </a>
         }
+        } @else {
+        <app-loading />
+        }
       </div>
     </section>
 
@@ -68,6 +70,7 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @if (news) {
         @for (item of news; track item.id) {
         <a [routerLink]="'/news/' + item.id"
           class="bg-text-200 rounded-xl p-6 hover:scale-101 hover:shadow-md transition-all">
@@ -78,6 +81,9 @@
             </div>
           </div>
         </a>
+        }
+        } @else {
+        <app-loading />
         }
       </div>
     </section>
@@ -91,12 +97,12 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        @if (videos) {
         @for (video of videos; track video.aid) {
         <a [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
           class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
           <div class="aspect-video relative overflow-hidden">
-            <img [src]="'https://api.hotaru.icu/ial/agent/?url=' + video.pic"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+            <img [src]="video.pic" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
             <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
               {{ video.length }}
             </div>
@@ -118,6 +124,9 @@
           </div>
         </a>
         }
+        } @else {
+        <app-loading />
+        }
       </div>
     </section>
 
@@ -134,7 +143,11 @@
         <r-button [routerLink]="'/project'" type="primary">查看更多</r-button>
       </div>
 
+      @if (projects) {
       <app-project-list [repos]="projects" />
-    </section>}
+      } @else {
+      <app-loading />
+      }
+    </section>
   </div>
 </app-layout-using>

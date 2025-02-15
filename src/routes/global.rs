@@ -1,22 +1,16 @@
-use rocket::{http::Status, State};
-
 use crate::utils::ssr::{SSRResponse, SSR};
+use rocket::{http::Status, State};
+use roga::*;
 
 #[get("/<path..>", rank = 99)]
 pub async fn ssr_handler(
     path: std::path::PathBuf,
     ssr: &State<SSR>,
+    logger: &State<Logger>,
 ) -> Result<SSRResponse, Status> {
     let url = path.to_str().unwrap_or("");
-    match ssr.render(url).await {
-        Ok((status, headers, body)) => Ok(SSRResponse {
-            status,
-            headers,
-            body,
-        }),
-        Err(e) => {
-            eprintln!("SSR Error for {}: {:?}", url, e);
-            Err(Status::InternalServerError)
-        }
-    }
+    Ok(ssr.render(url).await.map_err(|e| {
+        l_error!(logger, "SSR render error: {}", e);
+        Status::InternalServerError
+    })?)
 }
