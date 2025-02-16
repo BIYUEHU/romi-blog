@@ -8,9 +8,9 @@ pub async fn ssr_handler(
     ssr: &State<SSR>,
     logger: &State<Logger>,
 ) -> Result<SSRResponse, Status> {
-    let url = path.to_str().unwrap_or("");
-    Ok(ssr.render(url).await.map_err(|e| {
+    let result = ssr.render(path.to_str().unwrap_or("")).await.map_err(|e| {
         l_error!(logger, "SSR render error: {}", e);
         Status::InternalServerError
-    })?)
+    })?;
+    Ok(result)
 }

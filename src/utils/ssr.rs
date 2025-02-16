@@ -97,7 +97,7 @@ impl SSR {
 
         // 先获取响应体
         let headers_raw = response.headers().clone();
-        let body = response.bytes().await?.to_vec();
+        let body = response.text().await?.as_bytes().to_vec();
 
         // 收集响应头
         let mut headers = Vec::new();
