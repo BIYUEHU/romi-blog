@@ -12,5 +12,6 @@ pub async fn ssr_handler(
         l_error!(logger, "SSR render error: {}", e);
         Status::InternalServerError
     })?;
+    println!("SSR response: {:?}", result.headers);
     Ok(result)
 }

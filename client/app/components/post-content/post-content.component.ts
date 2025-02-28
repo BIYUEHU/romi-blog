@@ -5,7 +5,6 @@ import { RelatedPost, ResCommentData, ResPostSingleData, UserAuthData } from '..
 import { NotifyService } from '../../services/notify.service'
 import { DatePipe } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { CacheService } from '../../services/cache.service'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { AuthService } from '../../services/auth.service'
 import markdownIt from 'markdown-it'
@@ -84,7 +83,6 @@ export class PostContentComponent
 
   public constructor(
     private readonly router: Router,
-    private readonly cacheService: CacheService,
     private readonly notifyService: NotifyService,
     private readonly authService: AuthService,
     private readonly sanitizer: DomSanitizer
@@ -200,8 +198,27 @@ export class PostContentComponent
       this.comments = this.parseComments(comments)
     })
     if (!this.hideRelatedPosts) {
-      this.cacheService.getRelatedPosts(this.id).subscribe((relatedPosts) => {
-        this.relatedPosts = relatedPosts
+      this.apiService.getPosts().subscribe((posts) => {
+        const currentIndex = posts.findIndex((post) => post.id === this.id)
+        this.relatedPosts =
+          currentIndex === -1
+            ? []
+            : [
+                currentIndex > 0
+                  ? {
+                      url: `/post/${posts[currentIndex - 1].id}`,
+                      title: posts[currentIndex - 1].title,
+                      type: 'prev'
+                    }
+                  : undefined,
+                currentIndex < posts.length - 1
+                  ? {
+                      url: `/post/${posts[currentIndex + 1].id}`,
+                      title: posts[currentIndex + 1].title,
+                      type: 'next'
+                    }
+                  : undefined
+              ]
       })
     }
   }

@@ -67,29 +67,31 @@ impl Fairing for Recorder {
     }
 
     async fn on_response<'r>(&self, req: &'r Request<'_>, res: &mut Response<'r>) {
-        // TODO: fix this
-        // let body_raw = res.body().clone();
-        // let body = res
-        //     .body_mut()
-        //     .to_string()
-        //     .await
-        //     .map(|body| {
-        //         if !body.contains("raw_error") {
-        //             return body;
-        //         }
-        //         if let Ok(ApiError {
-        //             raw_error,
-        //             code,
-        //             msg,
-        //         }) = serde_json::from_str::<ApiError>(&body)
-        //         {
-        //             l_error!(self.logger.clone(), raw_error.unwrap_or(msg.clone()));
-        //             serde_json::to_string(&ApiErrorReal { code, msg }).unwrap_or("".into())
-        //         } else {
-        //             body
-        //         }
-        //     })
-        //     .unwrap_or("".into());
+        let body = res
+            .body_mut()
+            .to_bytes()
+            .await
+            .map(|body| {
+                let body_str = String::from_utf8_lossy(&body).to_string();
+                if !body_str.contains("raw_error") {
+                    return body;
+                }
+                if let Ok(ApiError {
+                    raw_error,
+                    code,
+                    msg,
+                }) = serde_json::from_str::<ApiError>(&body_str)
+                {
+                    l_error!(self.logger.clone(), raw_error.unwrap_or(msg.clone()));
+                    serde_json::to_string(&ApiErrorReal { code, msg })
+                        .unwrap_or("".into())
+                        .as_bytes()
+                        .to_vec()
+                } else {
+                    body
+                }
+            })
+            .unwrap_or("".into());
 
         l_record!(
             self.logger.clone().with_label("Response"),
@@ -97,7 +99,7 @@ impl Fairing for Recorder {
             req.uri(),
             res.status()
         );
-        // res.set_sized_body(body.len(), io::Cursor::new(body));
+        res.set_sized_body(body.len(), io::Cursor::new(body));
     }
 
     async fn on_shutdown(&self, _rocket: &Rocket<Orbit>) {

@@ -45,7 +45,6 @@ impl SSR {
             })
             .unwrap();
 
-        // 等待进程启动
         std::thread::sleep(std::time::Duration::from_secs(1));
 
         if let Some(stderr) = process.stderr.take() {
@@ -85,7 +84,6 @@ impl SSR {
             url.trim_start_matches('/')
         );
 
-        // 使用 reqwest 发送请求并等待完整响应
         let response = self
             .client
             .get(&request_url)
@@ -95,29 +93,11 @@ impl SSR {
 
         let status = Status::from_code(response.status().as_u16()).unwrap_or(Status::Ok);
 
-        // 先获取响应体
         let headers_raw = response.headers().clone();
-        let body = response.text().await?.as_bytes().to_vec();
+        let body = response.bytes().await?.to_vec();
 
-        // 收集响应头
         let mut headers = Vec::new();
 
-        // 设置 Content-Type
-        // if let Some(content_type) = response.headers().get("content-type") {
-        //     if let Ok(content_type_str) = content_type.to_str() {
-        //         headers.push(("Content-Type".to_owned(), content_type_str.to_owned()));
-        //     }
-        // } else {
-        //     headers.push((
-        //         "Content-Type".to_owned(),
-        //         "application/octet-stream".to_owned(),
-        //     ));
-        // }
-
-        // 明确设置 Content-Length
-        // headers.push(("Content-Length".to_owned(), content_length.to_string()));
-
-        // 处理其他头部
         for (name, value) in headers_raw {
             if let Ok(value_str) = value.to_str() {
                 if let Some(name) = name {
@@ -143,7 +123,6 @@ pub struct SSRResponse {
 
 impl<'r> Responder<'r, 'static> for SSRResponse {
     fn respond_to(self, _: &'r rocket::Request<'_>) -> response::Result<'static> {
-        // 检查响应体是否为空
         if self.body.is_empty() {
             return Response::build()
                 .status(Status::InternalServerError)
@@ -155,14 +134,11 @@ impl<'r> Responder<'r, 'static> for SSRResponse {
         let mut response = Response::build();
         response.status(self.status);
 
-        // 添加所有响应头
         for (name, value) in self.headers {
             response.raw_header(name, value);
         }
 
-        // 使用实际的 body 长度构建响应
         response.sized_body(Some(self.body.len()), Cursor::new(self.body));
-
         response.ok()
     }
 }

@@ -35,8 +35,10 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
         this.loggerService.label('HTTP').error(error)
 
         if (token && error.status === 401) {
-          this.notifyService.showMessage('登录已过期，请重新登录', 'error')
-          this.authService.logout()
+          if (location.href.includes('/admin/')) {
+            this.notifyService.showMessage('登录已过期，请重新登录', 'error')
+            this.authService.logout()
+          }
           return EMPTY
         }
         if (

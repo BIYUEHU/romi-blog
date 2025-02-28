@@ -11,7 +11,6 @@ mod tools;
 mod utils;
 
 use dotenvy::dotenv;
-use rocket::fs::{relative, FileServer};
 use rocket::Config;
 use roga::*;
 use routes::{comment, global, info, news, user};
@@ -100,12 +99,12 @@ async fn bootstrap() {
         address: config.address.parse().unwrap(),
         port: config.port,
         log_level: rocket::config::LogLevel::Off,
-        ..Config::debug_default()
+        ..Config::default()
     })
     .attach(Db::init())
     .attach(get_cors())
-    // .attach(Recorder::new(logger.clone(), config.clone()))
-    // .manage(Cache::new())
+    .attach(Recorder::new(logger.clone(), config.clone()))
+    .manage(Cache::new())
     .manage(SSR::new(
         config.ssr_entry.clone(),
         config.port + 1,
@@ -182,22 +181,22 @@ async fn bootstrap() {
         "/api/seimg",
         routes![seimg::fetch, seimg::create, seimg::update, seimg::delete],
     )
-    // .mount(
-    //     "/api/info",
-    //     routes![info::fetch_dashboard, info::fetch_settings],
-    // )
+    .mount(
+        "/api/info",
+        routes![info::fetch_dashboard, info::fetch_settings],
+    )
+    .register(
+        "/",
+        catchers![
+            catcher::bad_request,
+            catcher::unauthorized,
+            catcher::forbidden,
+            catcher::not_found,
+            catcher::unprocessable_entity,
+            catcher::internal_server_error
+        ],
+    )
     .mount("/", routes![global::ssr_handler])
-    // .register(
-    //     "/",
-    //     catchers![
-    //         catcher::bad_request,
-    //         catcher::unauthorized,
-    //         catcher::forbidden,
-    //         catcher::not_found,
-    //         catcher::unprocessable_entity,
-    //         catcher::internal_server_error
-    //     ],
-    // )
     // .mount("/", FileServer::from(relative!("dist/browser")))
     .launch()
     .await

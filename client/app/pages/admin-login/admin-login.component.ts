@@ -19,7 +19,7 @@ export class AdminLoginComponent {
   public username = ''
   public password = ''
   public rememberMe = false
-  public isLoading = true
+  public isLoading = false
 
   public constructor(
     private readonly router: Router,
@@ -37,6 +37,7 @@ export class AdminLoginComponent {
       return
     }
 
+    this.isLoading = true
     this.apiService.login(this.username, this.password).subscribe((data) => {
       this.isLoading = false
       if (data) {

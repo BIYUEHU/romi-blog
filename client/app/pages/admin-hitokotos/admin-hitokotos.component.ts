@@ -73,7 +73,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
       return
     }
 
-    this.apiService.createHitokoto({ ...this.newHitokoto }).subscribe(() => {
+    this.apiService.createHitokoto({ ...this.newHitokoto, type: Number(this.newHitokoto.type) }).subscribe(() => {
       this.loadItems()
       this.cancelEdit()
       this.notifyService.showMessage('一言创建成功', 'success')

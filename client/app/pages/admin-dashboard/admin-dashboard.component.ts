@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ApiService } from '../../services/api.service'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
-import { CacheService } from '../../services/cache.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { DatePipe } from '@angular/common'
@@ -108,8 +107,7 @@ export class AdminDashboardComponent implements OnInit {
   public constructor(
     private readonly apiService: ApiService,
     private readonly authService: AuthService,
-    private readonly browserService: BrowserService,
-    private readonly cacheService: CacheService
+    private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
@@ -138,13 +136,9 @@ export class AdminDashboardComponent implements OnInit {
       this.dashboardData = data
     })
 
-    this.recentPosts = this.cacheService.getCachedData() || []
-    if (this.recentPosts.length === 0) {
-      this.apiService.getPosts().subscribe((data) => {
-        this.recentPosts = data
-        this.cacheService.setCacheData(data)
-      })
-    }
+    this.apiService.getPosts().subscribe((data) => {
+      this.recentPosts = data
+    })
   }
 
   private getStatKey(title: string): keyof ResDashboardData {

@@ -91,13 +91,13 @@
         <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
 
         @if (isNotLoggedIn) {
-        <div class="p-6 bg-text-300 rounded-lg text-center">
+        <div class="mb-8 p-6 bg-text-300 rounded-lg text-center">
           <p class="text-accent-100 mb-4">登录后才能发表评论</p>
           <r-button [routerLink]="['/admin/login']" type="primary">
             去登录
           </r-button>
         </div>
-        } @else {
+        } @else if (currentUser) {
         <div class="mb-8">
           @if (replyingTo) {
           <div class="mb-2 flex items-center gap-2">
@@ -110,7 +110,7 @@
           <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="commentText" placeholder="写下你的想法..."></r-input>
           <div class="flex flex-wrap justify-between mt-4 gap-4 items-center">
             <div class="text-accent-100">
-              当前登录：{{ currentUser?.username }}
+              当前登录：{{ currentUser.username }}
             </div>
             <r-button (click)="addComment()" type="primary">发表评论</r-button>
           </div>

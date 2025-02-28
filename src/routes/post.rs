@@ -547,8 +547,7 @@ pub async fn decrypt(
                     Err(ApiError::unauthorized("Incorrect password"))
                 }
             } else {
-                l_warn!(logger, "Post is not password protected: id={}", id);
-                Err(ApiError::unauthorized("Post is not password protected"))
+                Err(ApiError::bad_request("Post is not password protected"))
             }
         }
         None => {
