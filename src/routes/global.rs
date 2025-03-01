@@ -8,10 +8,8 @@ pub async fn ssr_handler(
     ssr: &State<SSR>,
     logger: &State<Logger>,
 ) -> Result<SSRResponse, Status> {
-    let result = ssr.render(path.to_str().unwrap_or("")).await.map_err(|e| {
+    Ok(ssr.render(path.to_str().unwrap_or("")).await.map_err(|e| {
         l_error!(logger, "SSR render error: {}", e);
         Status::InternalServerError
-    })?;
-    println!("SSR response: {:?}", result.headers);
-    Ok(result)
+    })?)
 }

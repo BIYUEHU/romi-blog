@@ -70,7 +70,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
     this.apiService.getPosts().subscribe((data) => {
-      this.posts = data.slice(0, 4)
+      this.posts = data.filter(({ hide }) => !hide).slice(0, 4)
     })
     this.apiService.getNewses().subscribe((data) => {
       this.news = data.slice(0, 4)
