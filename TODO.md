@@ -19,3 +19,4 @@
 - [ ] Rust rerendering html to implement custom footer, header scripts and meta description, tags
 - [ ] I18n
 - [ ] Rss and sitemap
+- [ ] Romi UI better building

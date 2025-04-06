@@ -9,9 +9,7 @@
   ],
   "main": "./dist/romi-ui.umd.cjs",
   "module": "./dist/romi-ui.js",
-  "types": "./index.d.ts",
   "exports": {
-    "types": "./index.d.ts",
     "import": "./dist/romi-ui.js",
     "require": "./dist/romi-ui.umd.cjs"
   },
@@ -27,5 +25,12 @@
   },
   "dependencies": {
     "lit": "^3.2.1"
+  },
+  "bugs": {
+    "url": "https://github.com/biyuehu/romi-blog/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/biyuehu/romi-blog.git"
   }
 }
