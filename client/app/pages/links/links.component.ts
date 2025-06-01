@@ -1,7 +1,7 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnInit } from '@angular/core'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { Component, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
+import { CardComponent } from '../../components/card/card.component'
 
 interface ResFriendData {
   name: string
@@ -13,7 +13,7 @@ interface ResFriendData {
 @Component({
   selector: 'app-links',
   standalone: true,
-  imports: [FormsModule, PostContentComponent],
+  imports: [FormsModule, PostContentComponent, CardComponent],
   templateUrl: './links.component.html'
 })
 export class LinksComponent {

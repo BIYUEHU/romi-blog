@@ -1,3 +1,4 @@
+pub mod character;
 pub mod comment;
 pub mod global;
 pub mod hitokoto;

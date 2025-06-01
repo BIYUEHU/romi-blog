@@ -40,6 +40,8 @@ a:hover {
   margin-inline: auto;
   word-wrap: break-word;
   scrollbar-color: var(--bg-300) var(--text-300);
+  border-width: 1px;
+  border-color: var(--text-200);
 
   h1,
   h2,

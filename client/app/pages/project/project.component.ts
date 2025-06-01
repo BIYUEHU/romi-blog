@@ -3,9 +3,9 @@ import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { NotifyService } from '../../services/notify.service'
-import { Repository } from '../../models/api.model'
 import { FormsModule } from '@angular/forms'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
+import { ResProjectData } from '../../models/api.model'
 
 @Component({
   selector: 'app-project',
@@ -14,7 +14,7 @@ import { ProjectListComponent } from '../../components/project-list/project-list
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './project.component.html'
 })
-export class ProjectComponent extends romiComponentFactory<Repository[]>('project') implements OnInit {
+export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('project') implements OnInit {
   public isLoading = true
 
   public searchQuery = ''

@@ -1,10 +1,13 @@
 <div class="w-5xl max-w-90% mx-auto flex-1">
 
   @if (posts) {
-  <!-- 文章网格 -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <div class="columns-1 md:columns-2 gap-6">
     @for (post of displayedPosts; track post.id) {
-    <article class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
+    <!-- 外层加一个 wrapper，用来打断列内拆分 -->
+    <app-card
+      class="group rounded-xl overflow-hidden hover:shadow-lg transition-all hover:cursor-pointer break-inside-avoid mb-6"
+      [routerLink]="['/post', post.id]">
+      <!-- 下面保持你原来的卡片内容不变 -->
       @if (post.banner) {
       <div class="aspect-video overflow-hidden">
         <img [src]="post.banner" [alt]="post.title"
@@ -16,9 +19,9 @@
         <!-- 标题和摘要 -->
         <div class="mb-4">
           <h2 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors mb-2">
-            <a [routerLink]="['/post', post.id]" class="hover:text-primary-100">
+            <span class="hover:text-primary-100">
               {{ post.title }}
-            </a>
+            </span>
           </h2>
           <p class="text-accent-100 line-clamp-2">{{ post.summary }}</p>
         </div>
@@ -50,7 +53,7 @@
         </div>
         }
       </div>
-    </article>
+    </app-card>
     }
   </div>
 
@@ -60,11 +63,11 @@
     @for (item of getPageNumbers(); track $index) {
     @if (item === 'prev') {
     <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
-      <- </r-button>
+      << </r-button>
         } @else if (item === 'next') {
         <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg"
           [disabled]="currentPage === totalPages">
-          ->
+          >>
         </r-button>
         } @else if (item === '...') {
         <span class="px-2 text-accent-100">...</span>

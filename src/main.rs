@@ -13,13 +13,11 @@ mod utils;
 use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
-use routes::{comment, global, info, news, user};
-use routes::{hitokoto, meta, post, seimg};
+use routes::{character, comment, global, hitokoto, info, meta, news, post, seimg, user};
 use sea_orm_rocket::Database;
 use std::env;
 use std::fs::exists;
 use transport::console::ConsoleTransport;
-use utils::cache::Cache;
 use utils::catcher;
 use utils::config::load_config;
 use utils::cros::get_cors;
@@ -104,7 +102,6 @@ async fn bootstrap() {
     .attach(Db::init())
     .attach(get_cors())
     .attach(Recorder::new(logger.clone(), config.clone()))
-    .manage(Cache::new())
     .manage(SSR::new(
         config.ssr_entry.clone(),
         config.port + 1,
@@ -178,12 +175,26 @@ async fn bootstrap() {
         ],
     )
     .mount(
+        "/api/character",
+        routes![
+            character::fetch,
+            character::fetch_all,
+            character::create,
+            character::update,
+            character::delete
+        ],
+    )
+    .mount(
         "/api/seimg",
         routes![seimg::fetch, seimg::create, seimg::update, seimg::delete],
     )
     .mount(
         "/api/info",
-        routes![info::fetch_dashboard, info::fetch_settings],
+        routes![
+            info::fetch_dashboard,
+            info::fetch_settings,
+            info::fetch_projects
+        ],
     )
     .register(
         "/",

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core'
+import { Component } from '@angular/core'
 import { LayoutUsingComponent } from '../layout-using/layout-using.component'
 import { PostContentComponent } from '../post-content/post-content.component'
 import { Router } from '@angular/router'

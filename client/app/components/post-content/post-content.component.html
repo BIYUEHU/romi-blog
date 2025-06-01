@@ -5,7 +5,7 @@
     <div class="flex-1 w-full">
       <ng-content select="[post-brefore]"></ng-content>
 
-      <div class="max-w-full w-230 post-body mt-2 p-5 rounded-xl hover:shadow-sm" [innerHTML]="renderedContent"></div>
+      <div class="max-w-full w-230 post-body mt-2 p-5 rounded-xl" [innerHTML]="renderedContent"></div>
 
       <ng-content select="[post-after]"></ng-content>
 

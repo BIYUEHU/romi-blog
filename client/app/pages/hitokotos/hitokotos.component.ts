@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
-import { ResHitokotoData } from '../../../output'
+import { ResHitokotoData } from '../../models/api.model'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { NotifyService } from '../../services/notify.service'
 import { RouterLink } from '@angular/router'

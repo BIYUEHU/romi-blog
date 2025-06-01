@@ -5,7 +5,7 @@
     <div class="flex flex-wrap gap-3">
       @for (category of categories; track $index) {
       <a [routerLink]="['/category', category]"
-        class="px-4 py-2 bg-text-200 hover:bg-text-100 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors font-bold">
+        class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors font-bold">
         {{ category }}
       </a>
       }
@@ -17,7 +17,7 @@
     <div class="flex flex-wrap gap-3">
       @for (tag of tags; track $index) {
       <a [routerLink]="['/tag', tag]"
-        class="px-4 py-2 bg-text-300 hover:bg-text-200 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors">
+        class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors">
         #{{ tag }}
       </a>
       }

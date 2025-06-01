@@ -65,11 +65,20 @@ Authorization: Bearer 222
 ### Get settings
 
 GET {{URL}}/api/info/settings/
-
+x
 ### Get dashboard data
 
 GET {{URL}}/api/info/dashboard/
 Authorization: Bearer
+
+
+### Get characters
+
+GET {{URL}}/api/character/
+
+### Get character
+
+GET {{URL}}/api/character/3
 
 ### Test
 

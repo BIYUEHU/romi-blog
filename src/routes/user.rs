@@ -1,5 +1,3 @@
-use std::env;
-
 use crate::entity::romi_users;
 use crate::guards::admin::AdminUser;
 use crate::guards::auth::AuthUser;
@@ -15,6 +13,8 @@ use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter,
 };
 use sea_orm_rocket::Connection;
+use std::env;
+use std::time::{Duration, SystemTime};
 use tokio::spawn;
 
 #[post("/login", data = "<credentials>")]
@@ -41,8 +41,8 @@ pub async fn login(
         username: user.username.clone(),
         created: user.created.clone(),
         url: user.url.clone(),
-        exp: (std::time::SystemTime::now() + std::time::Duration::from_secs(60 * 60 * 24 * 12))
-            .duration_since(std::time::UNIX_EPOCH)
+        exp: (SystemTime::now() + Duration::from_secs(60 * 60 * 24 * 12))
+            .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
             .as_secs() as u64,
         is_admin: user.is_admin.eq(&"1".to_string()),

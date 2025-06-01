@@ -7,63 +7,79 @@ use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;
 use roga::*;
-use sea_orm::{
-    ActiveModelTrait, ActiveValue, ColumnTrait, DbBackend, EntityTrait, IntoActiveModel,
-    QueryFilter, Statement,
-};
+use sea_orm::{ActiveModelTrait, ActiveValue, DbBackend, EntityTrait, IntoActiveModel, Statement};
 use sea_orm_rocket::Connection;
 
 #[get("/?<limit>&<tag>&<r18>")]
 pub async fn fetch(
     limit: Option<u32>,
     tag: Option<String>,
-    r18: Option<u32>,
+    r18: Option<String>,
     logger: &State<Logger>,
     conn: Connection<'_, Db>,
 ) -> ApiResult<Vec<ResSeimgData>> {
     let limit = limit.map_or(1, |l| l.clamp(1, 10));
+
     l_info!(
         logger,
-        "Fetching seimg with limit={}, tag={:?}, r18={:?}",
+        "Fetching seimg with limit={}, r18={:?}, tag={:?}",
         limit,
-        tag,
-        r18
+        r18,
+        tag
     );
 
-    let mut query = romi_seimgs::Entity::find();
+    let mut conditions = Vec::new();
 
-    if let Some(r18_val) = r18 {
-        query = query.filter(romi_seimgs::Column::R18.eq(r18_val.to_string()));
+    if let Some(r18_str) = r18 {
+        let r18_val = if r18_str == "true" { 1 } else { 0 };
+        conditions.push(format!("r18 = {}", r18_val));
     }
 
     if let Some(tag_str) = tag {
-        for tag in tag_str.split('|').collect::<Vec<&str>>() {
-            query = query.filter(romi_seimgs::Column::Tags.contains(tag));
+        let tags: Vec<String> = tag_str
+            .split('|')
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.trim().to_string())
+            .collect();
+
+        if !tags.is_empty() {
+            let tag_sqls: Vec<String> = tags
+                .iter()
+                .map(|t| format!("tags LIKE '%{}%'", t.replace('\'', "''")))
+                .collect();
+            conditions.push(format!("({})", tag_sqls.join(" OR ")));
         }
     }
 
+    let mut sql = String::from("SELECT * FROM romi_seimgs");
+
+    if !conditions.is_empty() {
+        sql.push_str(" WHERE ");
+        sql.push_str(&conditions.join(" AND "));
+    }
+
+    sql.push_str(&format!(" ORDER BY RAND() LIMIT {}", limit));
+
+    let result = romi_seimgs::Entity::find()
+        .from_raw_sql(Statement::from_string(DbBackend::MySql, sql))
+        .all(conn.into_inner())
+        .await
+        .context("Failed to fetch seimg")?;
+
     api_ok(
-        romi_seimgs::Entity::find()
-            .from_raw_sql(Statement::from_sql_and_values(
-                DbBackend::MySql,
-                format!("SELECT * FROM romi_seimgs ORDER BY RAND() limit {}", limit),
-                [],
-            ))
-            .all(conn.into_inner())
-            .await
-            .context("Failed to fetch seimg")?
+        result
             .into_iter()
             .map(|img| ResSeimgData {
                 pid: img.pixiv_pid,
                 uid: img.pixiv_uid,
                 title: img.title,
                 author: img.author,
-                r18: img.r18.eq(&1.to_string()),
+                r18: img.r18.eq("1"),
                 tags: img
                     .tags
-                    .unwrap_or("".to_string())
+                    .unwrap_or_default()
                     .split(',')
-                    .map(String::from)
+                    .map(str::to_string)
                     .collect(),
                 width: img.width,
                 height: img.height,

@@ -85,7 +85,7 @@ CREATE TABLE `romi_seimgs` (
     `title` varchar(150) NOT NULL,
     `author` varchar(150) NOT NULL,
     `r18` char(1) NOT NULL DEFAULT '0',
-    `tags` text  DEFAULT NULL,
+    `tags` text DEFAULT NULL,
     `width` int(10) UNSIGNED NOT NULL,
     `height` int(10) UNSIGNED NOT NULL,
     `type` varchar(10) NOT NULL,
@@ -100,6 +100,38 @@ CREATE TABLE `romi_hitokotos` (
     `likes` int(10) NOT NULL DEFAULT '0',
     `isPublic` char(1) NOT NULL DEFAULT '0'
 )
+
+CREATE TABLE `romi_characters` (
+    `id` int(10) UNSIGNED NOT NULL,
+    `name` varchar(191) NOT NULL,
+    `romaji` varchar(191) NOT NULL,
+    `gender` VARCHAR(20) NOT NULL,
+    `alias` text DEFAULT NULL,
+    `age` int(10) UNSIGNED DEFAULT NULL,
+    `images` text NOT NULL,
+    `url` text DEFAULT NULL,
+    `description` text NOT NULL,
+    `comment` text DEFAULT NULL,
+    `hitokoto` text DEFAULT NULL,
+    `birthday` int(10) UNSIGNED DEFAULT NULL,
+    `voice` varchar(191) DEFAULT NULL,
+    `series` text NOT NULL,
+    `seriesGenre` varchar(20) NOT NULL,
+    `tags` text DEFAULT NULL,
+    `hairColor` varchar(191) DEFAULT NULL,
+    `eyeColor` varchar(191) DEFAULT NULL,
+    `bloodType` VARCHAR(3) DEFAULT NULL,
+    `height` int(10) UNSIGNED DEFAULT NULL,
+    `bust` int(10) UNSIGNED DEFAULT NULL,
+    `waist` int(10) UNSIGNED DEFAULT NULL,
+    `hip` int(10) UNSIGNED DEFAULT NULL,
+    `created` int(10) UNSIGNED NOT NULL DEFAULT '0',
+    `color` varchar(191) DEFAULT NULL,
+    `hide` char(1) NOT NULL DEFAULT '0',
+    `order` int(10) UNSIGNED NOT NULL DEFAULT '50',
+    `songId` int(10) UNSIGNED DEFAULT NULL,
+    `weight` int(10) UNSIGNED DEFAULT NULL
+);
 
 ALTER TABLE `romi_comments`
 ADD PRIMARY KEY (`cid`),
@@ -135,8 +167,9 @@ ADD PRIMARY KEY (`id`),
 ADD KEY `pixivPid` (`pixivPid`),
 ADD KEY `pixivUid` (`pixivUid`);
 
-ALTER TABLE `romi_hitokotos`
-ADD PRIMARY KEY (`id`);
+ALTER TABLE `romi_hitokotos` ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `romi_characters` ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `romi_comments`
 MODIFY `cid` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
@@ -166,4 +199,7 @@ ALTER TABLE `romi_seimgs`
 MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `romi_hitokotos`
+MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `romi_characters`
 MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;

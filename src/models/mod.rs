@@ -1,3 +1,4 @@
+pub mod character;
 pub mod comment;
 pub mod hitokoto;
 pub mod info;

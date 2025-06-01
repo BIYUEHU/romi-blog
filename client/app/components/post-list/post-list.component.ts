@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
 import { DatePipe } from '@angular/common'
+import { CardComponent } from '../card/card.component'
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [DatePipe, LoadingComponent, RouterLink],
+  imports: [DatePipe, LoadingComponent, RouterLink, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-list.component.html'
 })

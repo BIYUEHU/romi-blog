@@ -19,10 +19,10 @@
       </div>
 
       <div class="flex items-center justify-center gap-2">
-        <r-button size="lg" (click)="likeHitokoto()" [disabled]="isLiked">
+        <r-button type="error" size="lg" (click)="likeHitokoto()" [disabled]="isLiked">
           点赞
         </r-button>
-        <r-button size="lg" (click)="nextHitokoto()">
+        <r-button type="secondary" size="lg" (click)="nextHitokoto()">
           下一条
         </r-button>
         <r-button size="lg" (click)="shareHitokoto()">

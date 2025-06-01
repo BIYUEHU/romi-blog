@@ -1,19 +1,20 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { DatePipe } from '@angular/common'
-import { Character } from '../../models/api.model'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { NotifyService } from '../../services/notify.service'
+import { ResCharacterData } from '../../models/api.model'
+import { DatePipe } from '@angular/common'
+import { CardComponent } from '../../components/card/card.component'
 
 @Component({
   selector: 'app-char',
   standalone: true,
-  imports: [LoadingComponent],
+  imports: [LoadingComponent, DatePipe, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })
-export class CharComponent extends romiComponentFactory<Character>('char') implements OnInit {
+export class CharComponent extends romiComponentFactory<ResCharacterData>('char') implements OnInit {
   public isLoading = true
 
   public constructor(

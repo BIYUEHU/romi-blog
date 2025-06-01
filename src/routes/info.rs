@@ -6,9 +6,9 @@ use crate::entity::{
     romi_seimgs, romi_users,
 };
 use crate::guards::admin::AdminUser;
-use crate::models::info::{ResDashboardData, ResSettingsData};
-use crate::utils::api::{api_ok, ApiResult};
-use crate::utils::cache::Cache;
+use crate::models::info::{ResDashboardData, ResProjectData, ResSettingsData};
+use crate::utils::api::{api_ok, ApiError, ApiResult};
+use crate::utils::cache::{get_projects_cache, get_settings_cache};
 use crate::utils::pool::Db;
 use anyhow::Context;
 use futures::try_join;
@@ -80,9 +80,22 @@ pub async fn fetch_dashboard(
 #[get("/settings")]
 pub async fn fetch_settings(
     logger: &State<Logger>,
-    cache: &State<Cache>,
     conn: Connection<'_, Db>,
 ) -> ApiResult<ResSettingsData> {
     l_info!(logger, "Fetching site settings");
-    api_ok(cache.get_settings(conn.into_inner()).await?)
+    api_ok(
+        get_settings_cache(conn.into_inner())
+            .await
+            .map_err(|e| ApiError::internal(e.to_string()))?,
+    )
+}
+
+#[get("/projects")]
+pub async fn fetch_projects(logger: &State<Logger>) -> ApiResult<Vec<ResProjectData>> {
+    l_info!(logger, "Fetching projects data from github repository");
+    api_ok(
+        get_projects_cache()
+            .await
+            .map_err(|e| ApiError::internal(e.to_string()))?,
+    )
 }

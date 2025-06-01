@@ -1,23 +1,21 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
 import { DatePipe } from '@angular/common'
 import { RouterLink } from '@angular/router'
-import { Repository, ResPostData } from '../../models/api.model'
-import { ResNewsData } from '../../models/api.model'
-import { Video } from '../../models/api.model'
+import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { APlayer } from '../../shared/types'
 import musicList from '../../shared/music.json'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
+import { CardComponent } from '../../components/card/card.component'
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe, RouterLink, ProjectListComponent, LayoutUsingComponent, LoadingComponent],
+  imports: [DatePipe, RouterLink, ProjectListComponent, LayoutUsingComponent, LoadingComponent, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
@@ -25,7 +23,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public posts?: ResPostData[]
   public news?: ResNewsData[]
   public videos?: Video[]
-  public projects?: Repository[]
+  public projects?: ResProjectData[]
   private aplayer?: APlayer
   public header = {
     title: 'Arimura Sena',
@@ -70,13 +68,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
     this.apiService.getPosts().subscribe((data) => {
-      this.posts = data.filter(({ hide }) => !hide).slice(0, 4)
+      this.posts = data
+        .filter(({ hide }) => !hide)
+        .slice(0, 4)
+        .sort((a, b) => b.created - a.created)
     })
     this.apiService.getNewses().subscribe((data) => {
-      this.news = data.slice(0, 4)
+      this.news = data.slice(0, 4).sort((a, b) => b.created - a.created)
     })
     this.apiService.getVideos().subscribe((data) => {
-      this.videos = data.slice(0, 4)
+      this.videos = data.slice(0, 4).sort((a, b) => b.created - a.created)
     })
     this.apiService.getProjects().subscribe((data) => {
       this.projects = data.slice(0, 4)

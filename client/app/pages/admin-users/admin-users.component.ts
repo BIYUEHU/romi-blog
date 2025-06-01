@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
-import { ResUserData, ReqUserData } from '../../../output'
+import { ResUserData, ReqUserData } from '../../models/api.model'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { AuthService } from '../../services/auth.service'
 import { UserAuthData } from '../../models/api.model'

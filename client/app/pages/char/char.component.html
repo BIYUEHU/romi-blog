@@ -1,107 +1,159 @@
-<div class="max-w-98% w-4xl mx-auto flex-1">
-  @if (isLoading) {
-  <app-loading />
-  } @else if (data) {
-  <div class="flex flex-col lg:flex-row gap-8">
-    <!-- 左侧图片区 -->
-    <div class="lg:w-96 flex-shrink-0">
-      <div class="bg-text-200 rounded-xl overflow-hidden p-4" [style.border-color]="'#' + data.color"
-        style="border-width: 2px; border-style: solid;">
-        <img [src]="data.images[0]" [alt]="data.name" class="w-full rounded-lg" />
-      </div>
+<div class="bg-text-100 min-h-screen px-4 py-6">
+  <div class="max-w-screen-lg mx-auto flex flex-col lg:flex-row gap-6">
+    @if (isLoading) {
+    <app-loading class="mx-auto" />
+    } @else if (data) {
+
+    <div class="flex flex-col items-center lg:items-start shrink-0 w-full lg:w-80 space-y-4">
+      <app-card class="w-full overflow-hidden border" [style.border-color]="'#' + data.color">
+        <div class="text-center lg:text-left space-y-1">
+          <img [src]="data.images[0]" [alt]="data.name"
+            class="max-h-70 lg:max-h-auto lg:w-full text-center mx-auto object-cover" />
+          <h1 class="text-2xl font-bold text-primary-100 truncate">
+            {{ data.name }}
+          </h1>
+          <div class="text-sm text-accent-100 truncate">{{ data.romaji }}</div>
+          <div class="flex items-center justify-center lg:justify-start space-x-2">
+            <r-tag [type]="data.gender === 'FEMALE' ? 'error' : 'info'" size="md">
+              {{ data.gender === 'FEMALE' ? '♀' : '♂' }}
+            </r-tag>
+          </div>
+        </div>
+      </app-card>
     </div>
 
-    <!-- 右侧信息区 -->
-    <div class="flex-1">
-      <div class="bg-text-200 rounded-xl p-6">
-        <!-- 基本信息 -->
-        <div class="flex items-start justify-between gap-4 mb-6">
+    <!-- 右侧信息 -->
+    <div class="flex-1 flex flex-col space-y-6">
+      <!-- 属性网格 -->
+      <app-card class="w-full" [style.border-color]="'#' + data.color">
+        <div class="w-full italic text-primary-100 text-6 mb-5 text-center" [style.border-color]="'#' + data.color">
+          「{{ data.hitokoto }}」
+        </div>
+
+        <h2 class="text-lg font-semibold text-primary-100 mb-4">基本信息</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          @if (data.age !== null) {
           <div>
-            <h1 class="text-2xl font-bold text-bg-100 mb-2">{{ data.name }}</h1>
-            <div class="text-accent-100">{{ data.romaji }}</div>
+            <span class="text-xs text-accent-100">年龄</span>
+            <div class="text-bg-300">{{ data.age }}</div>
           </div>
-          <r-tag [style.background-color]="'#' + data.color" size="lg">
-            {{ data.gender === 'FEMALE' ? '♀' : '♂' }}
-          </r-tag>
-        </div>
-
-        @if (data.alias.length > 0) {
-        <div class="mb-4">
-          <div class="text-sm text-accent-100 mb-2">别名</div>
-          <div class="flex flex-wrap gap-2">
-            @for (alias of data.alias; track alias) {
-            <r-tag>{{ alias }}</r-tag>
-            }
+          }
+          @if (data.birthday !== null) {
+          <div>
+            <span class="text-xs text-accent-100">生日</span>
+            <div class="text-bg-300">{{ (data.birthday | date:'MM-dd') }}</div>
           </div>
-        </div>
-        }
-
-        @if (data.hitokoto) {
-        <div class="bg-text-300 rounded-lg p-4 mb-6">
-          <div class="text-bg-100 italic">「{{ data.hitokoto }}」</div>
-        </div>
-        }
-
-        <!-- 详细信息 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          }
           @if (data.series) {
           <div>
-            <span class="text-accent-100">作品：</span>
-            <span class="text-bg-100">{{ data.series }}</span>
+            <span class="text-xs text-accent-100">作品</span>
+            <div class="text-bg-300">{{ data.series }}</div>
+          </div>
+          }
+          @if (data.series_genre) {
+          <div>
+            <span class="text-xs text-accent-100">类型</span>
+            <div class="text-bg-300">{{ data.series_genre }}</div>
           </div>
           }
           @if (data.voice) {
           <div>
-            <span class="text-accent-100">声优：</span>
-            <span class="text-bg-100">{{ data.voice }}</span>
+            <span class="text-xs text-accent-100">声优</span>
+            <div class="text-bg-300">{{ data.voice }}</div>
+          </div>
+          }
+          @if (data.hair_color) {
+          <div>
+            <span class="text-xs text-accent-100">发色</span>
+            <div class="text-bg-300">{{ data.hair_color }}</div>
+          </div>
+          }
+          @if (data.eye_color) {
+          <div>
+            <span class="text-xs text-accent-100">眼色</span>
+            <div class="text-bg-300">{{ data.eye_color }}</div>
           </div>
           }
           @if (data.height) {
           <div>
-            <span class="text-accent-100">身高：</span>
-            <span class="text-bg-100">{{ data.height }}cm</span>
+            <span class="text-xs text-accent-100">身高</span>
+            <div class="text-bg-300">{{ data.height }} cm</div>
           </div>
           }
-          @if (data.bloodType) {
+          @if (data.weight) {
           <div>
-            <span class="text-accent-100">血型：</span>
-            <span class="text-bg-100">{{ data.bloodType }}</span>
+            <span class="text-xs text-accent-100">体重</span>
+            <div class="text-bg-300">{{ data.weight }} kg</div>
+          </div>
+          }
+          @if (data.blood_type) {
+          <div>
+            <span class="text-xs text-accent-100">血型</span>
+            <div class="text-bg-300">{{ data.blood_type }}</div>
+          </div>
+          }
+          <!-- 三围：至少有一个就显示 -->
+          @if (data.bust || data.waist || data.hip) {
+          <div class="col-span-2 sm:col-span-1 lg:col-span-1">
+            <span class="text-xs text-accent-100">三围</span>
+            <div class="text-bg-300">
+              @if (data.bust) {
+              <span>B{{ data.bust }}</span>
+              }
+              @if (data.waist) {
+              <span>@if (data.bust) {/} W{{ data.waist }}</span>
+              }
+              @if (data.hip) {
+              <span>@if (data.bust || data.waist) {/} H{{ data.hip }}</span>
+              }
+            </div>
           </div>
           }
         </div>
+      </app-card>
 
-        @if (data.description) {
-        <div class="mb-6">
-          <div class="text-sm text-accent-100 mb-2">描述</div>
-          <div class="text-bg-100 whitespace-pre-wrap">{{ data.description }}</div>
+      @if (data.alias.length > 0) {
+      <app-card class="w-full" [style.border-color]="'#' + data.color">
+        <h2 class="text-lg font-semibold text-primary-100 mb-3">描述</h2>
+        <div class="text-bg-300 whitespace-pre-wrap break-words mb-4">
+          {{ data.description }}
         </div>
-        }
 
-        @if (data.tags.length > 0) {
-        <div class="mb-6">
-          <div class="text-sm text-accent-100 mb-2">标签</div>
-          <div class="flex flex-wrap gap-2">
-            @for (tag of data.tags; track tag) {
-            <r-tag type="primary">{{ tag }}</r-tag>
-            }
-          </div>
+        <h2 class="text-lg font-semibold text-primary-100 mb-3">别名</h2>
+        <div class="flex flex-wrap gap-2 mb-4">
+          @for (alias of data.alias; track alias) {
+          <r-tag size="sm">{{ alias }}</r-tag>
+          }
         </div>
-        }
 
-        @if (data.url.length > 0) {
-        <div>
-          <div class="text-sm text-accent-100 mb-2">相关链接</div>
-          <div class="flex flex-wrap gap-2">
-            @for (url of data.url; track url) {
-            <a [href]="url" target="_blank" class="text-primary-100 hover:text-primary-200 hover:underline">
-              {{ url }}
-            </a>
-            }
-          </div>
+        <h2 class="text-lg font-semibold text-primary-100 mb-3">标签</h2>
+        <div class="flex flex-wrap gap-2">
+          @for (tag of data.tags; track tag) {
+          <r-tag type="accent" size="sm">{{ tag }}</r-tag>
+          }
         </div>
-        }
-      </div>
+      </app-card>
+      }
+
+      @if (data.comment) {
+      <app-card class="w-full" [style.border-color]="'#' + data.color">
+        <h2 class="text-lg font-semibold text-primary-100 mb-3">评价</h2>
+        <div class="text-bg-300 whitespace-pre-wrap break-words mb-4">
+          {{ data.comment }}
+        </div>
+
+        <h2 class="text-lg font-semibold text-primary-100 mb-3">链接</h2>
+        <div class="flex flex-wrap gap-2">
+          @for (url of data.url; track url) {
+          <a [href]="url" target="_blank"
+            class="text-primary-100 hover:text-primary-200 hover:underline break-words max-w-full">
+            {{ url }}
+          </a>
+          }
+        </div>
+      </app-card>
+      }
     </div>
+    }
   </div>
-  }
 </div>

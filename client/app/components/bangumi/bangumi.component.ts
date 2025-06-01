@@ -3,11 +3,12 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { NotifyService } from '../../services/notify.service'
 import { BangumiData } from '../../models/api.model'
 import { LoadingComponent } from '../../components/loading/loading.component'
+import { CardComponent } from '../card/card.component'
 
 @Component({
   selector: 'app-bangumi',
   standalone: true,
-  imports: [LoadingComponent],
+  imports: [LoadingComponent, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './bangumi.component.html'
 })

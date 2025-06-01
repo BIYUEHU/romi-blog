@@ -1,3 +1,4 @@
+// pub use super::romi_characters::Entity as RomiCharacters;
 // pub use super::romi_comments::Entity as RomiComments;
 // pub use super::romi_fields::Entity as RomiFields;
 // pub use super::romi_hitokotos::Entity as RomiHitokotos;

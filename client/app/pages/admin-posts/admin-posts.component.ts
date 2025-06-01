@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
-import { ResPostData } from '../../../output'
+import { ResPostData } from '../../models/api.model'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import {
   AbstractAdminBaseListComponent,

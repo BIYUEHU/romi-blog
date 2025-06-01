@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DatePipe } from '@angular/common'
 import { ApiService } from '../../services/api.service'
-import { ResNewsData, ReqNewsData } from '../../../output'
+import { ResNewsData, ReqNewsData } from '../../models/api.model'
 import {
   AdminBaseListComponent,
   AbstractAdminBaseListComponent

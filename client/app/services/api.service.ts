@@ -19,9 +19,9 @@ import type {
   UserAuthData,
   ResNewsData,
   ReqNewsData,
-  Character,
-  Repository,
-  Video
+  Video,
+  ResProjectData,
+  ResCharacterData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -219,16 +219,16 @@ export class ApiService {
     return this.http.get<ResDashboardData>(`${this.apiUrl}/info/dashboard`)
   }
 
+  public getProjects() {
+    return /* isDevMode() ? of([]) : */ this.http.get<ResProjectData[]>(`${this.apiUrl}/info/projects`)
+  }
+
   public getCharacters() {
-    return this.http.get<{ data: Character[] }>('https://m.hotaru.icu/api/character').pipe(map(({ data }) => data))
+    return this.http.get<ResCharacterData[]>(`${this.apiUrl}/character`)
   }
 
   public getCharacter(id: number) {
-    return this.http.get<{ data: Character }>(`https://m.hotaru.icu/api/character/${id}`).pipe(map(({ data }) => data))
-  }
-
-  public getProjects() {
-    return isDevMode() ? of([]) : this.http.get<Repository[]>('https://api.github.com/users/BIYUEHU/repos?sort=updated')
+    return this.http.get<ResCharacterData>(`${this.apiUrl}/character/${id}`)
   }
 
   public getVideos() {

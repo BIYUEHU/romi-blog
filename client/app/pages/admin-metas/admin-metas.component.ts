@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ApiService } from '../../services/api.service'
-import { ResMetaData } from '../../../output'
+import { ResMetaData } from '../../models/api.model'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { NotifyService } from '../../services/notify.service'
 

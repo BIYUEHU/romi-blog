@@ -82,7 +82,11 @@ impl Fairing for Recorder {
                     msg,
                 }) = serde_json::from_str::<ApiError>(&body_str)
                 {
-                    l_error!(self.logger.clone(), raw_error.unwrap_or(msg.clone()));
+                    l_error!(
+                        self.logger.clone(),
+                        "Unknown: {}",
+                        raw_error.unwrap_or(msg.clone())
+                    );
                     serde_json::to_string(&ApiErrorReal { code, msg })
                         .unwrap_or("".into())
                         .as_bytes()

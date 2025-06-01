@@ -1,16 +1,17 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core'
-import { Repository } from '../../models/api.model'
 import { DatePipe } from '@angular/common'
+import { ResProjectData } from '../../models/api.model'
+import { CardComponent } from '../card/card.component'
 
 @Component({
   selector: 'app-project-list',
   standalone: true,
-  imports: [DatePipe],
+  imports: [DatePipe, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './project-list.component.html'
 })
 export class ProjectListComponent {
-  @Input({ required: true }) public repos!: Repository[]
+  @Input({ required: true }) public repos!: ResProjectData[]
 
   private readonly languageColors: Record<string, string> = {
     TypeScript: '#3178c6',
@@ -50,5 +51,9 @@ export class ProjectListComponent {
   public getLanguageColor(language: string | null): string {
     if (!language) return '#6e7681'
     return this.languageColors[language] || '#6e7681'
+  }
+
+  public windowOpen(url: string): void {
+    window.open(url, '_blank')
   }
 }

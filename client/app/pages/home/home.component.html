@@ -1,13 +1,13 @@
 <app-layout-using [imageHeight]="'min-h-screen'">
   <div background class="bg-black/35 rounded-xl p-8 overflow-hidden hover:bg-black/40 hover:shadow-md">
-    <div class="relative z-10 flex items-center gap-8">
+    <div class="relative z-1 flex items-center gap-8">
       <img src="https://api.hotaru.icu/ial/qqavatar/index.php?qq=FrTFF7fjGbS2Fg%3D%3D&size=640" alt="Avatar"
         class="hidden md:block w-32 h-32 rounded-full border-4 border-primary-100" />
       <div class="flex-1 max-w-2xl">
         <h1 class="text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
           {{ header.title }}
         </h1>
-        <ul class="text-5 flex items-start flex-wrap gap-2 break-words">
+        <ul class="text-5 list-none space-y-2 text-left">
           @for (subTitle of header.subTitle; track $index) {
           <li class="font-sans">{{ subTitle }}</li>
           }
@@ -34,11 +34,11 @@
         <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @if (posts) {
+      @if (posts) {
+      <div class="columns-1 md:columns-2 gap-x-6">
         @for (post of posts; track post.id) {
-        <a [routerLink]="'/post/' + post.id"
-          class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
+        <app-card [routerLink]="'/post/' + post.id"
+          class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
           @if (post.banner) {
           <div class="aspect-video overflow-hidden">
             <img [src]="post.banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
@@ -55,12 +55,12 @@
               <span>{{ post.views }} 次阅读</span>
             </div>
           </div>
-        </a>
-        }
-        } @else {
-        <app-loading />
+        </app-card>
         }
       </div>
+      } @else {
+      <app-loading />
+      }
     </section>
 
     <section>
@@ -69,23 +69,23 @@
         <r-button [routerLink]="'/news/'" type="primary">查看更多</r-button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @if (news) {
+      @if (news) {
+      <div class="columns-1 md:columns-2 gap-x-6">
         @for (item of news; track item.id) {
-        <a [routerLink]="'/news/' + item.id"
-          class="bg-text-200 rounded-xl p-6 hover:scale-101 hover:shadow-md transition-all">
-          <div class="bg-text-200 rounded-xl p-6 hover:scale-105">
+        <app-card [routerLink]="'/news/' + item.id"
+          class="hover:cursor-pointer break-inside-avoid mb-6 hover:shadow-md transition-all">
+          <div class="bg-text-200 rounded-xl p-6">
             <div class="text-bg-100 break-words">{{ item.text.slice(0, 150) }}...</div>
             <div class="text-accent-100 text-sm mt-4">
               {{ item.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
             </div>
           </div>
-        </a>
-        }
-        } @else {
-        <app-loading />
+        </app-card>
         }
       </div>
+      } @else {
+      <app-loading />
+      }
     </section>
 
     <section>
@@ -96,11 +96,11 @@
         </a>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @if (videos) {
+      @if (videos) {
+      <div class="columns-1 md:columns-2 gap-x-6">
         @for (video of videos; track video.aid) {
-        <a [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
-          class="group bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all">
+        <app-card [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
+          class="break-inside-avoid mb-6 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:cursor-pointer">
           <div class="aspect-video relative overflow-hidden">
             <img [src]="video.pic" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
             <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
@@ -122,12 +122,12 @@
               </span>
             </div>
           </div>
-        </a>
-        }
-        } @else {
-        <app-loading />
+        </app-card>
         }
       </div>
+      } @else {
+      <app-loading />
+      }
     </section>
 
     <section>

@@ -1,0 +1,67 @@
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
+
+#[derive(Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqCharacterData {
+    pub name: String,
+    pub romaji: String,
+    pub color: Option<String>,
+    pub song_id: Option<u32>,
+    pub gender: String,
+    pub alias: Vec<String>,
+    pub age: Option<u32>,
+    pub images: Vec<String>,
+    pub url: Vec<String>,
+    pub description: String,
+    pub comment: Option<String>,
+    pub hitokoto: Option<String>,
+    pub birthday: Option<i64>,
+    pub voice: Option<String>,
+    pub series: String,
+    pub series_genre: String,
+    pub tags: Vec<String>,
+    pub hair_color: Option<String>,
+    pub eye_color: Option<String>,
+    pub blood_type: Option<String>,
+    pub height: Option<u32>,
+    pub weight: Option<u32>,
+    pub bust: Option<u32>,
+    pub waist: Option<u32>,
+    pub hip: Option<u32>,
+    pub order: Option<u32>,
+    pub hide: Option<bool>,
+}
+
+#[derive(Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResCharacterData {
+    pub id: u32,
+    pub name: String,
+    pub romaji: String,
+    pub color: Option<String>,
+    pub song_id: Option<u32>,
+    pub gender: String,
+    pub alias: Vec<String>,
+    pub age: Option<u32>,
+    pub images: Vec<String>,
+    pub url: Vec<String>,
+    pub description: String,
+    pub comment: Option<String>,
+    pub hitokoto: Option<String>,
+    pub birthday: Option<u32>,
+    pub voice: Option<String>,
+    pub series: String,
+    pub series_genre: String,
+    pub tags: Vec<String>,
+    pub hair_color: Option<String>,
+    pub eye_color: Option<String>,
+    pub blood_type: Option<String>,
+    pub height: Option<u32>,
+    pub weight: Option<u32>,
+    pub bust: Option<u32>,
+    pub waist: Option<u32>,
+    pub hip: Option<u32>,
+    pub order: u32,
+    pub hide: bool,
+}

@@ -1,54 +1,57 @@
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="columns-1 lg:columns-2 gap-x-6">
   @for (repo of repos; track repo.id) {
-  <div class="bg-text-200 rounded-xl p-6 hover:shadow-sm transition-shadow">
-    <div class="flex items-start justify-between gap-4 mb-4">
-      <div>
-        <a [href]="repo.html_url" target="_blank" class="text-xl font-bold text-primary-100 hover:text-primary-200">
-          {{ repo.name }}
-        </a>
-        @if (repo.archived) {
-        <r-tag type="error" class="ml-2">已归档</r-tag>
+  <app-card
+    class="hover:scale-100 group rounded-xl overflow-hidden hover:shadow-sm transition-all hover:cursor-pointer break-inside-avoid mb-6">
+    <div (click)="windowOpen(repo.html_url)">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <span class="text-xl font-bold text-primary-100 hover:text-primary-200">
+            {{ repo.name }}
+          </span>
+          @if (repo.archived) {
+          <r-tag type="error" class="ml-2">已归档</r-tag>
+          }
+        </div>
+
+        @if (repo.language) {
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full" [style.background-color]="getLanguageColor(repo.language)">
+          </span>
+          <span class="text-accent-100">{{ repo.language }}</span>
+        </div>
         }
       </div>
 
-      @if (repo.language) {
-      <div class="flex items-center gap-2">
-        <span class="w-3 h-3 rounded-full" [style.background-color]="getLanguageColor(repo.language)">
-        </span>
-        <span class="text-accent-100">{{ repo.language }}</span>
+      @if (repo.description) {
+      <p class="text-bg-100 mb-4 line-clamp-2">{{ repo.description }}</p>
+      }
+
+      @if (repo.topics.length > 0) {
+      <div class="flex flex-wrap gap-2 mb-4">
+        @for (topic of repo.topics; track topic) {
+        <r-tag type="primary">{{ topic }}</r-tag>
+        }
       </div>
       }
-    </div>
 
-    @if (repo.description) {
-    <p class="text-bg-100 mb-4 line-clamp-2">{{ repo.description }}</p>
-    }
-
-    @if (repo.topics.length > 0) {
-    <div class="flex flex-wrap gap-2 mb-4">
-      @for (topic of repo.topics; track topic) {
-      <r-tag type="primary">{{ topic }}</r-tag>
-      }
-    </div>
-    }
-
-    <div class="flex items-center gap-6 text-sm text-accent-100">
-      <div class="flex items-center gap-1">
-        <i class="i-mdi-star"></i>
-        <span>{{ repo.stargazers_count }}</span>
-      </div>
-      <div class="flex items-center gap-1">
-        <i class="i-mdi-source-fork"></i>
-        <span>{{ repo.forks_count }}</span>
-      </div>
-      @if (repo.license) {
-      <div class="flex items-center gap-1">
-        <i class="i-mdi-creative-commons"></i>
-        <span>{{ repo.license.name }}</span>
-      </div>
-      }
-      <div>
-        更新于 {{ repo.updated_at | date:'yyyy-MM-dd' }}
+      <div class="flex items-center gap-6 text-sm text-accent-100">
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-star"></i>
+          <span>{{ repo.stargazers_count }}</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-source-fork"></i>
+          <span>{{ repo.forks_count }}</span>
+        </div>
+        @if (repo.license) {
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-creative-commons"></i>
+          <span>{{ repo.license.name }}</span>
+        </div>
+        }
+        <div>
+          更新于 {{ repo.updated_at | date:'yyyy-MM-dd' }}
+        </div>
       </div>
     </div>
 
@@ -61,6 +64,6 @@
       </a>
     </div>
     }
-  </div>
+  </app-card>
   }
 </div>

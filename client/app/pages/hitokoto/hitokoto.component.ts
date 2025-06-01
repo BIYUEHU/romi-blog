@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { ResHitokotoData } from '../../../output'
+import { ResHitokotoData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
@@ -15,7 +15,9 @@ import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 })
 export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hitokoto') implements OnInit {
   public showHelpDialog = false
-  public isLiked = false
+  public get isLiked() {
+    return !!this.data && !!this.browserService.localStorage?.getItem(`hitokoto_like_${this.data.id}`)
+  }
 
   public constructor(
     private readonly notifyService: NotifyService,
@@ -40,7 +42,6 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
     this.setData((set) =>
       this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined).subscribe((data) => {
         set(data)
-        this.isLiked = !!this.browserService.localStorage?.getItem(`hitokoto_like_${data.id}`)
       })
     )
   }
@@ -58,14 +59,13 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
     this.apiService.likeHitokoto(this.data.id).subscribe(() => {
       this.browserService.localStorage?.setItem(`hitokoto_like_${(this.data as ResHitokotoData).id}`, 'true')
       ;(this.data as ResHitokotoData).likes += 1
-      this.isLiked = true
       this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
   public shareHitokoto(): void {
     if (!this.data) return
-    const url = `${location.origin}${location.pathname}/${this.data.id}`
+    const url = `${location.origin}/hitokoto/${this.data.id}`
     navigator.clipboard.writeText(url).then(
       () => this.notifyService.showMessage('链接已复制', 'secondary'),
       () => this.notifyService.showMessage('复制失败', 'error')
