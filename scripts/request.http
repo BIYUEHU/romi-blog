@@ -91,3 +91,7 @@ From:
     "url": "http://music.163.com/api/song/lyric",
     "params": {"id":589885,"lv":1}
 }
+
+### Test2
+
+GET https://music.163.com/api/v3/playlist/detail?id=2653919517

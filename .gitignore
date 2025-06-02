@@ -50,9 +50,3 @@ ui/styles.css
 *.env
 output.ts
 static
-
-o.js
-p.js
-t.js
-t.json
-t2.js

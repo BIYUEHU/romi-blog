@@ -1,5 +1,6 @@
+
 [workspace]
-members = [".", "library/roga", "library/migration", "library/music-fetcher"]
+members = [".", "library/roga", "library/migration", "library/fetcher"]
 
 [package]
 name = "romichan"
@@ -24,6 +25,7 @@ serde_json = { version = "1" }
 async-trait = { version = "0.1" }
 serde = { version = "1.0.210", features = ["derive"] }
 roga = { path = "library/roga" }
+fetcher = { path = "library/fetcher" }
 rocket_cors = "0.6.0"
 futures = "0.3.31"
 reqwest = "0.12.12"

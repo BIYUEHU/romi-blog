@@ -3,13 +3,15 @@ use crate::{
     guards::client_info::ClientInfo,
     utils::api::{ApiError, ApiErrorReal},
 };
+use fetcher::playlist::fetch_playlist;
 use rocket::{
     fairing::{Fairing, Info, Kind, Result},
     request::{FromRequest, Outcome},
     Build, Data, Orbit, Request, Response, Rocket,
 };
-use roga::*;
-use std::io;
+use roga::{transport::console::ConsoleTransport, *};
+use std::{io, thread::spawn};
+use tokio::runtime::Runtime;
 
 #[derive(Clone)]
 pub struct Recorder {
@@ -45,6 +47,23 @@ impl Fairing for Recorder {
                 self.config.port + 1
             );
         }
+
+        spawn(|| {
+            let logger = Logger::new()
+                .with_transport(ConsoleTransport {
+                    use_color: true,
+                    label_color: "red",
+                    time_format: "%H:%M:%S",
+                    template: "{time} {level} {labels}: {msg}",
+                    label_template: "[{name}]",
+                })
+                .with_level(LoggerLevel::Info)
+                .with_label("Netease");
+            Runtime::new()
+                .unwrap()
+                .block_on(async { fetch_playlist(&logger, 2653919517, 5).await });
+        });
+        // handle.join().unwrap();
         Ok(rocket)
     }
 
