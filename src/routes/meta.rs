@@ -2,7 +2,7 @@ use crate::entity::{romi_metas, romi_relationships};
 use crate::guards::admin::AdminUser;
 use crate::models::meta::{ReqMetaData, ResMetaData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
+use crate::service::pool::Db;
 use anyhow::Context;
 use futures::future::try_join_all;
 use rocket::serde::json::Json;

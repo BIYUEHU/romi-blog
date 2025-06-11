@@ -1,3 +1,5 @@
+/** 我草你妈的，傻逼支那豚，你翻你妈的代码 **/
+
 import { APP_BASE_HREF } from '@angular/common'
 import { CommonEngine } from '@angular/ssr'
 import express from 'express'

@@ -6,7 +6,7 @@ use crate::models::post::{
 };
 use crate::tools::markdown::summary_markdown;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
+use crate::service::pool::Db;
 use anyhow::Context;
 use futures::future::{join_all, try_join_all};
 use futures::try_join;

@@ -3,7 +3,6 @@ import { DatePipe } from '@angular/common'
 import { RouterLink } from '@angular/router'
 import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { APlayer } from '../../shared/types'
-import musicList from '../../shared/music.json'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
@@ -56,15 +55,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     private readonly browserService: BrowserService
   ) {}
 
-  private initAplayer() {
-    this.aplayer = new APlayer({
-      container: document.getElementById('recent-music'),
-      theme: 'var(--primary-100)',
-      listMaxHeight: '320px',
-      audio: musicList
-    })
-  }
-
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
     this.apiService.getPosts().subscribe((data) => {
@@ -82,9 +72,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.apiService.getProjects().subscribe((data) => {
       this.projects = data.slice(0, 4)
     })
-    setTimeout(() => {
-      if (this.browserService.isBrowser) this.initAplayer()
-    }, 0)
+    this.apiService.getMusic().subscribe((data) => {
+      if (!this.browserService.isBrowser) return
+      this.aplayer = new APlayer({
+        container: document.getElementById('recent-music'),
+        theme: 'var(--primary-100)',
+        listMaxHeight: '320px',
+        audio: data
+      })
+    })
   }
 
   public ngOnDestroy() {

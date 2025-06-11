@@ -1,0 +1,185 @@
+<app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
+  (pageChange)="goToPage($event)">
+  <div search-area class="flex flex-wrap items-center gap-4">
+    <div class="flex-1">
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索角色名字、别名、罗马字..." class="w-full" />
+    </div>
+
+    <r-button [routerLink]="['/admin/char-edit/new']" type="primary">
+      创建角色
+    </r-button>
+  </div>
+
+  <div list-content>
+    <table class="min-w-full divide-y divide-text-200 overflow-x-auto">
+      <thead class="bg-text-200">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">名字</th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            别名
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            罗马字
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            类型
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            作品
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            性别
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            描述
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            一言
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            评价
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            血型
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            三围
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            瞳色
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            发色
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            身高
+          </th>
+          <th
+            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">
+            体重
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">可见性</th>
+          <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
+        </tr>
+      </thead>
+      <tbody class="bg-text-200 divide-y divide-text-200">
+        @for (char of pagedItems; track char.id) {
+        <tr class="hover:bg-text-200">
+          <td class="px-6 py-4">
+            <div class="flex items-center">
+              @if (char.images.length > 0) {
+              <img [src]="char.images[0]" class="hidden 2xl:inline h-12 object-cover rounded mr-3"
+                alt="Character images" />
+              }
+              <div>
+                <a [routerLink]="['/char/', char.id]" target="_blank" class="text-sm font-medium text-bg-200 truncate">
+                  {{ char.name }}
+                </a>
+                <div class="text-sm text-gray-500">
+                  {{ char?.birthday | date:'MM-dd' }}
+                </div>
+              </div>
+            </div>
+          </td>
+          <td class="hidden 2xl:table-cell px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.alias.join('、')">
+              {{ char.alias.join('、')}}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-2 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.romaji}}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-12 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.series_genre">
+              {{ char.series_genre }}
+            </p>
+          </td>
+          <td class="px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.series">
+              {{ char.series }}
+            </p>
+          </td>
+          <td class="px-2 py-4">
+            <r-tag [type]="char.gender === 'FEMALE' ? 'error' : 'info'" size="md">
+              {{ char.gender === 'FEMALE' ? '♀' : '♂' }}
+            </r-tag>
+          </td>
+          <td class="hidden 2xl:table-cell px-12 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.description">
+              {{ char.description }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-8 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.hitokoto ?? ''">
+              {{ char.hitokoto ?? '' }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-8 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="char.comment ?? ''">
+              {{ char.comment ?? ''}}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-4 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.blood_type ?? '' }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-6 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words" [title]="renderBWH(char)">
+              {{ renderBWH(char) }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.eye_color }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.hair_color }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.height }}
+            </p>
+          </td>
+          <td class="hidden 2xl:table-cell px-3 py-4">
+            <p class="text-sm text-gray-500 line-clamp-2 break-words">
+              {{ char.weight }}
+            </p>
+          </td>
+          <td class="px-2 py-4">
+            <r-tag [type]="char.hide ? 'default' : 'secondary'">
+              {{ char.hide ? '隐藏' : '显示' }}
+            </r-tag>
+          </td>
+          <td class="px-6 py-4 text-sm">
+            <div class="flex items-center gap-2">
+              <r-button [routerLink]="['/admin/char-edit', char.id]" type="primary">
+                修改
+              </r-button>
+              <r-button (click)="deleteItem(char.id)" type="error">
+                删除
+              </r-button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</app-admin-base-list>

@@ -2,21 +2,23 @@
 
 - [ ] Support more markdown-it plugins
 - [ ] Comments status: 0 resolved; 1 pending; 2 spam
-- [ ] Posts status: 0 published; 1 hide; 2 draft
+- [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [ ] Support private news
 - [ ] Settings and customization
 - [ ] Website color scheme
 - [ ] Web loggers (filter requests from Node.Js)
 - [ ] RSS feed
-- [ ] Search engine
+- [ ] Blog content search
 - [ ] Post password protection (Include images and comments)
-- [ ] Post view, like
-- [ ] News view, like and comments, private news
+- [ ] Post view, like, share
+- [ ] News view, like and comments
 - [ ] Better website title
 - [ ] Refactory music player
 - [ ] Images gallery
 - [ ] Images bed and management system
-- [ ] Rust rerendering html to implement custom footer, header scripts and meta description, tags
+- [ ] Rust rendering html to implement custom footer, header scripts and meta description, tags
 - [ ] I18n
-- [ ] Rss and sitemap
+- [ ] sitemap
 - [ ] Romi UI better building
+- [ ] Unify all localStorage keys name
+- [ ] Refactory php ial api, such as proxy, qqavatar, etc.

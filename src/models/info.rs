@@ -55,3 +55,13 @@ pub struct ResProjectData {
     archived: bool,
     visibility: String,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResMusicData {
+    pub name: String,
+    pub artist: String,
+    pub url: String,
+    pub cover: String,
+    pub lrc: String,
+}

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import { ResNewsData, ResPostData } from '../models/api.model'
+import { ResCharacterData, ResNewsData, ResPostData } from '../models/api.model'
 
 export function handlePostList(posts: ResPostData[]) {
   return posts.map((post) => (post.password === 'password' ? { ...post, summary: '文章已加密' } : post))
@@ -21,4 +21,8 @@ export function observableToPromise<T>(observable: Observable<T>): Promise<T> {
       error: (error) => reject(error)
     })
   })
+}
+
+export function renderCharacterBWH({ bust, waist, hip }: ResCharacterData) {
+  return `${bust ? `B${bust}` : ''}${waist ? `${bust ? '/' : ''}W${waist}` : ''}${hip ? `${bust || waist ? '/' : ''}H${hip}` : ''}`
 }

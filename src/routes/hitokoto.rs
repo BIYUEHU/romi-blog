@@ -1,8 +1,8 @@
 use crate::entity::romi_hitokotos;
 use crate::guards::admin::AdminUser;
 use crate::models::hitokoto::{ReqHitokotoData, ResHitokotoData};
+use crate::service::pool::Db;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
 use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;

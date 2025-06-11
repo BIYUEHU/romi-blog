@@ -1,3 +1,4 @@
+use crate::constant::{PROJECTS_CACHE_TIMEOUT, SETTINGS_CACHE_TIMEOUT};
 use crate::entity::romi_fields;
 use crate::models::info::{ResProjectData, ResSettingsData};
 use anyhow::{anyhow, Context};
@@ -55,7 +56,7 @@ static SETTINGS_CACHE: Lazy<tokio::sync::OnceCell<Cache<ResSettingsData>>> =
 
 pub async fn get_settings_cache(db: &DatabaseConnection) -> Result<ResSettingsData, anyhow::Error> {
     SETTINGS_CACHE
-        .get_or_init(|| async { Cache::new(Duration::from_secs(15 * 60)) })
+        .get_or_init(|| async { Cache::new(Duration::from_secs(SETTINGS_CACHE_TIMEOUT)) })
         .await
         .get_or_update(|| async {
             let record = romi_fields::Entity::find()
@@ -78,7 +79,7 @@ static PROJECTS_CACHE: Lazy<tokio::sync::OnceCell<Cache<Vec<ResProjectData>>>> =
 
 pub async fn get_projects_cache() -> Result<Vec<ResProjectData>, anyhow::Error> {
     PROJECTS_CACHE
-        .get_or_init(|| async { Cache::new(Duration::from_secs(15 * 60)) })
+        .get_or_init(|| async { Cache::new(Duration::from_secs(PROJECTS_CACHE_TIMEOUT)) })
         .await
         .get_or_update(|| async {
             serde_json::from_str::<Vec<ResProjectData>>(

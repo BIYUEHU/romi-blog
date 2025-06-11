@@ -20,11 +20,11 @@
     <div class="space-y-6">
       <div class="grid  grid-cols-1 lg:grid-cols-3 lg:gap-6">
         <div class="col-span-2">
-          <r-input label="文章标题" [(ngModel)]="postForm.title" placeholder="请输入文章标题" required class="w-full" />
+          <r-input label="文章标题" [(ngModel)]="postForm.title" required class="w-full" />
         </div>
         <div>
 
-          <r-input [(ngModel)]="postForm.banner" label="文章封面" placeholder="输入封面图片URL" class="w-full" />
+          <r-input [(ngModel)]="postForm.banner" label="文章封面" class="w-full" />
         </div>
       </div>
 
@@ -98,6 +98,11 @@
       <div>
         <label class="block text-sm text-bg-200 mb-2">文章内容</label>
         <div id="editor"></div>
+        <span class="text-xs text-gray mt-2">上次保存时间: @if (lastSaveDraftTime) {
+          {{ lastSaveDraftTime | date :'yyyy-MM-dd HH:mm:ss' }}
+          } @else {
+          未保存
+          } </span>
       </div>
     </div>
     }

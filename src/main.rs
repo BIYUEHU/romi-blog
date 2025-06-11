@@ -3,78 +3,54 @@
 #[macro_use]
 extern crate rocket;
 
+mod constant;
 mod entity;
 mod guards;
 mod models;
 mod routes;
+mod service;
 mod tools;
 mod utils;
 
-use dotenvy::dotenv;
 use rocket::Config;
 use roga::*;
-use routes::{character, comment, global, hitokoto, info, meta, news, post, seimg, user};
+use routes::*;
 use sea_orm_rocket::Database;
-use std::env;
+use service::pool::Db;
+use service::recorder::Recorder;
+use service::ssr::SSR;
 use std::fs::exists;
-use transport::console::ConsoleTransport;
+use utils::bootstrap::{init_dirs, load_env_vars, set_env_var};
 use utils::catcher;
 use utils::config::load_config;
 use utils::cros::get_cors;
-use utils::pool::Db;
-use utils::recorder::Recorder;
-use utils::ssr::SSR;
+use utils::logger::get_logger;
 use uuid::Uuid;
 
 pub const FREE_HONG_KONG: &'static str =
     "香港に栄光あれ\n光复香港，时代革命\nFree Hong Kong, revolution now";
 
 #[rocket::main]
-async fn bootstrap() {
-    let logger = Logger::new().with_transport(ConsoleTransport {
-        label_color: "magenta",
-        ..Default::default()
-    });
-
-    if exists(".env").unwrap() {
-        dotenv()
-            .map_err(|e| {
-                l_error!(
-                    &logger,
-                    "Failed to load environment variables from .env file: {}",
-                    e
-                );
-            })
-            .unwrap();
+async fn main() {
+    if let Err(e) = load_env_vars() {
+        eprintln!("{}", e);
+        return;
     }
 
-    env::set_var(
+    set_env_var(
         "FREE_HONG_KONG_SECRET",
-        format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
+        format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()).as_str(),
     );
 
-    let config = load_config()
-        .map_err(|e| l_fatal!(&logger, "{}", e))
-        .unwrap();
-
-    let logger = logger.clone().with_level(match config.log_level.as_str() {
-        "trace" => LoggerLevel::Trace,
-        "debug" => LoggerLevel::Debug,
-        "record" => LoggerLevel::Record,
-        "info" => LoggerLevel::Info,
-        "warn" => LoggerLevel::Warn,
-        "error" => LoggerLevel::Error,
-        "fatal" => LoggerLevel::Fatal,
-        "silent" => LoggerLevel::Silent,
-        _ => {
-            l_warn!(
-                &logger,
-                "Invalid log level: {}, using default level: info",
-                config.log_level
-            );
-            LoggerLevel::Info
+    let config = match load_config() {
+        Ok(config) => config,
+        Err(e) => {
+            eprintln!("{}", e);
+            return;
         }
-    });
+    };
+
+    let logger = get_logger();
 
     if !config.database_url.trim().is_empty() {
         std::env::set_var("DATABASE_URL", config.clone().database_url);
@@ -91,6 +67,10 @@ async fn bootstrap() {
             config.ssr_entry.clone()
         );
         return;
+    }
+
+    if let Err(e) = init_dirs() {
+        l_fatal!(&logger, "{}", e);
     }
 
     let _ = rocket::custom(Config {
@@ -193,7 +173,8 @@ async fn bootstrap() {
         routes![
             info::fetch_dashboard,
             info::fetch_settings,
-            info::fetch_projects
+            info::fetch_projects,
+            info::fetch_music
         ],
     )
     .register(
@@ -215,8 +196,4 @@ async fn bootstrap() {
     .map_err(|e| {
         l_fatal!(&logger, "Failed to launch server: {}", e);
     });
-}
-
-fn main() {
-    bootstrap();
 }

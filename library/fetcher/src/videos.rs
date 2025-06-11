@@ -1,4 +1,7 @@
-use reqwest::Client;
+use reqwest::{
+    header::{HeaderMap, HeaderValue, USER_AGENT},
+    Client, ClientBuilder,
+};
 use serde::{Deserialize, Serialize};
 use std::{error::Error, time::Duration};
 use tokio::time::sleep;
@@ -57,7 +60,13 @@ struct Owner {
 }
 
 pub async fn fetch_videos(uid: u64, max_attempts: usize) -> Result<Vec<Video>, Box<dyn Error>> {
-    let client = Client::new();
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        USER_AGENT,
+        HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"),
+    );
+
+    let client = ClientBuilder::new().default_headers(headers).build()?;
     let url = format!(
         "https://api.bilibili.com/x/space/arc/search?mid={}&pn=1&ps=4&order=pubdate",
         uid

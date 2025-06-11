@@ -1,4 +1,8 @@
 <div class="max-w-98% w-4xl mx-auto flex-1">
+
+  @if (isLoading) {
+  <app-loading />
+  } @else {
   <div class="bg-text-200 rounded-xl overflow-hidden border border-text-300 hover:shadow-sm transition-shadow p-6">
     <div id="aplayer"></div>
     <div class="mt-4">
@@ -6,4 +10,5 @@
         target="_blank">RomiFetcher</a>，播放器支持：<a href="https://github.com/DIYgod/APlayer" target="_blank">APlayer</a>
     </div>
   </div>
+  }
 </div>

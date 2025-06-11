@@ -2,7 +2,7 @@ use crate::entity::romi_seimgs;
 use crate::guards::admin::AdminUser;
 use crate::models::seimg::{ReqSeimgData, ResSeimgData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
+use crate::service::pool::Db;
 use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;

@@ -16,7 +16,7 @@ pub struct ReqCharacterData {
     pub description: String,
     pub comment: Option<String>,
     pub hitokoto: Option<String>,
-    pub birthday: Option<i64>,
+    pub birthday: Option<u32>,
     pub voice: Option<String>,
     pub series: String,
     pub series_genre: String,

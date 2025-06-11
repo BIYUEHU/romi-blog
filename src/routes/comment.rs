@@ -4,7 +4,7 @@ use crate::guards::auth::AuthUser;
 use crate::guards::client_info::ClientInfo;
 use crate::models::comment::{ReqCommentData, ResCommentData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
+use crate::service::pool::Db;
 use anyhow::Context;
 use futures::future::try_join_all;
 use migration::Expr;

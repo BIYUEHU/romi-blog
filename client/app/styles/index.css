@@ -35,7 +35,7 @@ a:hover {
 .post-body {
   background-color: var(--text-200);
   font-family: sans-serif;
-  font-size: 0.95rem;
+  font-size: 1.15rem;
   line-height: 1.75;
   margin-inline: auto;
   word-wrap: break-word;

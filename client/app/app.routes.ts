@@ -27,6 +27,8 @@ import { CharComponent } from './pages/char/char.component'
 import { CharsComponent } from './pages/chars/chars.component'
 import { ProjectComponent } from './pages/project/project.component'
 import { PostsComponent } from './pages/posts/posts.component'
+import { AdminCharsComponent } from './pages/admin-chars/admin-chars.component'
+import { AdminCharEditComponent } from './pages/admin-char-edit/admin-char-edit.component'
 
 export const routes: Routes = [
   {
@@ -137,6 +139,14 @@ export const routes: Routes = [
       {
         path: 'news',
         component: AdminNewsComponent
+      },
+      {
+        path: 'chars',
+        component: AdminCharsComponent
+      },
+      {
+        path: 'char-edit/:id',
+        component: AdminCharEditComponent
       }
     ]
   },

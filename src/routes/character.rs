@@ -3,8 +3,8 @@ use std::time::SystemTime;
 use crate::entity::romi_characters;
 use crate::guards::admin::AdminUser;
 use crate::models::character::{ReqCharacterData, ResCharacterData};
+use crate::service::pool::Db;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
 use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;
@@ -62,7 +62,7 @@ pub async fn fetch_all(
                 romaji: m.romaji,
                 color: m.color,
                 song_id: m.song_id,
-                gender: m.gender, // 直接用 String 字段，不使用枚举
+                gender: m.gender,
                 alias: alias_vec,
                 age: m.age,
                 images: images_vec,
@@ -246,6 +246,7 @@ pub async fn update(
     let mut active: romi_characters::ActiveModel = existing.unwrap().into_active_model();
 
     active.name = ActiveValue::set(req.name.clone());
+    active.color = ActiveValue::set(req.color.clone());
     active.romaji = ActiveValue::set(req.romaji.clone());
     active.gender = ActiveValue::set(req.gender.clone());
     active.alias = ActiveValue::set(alias_str);

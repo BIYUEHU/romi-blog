@@ -6,11 +6,13 @@ use crate::entity::{
     romi_seimgs, romi_users,
 };
 use crate::guards::admin::AdminUser;
-use crate::models::info::{ResDashboardData, ResProjectData, ResSettingsData};
+use crate::models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData};
+use crate::service::cache::{get_projects_cache, get_settings_cache};
+use crate::service::music::{get_music_cache, MusicCache};
+use crate::service::pool::Db;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::cache::{get_projects_cache, get_settings_cache};
-use crate::utils::pool::Db;
 use anyhow::Context;
+use fetcher::playlist::SongInfo;
 use futures::try_join;
 use rocket::State;
 use roga::*;
@@ -97,5 +99,35 @@ pub async fn fetch_projects(logger: &State<Logger>) -> ApiResult<Vec<ResProjectD
         get_projects_cache()
             .await
             .map_err(|e| ApiError::internal(e.to_string()))?,
+    )
+}
+#[get("/music")]
+pub async fn fetch_music(logger: &State<Logger>) -> ApiResult<Vec<ResMusicData>> {
+    l_info!(logger, "Fetching music data from netease music");
+    api_ok(
+        get_music_cache()
+            .await
+            .map_err(|e| ApiError::internal(e.to_string()))
+            .map(|MusicCache { data, .. }| {
+                data.into_iter()
+                    .map(
+                        |SongInfo {
+                             name,
+                             artist,
+                             url,
+                             cover,
+                             lrc,
+                         }| {
+                            ResMusicData {
+                                name,
+                                artist,
+                                url,
+                                cover,
+                                lrc,
+                            }
+                        },
+                    )
+                    .collect()
+            })?,
     )
 }

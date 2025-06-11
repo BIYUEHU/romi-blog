@@ -50,3 +50,4 @@ ui/styles.css
 *.env
 output.ts
 static
+cache

@@ -4,9 +4,10 @@ import { HeaderComponent } from '../header/header.component'
 import { FooterComponent } from '../footer/footer.component'
 import { NotifyService } from '../../services/notify.service'
 import { BrowserService } from '../../services/browser.service'
-import musicList from '../../shared/music.json'
 import '../../shared/types'
 import { APlayer } from '../../shared/types'
+import { ResMusicData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 
 @Component({
   selector: 'app-layout-using',
@@ -40,14 +41,24 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
 
   protected aplayerTimer?: number
 
+  private musicList?: ResMusicData[]
+
   public constructor(
     private readonly router: Router,
     private readonly notifyService: NotifyService,
-    private readonly browserService: BrowserService
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
   ) {}
 
   public ngOnInit() {
     this.headerImageHeight = this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
+
+    this.apiService.getMusic().subscribe((data) => {
+      const isEmpty = !this.musicList
+      this.musicList = data
+      if (!this.browserService.isBrowser || !isEmpty) return
+      this.aplayer?.list.add(data)
+    })
 
     this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
@@ -104,8 +115,9 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
       lrcType: 1,
       order: 'random',
       theme: 'var(--primary-100)',
-      audio: musicList
+      audio: this.musicList
     })
+    this.aplayer
     if (this.aplayerTimer) return
 
     this.aplayerTimer = Number(

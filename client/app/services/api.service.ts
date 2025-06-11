@@ -1,4 +1,4 @@
-import { Injectable, isDevMode } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import type {
   AuthUser,
@@ -21,7 +21,9 @@ import type {
   ReqNewsData,
   Video,
   ResProjectData,
-  ResCharacterData
+  ResCharacterData,
+  ResMusicData,
+  ReqCharacterData
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
 import { catchError, map, of } from 'rxjs'
@@ -180,6 +182,26 @@ export class ApiService {
     return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto/${id}`)
   }
 
+  public getCharacters() {
+    return this.http.get<ResCharacterData[]>(`${this.apiUrl}/character`)
+  }
+
+  public getCharacter(id: number) {
+    return this.http.get<ResCharacterData>(`${this.apiUrl}/character/${id}`)
+  }
+
+  public createCharacter(data: ReqCharacterData) {
+    return this.http.post<void>(`${this.apiUrl}/character`, data)
+  }
+
+  public updateCharacter(id: number, data: ReqCharacterData) {
+    return this.http.put<void>(`${this.apiUrl}/character/${id}`, data)
+  }
+
+  public deleteCharacter(id: number) {
+    return this.http.delete<void>(`${this.apiUrl}/character/${id}`)
+  }
+
   public getBangumi(offset: number, isAnime: boolean) {
     return this.http.get<BangumiData>('https://api.bgm.tv/v0/users/himeno/collections', {
       params: {
@@ -223,12 +245,8 @@ export class ApiService {
     return /* isDevMode() ? of([]) : */ this.http.get<ResProjectData[]>(`${this.apiUrl}/info/projects`)
   }
 
-  public getCharacters() {
-    return this.http.get<ResCharacterData[]>(`${this.apiUrl}/character`)
-  }
-
-  public getCharacter(id: number) {
-    return this.http.get<ResCharacterData>(`${this.apiUrl}/character/${id}`)
+  public getMusic() {
+    return this.http.get<ResMusicData[]>(`${this.apiUrl}/info/music`)
   }
 
   public getVideos() {

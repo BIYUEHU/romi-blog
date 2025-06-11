@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 pub mod transport;
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LoggerLevel {
     Fatal = 0,
     Error = 1,

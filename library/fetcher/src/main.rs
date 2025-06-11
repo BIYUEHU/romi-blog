@@ -5,7 +5,8 @@ use roga::{transport::console::ConsoleTransport, Logger, LoggerLevel};
 
 #[tokio::main]
 async fn main() {
-    fetch_videos(293767574, 10).await.unwrap();
+    // fetch_videos(293767574, 10).await.unwrap();
+    f().await;
 }
 
 async fn f() {

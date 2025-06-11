@@ -3,7 +3,7 @@ use crate::guards::admin::AdminUser;
 use crate::guards::auth::AuthUser;
 use crate::models::user::{LoginRequest, LoginResponse, ReqUserData, ResUserData};
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::utils::pool::Db;
+use crate::service::pool::Db;
 use anyhow::Context;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use rocket::serde::json::Json;

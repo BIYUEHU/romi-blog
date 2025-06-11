@@ -1,4 +1,4 @@
-use crate::utils::ssr::{SSRResponse, SSR};
+use crate::service::ssr::{SSRResponse, SSR};
 use rocket::{http::Status, State};
 use roga::*;
 
