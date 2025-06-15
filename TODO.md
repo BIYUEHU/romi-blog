@@ -22,3 +22,9 @@
 - [ ] Romi UI better building
 - [ ] Unify all localStorage keys name
 - [ ] Refactory php ial api, such as proxy, qqavatar, etc.
+- [ ] Characters brithdays reminder
+- [ ] Music playlist cannot load to cache in first loading
+- [ ] Music playlist cannot automatically create json file
+- [ ] 后台文章列表显示以及相关的都有按 `创建时间` 排序的需要
+- [ ] 创建文章模式下保存的草稿缓存应在该文章保存成功时删掉
+- [ ] char page 还不够个性化

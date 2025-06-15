@@ -35,6 +35,7 @@ export class MusicComponent implements OnInit, OnDestroy {
       const isEmpty = !this.musicList
       this.musicList = data
       this.isLoading = false
+      this.initAplayer()
       if (!this.browserService.isBrowser || !isEmpty || !this.aplayer) return
       this.aplayer.list.add(data)
     })
@@ -43,7 +44,6 @@ export class MusicComponent implements OnInit, OnDestroy {
       title: '歌单列表',
       subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
     })
-    if (this.browserService.isBrowser) this.initAplayer()
   }
 
   private initAplayer() {
