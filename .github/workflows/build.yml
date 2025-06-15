@@ -11,7 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-latest, windows-latest]
+        os: [ubuntu-22.04, macos-latest]
+        # , windows-latest
         arch: [x86_64, aarch64]
 
     steps:
@@ -29,17 +30,17 @@ jobs:
         run: cargo build --release
 
       - name: Upload artifact (Linux)
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-20.04-romichan-server
+          name: ubuntu-22.04-romichan-server
           path: target/release/romichan
 
       - name: Upload artifact (Linux aarch64)
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'aarch64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-20.04-romichan-server-aarch64
+          name: ubuntu-22.04-romichan-server-aarch64
           path: target/release/romichan
 
       - name: Upload artifact (macOS)
@@ -71,26 +72,26 @@ jobs:
           path: target/release/romichan.exe
 
       - name: Set up Node.js
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Install pnpm
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: pnpm/action-setup@v2
         with:
           version: 9
 
       - name: Build frontend
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         run: |
           pnpm install --no-frozen-lockfile
           pnpm build
           tar -czf dist.tar.gz dist
 
       - name: Upload artifact (Frontend)
-        if: matrix.os == 'ubuntu-20.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: romichan-client
