@@ -1,6 +1,6 @@
 use reqwest::{
     header::{HeaderMap, HeaderValue, USER_AGENT},
-    Client, ClientBuilder,
+    ClientBuilder,
 };
 use serde::{Deserialize, Serialize};
 use std::{error::Error, time::Duration};
