@@ -1,6 +1,12 @@
 
 [workspace]
-members = [".", "library/roga", "library/migration", "library/fetcher"]
+members = [
+  ".",
+  "library/roga",
+  "library/migration",
+  "library/fetcher",
+  # "library/experimental",
+]
 
 [package]
 name = "romichan"
@@ -28,10 +34,10 @@ roga = { path = "library/roga" }
 fetcher = { path = "library/fetcher" }
 rocket_cors = "0.6.0"
 futures = "0.3.31"
-reqwest = "0.12.12"
+reqwest = "0.12.22"
 config = "0.15.6"
 jsonwebtoken = "9.3.0"
-sysinfo = "0.33.1"
+sysinfo = "0.37"
 uuid = { version = "1.13.1", features = ["v4"] }
 once_cell = "1.21.3"
 ts-rs = "11.0.1"

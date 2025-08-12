@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { NotifyService } from '../../services/notify.service'
 import { FormsModule } from '@angular/forms'
+import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResProjectData } from '../../models/api.model'
+import { NotifyService } from '../../services/notify.service'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-project',
@@ -22,6 +22,7 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
 
   public constructor(private readonly notifyService: NotifyService) {
     super()
+    this.notifyService.setTitle('开源项目')
   }
 
   public get filteredRepos() {

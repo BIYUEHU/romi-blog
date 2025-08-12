@@ -1,15 +1,16 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ApiService } from '../../services/api.service'
-import type { ReqPostData } from '../../models/api.model'
+import Vditor from 'vditor'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import Vditor from 'vditor'
-import { NotifyService } from '../../services/notify.service'
-import { formatDate } from '../../utils'
+import type { ReqPostData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { DatePipe } from '@angular/common'
+import { NotifyService } from '../../services/notify.service'
+import { KEYS } from '../../services/store.service'
+import { formatDate } from '../../utils'
 
 @Component({
   selector: 'app-admin-edit',
@@ -110,10 +111,9 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
   private getDraftKey() {
     if (this.isEdit) {
-      const draftKey = `post-draft-${this.getId()}`
-      return [draftKey, `${draftKey}-time`]
+      return [KEYS.POST_DRAFT(this.getId()), KEYS.POST_DRAFT_TIME(this.getId())]
     }
-    return 'post-draft-new'
+    return KEYS.POST_DRAFT_NEW
   }
 
   private getPostText() {
@@ -124,7 +124,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     if (typeof keys === 'string') {
       try {
         const { text, password, title, hide, allow_comment, tags, categories, banner } = JSON.parse(
-          localStorage.getItem(keys) ?? ''
+          this.browserService.store?.getItem(keys) ?? ''
         )
         this.postForm = {
           ...this.postForm,
@@ -147,8 +147,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
     const update = this.postForm.modified * 1000
     const [draftKey, draftTimeKey] = keys
-    const draft = localStorage.getItem(draftKey)
-    const draftTime = Number(localStorage.getItem(draftTimeKey))
+    const draft = this.browserService.store?.getItem(draftKey)
+    const draftTime = Number(this.browserService.store?.getItem(draftTimeKey))
     if (draft && draftTime && !Number.isNaN(draftTime) && draftTime >= update) {
       if (draft !== this.postForm.text) {
         notify()
@@ -156,8 +156,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       }
       return draft
     }
-    localStorage.removeItem(draftKey)
-    localStorage.removeItem(draftTimeKey)
+    this.browserService.store?.removeItem(draftKey)
+    this.browserService.store?.removeItem(draftTimeKey)
     return this.postForm.text
   }
 
@@ -174,7 +174,9 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly apiService: ApiService,
     private readonly notifyService: NotifyService,
     private readonly browserService: BrowserService
-  ) {}
+  ) {
+    this.notifyService.setTitle('文章编辑')
+  }
 
   public ngOnInit() {
     const id = this.getId()
@@ -207,11 +209,11 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
         this.lastSaveDraftTime = Date.now()
         if (typeof keys === 'string') {
-          localStorage.setItem(keys, JSON.stringify({ ...this.postForm, text }))
+          this.browserService.store!.setItem(keys, JSON.stringify({ ...this.postForm, text }))
         } else {
           const [draftKey, draftTimeKey] = keys
-          localStorage.setItem(draftKey, text)
-          localStorage.setItem(draftTimeKey, String(this.lastSaveDraftTime))
+          this.browserService.store!.setItem(draftKey, text)
+          this.browserService.store!.setItem(draftTimeKey, String(this.lastSaveDraftTime))
         }
       }, 5 * 1000)
     )
@@ -290,6 +292,9 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const request = this.isEdit ? this.apiService.updatePost(this.getId(), form) : this.apiService.createPost(form)
 
     request.subscribe(() => {
+      if (!this.isEdit) {
+        this.browserService.store!.removeItem(KEYS.POST_DRAFT_NEW)
+      }
       this.notifyService.showMessage('文章保存成功', 'success')
       this.goBack()
     })

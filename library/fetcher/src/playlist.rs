@@ -65,8 +65,6 @@ pub struct SongInfo {
     pub lrc: String,
 }
 
-// TODO: 这里多定义返回数据结构体 别老是搁那 match 里面
-
 pub type Playlist = Vec<SongInfo>;
 
 fn extract_csrf_token(cookie: &str) -> String {

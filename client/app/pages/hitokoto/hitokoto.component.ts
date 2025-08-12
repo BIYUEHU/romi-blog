@@ -1,9 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
+import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
+import { KEYS } from '../../services/store.service'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
@@ -16,7 +17,7 @@ import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hitokoto') implements OnInit {
   public showHelpDialog = false
   public get isLiked() {
-    return !!this.data && !!this.browserService.localStorage?.getItem(`hitokoto_like_${this.data.id}`)
+    return !!this.data && !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(this.data.id))
   }
 
   public constructor(
@@ -39,10 +40,12 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
   }
 
   private loadHitokoto(id?: number): void {
-    this.setData((set) =>
-      this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined).subscribe((data) => {
-        set(data)
-      })
+    this.setData(
+      (set) =>
+        this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined).subscribe((data) => {
+          set(data)
+        }),
+      (data) => this.notifyService.setTitle(data.msg)
     )
   }
 
@@ -57,7 +60,7 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
     }
 
     this.apiService.likeHitokoto(this.data.id).subscribe(() => {
-      this.browserService.localStorage?.setItem(`hitokoto_like_${(this.data as ResHitokotoData).id}`, 'true')
+      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED((this.data as ResHitokotoData).id), true)
       ;(this.data as ResHitokotoData).likes += 1
       this.notifyService.showMessage('点赞成功', 'success')
     })

@@ -1,9 +1,9 @@
 import { Component, type OnInit } from '@angular/core'
-import { ResPostData } from '../../models/api.model'
 import { PostListComponent } from '../../components/post-list/post-list.component'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { handlePostList, sortByCreatedTime } from '../../utils'
+import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
+import { handlePostList, sortByCreatedTime } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-posts',
@@ -14,6 +14,7 @@ import { NotifyService } from '../../services/notify.service'
 export class PostsComponent extends romiComponentFactory<ResPostData[]>('posts') implements OnInit {
   public constructor(private readonly notifyService: NotifyService) {
     super()
+    this.notifyService.setTitle('文章列表')
   }
 
   public ngOnInit(): void {

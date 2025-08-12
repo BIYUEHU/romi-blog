@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ResPostData } from '../../models/api.model'
 import { PostListComponent } from '../../components/post-list/post-list.component'
+import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { sortByCreatedTime } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-category',
@@ -35,6 +35,7 @@ export class CategoryComponent extends romiComponentFactory<ResPostData[]>('home
           this.router.navigate(['/404'])
           return
         }
+        this.notifyService.setTitle(`${this.categoryName} 分类`)
         this.notifyService.updateHeaderContent({
           title: this.categoryName,
           subTitle: [`共 ${this.data?.length ?? 0} 篇文章`]

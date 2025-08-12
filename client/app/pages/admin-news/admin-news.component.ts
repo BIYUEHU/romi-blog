@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { DatePipe } from '@angular/common'
-import { ApiService } from '../../services/api.service'
-import { ResNewsData, ReqNewsData } from '../../models/api.model'
 import {
-  AdminBaseListComponent,
-  AbstractAdminBaseListComponent
+  AbstractAdminBaseListComponent,
+  AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { formatDate } from '../../utils'
+import { ReqNewsData, ResNewsData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { formatDate, sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-admin-news',
@@ -29,12 +29,13 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
   public constructor(private readonly apiService: ApiService) {
     super()
+    this.notifyService.setTitle('动态管理')
   }
 
   protected loadItems(): void {
     this.isLoading = true
     this.apiService.getNewses().subscribe((data) => {
-      this.items = data
+      this.items = sortByCreatedTime(data)
       this.isLoading = false
     })
   }

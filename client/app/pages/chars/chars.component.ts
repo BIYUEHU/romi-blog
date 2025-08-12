@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { NotifyService } from '../../services/notify.service'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { FormsModule } from '@angular/forms'
 import { ResCharacterData } from '../../models/api.model'
+import { NotifyService } from '../../services/notify.service'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-chars',
@@ -21,6 +21,7 @@ export class CharsComponent extends romiComponentFactory<ResCharacterData[]>('ch
 
   public constructor(private readonly notifyService: NotifyService) {
     super()
+    this.notifyService.setTitle('角色收藏')
   }
 
   public ngOnInit() {
@@ -28,9 +29,9 @@ export class CharsComponent extends romiComponentFactory<ResCharacterData[]>('ch
       (set) => this.apiService.getCharacters().subscribe((data) => set(data)),
       (data) => {
         this.isLoading = false
-        this.data = data.sort((a, b) => a.order - b.order)
+        this.data = data.filter(({ hide }) => !hide).sort((a, b) => a.order - b.order)
         this.notifyService.updateHeaderContent({
-          title: '角色列表',
+          title: '角色收藏',
           subTitle: [`总计 ${data.length} 位角色`, '这里收集了曾经历的故事中邂逅并令之心动的美少女角色~']
         })
       }

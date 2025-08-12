@@ -13,7 +13,8 @@
     "enabled": true,
     "rules": {
       "style": {
-        "useImportType": "off"
+        "useImportType": "off",
+        "noNonNullAssertion": "off"
       }
     },
     "ignore": [

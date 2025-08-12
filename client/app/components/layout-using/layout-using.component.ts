@@ -1,13 +1,14 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationStart, Router, RouterLink } from '@angular/router'
-import { HeaderComponent } from '../header/header.component'
-import { FooterComponent } from '../footer/footer.component'
-import { NotifyService } from '../../services/notify.service'
 import { BrowserService } from '../../services/browser.service'
+import { NotifyService } from '../../services/notify.service'
+import { FooterComponent } from '../footer/footer.component'
+import { HeaderComponent } from '../header/header.component'
 import '../../shared/types'
-import { APlayer } from '../../shared/types'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
+import { KEYS, StoreService } from '../../services/store.service'
+import { APlayer } from '../../shared/types'
 
 @Component({
   selector: 'app-layout-using',
@@ -94,20 +95,20 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
 
   public togglePlayer(isFirst: boolean) {
     if (this.router.url === '/music') return
-    const playerDisabled = localStorage.getItem('aplayer-diabled') === 'true'
+    const playerDisabled = this.browserService.store!.getItem(KEYS.APLAYER_DISABLED) === 'true'
     if (isFirst && playerDisabled) return
 
     if (this.aplayer) {
-      localStorage.setItem('aplayer-diabled', 'true')
+      this.browserService.store!.setItem(KEYS.APLAYER_DISABLED, 'true')
       this.aplayer.destroy()
       this.aplayer = undefined
       return
     }
 
-    const aliveTime = Number(localStorage.getItem('aplayer-alive-time') ?? 0)
+    const aliveTime = Number(this.browserService.store!.getItem(KEYS.APLAYER_ALIVE_TIME) ?? 0)
     if (!Number.isNaN(aliveTime) && Date.now() - aliveTime < 1010) return
 
-    localStorage.setItem('aplayer-diabled', 'false')
+    this.browserService.store!.setItem(KEYS.APLAYER_DISABLED, 'false')
     this.aplayer = new APlayer({
       container: document.getElementById('aplayer-global'),
       autoplay: true,
@@ -122,7 +123,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
 
     this.aplayerTimer = Number(
       setInterval(() => {
-        if (this.aplayer) localStorage.setItem('aplayer-alive-time', Date.now().toString())
+        if (this.aplayer) this.browserService.store!.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
       }, 1000)
     )
   }

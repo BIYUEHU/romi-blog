@@ -3,12 +3,12 @@ import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 import { UserAuthData } from '../models/api.model'
 import { BrowserService } from './browser.service'
+import { KEYS } from './store.service'
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly STORAGE_KEY = 'admin_auth'
   private userSubject = new BehaviorSubject<UserAuthData | null>(null)
   public user$ = this.userSubject.asObservable()
 
@@ -20,39 +20,35 @@ export class AuthService {
   }
 
   private restoreSession() {
-    const { localStorage } = this.browserService
-    if (!localStorage) return
+    const { store } = this.browserService
+    if (!store) return
 
-    const stored = localStorage.getItem(this.STORAGE_KEY)
+    const stored = store.getItem(KEYS.ADMIN_AUTH)
     if (stored) {
       try {
         const userData = JSON.parse(stored)
         this.userSubject.next(userData)
       } catch {
-        localStorage.removeItem(this.STORAGE_KEY)
+        store.removeItem(KEYS.ADMIN_AUTH)
       }
     }
   }
 
   public setUser(userData: UserAuthData, remember = false) {
-    const { localStorage } = this.browserService
-    if (!localStorage) return
+    const { store } = this.browserService
+    if (!store) return
 
     this.userSubject.next(userData)
-    if (remember) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(userData))
-    } else {
-      sessionStorage.setItem(this.STORAGE_KEY, JSON.stringify(userData))
-    }
+    store.setItem(KEYS.ADMIN_AUTH, JSON.stringify(userData), remember)
   }
 
   public logout() {
-    const { localStorage } = this.browserService
-    if (!localStorage) return
+    const { store } = this.browserService
+    if (!store) return
 
     this.userSubject.next(null)
-    localStorage.removeItem(this.STORAGE_KEY)
-    sessionStorage.removeItem(this.STORAGE_KEY)
+    store.removeItem(KEYS.ADMIN_AUTH, true)
+    store.removeItem(KEYS.ADMIN_AUTH, false)
     this.router.navigate(['/admin/login'])
   }
 

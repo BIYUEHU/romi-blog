@@ -1,14 +1,15 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
-import { ApiService } from '../../services/api.service'
-import { ResPostData } from '../../models/api.model'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { RouterLink } from '@angular/router'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
-import { DatePipe } from '@angular/common'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { ResPostData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-admin-posts',
@@ -22,13 +23,14 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
 
   constructor(private readonly apiService: ApiService) {
     super()
+    this.notifyService.setTitle('文章管理')
     this.emptyMessage = '暂无文章'
   }
 
   protected loadItems(): void {
     this.isLoading = true
     this.apiService.getPosts().subscribe((data) => {
-      this.items = data
+      this.items = sortByCreatedTime(data)
       this.isLoading = false
     })
   }

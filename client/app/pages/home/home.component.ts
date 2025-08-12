@@ -1,15 +1,15 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
 import { DatePipe } from '@angular/common'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
-import { APlayer } from '../../shared/types'
-import { ProjectListComponent } from '../../components/project-list/project-list.component'
+import { CardComponent } from '../../components/card/card.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { NotifyService } from '../../services/notify.service'
+import { ProjectListComponent } from '../../components/project-list/project-list.component'
+import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { CardComponent } from '../../components/card/card.component'
+import { NotifyService } from '../../services/notify.service'
+import { APlayer } from '../../shared/types'
 
 @Component({
   selector: 'app-home',
@@ -53,7 +53,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService
-  ) {}
+  ) {
+    this.notifyService.setTitle()
+  }
 
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })

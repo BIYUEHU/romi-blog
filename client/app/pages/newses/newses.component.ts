@@ -1,14 +1,14 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { RouterLink } from '@angular/router'
 import { DatePipe } from '@angular/common'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { RouterLink } from '@angular/router'
+import { LoadingComponent } from '../../components/loading/loading.component'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResNewsData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { NotifyService } from '../../services/notify.service'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { sortByCreatedTime } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 interface TocItem {
   year: number
@@ -47,9 +47,28 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
     private readonly notifyService: NotifyService
   ) {
     super()
+    this.notifyService.setTitle('近期动态')
     this.authService.user$.subscribe((user) => {
       this.isAdmin = !!user?.is_admin
     })
+  }
+
+  public ngOnInit() {
+    this.notifyService.updateHeaderContent({
+      title: '近期动态',
+      subTitle: []
+    })
+
+    this.setData(
+      (set) => this.loadData(true).then((data) => set(sortByCreatedTime(data))),
+      (data) => {
+        this.isLoading = false
+        this.refresh(data)
+      }
+    )
+
+    if (!this.browserService.isBrowser) return
+    this.url = `${location.origin}/news`
   }
 
   private generateToc(news: ResNewsData[]) {
@@ -157,23 +176,5 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
     }
     this.displayedNews = [...this.displayedNews, ...nextItems]
     this.currentPage++
-  }
-
-  public ngOnInit() {
-    this.notifyService.updateHeaderContent({
-      title: '动态列表',
-      subTitle: []
-    })
-
-    this.setData(
-      (set) => this.loadData(true).then((data) => set(sortByCreatedTime(data))),
-      (data) => {
-        this.isLoading = false
-        this.refresh(data)
-      }
-    )
-
-    if (!this.browserService.isBrowser) return
-    this.url = `${location.origin}/news`
   }
 }

@@ -40,6 +40,13 @@
 - MySQL
 - JsonWebToken
 
+## Development
+
+- Node.js
+- Python3
+- Rust
+- cargo-watch: `cargo install cargo-watch`
+
 ## License
 
 The project is licensed under the [BCU](https://github.com/ICEAGENB/ban-chinaman-using) license.

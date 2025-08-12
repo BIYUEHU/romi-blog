@@ -1,8 +1,9 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
-import { ResHitokotoData } from '../../models/api.model'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { NotifyService } from '../../services/notify.service'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { ResHitokotoData } from '../../models/api.model'
+import { NotifyService } from '../../services/notify.service'
+import { KEYS } from '../../services/store.service'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-hitokotos',
@@ -21,6 +22,7 @@ export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>(
 
   public constructor(private readonly notifyService: NotifyService) {
     super()
+    this.notifyService.setTitle('语录墙')
   }
 
   public ngOnInit(): void {
@@ -63,14 +65,14 @@ export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>(
   public likeHitokoto(id: number): void {
     if (this.isLiked(id)) return
     this.apiService.likeHitokoto(id).subscribe(() => {
-      this.browserService.localStorage?.setItem(`hitokoto_like_${id}`, 'true')
+      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED(id), true)
       const hitokoto = this.hitokotos.find((h) => h.id === id)
       if (hitokoto) hitokoto.likes++
     })
   }
 
   public isLiked(id: number): boolean {
-    return !!this.browserService.localStorage?.getItem(`hitokoto_like_${id}`)
+    return !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(id))
   }
 
   public getTypeColor(type: number): string {

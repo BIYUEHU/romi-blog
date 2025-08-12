@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
-import { ProgressComponent } from './components/progress/progress.component'
 import { MessageComponent } from './components/message/message.component'
+import { ProgressComponent } from './components/progress/progress.component'
 
 @Component({
   selector: 'app-root',

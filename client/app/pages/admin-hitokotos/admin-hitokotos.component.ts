@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { ApiService } from '../../services/api.service'
-import { ResHitokotoData, ReqHitokotoData } from '../../models/api.model'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { WebComponentSwitchAccessorDirective } from '../../directives/web-component-switch-accessor.directive'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { WebComponentSwitchAccessorDirective } from '../../directives/web-component-switch-accessor.directive'
+import { ReqHitokotoData, ResHitokotoData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 
 @Component({
   selector: 'app-admin-hitokotos',
@@ -42,6 +42,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
   public constructor(private readonly apiService: ApiService) {
     super()
     this.loadItems()
+    this.notifyService.setTitle('一言管理')
   }
 
   protected loadItems(): void {

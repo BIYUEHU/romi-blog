@@ -1,0 +1,12 @@
+[package]
+name = "experimental"
+version = "1.0.0"
+edition = "2021"
+readme = "README.md"
+license = "GPL-3.0-only"
+
+[dependencies]
+# hyper = { version = "1.0", features = ["full"] }
+# hyperlocal = "0.9"
+# tokio = { version = "1", features = ["full"] }
+# reqwest = "0.12"

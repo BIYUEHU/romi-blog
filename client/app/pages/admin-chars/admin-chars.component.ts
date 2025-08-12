@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { RouterLink } from '@angular/router'
 import { FormsModule } from '@angular/forms'
-import { ApiService } from '../../services/api.service'
-import { ResCharacterData } from '../../models/api.model'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { RouterLink } from '@angular/router'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
-import { DatePipe } from '@angular/common'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { ResCharacterData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { renderCharacterBWH } from '../../utils'
 
 @Component({
@@ -21,6 +21,7 @@ import { renderCharacterBWH } from '../../utils'
 export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResCharacterData> implements OnInit {
   constructor(private readonly apiService: ApiService) {
     super()
+    this.notifyService.setTitle('角色管理')
     this.emptyMessage = '暂无角色'
   }
 

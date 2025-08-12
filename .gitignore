@@ -44,10 +44,12 @@ Thumbs.db
 .42c
 
 # Custom
-scripts/*.json
-scripts/*.jsonl
-ui/styles.css
+/scripts/*.json
+/scripts/*.jsonl
+/ui/styles.css
 *.env
 output.ts
 static
-cache
+/cache
+/logs
+/data

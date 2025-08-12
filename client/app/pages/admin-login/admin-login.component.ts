@@ -1,11 +1,11 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
+import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { NotifyService } from '../../services/notify.service'
 
 @Component({
@@ -29,6 +29,7 @@ export class AdminLoginComponent {
     private readonly notifyService: NotifyService
   ) {
     if (this.browserService.isBrowser && this.authService.isLoggedIn()) location.href = '/admin/dashboard'
+    this.notifyService.setTitle('管理员登录')
   }
 
   public async handleSubmit() {

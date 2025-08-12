@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core'
+import { Title } from '@angular/platform-browser'
 import { BehaviorSubject, Subject } from 'rxjs'
-import { BrowserService } from './browser.service'
-import { MessageComponent } from '../components/message/message.component'
 import { LayoutUsingComponent } from '../components/layout-using/layout-using.component'
+import { MessageComponent } from '../components/message/message.component'
+import { DEFAULT_TITLE } from '../shared/constants'
+import { BrowserService } from './browser.service'
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +22,10 @@ export class NotifyService {
 
   public isSidebarOpen$
 
-  public constructor(private readonly browserService: BrowserService) {
+  public constructor(
+    private readonly browserService: BrowserService,
+    private readonly title: Title
+  ) {
     this.isSidebarOpen = new BehaviorSubject((this.browserService.windowRef?.innerWidth ?? 0) >= 1024)
     this.isSidebarOpen$ = this.isSidebarOpen.asObservable()
     this.isSidebarOpen.subscribe((isOpen) => {
@@ -46,5 +51,9 @@ export class NotifyService {
 
   public closeSidebar() {
     this.isSidebarOpen.next(false)
+  }
+
+  public setTitle(title?: string) {
+    this.title.setTitle(title?.trim() ? `${title.slice(0, 30)} - ${DEFAULT_TITLE}` : DEFAULT_TITLE)
   }
 }

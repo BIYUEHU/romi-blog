@@ -1,8 +1,8 @@
 use crate::entity::romi_news;
 use crate::guards::admin::AdminUser;
 use crate::models::news::{ReqNewsData, ResNewsData};
-use crate::utils::api::{api_ok, ApiError, ApiResult};
 use crate::service::pool::Db;
+use crate::utils::api::{api_ok, ApiError, ApiResult};
 use anyhow::Context;
 use rocket::serde::json::Json;
 use rocket::State;
@@ -160,6 +160,56 @@ pub async fn update(
     };
 
     l_info!(logger, "Successfully updated news: id={}", id);
+    api_ok(())
+}
+
+#[put("/like/<id>")]
+pub async fn like(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
+    l_info!(logger, "Liking news: id={}", id);
+    let db = conn.into_inner();
+
+    match romi_news::Entity::find_by_id(id)
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to fetch news {} for like", id))?
+    {
+        Some(model) => {
+            let mut active_model = model.clone().into_active_model();
+            active_model.likes = ActiveValue::set(model.likes + 1);
+            active_model
+                .save(db)
+                .await
+                .context("Failed to update news")?;
+        }
+        None => return Err(ApiError::not_found("News not found")),
+    };
+
+    l_info!(logger, "Successfully liked news: id={}", id);
+    api_ok(())
+}
+
+#[put("/view/<id>")]
+pub async fn view(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
+    l_info!(logger, "Viewing news: id={}", id);
+    let db = conn.into_inner();
+
+    match romi_news::Entity::find_by_id(id)
+        .one(db)
+        .await
+        .with_context(|| format!("Failed to fetch news {} for view", id))?
+    {
+        Some(model) => {
+            let mut active_model = model.clone().into_active_model();
+            active_model.views = ActiveValue::set(model.views + 1);
+            active_model
+                .save(db)
+                .await
+                .context("Failed to update news")?;
+        }
+        None => return Err(ApiError::not_found("News not found")),
+    };
+
+    l_info!(logger, "Successfully viewed news: id={}", id);
     api_ok(())
 }
 

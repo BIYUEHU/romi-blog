@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ResPostData } from '../../models/api.model'
 import { PostListComponent } from '../../components/post-list/post-list.component'
+import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { sortByCreatedTime } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-tag',
@@ -35,6 +35,7 @@ export class TagComponent extends romiComponentFactory<ResPostData[]>('home') im
           this.router.navigate(['/404'])
           return
         }
+        this.notifyService.setTitle(`${this.tagName} 标签`)
         this.notifyService.updateHeaderContent({
           title: `#${this.tagName}`,
           subTitle: [`共 ${this.data.length} 篇文章`]

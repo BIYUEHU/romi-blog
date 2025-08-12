@@ -5,13 +5,13 @@
     } @else if (data) {
 
     <div class="flex flex-col items-center lg:items-start shrink-0 w-full lg:w-80 space-y-4">
-      <app-card class="w-full overflow-hidden border" [style.border-color]="'#' + data.color">
+      <app-card class="w-full overflow-hidden border">
         <div class="text-center lg:text-left space-y-1">
           <a [href]="data.images[0]" target="_blank">
             <img [src]="data.images[0]" [alt]="data.name"
               class="max-h-70 lg:max-h-auto lg:w-full text-center mx-auto object-cover" />
           </a>
-          <h1 class="text-2xl font-bold text-primary-100 truncate">
+          <h1 class="text-2xl font-bold text-primary-100 truncate" [style]="data.color ? 'color:#' + data.color : ''">
             {{ data.name }}
           </h1>
           <div class="text-sm text-accent-100 truncate">{{ data.romaji }}</div>
@@ -25,8 +25,9 @@
     </div>
 
     <div class="flex-1 flex flex-col space-y-6">
-      <app-card class="w-full" [style.border-color]="'#' + data.color">
-        <div class="w-full italic text-primary-100 text-6 mb-5 text-center" [style.border-color]="'#' + data.color">
+      <app-card class="w-full">
+        <div class="w-full italic text-primary-100 text-6 mb-5 text-center"
+          [style]="data.color ? 'color:#' + data.color : ''">
           「{{ data.hitokoto }}」
         </div>
 
@@ -104,7 +105,7 @@
       </app-card>
 
 
-      <app-card class="w-full" [style.border-color]="'#' + data.color">
+      <app-card class="w-full">
         <h2 class="text-lg font-semibold text-primary-100 mb-3">描述</h2>
         <div class="text-bg-300 whitespace-pre-wrap break-words mb-4">
           {{ data.description }}
@@ -123,14 +124,14 @@
         <h2 class="text-lg font-semibold text-primary-100 mb-3">标签</h2>
         <div class="flex flex-wrap gap-2">
           @for (tag of data.tags; track tag) {
-          <r-tag type="accent" size="sm">{{ tag }}</r-tag>
+          <r-tag [type]="tag[1]" size="sm">{{ tag[0] }}</r-tag>
           }
         </div>
         }
       </app-card>
 
       @if (data.comment || data.url.length > 0 || data.song_id) {
-      <app-card class="w-full" [style.border-color]="'#' + data.color">
+      <app-card class="w-full">
         <div id="aplayer"></div>
 
         @if (data.comment) {

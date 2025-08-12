@@ -2,8 +2,9 @@ import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { NotifyService } from '../../services/notify.service'
 import { sortByCreatedTime } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-archive',
@@ -25,6 +26,11 @@ export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archi
   public tags: string[] = []
 
   public categories: string[] = []
+
+  public constructor(private notifyService: NotifyService) {
+    super()
+    this.notifyService.setTitle('归档整理')
+  }
 
   public async ngOnInit() {
     this.setData(

@@ -1,19 +1,12 @@
+import { DatePipe } from '@angular/common'
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { ApiService } from '../../services/api.service'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
-import { DatePipe } from '@angular/common'
+import { NotifyService } from '../../services/notify.service'
 import { ROMI_METADATA } from '../../shared/constants'
-
-interface StatCard {
-  title: string
-  value: number
-  icon: string
-  color: string
-  link: string
-}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -27,64 +20,76 @@ export class AdminDashboardComponent implements OnInit {
 
   public dashboardData?: ResDashboardData
 
-  public statCards: StatCard[] = [
-    {
-      title: '文章数量',
-      value: 0,
-      icon: 'i-mdi:file-document',
-      color: 'bg-primary-100',
-      link: '/admin/posts'
-    },
-    {
-      title: '分类数量',
-      value: 0,
-      icon: 'i-mdi:folder',
-      color: 'bg-green-500',
-      link: '/admin/metas'
-    },
-    {
-      title: '标签数量',
-      value: 0,
-      icon: 'i-mdi:tag',
-      color: 'bg-yellow-500',
-      link: '/admin/metas'
-    },
-    {
-      title: '评论数量',
-      value: 0,
-      icon: 'i-mdi:comment',
-      color: 'bg-blue-500',
-      link: '/admin/comments'
-    },
-    {
-      title: '用户数量',
-      value: 0,
-      icon: 'i-mdi:account',
-      color: 'bg-purple-500',
-      link: '/admin/users'
-    },
-    {
-      title: '一言数量',
-      value: 0,
-      icon: 'i-mdi:yin-yang',
-      color: 'bg-pink-500',
-      link: '/admin/hitokotos'
-    },
-    {
-      title: '色图数量',
-      value: 0,
-      icon: 'i-mdi:palette',
-      color: 'bg-red-500',
-      link: '/admin/seimgs'
-    },
-    {
-      title: '动态数量',
-      value: 0,
-      icon: 'i-mdi:newspaper',
-      color: 'bg-gray-500',
-      link: '/admin/news'
-    }
-  ]
+  public get statCards() {
+    return [
+      {
+        title: '文章数量',
+        value: this.dashboardData?.posts_count ?? 0,
+        icon: 'i-mdi:file-document',
+        color: 'bg-primary-100',
+        link: '/admin/posts'
+      },
+      {
+        title: '分类数量',
+        value: this.dashboardData?.categories_count ?? 0,
+        icon: 'i-mdi:folder',
+        color: 'bg-green-500',
+        link: '/admin/metas'
+      },
+      {
+        title: '标签数量',
+        value: this.dashboardData?.tags_count ?? 0,
+        icon: 'i-mdi:tag',
+        color: 'bg-yellow-500',
+        link: '/admin/metas'
+      },
+      {
+        title: '评论数量',
+        value: this.dashboardData?.comments_count ?? 0,
+        icon: 'i-mdi:comment',
+        color: 'bg-blue-500',
+        link: '/admin/comments'
+      },
+      {
+        title: '用户数量',
+        value: this.dashboardData?.users_count ?? 0,
+        icon: 'i-mdi:account',
+        color: 'bg-purple-500',
+        link: '/admin/users'
+      },
+      {
+        title: '一言数量',
+        value: this.dashboardData?.hitokotos_count ?? 0,
+        icon: 'i-mdi:yin-yang',
+        color: 'bg-pink-500',
+        link: '/admin/hitokotos'
+      },
+      {
+        title: '色图数量',
+        value: this.dashboardData?.seimgs_count ?? 0,
+        icon: 'i-mdi:palette',
+        color: 'bg-red-500',
+        link: '/admin/seimgs'
+      },
+      {
+        title: '动态数量',
+        value: this.dashboardData?.news_count ?? 0,
+        icon: 'i-mdi:newspaper',
+        color: 'bg-gray-500',
+        link: '/admin/news'
+      }
+    ]
+  }
+
+  public get systemInfo() {
+    return [
+      { label: '前端版本', value: ROMI_METADATA.pkg.version },
+      { label: '系统版本', value: this.dashboardData?.version ?? '' },
+      { label: 'Node.js 版本', value: this.dashboardData?.nodejs_version ?? '' },
+      { label: '服务器系统', value: this.dashboardData?.os_info ?? '' },
+      { label: '用户目录', value: this.dashboardData?.home_dir ?? '' }
+    ]
+  }
 
   private recentPostsData: ResPostData[] = []
 
@@ -96,19 +101,14 @@ export class AdminDashboardComponent implements OnInit {
     this.recentPostsData = value.sort((a, b) => b.created - a.created).slice(0, 5)
   }
 
-  public systemInfo = [
-    { label: '前端版本', value: ROMI_METADATA.pkg.version },
-    { label: '系统版本', value: 'Loading...' },
-    { label: 'Node.js 版本', value: 'Loading...' },
-    { label: '服务器系统', value: 'Loading...' },
-    { label: '运行目录', value: 'Loading...' }
-  ]
-
   public constructor(
     private readonly apiService: ApiService,
     private readonly authService: AuthService,
-    private readonly browserService: BrowserService
-  ) {}
+    private readonly browserService: BrowserService,
+    private readonly notifyService: NotifyService
+  ) {
+    this.notifyService.setTitle('控制台')
+  }
 
   public ngOnInit() {
     if (!this.browserService.isBrowser) return
@@ -121,40 +121,11 @@ export class AdminDashboardComponent implements OnInit {
     }, 1000)
 
     this.apiService.getDashboard().subscribe((data) => {
-      this.statCards = this.statCards.map((card) => ({
-        ...card,
-        value: Number(data[this.getStatKey(card.title)] || 0)
-      }))
-      this.systemInfo = [
-        { label: '前端版本', value: ROMI_METADATA.pkg.version },
-        { label: '系统版本', value: data.version },
-        { label: 'Node.js 版本', value: data.nodejs_version },
-        { label: '服务器系统', value: data.os_info },
-        { label: '运行目录', value: data.home_dir }
-      ]
-
       this.dashboardData = data
     })
 
     this.apiService.getPosts().subscribe((data) => {
       this.recentPosts = data
     })
-  }
-
-  private getStatKey(title: string): keyof ResDashboardData {
-    return (
-      (
-        {
-          文章数量: 'posts_count',
-          分类数量: 'categories_count',
-          标签数量: 'tags_count',
-          评论数量: 'comments_count',
-          用户数量: 'users_count',
-          一言数量: 'hitokotos_count',
-          色图数量: 'seimgs_count',
-          动态数量: 'news_count'
-        } as const
-      )[title] || 'posts_count'
-    )
   }
 }

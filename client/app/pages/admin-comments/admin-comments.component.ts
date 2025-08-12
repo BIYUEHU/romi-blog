@@ -1,14 +1,15 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
-import { ApiService } from '../../services/api.service'
-import { ResCommentData } from '../../models/api.model'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
-import { DatePipe } from '@angular/common'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { ResCommentData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-admin-comments',
@@ -20,13 +21,14 @@ import { DatePipe } from '@angular/common'
 export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCommentData> {
   public constructor(private readonly apiService: ApiService) {
     super()
+    this.notifyService.setTitle('评论管理')
     this.loadItems()
   }
 
   protected loadItems() {
     this.isLoading = true
     this.apiService.getComments().subscribe((data) => {
-      this.items = data.reverse()
+      this.items = sortByCreatedTime(data)
       this.isLoading = false
     })
   }

@@ -6,10 +6,13 @@
   } @else {
   <div class="columns-1 md:columns-2 gap-x-4">
     @for (hitokoto of hitokotos; track $index) {
-    <div [routerLink]="'/hitokoto/' + hitokoto.id"
-      class="break-inside-avoid mb-4 hover:scale-100.1 bg-text-200 rounded-lg border hover:shadow-sm p-4 hover:bg-text-300 hover:cursor-pointer transition-colors relative "
+    <div class="break-inside-avoid mb-4 bg-text-200 rounded-lg border p-4 transition-colors relative "
       [style]="'flex-shrink:0;width:100%;max-width:100%;flex:0 0 auto; border-left: 4px solid ' + getTypeColor(hitokoto.type)">
-      <p class="text-bg-200 mb-4 overflow-y-auto max-h-50 ">{{ hitokoto.msg }}</p>
+      <p [routerLink]="'/hitokoto/' + hitokoto.id"
+        class="text-bg-200 mb-4 overflow-y-auto max-h-50 hover:text-primary-100 hover:cursor-pointer">{{
+        hitokoto.msg
+        }}
+      </p>
 
       <div class="flex items-center justify-between text-sm">
         <div class="flex items-center gap-4 text-accent-100">

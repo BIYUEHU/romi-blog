@@ -7,7 +7,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 --disable-host-check",
-    "dev": "tsx scripts/dev",
+    "dev": "python scripts/dev.py",
     "ui": "cd ui && pnpm dev",
     "build": "cargo test export_bindings && cd ui && pnpm build && ng build",
     "watch": "ng build --watch --configuration development",
@@ -78,7 +78,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "p-limit": "^6.2.0",
-    "tsx": "^4.19.2",
     "typescript": "~5.5.2",
     "unocss": "^0.64.1"
   }

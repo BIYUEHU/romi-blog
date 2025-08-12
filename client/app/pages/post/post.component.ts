@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
-import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-post',

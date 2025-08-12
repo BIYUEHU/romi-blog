@@ -20,8 +20,8 @@
 
       <div class="p-4">
         <div class="flex items-center justify-between gap-2 mb-2">
-          <h3 class="text-lg font-bold text-bg-100 line-clamp-1">{{ char.name }}</h3>
-          <r-tag [style.background-color]="'#' + char.color">
+          <h3 class="text-lg font-bold text-bg-100 line-clamp-1" [style]="'color:#' + char.color">{{ char.name }}</h3>
+          <r-tag>
             {{ char.gender === 'FEMALE' ? '♀' : '♂' }}
           </r-tag>
         </div>

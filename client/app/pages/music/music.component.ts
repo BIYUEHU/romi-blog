@@ -1,10 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
+import { LoadingComponent } from '../../components/loading/loading.component'
+import { ResMusicData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { APlayer } from '../../shared/types'
-import { ApiService } from '../../services/api.service'
-import { ResMusicData } from '../../models/api.model'
-import { LoadingComponent } from '../../components/loading/loading.component'
 
 @Component({
   selector: 'app-music',
@@ -28,7 +28,9 @@ export class MusicComponent implements OnInit, OnDestroy {
     private readonly browserService: BrowserService,
     private readonly notifyService: NotifyService,
     private readonly apiService: ApiService
-  ) {}
+  ) {
+    this.notifyService.setTitle('歌单收藏')
+  }
 
   public ngOnInit() {
     this.apiService.getMusic().subscribe((data) => {
@@ -41,7 +43,7 @@ export class MusicComponent implements OnInit, OnDestroy {
     })
 
     this.notifyService.updateHeaderContent({
-      title: '歌单列表',
+      title: '歌单收藏',
       subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
     })
   }

@@ -1,4 +1,4 @@
-use crate::constant::CACHE_DIR;
+use crate::constant::DATA_DIR;
 use dotenvy::dotenv;
 use std::path::Path;
 
@@ -18,11 +18,11 @@ pub fn set_env_var(key: &str, value: &str) {
     std::env::set_var(key, value);
 }
 
-pub fn init_dirs() -> Result<(), String> {
-    if Path::new(CACHE_DIR).exists() {
-        Ok(())
-    } else {
-        std::fs::create_dir(CACHE_DIR)
-            .map_err(|e| format!("Failed to create cache directory: {}", e))
+pub fn initialize_directories() -> Result<(), String> {
+    if !Path::new(DATA_DIR).exists() {
+        std::fs::create_dir(DATA_DIR)
+            .map_err(|e| format!("Failed to create data directory: {}", e))?;
     }
+
+    Ok(())
 }

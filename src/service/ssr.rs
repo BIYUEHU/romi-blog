@@ -21,7 +21,9 @@ impl SSR {
             return SSR {
                 process: None,
                 client: reqwest::Client::builder()
-                    .timeout(std::time::Duration::from_secs(30)) // 添加超时
+                    .pool_max_idle_per_host(5)
+                    .timeout(std::time::Duration::from_secs(30))
+                    .connection_verbose(true)
                     .build()
                     .unwrap_or_default(),
                 port,

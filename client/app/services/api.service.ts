@@ -1,33 +1,34 @@
-import { Injectable } from '@angular/core'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { jwtDecode } from 'jwt-decode'
+import { catchError, map, of } from 'rxjs'
 import type {
   AuthUser,
   BangumiData,
   LoginResponse,
+  ReqCharacterData,
   ReqHitokotoData,
   ReqMetaData,
+  ReqNewsData,
   ReqPostData,
   ReqUserData,
+  ResCharacterData,
   ResCommentData,
   ResDashboardData,
   ResHitokotoData,
   ResMetaData,
+  ResMusicData,
+  ResNewsData,
   ResPostData,
   ResPostSingleData,
+  ResProjectData,
   ResSettingsData,
   ResUserData,
   UserAuthData,
-  ResNewsData,
-  ReqNewsData,
-  Video,
-  ResProjectData,
-  ResCharacterData,
-  ResMusicData,
-  ReqCharacterData
+  Video
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
-import { catchError, map, of } from 'rxjs'
-import { jwtDecode } from 'jwt-decode'
+import { CacheService } from './cache.service'
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,10 @@ import { jwtDecode } from 'jwt-decode'
 export class ApiService {
   private readonly apiUrl = API_BASE_URL
 
-  public constructor(private readonly http: HttpClient) {}
+  public constructor(
+    private readonly http: HttpClient,
+    private readonly cacheService: CacheService
+  ) {}
 
   private getSkipErrorHandlerHeaders() {
     return new HttpHeaders().set('Skip-Error-Handler', 'true')
@@ -45,8 +49,9 @@ export class ApiService {
     return new HttpHeaders().set('Skip-Bring-Token', 'true')
   }
 
-  public getPosts() {
-    return this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
+  public getPosts(cache = false) {
+    const cachedPosts = this.cacheService.getPosts()
+    return cache && cachedPosts ? of(cachedPosts) : this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
   }
 
   public getPost(id: number) {
@@ -62,13 +67,13 @@ export class ApiService {
   }
 
   public likePost(id: number) {
-    return this.http.post<void>(`${this.apiUrl}/post/${id}/like`, null, {
+    return this.http.put<void>(`${this.apiUrl}/post/like/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }
 
   public viewPost(id: number) {
-    return this.http.post<void>(`${this.apiUrl}/post/${id}/view`, null, {
+    return this.http.put<void>(`${this.apiUrl}/post/view/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }

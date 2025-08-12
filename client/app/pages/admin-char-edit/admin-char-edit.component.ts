@@ -1,10 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ApiService } from '../../services/api.service'
-import type { ReqCharacterData, ResMusicData } from '../../models/api.model'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import type { ReqCharacterData, ResMusicData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
 import { formatDate } from '../../utils'
 
@@ -86,7 +86,9 @@ export class AdminCharEditComponent implements OnInit {
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly notifyService: NotifyService
-  ) {}
+  ) {
+    this.notifyService.setTitle('角色编辑')
+  }
 
   public ngOnInit() {
     this.apiService.getMusic().subscribe((songs) => {

@@ -20,7 +20,7 @@ use service::pool::Db;
 use service::recorder::Recorder;
 use service::ssr::SSR;
 use std::fs::exists;
-use utils::bootstrap::{init_dirs, load_env_vars, set_env_var};
+use utils::bootstrap::{initialize_directories, load_env_vars, set_env_var};
 use utils::catcher;
 use utils::config::load_config;
 use utils::cros::get_cors;
@@ -69,7 +69,7 @@ async fn main() {
         return;
     }
 
-    if let Err(e) = init_dirs() {
+    if let Err(e) = initialize_directories() {
         l_fatal!(&logger, "{}", e);
     }
 
@@ -151,6 +151,8 @@ async fn main() {
             news::fetch_all,
             news::create,
             news::update,
+            news::view,
+            news::like,
             news::delete
         ],
     )

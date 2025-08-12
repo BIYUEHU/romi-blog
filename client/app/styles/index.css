@@ -15,6 +15,7 @@
   --bg-300: #404040;
   scrollbar-color: var(--primary-100) var(--accent-100);
   scrollbar-width: thin;
+  font-family: 16px/1.5 'Microsoft Yahei', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
 }
 
 ::selection {
@@ -35,8 +36,8 @@ a:hover {
 .post-body {
   background-color: var(--text-200);
   font-family: sans-serif;
-  font-size: 1.15rem;
-  line-height: 1.75;
+  line-height: 1.8;
+  font-weight: 300;
   margin-inline: auto;
   word-wrap: break-word;
   scrollbar-color: var(--bg-300) var(--text-300);
@@ -49,11 +50,36 @@ a:hover {
   h4,
   h5,
   h6 {
-    font-weight: bold;
-    margin-top: 24px;
-    margin-bottom: 12px;
-    line-height: 1.3;
+    font-weight: 400;
+    /* margin-top: 24px; */
+    /* margin-bottom: 1rem; */
+    /* line-height: 1.3; */
   }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+  }
+
+  h4 {
+    font-size: 1rem;
+  }
+
+  h5 {
+    font-size: 0.8rem;
+  }
+
+  h6 {
+    font-size: 0.6rem;
+  }
+
 
   * {
     max-width: 100%;

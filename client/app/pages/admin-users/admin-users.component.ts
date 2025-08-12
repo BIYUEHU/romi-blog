@@ -1,15 +1,16 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { ApiService } from '../../services/api.service'
-import { ResUserData, ReqUserData } from '../../models/api.model'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { AuthService } from '../../services/auth.service'
-import { UserAuthData } from '../../models/api.model'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
-import { DatePipe } from '@angular/common'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { ReqUserData, ResUserData } from '../../models/api.model'
+import { UserAuthData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { AuthService } from '../../services/auth.service'
+import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-admin-users',
@@ -34,6 +35,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
     private readonly authService: AuthService
   ) {
     super()
+    this.notifyService.setTitle('用户管理')
     this.emptyMessage = '暂无用户'
     this.authService.user$.subscribe((user) => {
       this.admin = user
@@ -43,7 +45,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
   protected loadItems(): void {
     this.isLoading = true
     this.apiService.getUsers().subscribe((data) => {
-      this.items = data
+      this.items = sortByCreatedTime(data, false)
       this.isLoading = false
     })
   }

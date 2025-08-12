@@ -45,13 +45,13 @@
       }
 
       <div class="mx-auto flex gap-4 mt-6">
-        <r-button size="lg">
+        <r-button size="lg" type="error" (click)="likePost()" [disabled]="isLiked">
           点个赞
         </r-button>
-        <r-button size="lg" type="success">
+        <r-button size="lg" type="success" (click)="donate()">
           赏杯咖啡
         </r-button>
-        <r-button size="lg" type="warning">
+        <r-button size="lg" type="warning" (click)="sharePost()">
           分享到...
         </r-button>
       </div>

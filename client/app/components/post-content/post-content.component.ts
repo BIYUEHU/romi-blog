@@ -1,17 +1,19 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnDestroy, OnInit } from '@angular/core'
-import { Router, RouterLink } from '@angular/router'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { RelatedPost, ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
-import { NotifyService } from '../../services/notify.service'
 import { DatePipe } from '@angular/common'
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { AuthService } from '../../services/auth.service'
-import markdownIt from 'markdown-it'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
+import { Router, RouterLink } from '@angular/router'
+import markdownIt from 'markdown-it'
 import { BundledLanguage, BundledTheme, HighlighterGeneric, createHighlighter } from 'shiki'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { LoadingComponent } from '../../components/loading/loading.component'
+import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
+import { RelatedPost, ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
+import { AuthService } from '../../services/auth.service'
+import { NotifyService } from '../../services/notify.service'
+import { KEYS } from '../../services/store.service'
 import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
+import { randomRTagType } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 interface TocItem {
   level: number
@@ -41,6 +43,7 @@ export class PostContentComponent
   @Input() public hideRelatedPosts = false
   @Input() public hideOptions = false
   @Input() public hideCopyright = false
+  @Input() public setTitle = false
 
   public renderedContent: SafeHtml = ''
 
@@ -79,6 +82,10 @@ export class PostContentComponent
   public pageSize = 10
   public get pages() {
     return Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1)
+  }
+
+  public get isLiked() {
+    return !!this.browserService.store?.getItem(KEYS.POST_LIKED(this.id))
   }
 
   public constructor(
@@ -141,6 +148,21 @@ export class PostContentComponent
     })
   }
 
+  private updateHeaderContent() {
+    const { data } = this
+    if (!data) return
+    this.notifyService.updateHeaderContent({
+      title: data.title,
+      subTitle: this.hideSubTitle
+        ? []
+        : [
+            `创建时间：${new Date(data.created * 1000).toLocaleDateString()} | 更新时间：${new Date(data.modified * 1000).toLocaleDateString()}`,
+            `${data.views} 次阅读 ${data.allow_comment ? `•  ${data.comments} 条评论 ` : ''}•  ${data.likes} 人喜欢`
+          ],
+      ...(data.banner ? { imageUrl: data.banner } : {})
+    })
+  }
+
   private async renderContent(data: ResPostSingleData) {
     const highlighter = await createHighlighter({
       themes: ['vitesse-light'],
@@ -152,32 +174,12 @@ export class PostContentComponent
       url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(
         this.browserService.windowRef
       ),
-      tags: data.tags.map((tag) => [
-        tag,
-        ((types) => types[Math.floor(Math.random() * types.length)])([
-          'primary',
-          'secondary',
-          'accent',
-          'success',
-          'info',
-          'warning',
-          'error'
-        ])
-      ])
+      tags: data.tags.map((tag) => [tag, randomRTagType()])
     }
     this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(this.mdParser.render(data.text))
 
     if (!this.hideToc) this.toc = this.generateToc(data.text)
-    this.notifyService.updateHeaderContent({
-      title: data.title,
-      subTitle: this.hideSubTitle
-        ? []
-        : [
-            `创建时间：${new Date(data.created * 1000).toLocaleDateString()} | 更新时间：${new Date(data.modified * 1000).toLocaleDateString()}`,
-            `${data.views} 次阅读 ${data.allow_comment ? `•  ${data.comments} 条评论 ` : ''}•  ${data.likes} 人喜欢`
-          ],
-      ...(data.banner ? { imageUrl: data.banner } : {})
-    })
+    this.updateHeaderContent()
   }
 
   public goToPage(page: number) {
@@ -192,7 +194,10 @@ export class PostContentComponent
   public async ngOnInit() {
     this.setData(
       (set) => this.apiService.getPost(this.id).subscribe((data) => set(data)),
-      (data) => this.renderContent(data)
+      (data) => {
+        this.notifyService.setTitle(data.title)
+        this.renderContent(data)
+      }
     )
     this.apiService.getCommentsByPost(this.id).subscribe((comments) => {
       this.comments = this.parseComments(comments)
@@ -227,7 +232,29 @@ export class PostContentComponent
     this.highlighter?.dispose()
   }
 
-  public async likePost() {}
+  // TODO: donate page
+  public donate() {}
+
+  public viewPost() {}
+
+  public likePost() {
+    this.apiService.likePost(this.id).subscribe(() => {
+      this.browserService.store?.setItem(KEYS.POST_LIKED(this.id), true)
+      if (this.post) this.post.likes += 1
+      this.updateHeaderContent()
+      this.notifyService.showMessage('点赞成功', 'success')
+    })
+  }
+
+  public async sharePost() {
+    const copyText = `${this.post?.title} - ${this.post?.url}`
+    try {
+      await navigator.clipboard.writeText(copyText)
+      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+    } catch (_) {
+      this.notifyService.showMessage('链接复制失败', 'error')
+    }
+  }
 
   public async addComment() {
     if (!this.commentText) return

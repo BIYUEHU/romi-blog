@@ -1,14 +1,14 @@
+import { DatePipe } from '@angular/common'
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { NotifyService } from '../../services/notify.service'
-import { ResCharacterData, ResMusicData } from '../../models/api.model'
-import { DatePipe } from '@angular/common'
 import { CardComponent } from '../../components/card/card.component'
-import { renderCharacterBWH } from '../../utils'
-import { APlayer } from '../../shared/types'
+import { LoadingComponent } from '../../components/loading/loading.component'
+import { ResCharacterData, ResMusicData } from '../../models/api.model'
 import { BrowserService } from '../../services/browser.service'
+import { NotifyService } from '../../services/notify.service'
+import { APlayer } from '../../shared/types'
+import { randomRTagType, renderCharacterBWH } from '../../utils'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-char',
@@ -17,7 +17,10 @@ import { BrowserService } from '../../services/browser.service'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })
-export class CharComponent extends romiComponentFactory<ResCharacterData>('char') implements OnInit, OnDestroy {
+export class CharComponent
+  extends romiComponentFactory<Omit<ResCharacterData, 'tags'> & { tags: [string, string][] }>('char')
+  implements OnInit, OnDestroy
+{
   public isLoading = true
 
   protected aplayer?: APlayer
@@ -28,13 +31,13 @@ export class CharComponent extends romiComponentFactory<ResCharacterData>('char'
     if (this.data && !this.data.id) return undefined
     if (!this.data || this.musicList.length === 0) return []
     const music = this.musicList.find((music) =>
-      music.url.includes(`id=${(this.data as ResCharacterData).song_id}.mp3`)
+      music.url.includes(`id=${(this.data as unknown as ResCharacterData).song_id}.mp3`)
     )
     return music ? [music] : undefined
   }
 
   public get BWH() {
-    return this.data ? renderCharacterBWH(this.data) : ''
+    return this.data ? renderCharacterBWH(this.data as unknown as ResCharacterData) : ''
   }
 
   public constructor(
@@ -65,7 +68,10 @@ export class CharComponent extends romiComponentFactory<ResCharacterData>('char'
     })
 
     this.setData(
-      (set) => this.apiService.getCharacter(id).subscribe((data) => set(data)),
+      (set) =>
+        this.apiService
+          .getCharacter(id)
+          .subscribe((data) => set({ ...data, tags: data.tags.map((tag) => [tag, randomRTagType()]) })),
       (data) => {
         this.isLoading = false
         this.notifyService.updateHeaderContent({
@@ -74,6 +80,8 @@ export class CharComponent extends romiComponentFactory<ResCharacterData>('char'
         })
         if (!this.browserService.isBrowser) return
 
+        this.notifyService.setTitle(`${data.name} ${data.romaji}`)
+
         setTimeout(() => {
           const music = this.getMusic()
           if (music === undefined) return
@@ -81,7 +89,8 @@ export class CharComponent extends romiComponentFactory<ResCharacterData>('char'
             container: document.getElementById('aplayer'),
             theme: 'var(--primary-100)',
             lrcType: 1,
-            audio: music
+            audio: music,
+            ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
           })
           if (music.length > 0) this.aplayer.play()
         }, 0)
