@@ -1,16 +1,13 @@
 import { isDevMode } from '@angular/core'
 import pkg from '../../../package.json'
+import { environment as env, environment as envDev } from '../../environments/environment.development'
 import { LoggerService } from '../services/logger.service'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
 export const ROMI_METADATA = { pkg }
 
-export const API_BASE_URL = isDevMode()
-  ? 'http://192.168.1.4:8000/api'
-  : typeof process !== 'undefined'
-    ? `http://127.0.0.1:${Number((process.env as { PORT: string }).PORT ?? 4200) - 1}/api`
-    : '/api'
+export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
 
 export const POSTS_PER_PAGE = 10
 

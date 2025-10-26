@@ -1,6 +1,4 @@
 /** 我草你妈的，傻逼支那豚，你翻你妈的代码 **/
-
-import fs from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { APP_BASE_HREF } from '@angular/common'
@@ -41,7 +39,6 @@ export function app(): express.Express {
       .then((html) => res.send(html))
       .catch((err) => next(err))
   })
-
   return server
 }
 

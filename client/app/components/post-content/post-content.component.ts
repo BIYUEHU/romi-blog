@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
 import markdownIt from 'markdown-it'
-import { BundledLanguage, BundledTheme, HighlighterGeneric, createHighlighter } from 'shiki'
+import { BundledLanguage, BundledTheme, createHighlighter, HighlighterGeneric } from 'shiki'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { RelatedPost, ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
@@ -44,6 +44,8 @@ export class PostContentComponent
   @Input() public hideOptions = false
   @Input() public hideCopyright = false
   @Input() public setTitle = false
+
+  @Input() public defaultPostData?: ResPostSingleData
 
   public renderedContent: SafeHtml = ''
 
@@ -101,11 +103,11 @@ export class PostContentComponent
     })
 
     const defaultRender =
-      // biome-ignore lint:
+      // biome-ignore lint: *
       this.mdParser.renderer.rules['heading_open'] ||
       ((tokens, idx, options, _, self) => self.renderToken(tokens, idx, options))
 
-    // biome-ignore lint:
+    // biome-ignore lint: *
     this.mdParser.renderer.rules['heading_open'] = (tokens, idx, options, env, self) => {
       const token = tokens[idx]
       const nextToken = tokens[idx + 1]
@@ -115,7 +117,7 @@ export class PostContentComponent
       return defaultRender(tokens, idx, options, env, self)
     }
 
-    this.mdParser.renderer.rules.image = (tokens, idx, options, env, self) => {
+    this.mdParser.renderer.rules.image = (tokens, idx, _options, _env, _self) => {
       const token = tokens[idx]
       const src = token.attrGet('src') || ''
       const alt = token.content || ''
@@ -164,11 +166,6 @@ export class PostContentComponent
   }
 
   private async renderContent(data: ResPostSingleData) {
-    const highlighter = await createHighlighter({
-      themes: ['vitesse-light'],
-      langs: SUPPORTS_HIGHLIGHT_LANGUAGES
-    })
-    this.highlighter = highlighter
     this.post = {
       ...data,
       url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(
@@ -176,8 +173,12 @@ export class PostContentComponent
       ),
       tags: data.tags.map((tag) => [tag, randomRTagType()])
     }
+    const highlighter = await createHighlighter({
+      themes: ['vitesse-light'],
+      langs: SUPPORTS_HIGHLIGHT_LANGUAGES
+    })
+    this.highlighter = highlighter
     this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(this.mdParser.render(data.text))
-
     if (!this.hideToc) this.toc = this.generateToc(data.text)
     this.updateHeaderContent()
   }
@@ -192,17 +193,22 @@ export class PostContentComponent
   }
 
   public async ngOnInit() {
-    this.setData(
-      (set) => this.apiService.getPost(this.id).subscribe((data) => set(data)),
-      (data) => {
-        this.notifyService.setTitle(data.title)
-        this.renderContent(data)
-      }
-    )
+    if (this.defaultPostData) {
+      this.renderContent(this.defaultPostData)
+    } else {
+      this.setData(
+        (set) => this.apiService.getPost(this.id).subscribe((data) => set(data)),
+        (data) => {
+          this.notifyService.setTitle(data.title)
+          this.renderContent(data)
+        }
+      )
+    }
     this.apiService.getCommentsByPost(this.id).subscribe((comments) => {
       this.comments = this.parseComments(comments)
     })
     if (!this.hideRelatedPosts) {
+      // TODO: related posts
       this.apiService.getPosts().subscribe((posts) => {
         const currentIndex = posts.findIndex((post) => post.id === this.id)
         this.relatedPosts =

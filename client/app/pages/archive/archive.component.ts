@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
@@ -48,9 +48,9 @@ export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archi
           })
           return acc
         }, this.groupedPosts)
-        // biome-ignore lint:
+        // biome-ignore lint: *
         this.tags = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.tags])), [] as string[])
-        // biome-ignore lint:
+        // biome-ignore lint: *
         this.categories = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.categories])), [] as string[])
       }
     )

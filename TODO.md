@@ -1,5 +1,9 @@
 # Todo
 
+- [ ] createHighlighter 单例模式
+- [ ] 后端 related posts 接口/数据
+- [ ] 除去 API Model 和需要明确"未设置"状态的字段外，前端全部统一用 `x?:T` 定义可选字段
+
 <!-- - [ ] Support more markdown-it plugins -->
 - [ ] Blog content search
 - [ ] Support private news

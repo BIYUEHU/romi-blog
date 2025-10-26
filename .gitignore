@@ -49,6 +49,7 @@ Thumbs.db
 /ui/styles.css
 *.env
 output.ts
+ip.ts
 static
 /cache
 /logs

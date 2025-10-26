@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationStart, Router, RouterLink } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
@@ -7,7 +7,7 @@ import { HeaderComponent } from '../header/header.component'
 import '../../shared/types'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { KEYS } from '../../services/store.service'
 import { APlayer } from '../../shared/types'
 
 @Component({
@@ -65,7 +65,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
     if (!this.browserService.isBrowser) return
 
-    window.addEventListener('scroll', (e) => {
+    window.addEventListener('scroll', () => {
       this.showBackTop = window.scrollY > 100
     })
     this.togglePlayer(true)

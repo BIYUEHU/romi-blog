@@ -1,34 +1,35 @@
 import type { Routes } from '@angular/router'
-import { LayoutComponent } from './components/layout/layout.component'
-import { PostComponent } from './pages/post/post.component'
-import { ArchiveComponent } from './pages/archive/archive.component'
-import { TagComponent } from './pages/tag/tag.component'
-import { CategoryComponent } from './pages/category/category.component'
 import { AdminLayoutComponent } from './components/admin-layout/admin-layout.component'
-import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component'
-import { AdminPostsComponent } from './pages/admin-posts/admin-posts.component'
-import { AuthGuard } from './guards/auth.guard'
-import { AdminLoginComponent } from './pages/admin-login/admin-login.component'
-import { AdminEditComponent } from './pages/admin-edit/admin-edit.component'
-import { AdminMetasComponent } from './pages/admin-metas/admin-metas.component'
-import { AdminUsersComponent } from './pages/admin-users/admin-users.component'
-import { AdminCommentsComponent } from './pages/admin-comments/admin-comments.component'
-import { AdminHitokotosComponent } from './pages/admin-hitokotos/admin-hitokotos.component'
 import { ControlComponent } from './components/control/control.component'
-import { HitokotosComponent } from './pages/hitokotos/hitokotos.component'
-import { HitokotoComponent } from './pages/hitokoto/hitokoto.component'
-import { AnimeComponent } from './pages/anime/anime.component'
-import { GalComponent } from './pages/gal/gal.component'
+import { LayoutComponent } from './components/layout/layout.component'
+import { AuthGuard } from './guards/auth.guard'
+import { AdminCharEditComponent } from './pages/admin-char-edit/admin-char-edit.component'
+import { AdminCharsComponent } from './pages/admin-chars/admin-chars.component'
+import { AdminCommentsComponent } from './pages/admin-comments/admin-comments.component'
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component'
+import { AdminEditComponent } from './pages/admin-edit/admin-edit.component'
+import { AdminHitokotosComponent } from './pages/admin-hitokotos/admin-hitokotos.component'
+import { AdminLoginComponent } from './pages/admin-login/admin-login.component'
+import { AdminMetasComponent } from './pages/admin-metas/admin-metas.component'
 import { AdminNewsComponent } from './pages/admin-news/admin-news.component'
-import { NewsesComponent } from './pages/newses/newses.component'
-import { NewsComponent } from './pages/news/news.component'
-import { MusicComponent } from './pages/music/music.component'
+import { AdminPostsComponent } from './pages/admin-posts/admin-posts.component'
+import { AdminUsersComponent } from './pages/admin-users/admin-users.component'
+import { AnimeComponent } from './pages/anime/anime.component'
+import { ArchiveComponent } from './pages/archive/archive.component'
+import { CategoryComponent } from './pages/category/category.component'
 import { CharComponent } from './pages/char/char.component'
 import { CharsComponent } from './pages/chars/chars.component'
-import { ProjectComponent } from './pages/project/project.component'
+import { GalComponent } from './pages/gal/gal.component'
+import { HitokotoComponent } from './pages/hitokoto/hitokoto.component'
+import { HitokotosComponent } from './pages/hitokotos/hitokotos.component'
+import { MusicComponent } from './pages/music/music.component'
+import { NewsComponent } from './pages/news/news.component'
+import { NewsesComponent } from './pages/newses/newses.component'
+import { PostComponent } from './pages/post/post.component'
+import { postResolver } from './pages/post/post.resolver'
 import { PostsComponent } from './pages/posts/posts.component'
-import { AdminCharsComponent } from './pages/admin-chars/admin-chars.component'
-import { AdminCharEditComponent } from './pages/admin-char-edit/admin-char-edit.component'
+import { ProjectComponent } from './pages/project/project.component'
+import { TagComponent } from './pages/tag/tag.component'
 
 export const routes: Routes = [
   {
@@ -37,8 +38,10 @@ export const routes: Routes = [
     children: [
       {
         path: 'post/:id',
-        component: PostComponent
-        // title: 'Article'
+        component: PostComponent,
+        resolve: {
+          post: postResolver
+        }
       },
       {
         path: 'post',

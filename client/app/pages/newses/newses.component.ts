@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
@@ -74,7 +74,7 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
   private generateToc(news: ResNewsData[]) {
     const yearMap = new Map<number, Map<number, number>>()
 
-    news.map((item) => {
+    news.forEach((item) => {
       const date = new Date(item.created * 1000)
       const year = date.getFullYear()
       const month = date.getMonth() + 1
@@ -134,7 +134,7 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
   private groupNewsByDate(news: ResNewsData[]) {
     const groups = new Map<string, ResNewsData[]>()
 
-    news.map((item) => {
+    news.forEach((item) => {
       const date = new Date(item.created * 1000)
       const year = date.getFullYear()
       const month = date.getMonth() + 1

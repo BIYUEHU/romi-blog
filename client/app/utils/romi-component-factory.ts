@@ -1,4 +1,4 @@
-import { makeStateKey, TransferState, type OnInit, inject } from '@angular/core'
+import { inject, makeStateKey, TransferState } from '@angular/core'
 import { ApiService } from '../services/api.service'
 import { BrowserService } from '../services/browser.service'
 
@@ -22,7 +22,9 @@ export function romiComponentFactory<T = unknown>(key: string) {
       } else {
         setter((data) => {
           this.data = data
-          if (!this.browserService.isBrowser) this.transferState.set(this.CACHE_KEY, data)
+          if (!this.browserService.isBrowser) {
+            this.transferState.set(this.CACHE_KEY, data)
+          }
           handler?.(data)
         })
       }
