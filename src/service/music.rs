@@ -1,15 +1,16 @@
-use super::cache::Cache;
-use crate::constant::{
-    MUSIC_CACHE_FILE, MUSIC_CACHE_TIMEOUT, MUSIC_MAX_ATTEMPTS, MUSIC_PLAYLIST_ID,
-};
-use anyhow::{Context, Result};
-use fetcher::playlist::{fetch_playlist, Playlist, SongInfo};
-use once_cell::sync::Lazy;
-use roga::{transport::console::ConsoleTransport, *};
-use serde::{Deserialize, Serialize};
 use std::{
     fs::{read_to_string, write},
-    time::{Duration, SystemTime, UNIX_EPOCH},
+    time::{SystemTime, UNIX_EPOCH},
+};
+
+use anyhow::{Context, Result};
+use fetcher::playlist::{Playlist, SongInfo, fetch_playlist};
+use roga::{transport::console::ConsoleTransport, *};
+use serde::{Deserialize, Serialize};
+
+use crate::{
+    constant::{MUSIC_CACHE_FILE, MUSIC_CACHE_TIMEOUT, MUSIC_MAX_ATTEMPTS, MUSIC_PLAYLIST_ID},
+    define_cache,
 };
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -18,15 +19,10 @@ pub struct MusicCache {
     pub data: Playlist,
 }
 
-static MUSIC_CACHE: Lazy<tokio::sync::OnceCell<Cache<MusicCache>>> =
-    Lazy::new(tokio::sync::OnceCell::new);
+define_cache!(MUSIC_CACHE, MusicCache, MUSIC_CACHE_TIMEOUT);
 
 pub async fn get_music_cache() -> Result<MusicCache> {
-    let cache = MUSIC_CACHE
-        .get_or_init(|| async { Cache::new(Duration::from_secs(15 * 60)) })
-        .await;
-
-    cache
+    MUSIC_CACHE
         .get_or_update(|| async {
             match try_load_cache().await {
                 Ok(cached_data) => Ok(cached_data),
@@ -73,34 +69,23 @@ fn spawn_cache_refresh() {
 }
 
 async fn save_and_update_cache(data: Vec<SongInfo>) -> Result<()> {
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .context("Failed to get system time")?
-        .as_secs();
-
-    let cache = MusicCache { timestamp, data };
-
+    let cache = MusicCache {
+        timestamp: SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .context("Failed to get system time")?
+            .as_secs(),
+        data,
+    };
     let json_data = serde_json::to_string(&cache).context("Failed to serialize cache data")?;
-
     write(MUSIC_CACHE_FILE, json_data).context("Failed to write cache file")?;
-
-    if let Some(cache_instance) = MUSIC_CACHE.get() {
-        cache_instance.get_or_update(|| async { Ok(cache) }).await?;
-    }
-
+    MUSIC_CACHE.get_or_update(|| async { Ok(cache) }).await?;
     Ok(())
 }
 
 fn create_empty_cache() -> MusicCache {
-    let timestamp = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap_or_default()
-        .as_secs();
+    let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
 
-    MusicCache {
-        timestamp,
-        data: vec![],
-    }
+    MusicCache { timestamp, data: vec![] }
 }
 
 fn create_logger() -> Logger {

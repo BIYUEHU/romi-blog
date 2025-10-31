@@ -1,39 +1,60 @@
-use crate::entity::{romi_comments, romi_metas, romi_posts, romi_relationships};
-use crate::guards::access::{Access, AccessLevel};
-use crate::guards::admin::AdminUser;
-use crate::models::post::{
-    ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
-    ResPostSingleDataRelatedPost,
-};
-use crate::service::pool::Db;
-use crate::tools::markdown::summary_markdown;
-use crate::utils::api::{api_ok, ApiError, ApiResult};
+use std::collections::HashSet;
+
 use anyhow::Context;
-use futures::future::{join_all, try_join_all};
-use futures::try_join;
-use rocket::serde::json::Json;
-use rocket::State;
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    routing::{delete, get, post, put},
+};
+use futures::{
+    future::{join_all, try_join_all},
+    try_join,
+};
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, DbErr,
     EntityTrait, IntoActiveModel, QueryFilter, QueryOrder, TransactionTrait, TryIntoModel,
 };
-use sea_orm_rocket::Connection;
-use std::collections::HashSet;
-use std::vec;
 use tokio::spawn;
+
+use crate::{
+    app::AppState,
+    entity::{romi_comments, romi_metas, romi_posts, romi_relationships},
+    guards::{
+        admin::AdminUser,
+        auth::{Access, AccessLevel},
+    },
+    models::post::{
+        ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
+        ResPostSingleDataRelatedPost,
+    },
+    tools::markdown::summary_markdown,
+    utils::api::{ApiError, ApiResult, api_ok},
+};
+
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/", get(fetch_all))
+        .route("/", post(create))
+        .route("/{id}", get(fetch))
+        .route("/{id}", put(update))
+        .route("/like/{id}", put(like))
+        .route("/view/{id}", put(view))
+        .route("/{id}", delete(remove))
+        .route("/decrypt/{id}", post(decrypt))
+}
 
 async fn get_post_metas(
     id: u32,
-    db: &DatabaseConnection,
+    conn: &DatabaseConnection,
 ) -> Result<(Vec<String>, Vec<String>), DbErr> {
     let metas = try_join_all(
         romi_relationships::Entity::find()
             .filter(romi_relationships::Column::Pid.eq(id))
-            .all(db)
+            .all(conn)
             .await?
             .iter()
-            .map(|tag| async { romi_metas::Entity::find_by_id(tag.mid).one(db).await }),
+            .map(|tag| async { romi_metas::Entity::find_by_id(tag.mid).one(conn).await }),
     )
     .await?;
 
@@ -41,43 +62,33 @@ async fn get_post_metas(
         metas
             .iter()
             .filter_map(|meta| {
-                meta.as_ref()
-                    .filter(|m| m.is_category.ne(&1.to_string()))
-                    .map(|m| m.name.clone())
+                meta.as_ref().filter(|m| m.is_category.ne(&1.to_string())).map(|m| m.name.clone())
             })
             .collect(),
         metas
             .iter()
             .filter_map(|meta| {
-                meta.as_ref()
-                    .filter(|m| m.is_category.eq(&1.to_string()))
-                    .map(|m| m.name.clone())
+                meta.as_ref().filter(|m| m.is_category.eq(&1.to_string())).map(|m| m.name.clone())
             })
             .collect(),
     ))
 }
 
-#[get("/")]
-pub async fn fetch_all(
-    logger: &State<Logger>,
-    coon: Connection<'_, Db>,
-    access: Access,
-) -> ApiResult<Vec<ResPostData>> {
-    l_info!(logger, "Fetching posts");
-    let db = coon.into_inner();
+async fn fetch_all(State(state): State<AppState>, access: Access) -> ApiResult<Vec<ResPostData>> {
+    l_info!(&state.logger, "Fetching posts");
     let is_admin = access.level.eq(&AccessLevel::Admin);
 
     api_ok(
         join_all(
             romi_posts::Entity::find()
-                .all(db)
+                .all(&state.conn)
                 .await
                 .context("Failed to fetch posts")?
                 .iter()
                 .rev()
                 .filter(|data| is_admin || data.hide.ne(&1.to_string()))
                 .map(|data| async {
-                    let (tags, categories) = get_post_metas(data.pid.clone(), db)
+                    let (tags, categories) = get_post_metas(data.pid.clone(), &state.conn)
                         .await
                         .unwrap_or((vec![], vec![]));
                     let password = data.password.clone().filter(|p| !p.is_empty());
@@ -114,23 +125,20 @@ pub async fn fetch_all(
     )
 }
 
-#[get("/<id>")]
-pub async fn fetch(
-    id: u32,
-    coon: Connection<'_, Db>,
-    logger: &State<Logger>,
+async fn fetch(
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
     access: Access,
 ) -> ApiResult<ResPostSingleData> {
-    l_info!(logger, "Fetching post details: id={}", id);
-    let db = coon.into_inner();
+    l_info!(&state.logger, "Fetching post details: id={}", id);
 
     match romi_posts::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch post {}", id))?
     {
         Some(model) => {
-            let (tags, categories) = get_post_metas(id, db)
+            let (tags, categories) = get_post_metas(id, &state.conn)
                 .await
                 .with_context(|| format!("Failed to fetch metas of post {}", id))?;
             let password = model.password.clone().filter(|p| !p.is_empty());
@@ -139,7 +147,7 @@ pub async fn fetch(
                 .filter(romi_posts::Column::Hide.ne(1))
                 .filter(romi_posts::Column::Pid.lt(id))
                 .order_by_desc(romi_posts::Column::Pid)
-                .one(db)
+                .one(&state.conn)
                 .await
                 .with_context(|| format!("Failed to fetch prev post for {}", id))?;
 
@@ -147,7 +155,7 @@ pub async fn fetch(
                 .filter(romi_posts::Column::Hide.ne(1))
                 .filter(romi_posts::Column::Pid.gt(id))
                 .order_by_asc(romi_posts::Column::Pid)
-                .one(db)
+                .one(&state.conn)
                 .await
                 .with_context(|| format!("Failed to fetch next post for {}", id))?;
 
@@ -162,11 +170,7 @@ pub async fn fetch(
                     "".into()
                 },
                 password: password.map(|p| {
-                    access
-                        .level
-                        .eq(&AccessLevel::Admin)
-                        .then(|| p)
-                        .unwrap_or("password".into())
+                    access.level.eq(&AccessLevel::Admin).then(|| p).unwrap_or("password".into())
                 }),
                 hide: model.hide.eq(&1.to_string()),
                 allow_comment: model.allow_comment.eq(&1.to_string()),
@@ -176,21 +180,15 @@ pub async fn fetch(
                 likes: model.likes,
                 comments: model.comments,
                 banner: model.banner.clone(),
-                prev: prev_post.map(|m| ResPostSingleDataRelatedPost {
-                    id: m.pid,
-                    title: m.title,
-                }),
-                next: next_post.map(|m| ResPostSingleDataRelatedPost {
-                    id: m.pid,
-                    title: m.title,
-                }),
+                prev: prev_post.map(|m| ResPostSingleDataRelatedPost { id: m.pid, title: m.title }),
+                next: next_post.map(|m| ResPostSingleDataRelatedPost { id: m.pid, title: m.title }),
             };
 
-            l_debug!(logger, "Successfully fetched post: {}", model.title);
+            l_debug!(&state.logger, "Successfully fetched post: {}", model.title);
             api_ok(response)
         }
         None => {
-            l_warn!(logger, "Post not found: id={}", id);
+            l_warn!(&state.logger, "Post not found: id={}", id);
             Err(ApiError::not_found("Post not found"))
         }
     }
@@ -199,7 +197,7 @@ pub async fn fetch(
 async fn handle_metas(
     names: Vec<String>,
     is_category: bool,
-    db: &DatabaseTransaction,
+    conn: &DatabaseTransaction,
 ) -> Result<Vec<u32>, DbErr> {
     let is_category_str = if is_category { "1" } else { "0" };
     let mut mid_list = Vec::new();
@@ -207,17 +205,15 @@ async fn handle_metas(
     let existing_metas = romi_metas::Entity::find()
         .filter(romi_metas::Column::Name.is_in(names.clone()))
         .filter(romi_metas::Column::IsCategory.eq(is_category_str))
-        .all(db)
+        .all(conn)
         .await?;
 
     let existing_names: HashSet<_> = existing_metas.iter().map(|m| m.name.clone()).collect();
 
     mid_list.extend(existing_metas.iter().map(|m| m.mid));
 
-    let new_names: Vec<_> = names
-        .into_iter()
-        .filter(|name| !existing_names.contains(name))
-        .collect();
+    let new_names: Vec<_> =
+        names.into_iter().filter(|name| !existing_names.contains(name)).collect();
 
     if !new_names.is_empty() {
         let new_metas: Vec<romi_metas::ActiveModel> = new_names
@@ -230,13 +226,13 @@ async fn handle_metas(
             })
             .collect();
 
-        romi_metas::Entity::insert_many(new_metas).exec(db).await?;
+        romi_metas::Entity::insert_many(new_metas).exec(conn).await?;
 
         mid_list.extend(
             romi_metas::Entity::find()
                 .filter(romi_metas::Column::Name.is_in(new_names.clone()))
                 .filter(romi_metas::Column::IsCategory.eq(is_category_str))
-                .all(db)
+                .all(conn)
                 .await?
                 .iter()
                 .map(|m| m.mid),
@@ -246,17 +242,14 @@ async fn handle_metas(
     Ok(mid_list)
 }
 
-#[post("/", data = "<post>")]
-pub async fn create(
+async fn create(
     _admin_user: AdminUser,
-    post: Json<ReqPostData>,
-    conn: Connection<'_, Db>,
-    logger: &State<Logger>,
+    State(state): State<AppState>,
+    Json(post): Json<ReqPostData>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Creating new post: {}", post.title);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Creating new post: {}", post.title);
 
-    let txn = db.begin().await.context("Failed to begin transaction")?;
+    let txn = state.conn.begin().await.context("Failed to begin transaction")?;
 
     let post_model = romi_posts::ActiveModel {
         pid: ActiveValue::not_set(),
@@ -293,32 +286,27 @@ pub async fn create(
 
     if !relations.is_empty() {
         romi_relationships::Entity::insert_many(relations)
-            .exec(db)
+            .exec(&state.conn)
             .await
             .context("Failed to create relationships")?;
     }
 
     txn.commit().await.context("Failed to commit transaction")?;
 
-    let result = post_model
-        .try_into_model()
-        .context("Failed to convert model")?;
-    l_info!(logger, "Successfully created post: id={}", result.pid);
+    let result = post_model.try_into_model().context("Failed to convert model")?;
+    l_info!(&state.logger, "Successfully created post: id={}", result.pid);
     api_ok(())
 }
 
-#[put("/<id>", data = "<post>")]
-pub async fn update(
+async fn update(
     _admin_user: AdminUser,
-    id: u32,
-    post: Json<ReqPostData>,
-    conn: Connection<'_, Db>,
-    logger: &State<Logger>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
+    Json(post): Json<ReqPostData>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Updating post: id={}", id);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Updating post: id={}", id);
 
-    let txn = db.begin().await.context("Failed to begin transaction")?;
+    let txn = state.conn.begin().await.context("Failed to begin transaction")?;
 
     match romi_posts::Entity::find_by_id(id)
         .one(&txn)
@@ -330,11 +318,8 @@ pub async fn update(
             active_model.title = ActiveValue::set(post.title.clone());
             active_model.text = ActiveValue::set(post.text.clone());
             if let Some(password) = post.password.clone() {
-                active_model.password = ActiveValue::set(if password.is_empty() {
-                    None
-                } else {
-                    Some(password)
-                });
+                active_model.password =
+                    ActiveValue::set(if password.is_empty() { None } else { Some(password) });
             }
             active_model.hide = ActiveValue::set((if post.hide { 1 } else { 0 }).to_string());
             active_model.allow_comment =
@@ -342,10 +327,7 @@ pub async fn update(
             active_model.created = ActiveValue::set(post.created);
             active_model.modified = ActiveValue::set(post.modified);
             active_model.banner = ActiveValue::set(post.banner.clone());
-            active_model
-                .save(&txn)
-                .await
-                .context("Failed to update post")?;
+            active_model.save(&txn).await.context("Failed to update post")?;
         }
         None => return Err(ApiError::not_found("Post not found")),
     };
@@ -370,23 +352,11 @@ pub async fn update(
 
     let origin_categories: Vec<_> = origin_metas
         .clone()
-        .filter_map(|meta| {
-            if meta.is_category == "1" {
-                Some(meta.name.clone())
-            } else {
-                None
-            }
-        })
+        .filter_map(|meta| if meta.is_category == "1" { Some(meta.name.clone()) } else { None })
         .collect();
     let origin_tags: Vec<_> = origin_metas
         .clone()
-        .filter_map(|meta| {
-            if meta.is_category == "0" {
-                Some(meta.name.clone())
-            } else {
-                None
-            }
-        })
+        .filter_map(|meta| if meta.is_category == "0" { Some(meta.name.clone()) } else { None })
         .collect();
 
     let (new_category_mids, new_tag_mids) = try_join!(
@@ -400,11 +370,7 @@ pub async fn update(
             &txn
         ),
         handle_metas(
-            post.tags
-                .clone()
-                .into_iter()
-                .filter(|name| !origin_tags.contains(name))
-                .collect(),
+            post.tags.clone().into_iter().filter(|name| !origin_tags.contains(name)).collect(),
             false,
             &txn
         )
@@ -413,15 +379,13 @@ pub async fn update(
 
     romi_relationships::Entity::delete_many()
         .filter(romi_relationships::Column::Pid.eq(id))
-        .filter(
-            romi_relationships::Column::Mid.is_in(origin_metas.filter_map(|meta| {
-                if !post.tags.contains(&meta.name) && !post.categories.contains(&meta.name) {
-                    Some(meta.mid)
-                } else {
-                    None
-                }
-            })),
-        )
+        .filter(romi_relationships::Column::Mid.is_in(origin_metas.filter_map(|meta| {
+            if !post.tags.contains(&meta.name) && !post.categories.contains(&meta.name) {
+                Some(meta.mid)
+            } else {
+                None
+            }
+        })))
         .exec(&txn)
         .await
         .context("Failed to delete old relations")?;
@@ -444,131 +408,105 @@ pub async fn update(
 
     txn.commit().await.context("Failed to commit transaction")?;
 
-    l_info!(logger, "Successfully updated post: id={}", id);
+    l_info!(&state.logger, "Successfully updated post: id={}", id);
     api_ok(())
 }
 
-#[put("/like/<id>")]
-pub async fn like(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
-    l_info!(logger, "Liking post: id={}", id);
-    let db = conn.into_inner();
+async fn like(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<()> {
+    l_info!(&state.logger, "Liking post: id={}", id);
 
     match romi_posts::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch post {} for like", id))?
     {
         Some(model) => {
             let mut active_model = model.clone().into_active_model();
             active_model.likes = ActiveValue::set(model.likes + 1);
-            active_model
-                .save(db)
-                .await
-                .context("Failed to update post")?;
+            active_model.save(&state.conn).await.context("Failed to update post")?;
         }
         None => return Err(ApiError::not_found("Post not found")),
     };
 
-    l_info!(logger, "Successfully liked post: id={}", id);
+    l_info!(&state.logger, "Successfully liked post: id={}", id);
     api_ok(())
 }
 
-#[put("/view/<id>")]
-pub async fn view(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
-    l_info!(logger, "Viewing post: id={}", id);
-    let db = conn.into_inner();
+async fn view(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<()> {
+    l_info!(&state.logger, "Viewing post: id={}", id);
 
     match romi_posts::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch post {} for view", id))?
     {
         Some(model) => {
             let mut active_model = model.clone().into_active_model();
             active_model.views = ActiveValue::set(model.views + 1);
-            active_model
-                .save(db)
-                .await
-                .context("Failed to update post")?;
+            active_model.save(&state.conn).await.context("Failed to update post")?;
         }
         None => return Err(ApiError::not_found("Post not found")),
     };
 
-    l_info!(logger, "Successfully viewed post: id={}", id);
+    l_info!(&state.logger, "Successfully viewed post: id={}", id);
     api_ok(())
 }
 
-#[delete("/<id>")]
-pub async fn delete(
+async fn remove(
     _admin_user: AdminUser,
-    id: u32,
-    conn: Connection<'_, Db>,
-    logger: &State<Logger>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Deleting post: id={}", id);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Deleting post: id={}", id);
 
     romi_posts::Entity::delete_by_id(id)
-        .exec(db)
+        .exec(&state.conn)
         .await
         .context("Failed to delete post")?;
 
-    let db_clone = db.clone();
-    let logger_clone = (*logger).clone();
+    let conn_clone = state.conn.clone();
+    let logger_clone = state.logger.clone();
     spawn(async move {
         if let Err(e) = romi_relationships::Entity::delete_many()
             .filter(romi_relationships::Column::Pid.eq(id))
-            .exec(&db_clone)
+            .exec(&conn_clone)
             .await
         {
-            l_error!(
-                logger_clone,
-                "Failed to delete relationships for post {}: {}",
-                id,
-                e
-            );
+            l_error!(&logger_clone, "Failed to delete relationships for post {}: {}", id, e);
         }
 
         if let Err(e) = romi_comments::Entity::delete_many()
             .filter(romi_comments::Column::Pid.eq(id))
-            .exec(&db_clone)
+            .exec(&conn_clone)
             .await
         {
-            l_error!(
-                logger_clone,
-                "Failed to delete comments for post {}: {}",
-                id,
-                e
-            );
+            l_error!(&logger_clone, "Failed to delete comments for post {}: {}", id, e);
         }
     });
 
-    l_info!(logger, "Successfully deleted post: id={}", id);
+    l_info!(&state.logger, "Successfully deleted post: id={}", id);
     api_ok(())
 }
 
-#[post("/decrypt/<id>", data = "<data>")]
-pub async fn decrypt(
-    id: u32,
-    conn: Connection<'_, Db>,
-    logger: &State<Logger>,
-    data: Json<ReqDecryptPostData>,
+async fn decrypt(
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
+    Json(data): Json<ReqDecryptPostData>,
 ) -> ApiResult<ResDecryptPostData> {
-    l_info!(logger, "Decrypting post: id={}", id);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Decrypting post: id={}", id);
 
     match romi_posts::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch post {} for decrypt", id))?
     {
         Some(model) => {
             if let Some(password) = model.password {
                 if password == data.password {
-                    l_info!(logger, "Successfully decrypted post: id={}", id);
+                    l_info!(&state.logger, "Successfully decrypted post: id={}", id);
                     api_ok(ResDecryptPostData { text: model.text })
                 } else {
-                    l_warn!(logger, "Incorrect password for post: id={}", id);
+                    l_warn!(&state.logger, "Incorrect password for post: id={}", id);
                     Err(ApiError::unauthorized("Incorrect password"))
                 }
             } else {
@@ -576,7 +514,7 @@ pub async fn decrypt(
             }
         }
         None => {
-            l_warn!(logger, "Post not found: id={}", id);
+            l_warn!(&state.logger, "Post not found: id={}", id);
             Err(ApiError::not_found("Post not found"))
         }
     }

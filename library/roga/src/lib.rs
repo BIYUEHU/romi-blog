@@ -36,11 +36,7 @@ pub struct Logger {
 
 impl Logger {
     pub fn new() -> Self {
-        Self {
-            level: LoggerLevel::Info,
-            label: vec![],
-            transports: vec![],
-        }
+        Self { level: LoggerLevel::Info, label: vec![], transports: vec![] }
     }
 
     pub fn with_level(mut self, level: LoggerLevel) -> Self {

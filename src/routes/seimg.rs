@@ -1,32 +1,37 @@
-use crate::entity::romi_seimgs;
-use crate::guards::admin::AdminUser;
-use crate::models::seimg::{ReqSeimgData, ResSeimgData};
-use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::service::pool::Db;
 use anyhow::Context;
-use rocket::serde::json::Json;
-use rocket::State;
+use axum::{
+    Json, Router,
+    extract::{Path, Query, State},
+    routing::{delete, get, post, put},
+};
 use roga::*;
 use sea_orm::{ActiveModelTrait, ActiveValue, DbBackend, EntityTrait, IntoActiveModel, Statement};
-use sea_orm_rocket::Connection;
 
-#[get("/?<limit>&<tag>&<r18>")]
-pub async fn fetch(
-    limit: Option<u32>,
-    tag: Option<String>,
-    r18: Option<String>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+use crate::{
+    app::AppState,
+    entity::romi_seimgs,
+    guards::admin::AdminUser,
+    models::seimg::{ReqSeimgData, ResSeimgData},
+    utils::api::{ApiError, ApiResult, api_ok},
+};
+
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/", get(fetch))
+        .route("/", post(create))
+        .route("/{id}", put(update))
+        .route("/{id}", delete(remove))
+}
+
+async fn fetch(
+    Query(params): Query<std::collections::HashMap<String, String>>,
+    State(state): State<AppState>,
 ) -> ApiResult<Vec<ResSeimgData>> {
-    let limit = limit.map_or(1, |l| l.clamp(1, 10));
+    let limit = params.get("limit").and_then(|l| l.parse().ok()).map_or(1, |l: i32| l.clamp(1, 10));
+    let tag = params.get("tag").cloned();
+    let r18 = params.get("r18").cloned();
 
-    l_info!(
-        logger,
-        "Fetching seimg with limit={}, r18={:?}, tag={:?}",
-        limit,
-        r18,
-        tag
-    );
+    l_info!(&state.logger, "Fetching seimg with limit={}, r18={:?}, tag={:?}", limit, r18, tag);
 
     let mut conditions = Vec::new();
 
@@ -43,10 +48,8 @@ pub async fn fetch(
             .collect();
 
         if !tags.is_empty() {
-            let tag_sqls: Vec<String> = tags
-                .iter()
-                .map(|t| format!("tags LIKE '%{}%'", t.replace('\'', "''")))
-                .collect();
+            let tag_sqls: Vec<String> =
+                tags.iter().map(|t| format!("tags LIKE '%{}%'", t.replace('\'', "''"))).collect();
             conditions.push(format!("({})", tag_sqls.join(" OR ")));
         }
     }
@@ -62,7 +65,7 @@ pub async fn fetch(
 
     let result = romi_seimgs::Entity::find()
         .from_raw_sql(Statement::from_string(DbBackend::MySql, sql))
-        .all(conn.into_inner())
+        .all(&state.conn)
         .await
         .context("Failed to fetch seimg")?;
 
@@ -75,12 +78,7 @@ pub async fn fetch(
                 title: img.title,
                 author: img.author,
                 r18: img.r18.eq("1"),
-                tags: img
-                    .tags
-                    .unwrap_or_default()
-                    .split(',')
-                    .map(str::to_string)
-                    .collect(),
+                tags: img.tags.unwrap_or_default().split(',').map(str::to_string).collect(),
                 width: img.width,
                 height: img.height,
                 r#type: img.r#type,
@@ -90,14 +88,12 @@ pub async fn fetch(
     )
 }
 
-#[post("/", data = "<seimg>")]
-pub async fn create(
+async fn create(
     _admin_user: AdminUser,
-    seimg: Json<ReqSeimgData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    State(state): State<AppState>,
+    Json(seimg): Json<ReqSeimgData>,
 ) -> ApiResult<romi_seimgs::Model> {
-    l_info!(logger, "Creating new seimg");
+    l_info!(&state.logger, "Creating new seimg");
 
     let result = romi_seimgs::ActiveModel {
         id: ActiveValue::not_set(),
@@ -112,28 +108,24 @@ pub async fn create(
         r#type: ActiveValue::set(seimg.r#type.clone()),
         url: ActiveValue::set(seimg.url.clone()),
     }
-    .insert(conn.into_inner())
+    .insert(&state.conn)
     .await
     .context("Failed to create seimg")?;
 
-    l_info!(logger, "Successfully created seimg: id={}", result.id);
+    l_info!(&state.logger, "Successfully created seimg: id={}", result.id);
     api_ok(result)
 }
 
-#[put("/<id>", data = "<seimg>")]
-pub async fn update(
+async fn update(
     _admin_user: AdminUser,
-    id: u32,
-    seimg: Json<ReqSeimgData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
+    Json(seimg): Json<ReqSeimgData>,
 ) -> ApiResult<romi_seimgs::Model> {
-    l_info!(logger, "Updating seimg with id={}", id);
-
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Updating seimg with id={}", id);
 
     match romi_seimgs::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to find seimg with id={}", id))?
     {
@@ -149,31 +141,29 @@ pub async fn update(
             active_model.url = ActiveValue::set(seimg.url.clone());
 
             let result = active_model
-                .update(db)
+                .update(&state.conn)
                 .await
                 .with_context(|| format!("Failed to update seimg with id={}", id))?;
 
-            l_info!(logger, "Successfully updated seimg: id={}", result.id);
+            l_info!(&state.logger, "Successfully updated seimg: id={}", result.id);
             api_ok(result)
         }
         None => Err(ApiError::not_found(format!("Seimg {} not found", id))),
     }
 }
 
-#[delete("/<id>")]
-pub async fn delete(
+async fn remove(
     _admin_user: AdminUser,
-    id: u32,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Deleting seimg with id={}", id);
+    l_info!(&state.logger, "Deleting seimg with id={}", id);
 
     romi_seimgs::Entity::delete_by_id(id)
-        .exec(conn.into_inner())
+        .exec(&state.conn)
         .await
         .with_context(|| format!("Failed to delete seimg with id={}", id))?;
 
-    l_info!(logger, "Successfully deleted seimg: id={}", id);
+    l_info!(&state.logger, "Successfully deleted seimg: id={}", id);
     api_ok(())
 }

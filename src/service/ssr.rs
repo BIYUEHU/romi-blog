@@ -1,14 +1,18 @@
+use std::{
+    io::BufRead,
+    process::{Child, Command, Stdio},
+    sync::Arc,
+    thread::spawn,
+};
+
 use anyhow::{Context, Result};
-use rocket::http::Status;
-use rocket::response::{self, Responder};
-use rocket::Response;
+use axum::response::{IntoResponse, Response};
 use roga::*;
-use std::io::{BufRead, Cursor};
-use std::process::{Child, Command, Stdio};
-use std::sync::Arc;
-use std::thread::spawn;
 use tokio::sync::Mutex;
 
+use crate::constant::NODEJS_LOGGER_LABEL;
+
+#[derive(Clone)]
 pub struct SSR {
     process: Option<Arc<Mutex<Child>>>,
     client: reqwest::Client,
@@ -23,7 +27,6 @@ impl SSR {
                 client: reqwest::Client::builder()
                     .pool_max_idle_per_host(5)
                     .timeout(std::time::Duration::from_secs(30))
-                    .connection_verbose(true)
                     .build()
                     .unwrap_or_default(),
                 port,
@@ -39,7 +42,7 @@ impl SSR {
             .spawn()
             .map_err(|e| {
                 l_error!(
-                    logger.clone().with_label("Node.js"),
+                    logger.clone().with_label(NODEJS_LOGGER_LABEL),
                     "Failed to start Node.js process: {}",
                     e
                 );
@@ -55,7 +58,7 @@ impl SSR {
                 let reader = std::io::BufReader::new(stderr);
                 reader.lines().for_each(|line| {
                     if let Ok(line) = line {
-                        l_error!(logger.clone().with_label("Node.js"), "{}", line)
+                        l_error!(logger.clone().with_label(NODEJS_LOGGER_LABEL), "{}", line)
                     }
                 });
             });
@@ -64,7 +67,7 @@ impl SSR {
         SSR {
             process: Some(Arc::new(Mutex::new(process))),
             client: reqwest::Client::builder()
-                .timeout(std::time::Duration::from_secs(30)) // 添加超时
+                .timeout(std::time::Duration::from_secs(30))
                 .build()
                 .unwrap_or_default(),
             port,
@@ -74,17 +77,13 @@ impl SSR {
     pub async fn render(&self, url: &str) -> Result<SSRResponse> {
         if self.process.is_none() {
             return Ok(SSRResponse {
-                status: Status::NotFound,
-                headers: vec![("Content-Type".to_owned(), "text/plain".to_owned())],
+                status: http::StatusCode::NOT_FOUND,
+                headers: vec![("content-type".to_string(), "text/plain".to_string())],
                 body: "404 Not found".as_bytes().to_vec(),
             });
         }
 
-        let request_url = format!(
-            "http://localhost:{}/{}",
-            self.port,
-            url.trim_start_matches('/')
-        );
+        let request_url = format!("http://localhost:{}/{}", self.port, url.trim_start_matches('/'));
 
         let response = self
             .client
@@ -93,64 +92,55 @@ impl SSR {
             .await
             .context("Failed to connect to Node.js server")?;
 
-        let status = Status::from_code(response.status().as_u16()).unwrap_or(Status::Ok);
+        let status =
+            http::StatusCode::from_u16(response.status().as_u16()).unwrap_or(http::StatusCode::OK);
 
         let headers_raw = response.headers().clone();
         let body = response.bytes().await?.to_vec();
 
         let mut headers = Vec::new();
 
-        for (name, value) in headers_raw {
+        for (name, value) in headers_raw.iter() {
             if let Ok(value_str) = value.to_str() {
-                if let Some(name) = name {
-                    headers.push((name.to_string(), value_str.to_owned()));
-                }
+                headers.push((name.as_str().to_string(), value_str.to_owned()));
             }
         }
 
-        Ok(SSRResponse {
-            status,
-            headers,
-            body,
-        })
+        Ok(SSRResponse { status, headers, body })
     }
 }
 
-#[derive(Debug)]
 pub struct SSRResponse {
-    pub status: Status,
+    pub status: http::StatusCode,
     pub headers: Vec<(String, String)>,
     pub body: Vec<u8>,
 }
 
-impl<'r> Responder<'r, 'static> for SSRResponse {
-    fn respond_to(self, _: &'r rocket::Request<'_>) -> response::Result<'static> {
-        if self.body.is_empty() {
-            return Response::build()
-                .status(Status::InternalServerError)
-                .header(rocket::http::ContentType::Plain)
-                .sized_body(None, Cursor::new("Empty response body"))
-                .ok();
-        }
-
-        let mut response = Response::build();
-        response.status(self.status);
-
+impl IntoResponse for SSRResponse {
+    fn into_response(self) -> Response {
+        let mut builder = http::Response::builder().status(self.status);
         for (name, value) in self.headers {
-            response.raw_header(name, value);
+            if let Ok(header_name) = http::header::HeaderName::from_bytes(name.as_bytes()) {
+                if let Ok(header_value) = http::header::HeaderValue::from_str(&value) {
+                    builder = builder.header(header_name, header_value);
+                }
+            }
         }
-
-        response.sized_body(Some(self.body.len()), Cursor::new(self.body));
-        response.ok()
+        builder.body(axum::body::Body::from(self.body)).unwrap_or_else(|_| {
+            http::Response::builder()
+                .status(http::StatusCode::INTERNAL_SERVER_ERROR)
+                .body(axum::body::Body::from("Internal Server Error"))
+                .unwrap()
+        })
     }
 }
 
 impl Drop for SSR {
     fn drop(&mut self) {
         if let Some(process) = &self.process {
-            if let Ok(mut process) = process.try_lock() {
-                let _ = process.kill();
-                let _ = process.wait();
+            if let Ok(mut guard) = process.try_lock() {
+                let _ = guard.kill();
+                let _ = guard.wait();
             }
         }
     }

@@ -148,7 +148,7 @@ export class ApiService {
   }
 
   public getCommentsByPost(id: number) {
-    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment/${id}`)
+    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment/post/${id}`)
   }
 
   public sendComment(pid: number, text: string) {

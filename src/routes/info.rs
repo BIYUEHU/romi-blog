@@ -1,33 +1,41 @@
-use std::env;
-use std::process::Command;
+use std::{env, process::Command};
 
-use crate::entity::{
-    romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
-    romi_seimgs, romi_users,
-};
-use crate::guards::admin::AdminUser;
-use crate::models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData};
-use crate::service::cache::{get_projects_cache, get_settings_cache};
-use crate::service::music::{get_music_cache, MusicCache};
-use crate::service::pool::Db;
-use crate::utils::api::{api_ok, ApiError, ApiResult};
 use anyhow::Context;
+use axum::{Router, extract::State, routing::get};
 use fetcher::playlist::SongInfo;
 use futures::try_join;
-use rocket::State;
 use roga::*;
 use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
-use sea_orm_rocket::Connection;
 use sysinfo::System;
 
-#[get("/dashboard")]
-pub async fn fetch_dashboard(
+use crate::{
+    app::AppState,
+    entity::{
+        romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
+        romi_seimgs, romi_users,
+    },
+    guards::admin::AdminUser,
+    models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData},
+    service::music::{MusicCache, get_music_cache},
+    utils::{
+        api::{ApiError, ApiResult, api_ok},
+        cache::{get_projects_cache, get_settings_cache},
+    },
+};
+
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/dashboard", get(fetch_dashboard))
+        .route("/settings", get(fetch_settings))
+        .route("/projects", get(fetch_projects))
+        .route("/music", get(fetch_music))
+}
+
+async fn fetch_dashboard(
     _admin_user: AdminUser,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    State(state): State<AppState>,
 ) -> ApiResult<ResDashboardData> {
-    l_info!(logger, "Fetching dashboard data");
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Fetching dashboard data");
 
     let (
         posts_count,
@@ -40,21 +48,22 @@ pub async fn fetch_dashboard(
         seimgs_count,
         news_count,
     ) = try_join!(
-        romi_posts::Entity::find().count(db),
+        romi_posts::Entity::find().count(&state.conn),
         romi_metas::Entity::find()
             .filter(romi_metas::Column::IsCategory.eq("1"))
-            .count(db),
+            .count(&state.conn),
         romi_metas::Entity::find()
             .filter(romi_metas::Column::IsCategory.ne("1"))
-            .count(db),
-        romi_comments::Entity::find().count(db),
-        romi_news_comments::Entity::find().count(db),
-        romi_users::Entity::find().count(db),
-        romi_hitokotos::Entity::find().count(db),
-        romi_seimgs::Entity::find().count(db),
-        romi_news::Entity::find().count(db),
+            .count(&state.conn),
+        romi_comments::Entity::find().count(&state.conn),
+        romi_news_comments::Entity::find().count(&state.conn),
+        romi_users::Entity::find().count(&state.conn),
+        romi_hitokotos::Entity::find().count(&state.conn),
+        romi_seimgs::Entity::find().count(&state.conn),
+        romi_news::Entity::find().count(&state.conn),
     )
     .context("Failed to fetch dashboard counts")?;
+
     api_ok(ResDashboardData {
         posts_count,
         categories_count,
@@ -79,55 +88,29 @@ pub async fn fetch_dashboard(
     })
 }
 
-#[get("/settings")]
-pub async fn fetch_settings(
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<ResSettingsData> {
-    l_info!(logger, "Fetching site settings");
-    api_ok(
-        get_settings_cache(conn.into_inner())
-            .await
-            .map_err(|e| ApiError::internal(e.to_string()))?,
-    )
+async fn fetch_settings(State(state): State<AppState>) -> ApiResult<ResSettingsData> {
+    l_info!(&state.logger, "Fetching site settings");
+    api_ok(get_settings_cache(&state.conn).await.map_err(|e| ApiError::internal(e.to_string()))?)
 }
 
-#[get("/projects")]
-pub async fn fetch_projects(logger: &State<Logger>) -> ApiResult<Vec<ResProjectData>> {
-    l_info!(logger, "Fetching projects data from github repository");
-    api_ok(
-        get_projects_cache()
-            .await
-            .map_err(|e| ApiError::internal(e.to_string()))?,
-    )
+async fn fetch_projects(State(state): State<AppState>) -> ApiResult<Vec<ResProjectData>> {
+    l_info!(&state.logger, "Fetching projects data from github repository");
+    api_ok(get_projects_cache().await.map_err(|e| ApiError::internal(e.to_string()))?)
 }
-#[get("/music")]
-pub async fn fetch_music(logger: &State<Logger>) -> ApiResult<Vec<ResMusicData>> {
-    l_info!(logger, "Fetching music data from netease music");
-    api_ok(
-        get_music_cache()
-            .await
-            .map_err(|e| ApiError::internal(e.to_string()))
-            .map(|MusicCache { data, .. }| {
-                data.into_iter()
-                    .map(
-                        |SongInfo {
-                             name,
-                             artist,
-                             url,
-                             cover,
-                             lrc,
-                         }| {
-                            ResMusicData {
-                                name,
-                                artist,
-                                url,
-                                cover,
-                                lrc,
-                            }
-                        },
-                    )
-                    .collect()
-            })?,
-    )
+
+async fn fetch_music(State(state): State<AppState>) -> ApiResult<Vec<ResMusicData>> {
+    l_info!(&state.logger, "Fetching music data from netease music");
+    api_ok(get_music_cache().await.map_err(|e| ApiError::internal(e.to_string())).map(
+        |MusicCache { data, .. }| {
+            data.into_iter()
+                .map(|SongInfo { name, artist, url, cover, lrc }| ResMusicData {
+                    name,
+                    artist,
+                    url,
+                    cover,
+                    lrc,
+                })
+                .collect()
+        },
+    )?)
 }

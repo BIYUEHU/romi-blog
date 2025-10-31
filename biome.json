@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.2/schema.json",
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -17,9 +17,8 @@
         "noNonNullAssertion": "off"
       }
     },
-    "ignore": [
-      "**/*.js",
-      "**/*.d.ts"
+    "includes": [
+      "**/*.ts"
     ]
   },
   "javascript": {
@@ -39,12 +38,9 @@
       "unsafeParameterDecoratorsEnabled": true
     }
   },
-  "overrides": [
-    {
-      "include": [
-        "*.ts",
-        "*.tsx"
-      ]
+  "html": {
+    "parser": {
+      "interpolation": true
     }
-  ]
+  }
 }

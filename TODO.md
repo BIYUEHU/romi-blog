@@ -1,5 +1,6 @@
 # Todo
 
+- [ ] 优雅的退出 (axum + py)
 <!-- - [ ] Support more markdown-it plugins -->
 - [ ] Blog content search
 - [ ] Support private news
@@ -10,7 +11,9 @@
 - [ ] sitemap
 - [ ] Romi UI better building
 - [ ] Characters brithdays reminder
-- [ ] Web loggers (filter requests from Node.Js)
+- [ ] Web
+- [ ] File transporter logger
+- [x] filter requests from Node.Js
 - [ ] Refactory php ial api, such as proxy, qqavatar, etc.
 - [ ] Post password protection (Include images and comments)
 - [ ] Post and news comments and user system
@@ -26,9 +29,6 @@
 - [x] Unify all localStorage keys name
 - [x] Music playlist cannot load to cache in first loading
 - [x] Music playlist cannot automatically create json file
-- [x] 后台文章列表显示以及相关的都有按 `创建时间` 排序的需要
-- [x] 创建文章模式下保存的草稿缓存应在该文章保存成功时删掉
-- [x] char page 还不够个性化
 
 ## Details
 

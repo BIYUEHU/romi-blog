@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core'
 import { HttpHandlerFn, HttpRequest } from '@angular/common/http'
+import { Injectable } from '@angular/core'
 import { catchError, EMPTY, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
-import { NotifyService } from '../services/notify.service'
 import { LoggerService } from '../services/logger.service'
+import { NotifyService } from '../services/notify.service'
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +41,7 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
           }
           return EMPTY
         }
+
         if (
           error.status === 404 &&
           ['/news/', '/post/', '/char', '/admin/edit/'].some((url) => request.url.includes(url))
@@ -48,7 +49,9 @@ export class AuthInterceptor /* implements HttpInterceptor */ {
           location.href = '/404'
           return EMPTY
         }
+
         if (skipErrorHandler) return throwError(() => error)
+
         if (error.statusText.trim()) {
           this.notifyService.showMessage(`错误：${error.statusText} 状态码：${error.status} `, 'error')
         } else {

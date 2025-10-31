@@ -1,26 +1,36 @@
-use crate::entity::romi_news;
-use crate::guards::admin::AdminUser;
-use crate::models::news::{ReqNewsData, ResNewsData};
-use crate::service::pool::Db;
-use crate::utils::api::{api_ok, ApiError, ApiResult};
 use anyhow::Context;
-use rocket::serde::json::Json;
-use rocket::State;
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    routing::{delete, get, post, put},
+};
 use roga::*;
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel, TryIntoModel};
-use sea_orm_rocket::Connection;
 
-#[get("/<id>")]
-pub async fn fetch(
-    id: u32,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<ResNewsData> {
-    l_info!(logger, "Fetching news: id={}", id);
-    let db = conn.into_inner();
+use crate::{
+    app::AppState,
+    entity::romi_news,
+    guards::admin::AdminUser,
+    models::news::{ReqNewsData, ResNewsData},
+    utils::api::{ApiError, ApiResult, api_ok},
+};
+
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/", get(fetch_all))
+        .route("/", post(create))
+        .route("/{id}", get(fetch))
+        .route("/{id}", put(update))
+        .route("/{id}", delete(remove))
+        .route("/like/{id}", put(like))
+        .route("/view/{id}", put(view))
+}
+
+async fn fetch(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<ResNewsData> {
+    l_info!(&state.logger, "Fetching news: id={}", id);
 
     let news = romi_news::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch news {}", id))?
         .ok_or_else(|| ApiError::not_found("News not found"))?;
@@ -41,26 +51,11 @@ pub async fn fetch(
     })
 }
 
-#[get("/")]
-pub async fn fetch_all(
-    // page: Option<u64>,
-    // limit: Option<u64>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<Vec<ResNewsData>> {
-    // let page = page.unwrap_or(1);
-    // let limit = limit.unwrap_or(10);
-    // l_info!(logger, "Fetching news list: page={}, limit={}", page, limit);
-    l_info!(logger, "Fetching news list");
-    let db = conn.into_inner();
-
-    // let paginator = romi_news::Entity::find()
-    //     .order_by_desc(romi_news::Column::Created)
-    //     .paginate(db, limit);
+async fn fetch_all(State(state): State<AppState>) -> ApiResult<Vec<ResNewsData>> {
+    l_info!(&state.logger, "Fetching news list");
 
     let news_list = romi_news::Entity::find()
-        .all(db)
-        // .fetch_page(page - 1)
+        .all(&state.conn)
         .await
         .with_context(|| "Failed to fetch news list")?;
 
@@ -91,15 +86,12 @@ pub async fn fetch_all(
     )
 }
 
-#[post("/", data = "<news>")]
-pub async fn create(
+async fn create(
     _admin_user: AdminUser,
-    news: Json<ReqNewsData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    State(state): State<AppState>,
+    Json(news): Json<ReqNewsData>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Creating new news");
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Creating new news");
 
     let news_model = romi_news::ActiveModel {
         nid: ActiveValue::not_set(),
@@ -112,31 +104,26 @@ pub async fn create(
         comments: ActiveValue::set(0),
         imgs: ActiveValue::set(Some(news.imgs.join(","))),
     }
-    .save(db)
+    .save(&state.conn)
     .await
     .with_context(|| "Failed to create news")?;
 
-    let news = news_model
-        .try_into_model()
-        .with_context(|| "Failed to convert news model")?;
+    let news = news_model.try_into_model().with_context(|| "Failed to convert news model")?;
 
-    l_info!(logger, "Successfully created news: id={}", news.nid);
+    l_info!(&state.logger, "Successfully created news: id={}", news.nid);
     api_ok(())
 }
 
-#[put("/<id>", data = "<news>")]
-pub async fn update(
+async fn update(
     _admin_user: AdminUser,
-    id: u32,
-    news: Json<ReqNewsData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
+    Json(news): Json<ReqNewsData>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Updating news: id={}", id);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Updating news: id={}", id);
 
     match romi_news::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch news {}", id))?
     {
@@ -149,85 +136,72 @@ pub async fn update(
             active_model.imgs = ActiveValue::set(Some(news.imgs.join(",")));
 
             active_model
-                .save(db)
+                .save(&state.conn)
                 .await
                 .with_context(|| format!("Failed to update news {}", id))?
         }
         None => {
-            l_warn!(logger, "News not found for update: id={}", id);
+            l_warn!(&state.logger, "News not found for update: id={}", id);
             return Err(ApiError::not_found("News not found"));
         }
     };
 
-    l_info!(logger, "Successfully updated news: id={}", id);
+    l_info!(&state.logger, "Successfully updated news: id={}", id);
     api_ok(())
 }
 
-#[put("/like/<id>")]
-pub async fn like(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
-    l_info!(logger, "Liking news: id={}", id);
-    let db = conn.into_inner();
+async fn like(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<()> {
+    l_info!(&state.logger, "Liking news: id={}", id);
 
     match romi_news::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch news {} for like", id))?
     {
         Some(model) => {
             let mut active_model = model.clone().into_active_model();
             active_model.likes = ActiveValue::set(model.likes + 1);
-            active_model
-                .save(db)
-                .await
-                .context("Failed to update news")?;
+            active_model.save(&state.conn).await.context("Failed to update news")?;
         }
         None => return Err(ApiError::not_found("News not found")),
     };
 
-    l_info!(logger, "Successfully liked news: id={}", id);
+    l_info!(&state.logger, "Successfully liked news: id={}", id);
     api_ok(())
 }
 
-#[put("/view/<id>")]
-pub async fn view(id: u32, conn: Connection<'_, Db>, logger: &State<Logger>) -> ApiResult<()> {
-    l_info!(logger, "Viewing news: id={}", id);
-    let db = conn.into_inner();
+async fn view(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<()> {
+    l_info!(&state.logger, "Viewing news: id={}", id);
 
     match romi_news::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .with_context(|| format!("Failed to fetch news {} for view", id))?
     {
         Some(model) => {
             let mut active_model = model.clone().into_active_model();
             active_model.views = ActiveValue::set(model.views + 1);
-            active_model
-                .save(db)
-                .await
-                .context("Failed to update news")?;
+            active_model.save(&state.conn).await.context("Failed to update news")?;
         }
         None => return Err(ApiError::not_found("News not found")),
     };
 
-    l_info!(logger, "Successfully viewed news: id={}", id);
+    l_info!(&state.logger, "Successfully viewed news: id={}", id);
     api_ok(())
 }
 
-#[delete("/<id>")]
-pub async fn delete(
+async fn remove(
     _admin_user: AdminUser,
-    id: u32,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
 ) -> ApiResult<()> {
-    l_info!(logger, "Deleting news: id={}", id);
-    let db = conn.into_inner();
+    l_info!(&state.logger, "Deleting news: id={}", id);
 
     romi_news::Entity::delete_by_id(id)
-        .exec(db)
+        .exec(&state.conn)
         .await
         .with_context(|| format!("Failed to delete news {}", id))?;
 
-    l_info!(logger, "Successfully deleted news: id={}", id);
+    l_info!(&state.logger, "Successfully deleted news: id={}", id);
     api_ok(())
 }

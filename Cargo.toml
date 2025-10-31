@@ -1,43 +1,36 @@
 
-[workspace]
-members = [
-  ".",
-  "library/roga",
-  "library/migration",
-  "library/fetcher",
-  # "library/experimental",
-]
-
 [package]
 name = "romichan"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 publish = false
 license = "BAN-ZHINESE-USING"
 
 [dependencies]
-rocket = { version = "0.5.1", features = ["json"] }
-sea-orm = { version = "1.0.1", features = [
+axum = { version = "0.8", features = ["macros"] }
+# axum-extra = { version = "0.10", features = ["cookies"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
+sea-orm = { version = "1.0", features = [
   "sqlx-mysql",
   "runtime-tokio-native-tls",
   "macros",
 ] }
-sea-orm-rocket = "0.5"
-tokio = { version = "1.40.0", features = ["rt-multi-thread", "macros", "fs"] }
+tokio = { version = "1.40", features = ["rt-multi-thread", "macros", "fs"] }
+moka = { version = "0.12", features = ["future"] }
 dotenvy = "0.15.7"
-anyhow = "1.0.89"
-migration = { path = "library/migration" }
-serde_json = { version = "1" }
-async-trait = { version = "0.1" }
-serde = { version = "1.0.210", features = ["derive"] }
-roga = { path = "library/roga" }
-fetcher = { path = "library/fetcher" }
-rocket_cors = "0.6.0"
-futures = "0.3.31"
-reqwest = "0.12.22"
 config = "0.15.6"
+once_cell = "1.21.3"
+reqwest = "0.12.22"
+http = "1.3.1"
+anyhow = "1.0.89"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = { version = "1" }
+migration = { path = "library/migration" }
+fetcher = { path = "library/fetcher" }
+roga = { path = "library/roga" }
+async-trait = { version = "0.1" }
+futures = "0.3.31"
 jsonwebtoken = "9.3.0"
 sysinfo = "0.37"
 uuid = { version = "1.13.1", features = ["v4"] }
-once_cell = "1.21.3"
 ts-rs = "11.0.1"

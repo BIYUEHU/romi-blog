@@ -61,7 +61,7 @@
     "@angular-devkit/build-angular": "^18.2.8",
     "@angular/cli": "^18.2.8",
     "@angular/compiler-cli": "^18.2.0",
-    "@biomejs/biome": "^1.8.3",
+    "@biomejs/biome": "^2.3.2",
     "@iconify-json/mdi": "^1.2.3",
     "@types/express": "^5.0.0",
     "@types/jasmine": "~5.1.0",

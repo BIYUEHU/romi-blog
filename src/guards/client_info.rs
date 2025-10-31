@@ -1,4 +1,4 @@
-use rocket::request::{FromRequest, Outcome, Request};
+use axum::{extract::FromRequestParts, http::request::Parts};
 
 #[derive(Debug)]
 pub struct ClientInfo {
@@ -6,22 +6,25 @@ pub struct ClientInfo {
     pub user_agent: String,
 }
 
-#[rocket::async_trait]
-impl<'r> FromRequest<'r> for ClientInfo {
-    type Error = ();
+impl<S> FromRequestParts<S> for ClientInfo
+where
+    S: Send + Sync,
+{
+    type Rejection = ();
 
-    async fn from_request(req: &'r Request<'_>) -> Outcome<Self, Self::Error> {
-        let ip = req
-            .client_ip()
-            .map(|ip| ip.to_string())
-            .unwrap_or_else(|| "unknown".to_string());
-
-        let user_agent = req
-            .headers()
-            .get_one("User-Agent")
-            .map(|s| s.to_string())
-            .unwrap_or_else(|| "unknown".to_string());
-
-        Outcome::Success(ClientInfo { ip, user_agent })
+    async fn from_request_parts(parts: &mut Parts, _: &S) -> Result<Self, Self::Rejection> {
+        Ok(Self {
+            ip: parts
+                .extensions
+                .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
+                .map(|ci| ci.0.ip().to_string())
+                .unwrap_or_else(|| "unknown".into()),
+            user_agent: parts
+                .headers
+                .get("User-Agent")
+                .and_then(|v| v.to_str().ok())
+                .unwrap_or("unknown")
+                .to_string(),
+        })
     }
 }

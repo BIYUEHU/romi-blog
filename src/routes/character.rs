@@ -1,108 +1,101 @@
 use std::time::SystemTime;
 
-use crate::entity::romi_characters;
-use crate::guards::admin::AdminUser;
-use crate::models::character::{ReqCharacterData, ResCharacterData};
-use crate::service::pool::Db;
-use crate::utils::api::{api_ok, ApiError, ApiResult};
 use anyhow::Context;
-use rocket::serde::json::Json;
-use rocket::State;
-use roga::{l_info, Logger};
-use sea_orm::{ActiveModelTrait, ActiveValue, DatabaseConnection, EntityTrait, IntoActiveModel};
-use sea_orm_rocket::Connection;
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    routing::{delete, get, post, put},
+};
+use roga::*;
+use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel};
+
+use crate::{
+    app::AppState,
+    entity::romi_characters,
+    guards::admin::AdminUser,
+    models::character::{ReqCharacterData, ResCharacterData},
+    utils::api::{ApiError, ApiResult, api_ok},
+};
+
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/", get(fetch_all))
+        .route("/", post(create))
+        .route("/{id}", get(fetch))
+        .route("/{id}", put(update))
+        .route("/{id}", delete(remove))
+}
 
 fn split_pipe_str_to_vec(s: &str) -> Vec<String> {
-    s.split('|')
-        .filter(|t| !t.is_empty())
-        .map(str::to_string)
-        .collect()
+    s.split('|').filter(|t| !t.is_empty()).map(str::to_string).collect()
 }
 
 fn opt_split_pipe_str_to_vec(opt: &Option<String>) -> Vec<String> {
-    opt.as_ref()
-        .map(|s| split_pipe_str_to_vec(s))
-        .unwrap_or_default()
+    opt.as_ref().map(|s| split_pipe_str_to_vec(s)).unwrap_or_default()
 }
 
 fn vec_to_opt_str(v: Vec<String>) -> Option<String> {
-    if v.is_empty() {
-        None
-    } else {
-        Some(v.join("|"))
-    }
+    if v.is_empty() { None } else { Some(v.join("|")) }
 }
 
-#[get("/")]
-pub async fn fetch_all(
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<Vec<ResCharacterData>> {
-    l_info!(logger, "Fetching all characters");
-    let db: &DatabaseConnection = conn.into_inner();
+async fn fetch_all(State(state): State<AppState>) -> ApiResult<Vec<ResCharacterData>> {
+    l_info!(&state.logger, "Fetching all characters");
 
     let models = romi_characters::Entity::find()
-        .all(db)
+        .all(&state.conn)
         .await
         .context("Failed to fetch characters")?;
 
-    let results: Vec<ResCharacterData> = models
-        .into_iter()
-        .map(|m| {
-            let alias_vec = opt_split_pipe_str_to_vec(&m.alias);
-            let images_vec = split_pipe_str_to_vec(&m.images);
-            let url_vec = opt_split_pipe_str_to_vec(&m.url);
-            let tags_vec = opt_split_pipe_str_to_vec(&m.tags);
+    api_ok(
+        models
+            .into_iter()
+            .map(|m| {
+                let alias_vec = opt_split_pipe_str_to_vec(&m.alias);
+                let images_vec = split_pipe_str_to_vec(&m.images);
+                let url_vec = opt_split_pipe_str_to_vec(&m.url);
+                let tags_vec = opt_split_pipe_str_to_vec(&m.tags);
+                let hide_bool = m.hide != "0";
 
-            let hide_bool = m.hide != "0";
-
-            ResCharacterData {
-                id: m.id,
-                name: m.name,
-                romaji: m.romaji,
-                color: m.color,
-                song_id: m.song_id,
-                gender: m.gender,
-                alias: alias_vec,
-                age: m.age,
-                images: images_vec,
-                url: url_vec,
-                description: m.description,
-                comment: m.comment,
-                hitokoto: m.hitokoto,
-                birthday: m.birthday,
-                voice: m.voice,
-                series: m.series,
-                series_genre: m.series_genre,
-                tags: tags_vec,
-                hair_color: m.hair_color,
-                eye_color: m.eye_color,
-                blood_type: m.blood_type,
-                height: m.height,
-                weight: m.weight,
-                bust: m.bust,
-                waist: m.waist,
-                hip: m.hip,
-                order: m.order,
-                hide: hide_bool,
-            }
-        })
-        .collect();
-
-    api_ok(results)
+                ResCharacterData {
+                    id: m.id,
+                    name: m.name,
+                    romaji: m.romaji,
+                    color: m.color,
+                    song_id: m.song_id,
+                    gender: m.gender,
+                    alias: alias_vec,
+                    age: m.age,
+                    images: images_vec,
+                    url: url_vec,
+                    description: m.description,
+                    comment: m.comment,
+                    hitokoto: m.hitokoto,
+                    birthday: m.birthday,
+                    voice: m.voice,
+                    series: m.series,
+                    series_genre: m.series_genre,
+                    tags: tags_vec,
+                    hair_color: m.hair_color,
+                    eye_color: m.eye_color,
+                    blood_type: m.blood_type,
+                    height: m.height,
+                    weight: m.weight,
+                    bust: m.bust,
+                    waist: m.waist,
+                    hip: m.hip,
+                    order: m.order,
+                    hide: hide_bool,
+                }
+            })
+            .collect(),
+    )
 }
 
-#[get("/<id>")]
-pub async fn fetch(
-    id: u32,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
-) -> ApiResult<ResCharacterData> {
-    l_info!(logger, "Fetching character by id={}", id);
-    let db: &DatabaseConnection = conn.into_inner();
+async fn fetch(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<ResCharacterData> {
+    l_info!(&state.logger, "Fetching character by id={}", id);
 
     match romi_characters::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .context("Failed to fetch character")?
     {
@@ -113,7 +106,7 @@ pub async fn fetch(
             let tags_vec = opt_split_pipe_str_to_vec(&m.tags);
             let hide_bool = m.hide != "0";
 
-            let res = ResCharacterData {
+            api_ok(ResCharacterData {
                 id: m.id,
                 name: m.name,
                 romaji: m.romaji,
@@ -142,29 +135,23 @@ pub async fn fetch(
                 hip: m.hip,
                 order: m.order,
                 hide: hide_bool,
-            };
-            api_ok(res)
+            })
         }
         None => Err(ApiError::not_found(format!("Character {} not found", id))),
     }
 }
 
-#[post("/", data = "<body>")]
-pub async fn create(
+async fn create(
     _admin: AdminUser,
-    body: Json<ReqCharacterData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    State(state): State<AppState>,
+    Json(req): Json<ReqCharacterData>,
 ) -> ApiResult<romi_characters::Model> {
-    l_info!(logger, "Creating new character: {}", body.name);
-    let db: &DatabaseConnection = conn.into_inner();
-    let req = body.into_inner();
+    l_info!(&state.logger, "Creating new character: {}", req.name);
 
     let alias_str = vec_to_opt_str(req.alias);
     let images_str = req.images.join("|");
     let url_str = vec_to_opt_str(req.url);
     let tags_str = vec_to_opt_str(req.tags);
-
     let birthday_u32 = req.birthday.map(|ts| ts as u32);
     let hide_str = if req.hide.unwrap_or(false) { "1" } else { "0" }.to_string();
 
@@ -198,42 +185,28 @@ pub async fn create(
         song_id: ActiveValue::set(req.song_id),
         color: ActiveValue::set(req.color.clone()),
         created: ActiveValue::set(
-            SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
-                .unwrap()
-                .as_secs() as u32,
+            SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs() as u32,
         ),
     };
 
-    let res = active
-        .insert(db)
-        .await
-        .context("Failed to insert character")?;
-
-    api_ok(res)
+    api_ok(active.insert(&state.conn).await.context("Failed to insert character")?)
 }
 
-#[put("/<id>", data = "<body>")]
-pub async fn update(
+async fn update(
     _admin: AdminUser,
-    id: u32,
-    body: Json<ReqCharacterData>,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
+    Json(req): Json<ReqCharacterData>,
 ) -> ApiResult<romi_characters::Model> {
-    l_info!(logger, "Updating character id={}", id);
-    let db: &DatabaseConnection = conn.into_inner();
+    l_info!(&state.logger, "Updating character id={}", id);
 
     let existing = romi_characters::Entity::find_by_id(id)
-        .one(db)
+        .one(&state.conn)
         .await
         .context("Failed to fetch character for update")?;
 
-    if existing.is_none() {
-        return Err(ApiError::not_found(format!("Character {} not found", id)));
-    }
-
-    let req = body.into_inner();
+    let existing =
+        existing.ok_or_else(|| ApiError::not_found(format!("Character {} not found", id)))?;
 
     let alias_str = vec_to_opt_str(req.alias);
     let images_str = req.images.join("|");
@@ -242,8 +215,7 @@ pub async fn update(
     let birthday_u32 = req.birthday.map(|ts| ts as u32);
     let hide_str = if req.hide.unwrap_or(false) { "1" } else { "0" }.to_string();
 
-    // 取消枚举转换，直接使用 String
-    let mut active: romi_characters::ActiveModel = existing.unwrap().into_active_model();
+    let mut active: romi_characters::ActiveModel = existing.into_active_model();
 
     active.name = ActiveValue::set(req.name.clone());
     active.color = ActiveValue::set(req.color.clone());
@@ -273,26 +245,18 @@ pub async fn update(
     active.hide = ActiveValue::set(hide_str);
     active.song_id = ActiveValue::set(req.song_id);
 
-    let res = active
-        .update(db)
-        .await
-        .context("Failed to update character")?;
-
-    api_ok(res)
+    api_ok(active.update(&state.conn).await.context("Failed to update character")?)
 }
 
-#[delete("/<id>")]
-pub async fn delete(
+async fn remove(
     _admin: AdminUser,
-    id: u32,
-    logger: &State<Logger>,
-    conn: Connection<'_, Db>,
+    Path(id): Path<u32>,
+    State(state): State<AppState>,
 ) -> ApiResult<bool> {
-    l_info!(logger, "Deleting character id={}", id);
-    let db: &DatabaseConnection = conn.into_inner();
+    l_info!(&state.logger, "Deleting character id={}", id);
 
     let result = romi_characters::Entity::delete_by_id(id)
-        .exec(db)
+        .exec(&state.conn)
         .await
         .context("Failed to delete character")?;
 

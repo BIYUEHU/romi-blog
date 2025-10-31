@@ -1,16 +1,21 @@
-use crate::service::music::get_music_cache;
-use crate::utils::config::RomiConfig;
-use crate::{
-    guards::client_info::ClientInfo,
-    utils::api::{ApiError, ApiErrorReal},
-};
+use std::io;
+
 use rocket::{
+    Build, Data, Orbit, Request, Response, Rocket,
     fairing::{Fairing, Info, Kind, Result},
     request::{FromRequest, Outcome},
-    Build, Data, Orbit, Request, Response, Rocket,
 };
 use roga::*;
-use std::io;
+
+use crate::{
+    auth::client_info::ClientInfo,
+    constant::NODEJS_LOGGER_LABEL,
+    service::music::get_music_cache,
+    utils::{
+        api::{ApiError, ApiErrorReal},
+        config::RomiConfig,
+    },
+};
 
 #[derive(Clone)]
 pub struct Recorder {
@@ -60,10 +65,13 @@ impl Fairing for Recorder {
         };
 
         l_record!(
-            self.logger
-                .clone()
-                .with_label("Request")
-                .with_label(req.method().to_string().to_uppercase()),
+            if user_agent == "node" {
+                self.logger.clone().with_label(NODEJS_LOGGER_LABEL)
+            } else {
+                self.logger.clone()
+            }
+            .with_label("Request")
+            .with_label(req.method().to_string().to_uppercase()),
             "Calling {} with ip: {}, user_agent: {}",
             req.uri(),
             ip,
@@ -81,17 +89,10 @@ impl Fairing for Recorder {
                 if !body_str.contains("raw_error") {
                     return body;
                 }
-                if let Ok(ApiError {
-                    raw_error,
-                    code,
-                    msg,
-                }) = serde_json::from_str::<ApiError>(&body_str)
+                if let Ok(ApiError { raw_error, code, msg }) =
+                    serde_json::from_str::<ApiError>(&body_str)
                 {
-                    l_error!(
-                        self.logger.clone(),
-                        "Unknown: {}",
-                        raw_error.unwrap_or(msg.clone())
-                    );
+                    l_error!(self.logger.clone(), "Unknown: {}", raw_error.unwrap_or(msg.clone()));
                     serde_json::to_string(&ApiErrorReal { code, msg })
                         .unwrap_or("".into())
                         .as_bytes()
@@ -103,7 +104,12 @@ impl Fairing for Recorder {
             .unwrap_or("".into());
 
         l_record!(
-            self.logger.clone().with_label("Response"),
+            match ClientInfo::from_request(req).await {
+                Outcome::Success(client_info) if client_info.user_agent == "node" =>
+                    self.logger.clone().with_label(NODEJS_LOGGER_LABEL),
+                _ => self.logger.clone(),
+            }
+            .with_label("Response"),
             "Returnning {} with status: {}",
             req.uri(),
             res.status()

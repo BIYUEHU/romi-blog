@@ -63,21 +63,20 @@
     @for (item of getPageNumbers(); track $index) {
     @if (item === 'prev') {
     <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
-      << </r-button>
-        } @else if (item === 'next') {
-        <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg"
-          [disabled]="currentPage === totalPages">
-          >>
-        </r-button>
-        } @else if (item === '...') {
-        <span class="px-2 text-accent-100">...</span>
-        } @else {
-        <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'"
-          class="w-10 h-10 rounded-lg">
-          {{ item }}
-        </r-button>
-        }
-        }
+      &lt;&lt; </r-button>
+    } @else if (item === 'next') {
+    <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === totalPages">
+      >>
+    </r-button>
+    } @else if (item === '...') {
+    <span class="px-2 text-accent-100">...</span>
+    } @else {
+    <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'"
+      class="w-10 h-10 rounded-lg">
+      {{ item }}
+    </r-button>
+    }
+    }
   </div>
   }
   } @else {
