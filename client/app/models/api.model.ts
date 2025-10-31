@@ -7,12 +7,6 @@ export interface Author {
   avatar: string
 }
 
-export interface RelatedPost {
-  url: string
-  title: string
-  type: 'prev' | 'next'
-}
-
 export type UserAuthData = AuthUser & { token: string }
 
 export interface BangumiData {

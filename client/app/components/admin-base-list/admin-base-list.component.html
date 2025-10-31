@@ -1,10 +1,8 @@
 <div class="space-y-6">
-  <!-- 搜索区域 -->
   <div class="bg-text-200 rounded-lg border border-text-200 p-4">
     <ng-content select="[search-area]"></ng-content>
   </div>
 
-  <!-- 列表区域 -->
   <div class="bg-text-200 rounded-lg border border-text-200 overflow-y-hidden">
     @if (isLoading) {
     <div class="p-8 text-center">
@@ -17,7 +15,6 @@
     } @else {
     <ng-content select="[list-content]"></ng-content>
 
-    <!-- 分页 -->
     @if (pages.length > 1) {
     <div class="px-6 py-4 flex items-center justify-between border-t border-text-300">
       <div class="text-sm text-accent-100 m-2">

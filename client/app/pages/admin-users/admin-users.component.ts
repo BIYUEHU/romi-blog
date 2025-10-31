@@ -1,13 +1,12 @@
 import { DatePipe } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { ReqUserData, ResUserData } from '../../models/api.model'
-import { UserAuthData } from '../../models/api.model'
+import { ReqUserData, ResUserData, UserAuthData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { sortByCreatedTime } from '../../utils'

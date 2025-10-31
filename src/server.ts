@@ -1,4 +1,3 @@
-/** 我草你妈的，傻逼支那豚，你翻你妈的代码 **/
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { APP_BASE_HREF } from '@angular/common'
@@ -7,46 +6,38 @@ import express from 'express'
 import bootstrap from '../client/main.server'
 
 export function app(): express.Express {
-  const server = express()
   const serverDistFolder = dirname(fileURLToPath(import.meta.url))
   const browserDistFolder = resolve(serverDistFolder, '../browser')
   const indexHtml = join(serverDistFolder, 'index.server.html')
-
   const commonEngine = new CommonEngine()
 
-  server.set('view engine', 'html')
-  server.set('views', browserDistFolder)
-
-  server.get(
-    '**',
-    express.static(browserDistFolder, {
-      maxAge: '1y',
-      index: 'index.html'
-    })
-  )
-
-  server.get('**', (req, res, next) => {
-    const { protocol, originalUrl, baseUrl, headers } = req
-
-    commonEngine
-      .render({
-        bootstrap,
-        documentFilePath: indexHtml,
-        url: `${protocol}://${headers.host}${originalUrl}`,
-        publicPath: browserDistFolder,
-        providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }]
+  return express()
+    .set('view engine', 'html')
+    .set('views', browserDistFolder)
+    .get(
+      '**',
+      express.static(browserDistFolder, {
+        maxAge: '1y',
+        index: 'index.html'
       })
-      .then((html) => res.send(html))
-      .catch((err) => next(err))
-  })
-  return server
+    )
+    .get('**', (req, res, next) => {
+      commonEngine
+        .render({
+          bootstrap,
+          documentFilePath: indexHtml,
+          url: `${req.protocol}://${req.headers.host}${req.originalUrl}`,
+          publicPath: browserDistFolder,
+          providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }]
+        })
+        .then((html) => res.send(html))
+        .catch((err) => next(err))
+    })
 }
 
 function run(): void {
   const port = (process.env as { PORT: string }).PORT ?? 8001
-
-  const server = app()
-  server.listen(port, () => {
+  app().listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`)
   })
 }

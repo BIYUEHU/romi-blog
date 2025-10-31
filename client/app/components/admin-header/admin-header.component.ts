@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common'
 import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { AuthService } from '../../services/auth.service'
 import { UserAuthData } from '../../models/api.model'
+import { AuthService } from '../../services/auth.service'
 import { NotifyService } from '../../services/notify.service'
 
 @Component({
@@ -12,7 +12,7 @@ import { NotifyService } from '../../services/notify.service'
   templateUrl: './admin-header.component.html'
 })
 export class AdminHeaderComponent {
-  public user: UserAuthData | null = null
+  public user?: UserAuthData
 
   public createDate = new Date()
 
@@ -23,7 +23,7 @@ export class AdminHeaderComponent {
     private readonly notifyService: NotifyService
   ) {
     this.authService.user$.subscribe((user) => {
-      this.user = user
+      if (user) this.user = user
     })
     this.createDate = new Date((this.user?.created ?? 0) * 1000)
     this.isSidebarOpen$ = this.notifyService.isSidebarOpen$

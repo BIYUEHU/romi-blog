@@ -1,8 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-import { NotifyService } from '../../services/notify.service'
-import { BangumiData } from '../../models/api.model'
 import { LoadingComponent } from '../../components/loading/loading.component'
+import { BangumiData } from '../../models/api.model'
+import { NotifyService } from '../../services/notify.service'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { CardComponent } from '../card/card.component'
 
 @Component({
@@ -13,13 +13,12 @@ import { CardComponent } from '../card/card.component'
   templateUrl: './bangumi.component.html'
 })
 export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi') implements OnInit {
-  public isLoading = true
   private offset = 0
 
+  public isLoading = true
   public items: BangumiData['data'] = []
 
-  @Input({ required: true })
-  public isAnime!: boolean
+  @Input({ required: true }) public isAnime!: boolean
 
   public constructor(private readonly notifyService: NotifyService) {
     super()

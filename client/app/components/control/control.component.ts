@@ -1,9 +1,9 @@
 import { Component } from '@angular/core'
-import { LayoutUsingComponent } from '../layout-using/layout-using.component'
-import { PostContentComponent } from '../post-content/post-content.component'
 import { Router } from '@angular/router'
 import { LinksComponent } from '../../pages/links/links.component'
 import { NotFoundComponent } from '../../pages/not-found/not-found.component'
+import { LayoutUsingComponent } from '../layout-using/layout-using.component'
+import { PostContentComponent } from '../post-content/post-content.component'
 
 type DependentPage = {
   name: string
@@ -11,12 +11,12 @@ type DependentPage = {
   using: number
 } & (
   | {
-      isNormal: true
+      routinue: true
       hideToc: boolean
       hideComments: boolean
     }
   | {
-      isNormal: false
+      routinue: false
       template: string
     }
 )
@@ -29,13 +29,14 @@ type DependentPage = {
 })
 export class ControlComponent {
   public routerParams: string[]
+  public dependentPageUsing?: ControlComponent['dependentPages'][number]
 
   public dependentPages: DependentPage[] = [
     {
       name: 'about',
       title: '关于',
       using: 25,
-      isNormal: true,
+      routinue: true,
       hideToc: true,
       hideComments: false
     },
@@ -43,7 +44,7 @@ export class ControlComponent {
       name: 'log',
       title: '日志',
       using: 26,
-      isNormal: true,
+      routinue: true,
       hideToc: false,
       hideComments: true
     },
@@ -51,12 +52,10 @@ export class ControlComponent {
       name: 'links',
       title: '友情链接',
       using: 6,
-      isNormal: false,
+      routinue: false,
       template: 'links'
     }
   ]
-
-  public dependentPageUsing?: ControlComponent['dependentPages'][number]
 
   public constructor(private readonly router: Router) {
     this.routerParams = this.router.url

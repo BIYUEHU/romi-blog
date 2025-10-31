@@ -1,7 +1,6 @@
 <div class="max-w-98% w-4xl mx-auto flex-1">
   @if (post) {
   <div class="flex gap-8">
-    <!-- 主内容区 -->
     <div class="flex-1 w-full">
       <ng-content select="[post-brefore]"></ng-content>
 
@@ -57,28 +56,30 @@
       </div>
       }
 
-      @if (!hideRelatedPosts && !post.hide && (relatedPosts[0] || relatedPosts[1])) {
+      @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
-        @if (relatedPosts[0]) {
-        <a [href]="relatedPosts[0].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+        @if (post.prev) {
+        <a [href]="'/post/' + post.prev.id"
+          class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2">
             <span>上一篇</span>
           </div>
           <div class="'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors">
-            {{ relatedPosts[0].title }}
+            {{ post.prev.title }}
           </div>
         </a>
         } @else {
         <div class="group p-4 rounded-lg transition-colors"></div>
         }
 
-        @if (relatedPosts[1]) {
-        <a [href]="relatedPosts[1].url" class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
+        @if (post.next) {
+        <a [href]="'/post/' + post.next.id"
+          class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
             <span>下一篇</span>
           </div>
           <div class="text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors text-right">
-            {{ relatedPosts[1].title }}
+            {{ post.next.title }}
           </div>
         </a>
         }

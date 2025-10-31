@@ -11,8 +11,13 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
 })
 export class FooterComponent extends romiComponentFactory<ResHitokotoData>('footer') implements OnInit {
   public currentTime = this.getTimeString()
-
   public hitokoto?: ResHitokotoData
+
+  public footerItems = [
+    { link: '/feed', text: 'RSS 订阅' },
+    { link: '/sitemap.xml', text: '网站地图' },
+    { link: '/friends', text: '友情链接' }
+  ]
 
   public ngOnInit() {
     this.setData(
@@ -35,10 +40,4 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
     const diff = (Date.now() - new Date('2019-01-01T00:00:00Z').getTime()) / 1000
     return `${Math.floor(diff / 86400)} 天 ${Math.floor((diff % 86400) / 3600)} 小时 ${Math.floor((diff % 3600) / 60)} 分钟 ${Math.floor(diff % 60)} 秒`
   }
-
-  public footerItems = [
-    { link: '/feed', text: 'RSS 订阅' },
-    { link: '/sitemap.xml', text: '网站地图' },
-    { link: '/friends', text: '友情链接' }
-  ]
 }

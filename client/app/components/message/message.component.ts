@@ -1,6 +1,6 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
-import { NotifyService } from '../../services/notify.service'
 import { animate, style, transition, trigger } from '@angular/animations'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-message',

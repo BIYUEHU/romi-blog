@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { Router, RouterOutlet } from '@angular/router'
-import { LayoutUsingComponent } from '../layout-using/layout-using.component'
 import { HomeComponent } from '../../pages/home/home.component'
+import { LayoutUsingComponent } from '../layout-using/layout-using.component'
 
 @Component({
   selector: 'app-layout',

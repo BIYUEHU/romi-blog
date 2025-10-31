@@ -10,6 +10,8 @@ import { RouterLink } from '@angular/router'
 export class HeaderComponent {
   private lastSwitchMenu = 0
 
+  public isMenuOpen = false
+
   public navItems = [
     { text: '首页', link: '/' },
     {
@@ -35,8 +37,6 @@ export class HeaderComponent {
     { text: '项目', link: '/project' },
     { text: '日志', link: '/log' }
   ]
-
-  public isMenuOpen = false
 
   public toggleMenu() {
     if (Date.now() - this.lastSwitchMenu < 200) return

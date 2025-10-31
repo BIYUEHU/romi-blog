@@ -1,6 +1,6 @@
 use std::fs::write;
 
-use fetcher::{playlist::fetch_playlist, videos::fetch_videos};
+use fetcher::playlist::fetch_playlist;
 use roga::{transport::console::ConsoleTransport, Logger, LoggerLevel};
 
 #[tokio::main]

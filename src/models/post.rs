@@ -43,6 +43,13 @@ pub struct ResPostData {
 
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
+pub struct ResPostSingleDataRelatedPost {
+    pub id: u32,
+    pub title: String,
+}
+
+#[derive(Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleData {
     pub id: u32,
     pub title: String,
@@ -58,6 +65,8 @@ pub struct ResPostSingleData {
     pub likes: i32,
     pub comments: i32,
     pub banner: Option<String>,
+    pub prev: Option<ResPostSingleDataRelatedPost>,
+    pub next: Option<ResPostSingleDataRelatedPost>,
 }
 
 #[derive(Serialize, TS)]

@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, EventEmitter, Input, Output, inject } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, inject, Output } from '@angular/core'
 import { NotifyService } from '../../services/notify.service'
 
 @Component({
@@ -22,7 +22,6 @@ export abstract class AbstractAdminBaseListComponent<T> {
   public isLoading = true
   public searchQuery = ''
   public emptyMessage = '暂无数据'
-
   public currentPage = 1
   public pageSize = 10
 

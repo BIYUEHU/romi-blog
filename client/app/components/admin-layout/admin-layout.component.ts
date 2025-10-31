@@ -1,11 +1,11 @@
-import { Component, HostListener } from '@angular/core'
 import { AsyncPipe } from '@angular/common'
+import { Component, HostListener } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
-import { AdminHeaderComponent } from '../admin-header/admin-header.component'
-import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
-import { AdminFooterComponent } from '../admin-footer/admin-footer.component'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
+import { AdminFooterComponent } from '../admin-footer/admin-footer.component'
+import { AdminHeaderComponent } from '../admin-header/admin-header.component'
+import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 
 @Component({
   selector: 'app-admin-layout',

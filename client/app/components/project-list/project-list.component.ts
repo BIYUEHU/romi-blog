@@ -1,5 +1,5 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Input } from '@angular/core'
 import { DatePipe } from '@angular/common'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
 import { ResProjectData } from '../../models/api.model'
 import { CardComponent } from '../card/card.component'
 
@@ -48,9 +48,8 @@ export class ProjectListComponent {
     Zig: '#ec915c'
   }
 
-  public getLanguageColor(language: string | null): string {
-    if (!language) return '#6e7681'
-    return this.languageColors[language] || '#6e7681'
+  public getLanguageColor(language?: string): string {
+    return language && language in this.languageColors ? this.languageColors[language] : '#6e7681'
   }
 
   public windowOpen(url: string): void {

@@ -1,17 +1,20 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
 import markdownIt from 'markdown-it'
-import { BundledLanguage, BundledTheme, createHighlighter, HighlighterGeneric } from 'shiki'
+import MarkdownIt from 'markdown-it'
+import { from, Subject } from 'rxjs'
+import { switchMap, takeUntil } from 'rxjs/operators'
+import { BundledLanguage, BundledTheme, HighlighterGeneric } from 'shiki'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { RelatedPost, ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
+import { ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
+import { HighlighterService } from '../../services/highlighter.service'
 import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
-import { SUPPORTS_HIGHLIGHT_LANGUAGES } from '../../shared/constants'
 import { randomRTagType } from '../../utils'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
@@ -32,10 +35,7 @@ interface CommentItem extends ResCommentData {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-content.component.html'
 })
-export class PostContentComponent
-  extends romiComponentFactory<ResPostSingleData>('post-content')
-  implements OnInit, OnDestroy
-{
+export class PostContentComponent extends romiComponentFactory<ResPostSingleData>('post-content') implements OnInit {
   @Input({ required: true }) public id!: number
   @Input() public hideSubTitle = false
   @Input() public hideToc = false
@@ -44,44 +44,26 @@ export class PostContentComponent
   @Input() public hideOptions = false
   @Input() public hideCopyright = false
   @Input() public setTitle = false
-
   @Input() public defaultPostData?: ResPostSingleData
 
-  public renderedContent: SafeHtml = ''
-
-  private mdParser = new markdownIt({
-    html: true,
-    linkify: true,
-    typographer: true,
-    highlight: (str: string, lang: string) => {
-      if (!lang || !this.highlighter) return ''
-      const langHandled = lang.toLowerCase()
-      return this.highlighter.codeToHtml(str, {
-        mergeWhitespaces: true,
-        theme: 'vitesse-light',
-        lang: this.highlighter.getLoadedLanguages().includes(langHandled) ? langHandled : ''
-      })
-    }
-  })
-
+  private mdParser: MarkdownIt
   private highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>
 
-  public relatedPosts: [RelatedPost?, RelatedPost?] = []
-
+  public renderedContent: SafeHtml = ''
   public commentText = ''
-
   public toc: TocItem[] = []
   public comments: CommentItem[] = []
-  public currentUser?: UserAuthData | null
+  public currentUser: UserAuthData | null = null
   public replyingTo: { username: string; cid: number } | null = null
+  public post?: Omit<ResPostSingleData, 'tags'> & { url: string; tags: [string, string][] }
+  public currentPage = 1
+  public pageSize = 10
+  private destroy$ = new Subject<void>()
+
   public get isNotLoggedIn() {
     return this.currentUser === null
   }
 
-  public post?: Omit<ResPostSingleData, 'tags'> & { url: string; tags: [string, string][] }
-
-  public currentPage = 1
-  public pageSize = 10
   public get pages() {
     return Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1)
   }
@@ -90,19 +72,40 @@ export class PostContentComponent
     return !!this.browserService.store?.getItem(KEYS.POST_LIKED(this.id))
   }
 
-  public constructor(
+  constructor(
     private readonly router: Router,
     private readonly notifyService: NotifyService,
     private readonly authService: AuthService,
-    private readonly sanitizer: DomSanitizer
+    private readonly sanitizer: DomSanitizer,
+    private readonly highlighterService: HighlighterService // <- 注入 Angular service
   ) {
     super()
-    if (this.hideComments || !this.browserService.isBrowser) return
-    this.authService.user$.subscribe((user) => {
-      this.currentUser = user
+
+    this.mdParser = markdownIt({
+      html: true,
+      linkify: true,
+      typographer: true,
+      highlight: (str: string, lang: string) => {
+        try {
+          if (!lang || !this.highlighter) return ''
+          const langHandled = lang.toLowerCase()
+          const loaded = this.highlighter.getLoadedLanguages()
+          return this.highlighter.codeToHtml(str, {
+            mergeWhitespaces: true,
+            theme: 'vitesse-light',
+            lang: loaded.includes(langHandled) ? langHandled : ''
+          })
+        } catch {
+          return ''
+        }
+      }
     })
 
-    const defaultRender =
+    this.setupRendererRules()
+  }
+
+  private setupRendererRules() {
+    const defaultHeadRender =
       // biome-ignore lint: *
       this.mdParser.renderer.rules['heading_open'] ||
       ((tokens, idx, options, _, self) => self.renderToken(tokens, idx, options))
@@ -110,11 +113,11 @@ export class PostContentComponent
     // biome-ignore lint: *
     this.mdParser.renderer.rules['heading_open'] = (tokens, idx, options, env, self) => {
       const token = tokens[idx]
-      const nextToken = tokens[idx + 1]
-      if (nextToken && nextToken.type === 'inline') {
-        token.attrSet('id', nextToken.content)
+      const next = tokens[idx + 1]
+      if (next && next.type === 'inline') {
+        token.attrSet('id', next.content)
       }
-      return defaultRender(tokens, idx, options, env, self)
+      return defaultHeadRender(tokens, idx, options, env, self)
     }
 
     this.mdParser.renderer.rules.image = (tokens, idx, _options, _env, _self) => {
@@ -122,8 +125,8 @@ export class PostContentComponent
       const src = token.attrGet('src') || ''
       const alt = token.content || ''
       return `<a href="${src}" target="_blank" class="romi-img inline-block hover:opacity-90 transition-opacity">
-      <img src="${src}" alt="${alt}" class="max-w-full rounded-lg" loading="lazy">
-    </a>`
+        <img src="${src}" alt="${alt}" class="max-w-full rounded-lg" loading="lazy">
+      </a>`
     }
   }
 
@@ -139,7 +142,7 @@ export class PostContentComponent
     return comments.map((comment) => {
       const replyMatch = comment.text.match(/^@(\w+)#(\d+)\s+(.+)/)
       if (replyMatch) {
-        const [_, username, __, actualText] = replyMatch
+        const [, username, , actualText] = replyMatch
         return {
           ...comment,
           replyTo: username,
@@ -158,7 +161,9 @@ export class PostContentComponent
       subTitle: this.hideSubTitle
         ? []
         : [
-            `创建时间：${new Date(data.created * 1000).toLocaleDateString()} | 更新时间：${new Date(data.modified * 1000).toLocaleDateString()}`,
+            `创建时间：${new Date(data.created * 1000).toLocaleDateString()} | 更新时间：${new Date(
+              data.modified * 1000
+            ).toLocaleDateString()}`,
             `${data.views} 次阅读 ${data.allow_comment ? `•  ${data.comments} 条评论 ` : ''}•  ${data.likes} 人喜欢`
           ],
       ...(data.banner ? { imageUrl: data.banner } : {})
@@ -166,6 +171,10 @@ export class PostContentComponent
   }
 
   private async renderContent(data: ResPostSingleData) {
+    if (!this.highlighter) {
+      this.highlighter = await this.highlighterService.getHighlighter()
+    }
+
     this.post = {
       ...data,
       url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(
@@ -173,12 +182,10 @@ export class PostContentComponent
       ),
       tags: data.tags.map((tag) => [tag, randomRTagType()])
     }
-    const highlighter = await createHighlighter({
-      themes: ['vitesse-light'],
-      langs: SUPPORTS_HIGHLIGHT_LANGUAGES
-    })
-    this.highlighter = highlighter
-    this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(this.mdParser.render(data.text))
+
+    const rawHtml = this.mdParser.render(data.text)
+    this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(rawHtml)
+
     if (!this.hideToc) this.toc = this.generateToc(data.text)
     this.updateHeaderContent()
   }
@@ -192,53 +199,47 @@ export class PostContentComponent
     return this.comments.slice(start, start + this.pageSize)
   }
 
-  public async ngOnInit() {
+  public ngOnInit() {
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      this.currentUser = user
+    })
+
+    from(this.highlighterService.getHighlighter())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((h) => {
+        this.highlighter = h
+      })
+
     if (this.defaultPostData) {
-      this.renderContent(this.defaultPostData)
+      from(this.highlighterService.getHighlighter())
+        .pipe(
+          takeUntil(this.destroy$),
+          switchMap(() => from(Promise.resolve(this.renderContent(this.defaultPostData!))))
+        )
+        .subscribe()
     } else {
       this.setData(
         (set) => this.apiService.getPost(this.id).subscribe((data) => set(data)),
         (data) => {
           this.notifyService.setTitle(data.title)
-          this.renderContent(data)
+          from(this.highlighterService.getHighlighter())
+            .pipe(
+              takeUntil(this.destroy$),
+              switchMap(() => from(Promise.resolve(this.renderContent(data))))
+            )
+            .subscribe()
         }
       )
     }
-    this.apiService.getCommentsByPost(this.id).subscribe((comments) => {
-      this.comments = this.parseComments(comments)
-    })
-    if (!this.hideRelatedPosts) {
-      // TODO: related posts
-      this.apiService.getPosts().subscribe((posts) => {
-        const currentIndex = posts.findIndex((post) => post.id === this.id)
-        this.relatedPosts =
-          currentIndex === -1
-            ? []
-            : [
-                currentIndex > 0
-                  ? {
-                      url: `/post/${posts[currentIndex - 1].id}`,
-                      title: posts[currentIndex - 1].title,
-                      type: 'prev'
-                    }
-                  : undefined,
-                currentIndex < posts.length - 1
-                  ? {
-                      url: `/post/${posts[currentIndex + 1].id}`,
-                      title: posts[currentIndex + 1].title,
-                      type: 'next'
-                    }
-                  : undefined
-              ]
+
+    this.apiService
+      .getCommentsByPost(this.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((comments) => {
+        this.comments = this.parseComments(comments)
       })
-    }
   }
 
-  public ngOnDestroy() {
-    this.highlighter?.dispose()
-  }
-
-  // TODO: donate page
   public donate() {}
 
   public viewPost() {}
@@ -270,12 +271,16 @@ export class PostContentComponent
         this.id,
         this.replyingTo ? `@${this.replyingTo.username}#${this.replyingTo.cid} ${this.commentText}` : this.commentText
       )
+      .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.apiService.getCommentsByPost(this.id).subscribe((comments) => {
-          this.comments = this.parseComments(comments)
-          this.commentText = ''
-          this.replyingTo = null
-        })
+        this.apiService
+          .getCommentsByPost(this.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((comments) => {
+            this.comments = this.parseComments(comments)
+            this.commentText = ''
+            this.replyingTo = null
+          })
       })
   }
 

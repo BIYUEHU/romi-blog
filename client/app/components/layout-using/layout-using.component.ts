@@ -18,31 +18,24 @@ import { APlayer } from '../../shared/types'
   templateUrl: './layout-using.component.html'
 })
 export class LayoutUsingComponent implements OnInit, OnDestroy {
+  @Input() public imageHeight = ''
+  @Input() public fullBackground = false
+  @Input() public displayFooter = true
+
   private initHeaderData = {
     title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
     imageUrl: 'https://api.hotaru.icu/ial/background?id=2'
   }
 
-  public showBackTop = false
-
-  @Input() public imageHeight = ''
-
-  public headerImageHeight = 'h-350px'
-
-  public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
-
-  @Input()
-  public fullBackground = false
-
-  @Input()
-  public displayFooter = true
+  private musicList?: ResMusicData[]
 
   protected aplayer?: APlayer
-
   protected aplayerTimer?: number
 
-  private musicList?: ResMusicData[]
+  public showBackTop = false
+  public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
+  public headerImageHeight = 'h-350px'
 
   public constructor(
     private readonly router: Router,
@@ -76,11 +69,12 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
       ...this.initHeaderData,
       ...data
     }
-    if (this.imageHeight || this.fullBackground) return
-    this.headerImageHeight = `h-${
-      (this.headerData.title?.length ??
-        0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
-    }px`
+    if (!this.imageHeight && !this.fullBackground) {
+      this.headerImageHeight = `h-${
+        (this.headerData.title?.length ??
+          0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
+      }px`
+    }
   }
 
   private handleRouteEvent(event: object) {
@@ -94,9 +88,12 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   }
 
   public togglePlayer(isFirst: boolean) {
-    if (this.router.url === '/music') return
-    const playerDisabled = this.browserService.store!.getItem(KEYS.APLAYER_DISABLED) === 'true'
-    if (isFirst && playerDisabled) return
+    if (
+      this.router.url === '/music' ||
+      (isFirst && this.browserService.store!.getItem(KEYS.APLAYER_DISABLED) === 'true')
+    ) {
+      return
+    }
 
     if (this.aplayer) {
       this.browserService.store!.setItem(KEYS.APLAYER_DISABLED, 'true')
@@ -118,14 +115,14 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
       theme: 'var(--primary-100)',
       audio: this.musicList
     })
-    this.aplayer
-    if (this.aplayerTimer) return
 
-    this.aplayerTimer = Number(
-      setInterval(() => {
-        if (this.aplayer) this.browserService.store!.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
-      }, 1000)
-    )
+    if (!this.aplayerTimer) {
+      this.aplayerTimer = Number(
+        setInterval(() => {
+          if (this.aplayer) this.browserService.store!.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
+        }, 1000)
+      )
+    }
   }
 
   public ngOnDestroy() {

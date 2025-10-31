@@ -1,5 +1,3 @@
-/** 我草你妈的，傻逼支那豚，你翻你妈的代码 **/
-
 #[macro_use]
 extern crate rocket;
 

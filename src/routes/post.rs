@@ -3,10 +3,11 @@ use crate::guards::access::{Access, AccessLevel};
 use crate::guards::admin::AdminUser;
 use crate::models::post::{
     ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
+    ResPostSingleDataRelatedPost,
 };
+use crate::service::pool::Db;
 use crate::tools::markdown::summary_markdown;
 use crate::utils::api::{api_ok, ApiError, ApiResult};
-use crate::service::pool::Db;
 use anyhow::Context;
 use futures::future::{join_all, try_join_all};
 use futures::try_join;
@@ -15,7 +16,7 @@ use rocket::State;
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, DbErr,
-    EntityTrait, IntoActiveModel, QueryFilter, TransactionTrait, TryIntoModel,
+    EntityTrait, IntoActiveModel, QueryFilter, QueryOrder, TransactionTrait, TryIntoModel,
 };
 use sea_orm_rocket::Connection;
 use std::collections::HashSet;
@@ -134,6 +135,22 @@ pub async fn fetch(
                 .with_context(|| format!("Failed to fetch metas of post {}", id))?;
             let password = model.password.clone().filter(|p| !p.is_empty());
 
+            let prev_post = romi_posts::Entity::find()
+                .filter(romi_posts::Column::Hide.ne(1))
+                .filter(romi_posts::Column::Pid.lt(id))
+                .order_by_desc(romi_posts::Column::Pid)
+                .one(db)
+                .await
+                .with_context(|| format!("Failed to fetch prev post for {}", id))?;
+
+            let next_post = romi_posts::Entity::find()
+                .filter(romi_posts::Column::Hide.ne(1))
+                .filter(romi_posts::Column::Pid.gt(id))
+                .order_by_asc(romi_posts::Column::Pid)
+                .one(db)
+                .await
+                .with_context(|| format!("Failed to fetch next post for {}", id))?;
+
             let response = ResPostSingleData {
                 id: model.pid.clone(),
                 title: model.title.clone(),
@@ -159,6 +176,14 @@ pub async fn fetch(
                 likes: model.likes,
                 comments: model.comments,
                 banner: model.banner.clone(),
+                prev: prev_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    title: m.title,
+                }),
+                next: next_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    title: m.title,
+                }),
             };
 
             l_debug!(logger, "Successfully fetched post: {}", model.title);
