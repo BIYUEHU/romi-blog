@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs'
 import { ResHitokotoData } from '../../models/api.model'
@@ -33,7 +33,7 @@ export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>(
       title: '语录墙'
     })
 
-    this.loadData(this.apiService.getHitokotos(true).pipe(map((data) => this.shuffleArray(data)))).subscribe((data) => {
+    this.load(this.apiService.getHitokotos(true).pipe(map((data) => this.shuffleArray(data))), (data) => {
       this.notifyService.updateHeaderContent({
         title: '语录墙',
         subTitle: [`共 ${data.length} 条语录`]

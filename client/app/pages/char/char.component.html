@@ -42,7 +42,8 @@
           @if (data.birthday !== null) {
           <div>
             <span class="text-xs text-accent-100">生日</span>
-            <div class="text-bg-300">{{ (data.birthday | date:'MM-dd') }}</div>
+            <div class="text-bg-300">
+                {{ (data.birthday * 1000 | date:'MM-dd' : 'UTC') }} {{ data.birthday }}</div>
           </div>
           }
           @if (data.series) {

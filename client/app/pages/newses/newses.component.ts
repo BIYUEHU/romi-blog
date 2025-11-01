@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import { AsyncPipe, DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -28,20 +28,24 @@ interface GroupedNews {
 @Component({
   selector: 'app-newses',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, LoadingComponent],
+  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, LoadingComponent, AsyncPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newses.component.html'
 })
 export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses') implements OnInit {
+  private static readonly PAGE_SIZE = 15
+
   public isAdmin = false
   public isLoading = true
   public newText = ''
   public displayedNews: ResNewsData[] = []
+  public groupedNews: GroupedNews[] = []
   public toc: TocItem[] = []
   public currentPage = 1
-  private readonly pageSize = 15
-  public url = ''
-  public groupedNews: GroupedNews[] = []
+
+  public get url() {
+    return this.browserService.isBrowser ? window.location.href : ''
+  }
 
   public constructor(
     private readonly authService: AuthService,
@@ -60,13 +64,10 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
       subTitle: []
     })
 
-    this.loadData(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data)))).subscribe((data) => {
+    this.load(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data))), (data) => {
       this.isLoading = false
       this.refresh(data)
     })
-
-    if (!this.browserService.isBrowser) return
-    this.url = `${location.origin}/news`
   }
 
   private generateToc(news: ResNewsData[]) {
@@ -116,9 +117,7 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
   }
 
   private reloadNews() {
-    this.loadData(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data)))).subscribe((data) => {
-      this.refresh(data)
-    })
+    this.load(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data))), (data) => this.refresh(data))
   }
 
   private groupNewsByDate(news: ResNewsData[]) {
@@ -153,13 +152,16 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
     this.displayedNews = grouped
       .slice(0, this.currentPage)
       .flatMap((group) => group.news)
-      .slice(0, this.pageSize)
+      .slice(0, NewsesComponent.PAGE_SIZE)
     this.generateToc(data)
   }
 
   public loadMore() {
     const allNews = this.groupedNews.flatMap((group) => group.news)
-    const nextItems = allNews.slice(this.currentPage * this.pageSize, (this.currentPage + 1) * this.pageSize)
+    const nextItems = allNews.slice(
+      this.currentPage * NewsesComponent.PAGE_SIZE,
+      (this.currentPage + 1) * NewsesComponent.PAGE_SIZE
+    )
     if (nextItems.length === 0) {
       this.notifyService.showMessage('没有更多了', 'info')
       return

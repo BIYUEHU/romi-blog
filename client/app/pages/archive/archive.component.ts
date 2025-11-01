@@ -32,7 +32,7 @@ export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archi
   }
 
   public async ngOnInit() {
-    this.loadData(this.apiService.getPosts()).subscribe((posts) => {
+    this.load(this.apiService.getPosts(), (posts) => {
       this.groupedPosts = posts.reduce((acc, post) => {
         const date = new Date(post.created * 1000)
         const year = date.getFullYear().toString()

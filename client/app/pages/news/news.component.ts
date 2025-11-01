@@ -30,8 +30,7 @@ export class NewsComponent extends romiComponentFactory<ResNewsData>('news') imp
       this.router.navigate(['/404']).then(() => {})
       return
     }
-    this.loadData(this.apiService.getNews(id)).subscribe((data) => {
-      this.data = data
+    this.load(this.apiService.getNews(id), (data) => {
       this.isLoading = false
       this.notifyService.setTitle(data.text)
       this.notifyService.updateHeaderContent({

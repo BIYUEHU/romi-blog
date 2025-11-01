@@ -3,7 +3,7 @@ import { map } from 'rxjs'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { handlePostList, sortByCreatedTime } from '../../utils'
+import { sortByCreatedTime } from '../../utils'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
@@ -20,12 +20,16 @@ export class PostsComponent extends romiComponentFactory<ResPostData[]>('posts')
 
   public ngOnInit(): void {
     this.notifyService.updateHeaderContent({ title: '文章列表', subTitle: [] })
-
-    // TODO: handle posts and posts locked need auth but cache data cannot get
-    this.loadData(this.apiService.getPosts())
-      .pipe(map((data) => handlePostList(sortByCreatedTime(data))))
-      .subscribe((data) => {
-        this.data = data
-      })
+    this.load(
+      this.apiService
+        .getPosts()
+        .pipe(
+          map((data) =>
+            sortByCreatedTime(data).map((post) =>
+              post.password === 'password' ? { ...post, summary: '文章已加密' } : post
+            )
+          )
+        )
+    )
   }
 }

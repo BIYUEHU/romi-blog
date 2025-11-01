@@ -60,7 +60,7 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
       subTitle: ['这里是我的一些开源作品，大部分都是练手或者实用的小工具']
     })
 
-    this.loadData(this.apiService.getProjects()).subscribe(() => {
+    this.load(this.apiService.getProjects(), () => {
       this.isLoading = false
     })
   }

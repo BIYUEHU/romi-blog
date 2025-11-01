@@ -193,7 +193,7 @@
         <h3 class="text-lg font-medium text-bg-200 mb-4">目录</h3>
         <nav class="space-y-2 max-h-70vh">
           @for (item of toc; track $index) {
-          <a [href]="post.url + '#' + item.text" class="block text-accent-100 hover:text-primary-100 transition-colors"
+          <a [routerLink]="[]" [fragment]="item.text" class="block text-accent-100 hover:text-primary-100 transition-colors"
             [style.padding-left]="(item.level - 1) * 12 + 'px'">
             {{ item.text }}
           </a>

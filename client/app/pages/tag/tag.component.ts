@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
+import { map } from 'rxjs'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { sortByCreatedTime } from '../../utils'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
@@ -27,17 +27,19 @@ export class TagComponent extends romiComponentFactory<ResPostData[]>('home') im
     this.tagName = this.route.snapshot.paramMap.get('name') ?? ''
     if (!this.tagName) return
 
-    this.loadData(this.apiService.getPosts()).subscribe((data) => {
-      this.data = data.filter((post) => post.tags.includes(this.tagName))
-      if (this.data.length === 0) {
-        this.router.navigate(['/404'])
-        return
+    this.load(
+      this.apiService.getPosts().pipe(map((data) => data.filter((post) => post.tags.includes(this.tagName)))),
+      (data) => {
+        if (data.length === 0) {
+          this.router.navigate(['/404'])
+          return
+        }
+        this.notifyService.setTitle(`${this.tagName} 标签`)
+        this.notifyService.updateHeaderContent({
+          title: `#${this.tagName}`,
+          subTitle: [`共 ${data.length} 篇文章`]
+        })
       }
-      this.notifyService.setTitle(`${this.tagName} 标签`)
-      this.notifyService.updateHeaderContent({
-        title: `#${this.tagName}`,
-        subTitle: [`共 ${this.data.length} 篇文章`]
-      })
-    })
+    )
   }
 }

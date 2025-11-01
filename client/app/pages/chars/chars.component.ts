@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
+import { map } from 'rxjs'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResCharacterData } from '../../models/api.model'
@@ -25,14 +26,18 @@ export class CharsComponent extends romiComponentFactory<ResCharacterData[]>('ch
   }
 
   public ngOnInit() {
-    this.loadData(this.apiService.getCharacters()).subscribe((data) => {
-      this.isLoading = false
-      this.data = data.filter(({ hide }) => !hide).sort((a, b) => a.order - b.order)
-      this.notifyService.updateHeaderContent({
-        title: '角色收藏',
-        subTitle: [`总计 ${data.length} 位角色`, '这里收集了曾经历的故事中邂逅并令之心动的美少女角色~']
-      })
-    })
+    this.load(
+      this.apiService
+        .getCharacters()
+        .pipe(map((data) => data.filter(({ hide }) => !hide).sort((a, b) => a.order - b.order))),
+      (data) => {
+        this.isLoading = false
+        this.notifyService.updateHeaderContent({
+          title: '角色收藏',
+          subTitle: [`总计 ${data.length} 位角色`, '这里收集了曾经历的故事中邂逅并令之心动的美少女角色~']
+        })
+      }
+    )
   }
 
   public get filteredChars() {

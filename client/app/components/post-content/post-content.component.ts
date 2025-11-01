@@ -218,7 +218,7 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
         )
         .subscribe()
     } else {
-      this.loadData(this.apiService.getPost(this.id)).subscribe((data) => {
+      this.load(this.apiService.getPost(this.id), (data) => {
         this.notifyService.setTitle(data.title)
         from(this.highlighterService.getHighlighter())
           .pipe(

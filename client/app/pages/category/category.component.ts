@@ -28,17 +28,21 @@ export class CategoryComponent extends romiComponentFactory<ResPostData[]>('home
     this.categoryName = this.route.snapshot.paramMap.get('name') ?? ''
     if (!this.categoryName) return
 
-    this.loadData(this.apiService.getPosts().pipe(map((data) => sortByCreatedTime(data)))).subscribe((data) => {
-      this.data = data.filter((post) => post.categories.includes(this.categoryName))
-      if (this.data.length === 0) {
-        this.router.navigate(['/404']).then(() => {})
-        return
+    this.load(
+      this.apiService
+        .getPosts()
+        .pipe(map((data) => sortByCreatedTime(data).filter((post) => post.categories.includes(this.categoryName)))),
+      (data) => {
+        if (data.length === 0) {
+          this.router.navigate(['/404']).then(() => {})
+          return
+        }
+        this.notifyService.setTitle(`${this.categoryName} 分类`)
+        this.notifyService.updateHeaderContent({
+          title: this.categoryName,
+          subTitle: [`共 ${this.data?.length ?? 0} 篇文章`]
+        })
       }
-      this.notifyService.setTitle(`${this.categoryName} 分类`)
-      this.notifyService.updateHeaderContent({
-        title: this.categoryName,
-        subTitle: [`共 ${this.data?.length ?? 0} 篇文章`]
-      })
-    })
+    )
   }
 }

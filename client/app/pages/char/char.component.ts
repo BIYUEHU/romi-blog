@@ -68,34 +68,34 @@ export class CharComponent
       if (music.length > 0) this.aplayer.play()
     })
 
-    this.loadData(
+    this.load(
       this.apiService
         .getCharacter(id)
-        .pipe(map((data) => ({ ...data, tags: data.tags.map((tag) => [tag, randomRTagType()]) })))
-    ).subscribe((data) => {
-      this.data = data
-      this.isLoading = false
-      this.notifyService.updateHeaderContent({
-        title: data.name,
-        subTitle: [data.romaji, data.description]
-      })
-      if (!this.browserService.isBrowser) return
-
-      this.notifyService.setTitle(`${data.name} ${data.romaji}`)
-
-      setTimeout(() => {
-        const music = this.getMusic()
-        if (music === undefined) return
-        this.aplayer = new APlayer({
-          container: document.getElementById('aplayer'),
-          theme: 'var(--primary-100)',
-          lrcType: 1,
-          audio: music,
-          ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
+        .pipe(map((data) => ({ ...data, tags: data.tags.map((tag) => [tag, randomRTagType()]) }))),
+      (data) => {
+        this.isLoading = false
+        this.notifyService.updateHeaderContent({
+          title: data.name,
+          subTitle: [data.romaji, data.description]
         })
-        if (music.length > 0) this.aplayer.play()
-      }, 0)
-    })
+        if (!this.browserService.isBrowser) return
+
+        this.notifyService.setTitle(`${data.name} ${data.romaji}`)
+
+        setTimeout(() => {
+          const music = this.getMusic()
+          if (music === undefined) return
+          this.aplayer = new APlayer({
+            container: document.getElementById('aplayer'),
+            theme: 'var(--primary-100)',
+            lrcType: 1,
+            audio: music,
+            ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
+          })
+          if (music.length > 0) this.aplayer.play()
+        }, 0)
+      }
+    )
   }
 
   public ngOnDestroy(): void {

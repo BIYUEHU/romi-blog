@@ -1,7 +1,10 @@
 # Todo
 
-- [ ] buildingify some configuation（Website default title, nav, favicon, highlighter language）
+- [ ] Get ip bug fix
+- [ ] building-ify some configure files（Website default title, nav, favicon, highlighter language）
+
 <!-- - [ ] Support more markdown-it plugins -->
+
 - [ ] Blog content search
 - [ ] Support private news
 - [ ] Settings and customization

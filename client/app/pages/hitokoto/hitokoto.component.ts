@@ -40,7 +40,7 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
   }
 
   private loadHitokoto(id?: number): void {
-    this.loadData(this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined)).subscribe((data) =>
+    this.load(this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined), (data) =>
       this.notifyService.setTitle(data.msg)
     )
   }

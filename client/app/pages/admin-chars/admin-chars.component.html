@@ -87,7 +87,11 @@
                   {{ char.name }}
                 </a>
                 <div class="text-sm text-gray-500">
-                  {{ char?.birthday | date:'MM-dd' }}
+                  @if (char && char.birthday !== null) {
+                      {{ char.birthday * 1000 | date:'MM-dd' : 'UTC' }}
+                  } @else {
+                      未知
+                  }
                 </div>
               </div>
             </div>

@@ -6,7 +6,6 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import type { ReqCharacterData, ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
-import { formatDate } from '../../utils'
 
 @Component({
   selector: 'app-admin-char-edit',
@@ -106,7 +105,10 @@ export class AdminCharEditComponent implements OnInit {
           this.notifyService.showMessage('未找到该角色', 'error')
           return
         }
-        this.charForm = { ...char, birthday: char.birthday ? formatDate(new Date(char.birthday * 1000)) : null }
+        this.charForm = {
+          ...char,
+          birthday: char.birthday ? new Date(char.birthday * 1000).toISOString().slice(0, 16) : null
+        }
 
         this.isLoading = false
       })
@@ -218,7 +220,11 @@ export class AdminCharEditComponent implements OnInit {
     const numberKeys = ['age', 'height', 'weight', 'bust', 'waist', 'hip', 'order'] as const
     const form = {
       ...this.charForm,
-      birthday: this.charForm.birthday ? Math.floor(new Date(this.charForm.birthday).getTime() / 1000) : null
+      birthday: this.charForm.birthday
+        ? Math.floor(
+            ((local) => local.getTime() - local.getTimezoneOffset() * 60000)(new Date(this.charForm.birthday)) / 1000
+          )
+        : null
     }
     for (const key of numberKeys) {
       if (form[key] === null) continue

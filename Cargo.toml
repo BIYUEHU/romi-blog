@@ -17,9 +17,9 @@ axum = { version = "0.8", features = ["macros"] }
 # axum-extra = { version = "0.10", features = ["cookies"] }
 tower-http = { version = "0.6", features = ["cors", "trace", "fs"] }
 sea-orm = { version = "1.0", features = [
-  "sqlx-mysql",
-  "runtime-tokio-native-tls",
-  "macros",
+    "sqlx-mysql",
+    "runtime-tokio-native-tls",
+    "macros",
 ] }
 tokio = { version = "1.40", features = ["rt-multi-thread", "macros", "fs"] }
 # moka = { version = "0.12", features = ["future"] }
@@ -40,3 +40,4 @@ jsonwebtoken = "9.3.0"
 sysinfo = "0.37"
 uuid = { version = "1.13.1", features = ["v4"] }
 ts-rs = "11.0.1"
+rand = "0.8.5"

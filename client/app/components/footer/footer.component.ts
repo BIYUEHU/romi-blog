@@ -20,17 +20,7 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
   ]
 
   public ngOnInit() {
-    // this.setData(
-    //   (set) => this.apiService.getHitokoto().subscribe((data) => set(data)),
-    //   (data) => {
-    //     this.hitokoto = {
-    //       ...data,
-    //       msg: `${data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg}${data.from.trim() ? ` —— ${data.from}` : ''}`
-    //     }
-    //   }
-    // )
-
-    this.loadData(this.apiService.getHitokoto()).subscribe((data) => {
+    this.load(this.apiService.getHitokoto(), (data) => {
       const msg = data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg
       this.hitokoto = { ...data, msg: `${msg}${data.from.trim() ? ` —— ${data.from}` : ''}` }
     })

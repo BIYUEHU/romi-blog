@@ -28,7 +28,7 @@ export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi
   public ngOnInit(): void {
     this.isLoading = true
 
-    this.loadData(this.apiService.getBangumi(0, this.isAnime)).subscribe((data) => {
+    this.load(this.apiService.getBangumi(0, this.isAnime), (data) => {
       this.isLoading = false
       this.items = data.data
       this.total = data.total

@@ -2075,6 +2075,7 @@ dependencies = [
  "jsonwebtoken",
  "migration",
  "once_cell",
+ "rand",
  "reqwest",
  "roga",
  "sea-orm",
