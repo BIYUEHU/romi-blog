@@ -1,12 +1,15 @@
 use std::{
-    io::BufRead,
+    io::{BufRead, BufReader},
     process::{Child, Command, Stdio},
     sync::Arc,
-    thread::spawn,
+    thread::{self, spawn},
+    time::Duration,
 };
 
 use anyhow::{Context, Result};
 use axum::response::{IntoResponse, Response};
+use http::StatusCode;
+use reqwest::Client;
 use roga::*;
 use tokio::sync::Mutex;
 
@@ -15,7 +18,7 @@ use crate::constant::NODEJS_LOGGER_LABEL;
 #[derive(Clone)]
 pub struct SSR {
     process: Option<Arc<Mutex<Child>>>,
-    client: reqwest::Client,
+    client: Client,
     port: u16,
 }
 
@@ -24,9 +27,9 @@ impl SSR {
         if file.trim().is_empty() {
             return SSR {
                 process: None,
-                client: reqwest::Client::builder()
+                client: Client::builder()
                     .pool_max_idle_per_host(5)
-                    .timeout(std::time::Duration::from_secs(30))
+                    .timeout(Duration::from_secs(30))
                     .build()
                     .unwrap_or_default(),
                 port,
@@ -34,7 +37,7 @@ impl SSR {
         }
 
         let mut process = Command::new("node")
-            .arg(file)
+            .arg(file.clone())
             .env("PORT", port.to_string())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -50,12 +53,15 @@ impl SSR {
             })
             .unwrap();
 
-        std::thread::sleep(std::time::Duration::from_secs(1));
+        l_info!(logger, "SSR launched ➜ http://127.0.0.1:{}", port);
+        l_info!(logger, "Node.js process ID: {}", process.id());
+
+        thread::sleep(Duration::from_secs(1));
 
         if let Some(stderr) = process.stderr.take() {
             let logger = logger.clone();
             spawn(move || {
-                let reader = std::io::BufReader::new(stderr);
+                let reader = BufReader::new(stderr);
                 reader.lines().for_each(|line| {
                     if let Ok(line) = line {
                         l_error!(logger.clone().with_label(NODEJS_LOGGER_LABEL), "{}", line)
@@ -66,18 +72,19 @@ impl SSR {
 
         SSR {
             process: Some(Arc::new(Mutex::new(process))),
-            client: reqwest::Client::builder()
-                .timeout(std::time::Duration::from_secs(30))
-                .build()
-                .unwrap_or_default(),
+            client: Client::builder().timeout(Duration::from_secs(30)).build().unwrap_or_default(),
             port,
         }
+    }
+
+    pub fn is_running(&self) -> bool {
+        self.process.is_some()
     }
 
     pub async fn render(&self, url: &str) -> Result<SSRResponse> {
         if self.process.is_none() {
             return Ok(SSRResponse {
-                status: http::StatusCode::NOT_FOUND,
+                status: StatusCode::NOT_FOUND,
                 headers: vec![("content-type".to_string(), "text/plain".to_string())],
                 body: "404 Not found".as_bytes().to_vec(),
             });
@@ -108,6 +115,14 @@ impl SSR {
 
         Ok(SSRResponse { status, headers, body })
     }
+
+    pub async fn shutdown(&self) {
+        if let Some(process) = &self.process {
+            let mut guard = process.lock().await;
+            let _ = guard.kill();
+            let _ = guard.wait();
+        }
+    }
 }
 
 pub struct SSRResponse {
@@ -132,16 +147,5 @@ impl IntoResponse for SSRResponse {
                 .body(axum::body::Body::from("Internal Server Error"))
                 .unwrap()
         })
-    }
-}
-
-impl Drop for SSR {
-    fn drop(&mut self) {
-        if let Some(process) = &self.process {
-            if let Ok(mut guard) = process.try_lock() {
-                let _ = guard.kill();
-                let _ = guard.wait();
-            }
-        }
     }
 }

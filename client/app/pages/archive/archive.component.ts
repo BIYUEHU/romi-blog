@@ -3,7 +3,6 @@ import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { sortByCreatedTime } from '../../utils'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
@@ -33,26 +32,23 @@ export class ArchiveComponent extends romiComponentFactory<ResPostData[]>('archi
   }
 
   public async ngOnInit() {
-    this.setData(
-      (set) => this.apiService.getPosts().subscribe((posts) => set(sortByCreatedTime(posts))),
-      (posts) => {
-        this.groupedPosts = posts.reduce((acc, post) => {
-          const date = new Date(post.created * 1000)
-          const year = date.getFullYear().toString()
-          let index = acc.findIndex(([target]) => target === year)
-          index = index === -1 ? acc.push([year, []]) - 1 : index
-          acc[index][1].push({
-            date: `${((result) => (result > 10 ? result : `0${result}`))(date.getMonth() + 1)}-${((result) => (result > 10 ? result : `0${result}`))(date.getDate())}`,
-            title: post.title,
-            id: post.id
-          })
-          return acc
-        }, this.groupedPosts)
-        // biome-ignore lint: *
-        this.tags = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.tags])), [] as string[])
-        // biome-ignore lint: *
-        this.categories = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.categories])), [] as string[])
-      }
-    )
+    this.loadData(this.apiService.getPosts()).subscribe((posts) => {
+      this.groupedPosts = posts.reduce((acc, post) => {
+        const date = new Date(post.created * 1000)
+        const year = date.getFullYear().toString()
+        let index = acc.findIndex(([target]) => target === year)
+        index = index === -1 ? acc.push([year, []]) - 1 : index
+        acc[index][1].push({
+          date: `${((result) => (result > 10 ? result : `0${result}`))(date.getMonth() + 1)}-${((result) => (result > 10 ? result : `0${result}`))(date.getDate())}`,
+          title: post.title,
+          id: post.id
+        })
+        return acc
+      }, this.groupedPosts)
+      // biome-ignore lint: *
+      this.tags = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.tags])), [] as string[])
+      // biome-ignore lint: *
+      this.categories = posts.reduce((acc, post) => Array.from(new Set([...acc, ...post.categories])), [] as string[])
+    })
   }
 }

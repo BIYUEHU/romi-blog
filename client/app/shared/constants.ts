@@ -1,6 +1,7 @@
 import { isDevMode } from '@angular/core'
 import pkg from '../../../package.json'
-import { environment as env, environment as envDev } from '../../environments/environment.development'
+import { environment as env } from '../../environments/environment'
+import { environment as envDev } from '../../environments/environment.development'
 import { LoggerService } from '../services/logger.service'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO

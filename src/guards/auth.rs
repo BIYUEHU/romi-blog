@@ -5,6 +5,7 @@ use axum::{
 };
 use jsonwebtoken::{Algorithm, DecodingKey, Validation, decode};
 use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
 use crate::app::AppState;
 
@@ -15,7 +16,8 @@ pub enum AccessLevel {
     Admin,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, TS)]
+#[ts(export, export_to = "../client/output.ts")]
 pub struct AuthUser {
     pub id: u32,
     pub username: String,

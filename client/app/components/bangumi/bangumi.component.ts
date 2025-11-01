@@ -13,12 +13,13 @@ import { CardComponent } from '../card/card.component'
   templateUrl: './bangumi.component.html'
 })
 export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi') implements OnInit {
-  private offset = 0
+  @Input({ required: true }) public isAnime!: boolean
 
   public isLoading = true
   public items: BangumiData['data'] = []
 
-  @Input({ required: true }) public isAnime!: boolean
+  private offset = 0
+  private total = 0
 
   public constructor(private readonly notifyService: NotifyService) {
     super()
@@ -27,47 +28,35 @@ export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi
   public ngOnInit(): void {
     this.isLoading = true
 
-    this.setData(
-      (set) => this.loadData(true).then((data) => set(data)),
-      (data) => {
-        this.isLoading = false
-        this.items = data.data
-        this.offset = this.offset + 50 > data.total ? data.total : this.offset + 50
-        if (this.isAnime) {
-          this.notifyService.updateHeaderContent({
-            title: '追番列表',
-            subTitle: [`共 ${data.total} 部番剧`]
-          })
-        } else {
-          this.notifyService.updateHeaderContent({
-            title: 'Gal 列表',
-            subTitle: [`共 ${data.total} 部 Gal`]
-          })
-        }
-      }
-    )
-  }
+    this.loadData(this.apiService.getBangumi(0, this.isAnime)).subscribe((data) => {
+      this.isLoading = false
+      this.items = data.data
+      this.total = data.total
+      this.offset = Math.min(50, data.total)
 
-  private loadData<T extends boolean, R = Promise<true extends T ? BangumiData : void>>(isFirst: T): R {
-    return new Promise((resolve) => {
-      if (!isFirst && this.offset === this.data?.total) {
-        this.notifyService.showMessage('没有更多了', 'info')
-        resolve(undefined)
-        return
-      }
-      this.apiService.getBangumi(this.offset, this.isAnime).subscribe((data) => {
-        if (isFirst) {
-          resolve(data)
-        } else {
-          this.items = [...this.items, ...data.data]
-          this.offset = this.offset + 50 > data.total ? data.total : this.offset + 50
-          resolve(undefined)
-        }
-      })
-    }) as R
+      this.updateHeader()
+    })
   }
 
   public loadMore(): void {
-    this.loadData(false).then()
+    if (this.offset >= this.total) {
+      this.notifyService.showMessage('没有更多了', 'info')
+      return
+    }
+
+    this.apiService.getBangumi(this.offset, this.isAnime).subscribe((data) => {
+      this.items = [...this.items, ...data.data]
+      this.offset = Math.min(this.offset + 50, this.total)
+    })
+  }
+
+  private updateHeader(): void {
+    const title = this.isAnime ? '追番列表' : 'Gal 列表'
+    const typeName = this.isAnime ? '番剧' : 'Gal'
+
+    this.notifyService.updateHeaderContent({
+      title,
+      subTitle: [`共 ${this.total} 部${typeName}`]
+    })
   }
 }

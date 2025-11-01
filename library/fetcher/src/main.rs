@@ -1,7 +1,7 @@
 use std::fs::write;
 
 use fetcher::playlist::fetch_playlist;
-use roga::{transport::console::ConsoleTransport, Logger, LoggerLevel};
+use roga::{Logger, LoggerLevel, transport::console::ConsoleTransport};
 
 #[tokio::main]
 async fn main() {

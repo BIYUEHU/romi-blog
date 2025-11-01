@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
@@ -60,11 +60,8 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
       subTitle: ['这里是我的一些开源作品，大部分都是练手或者实用的小工具']
     })
 
-    this.setData(
-      (set) => this.apiService.getProjects().subscribe((data) => set(data)),
-      () => {
-        this.isLoading = false
-      }
-    )
+    this.loadData(this.apiService.getProjects()).subscribe(() => {
+      this.isLoading = false
+    })
   }
 }

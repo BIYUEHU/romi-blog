@@ -1,5 +1,7 @@
 use axum::{extract::FromRequestParts, http::request::Parts};
 
+use crate::utils::http::get_req_user_agent;
+
 #[derive(Debug)]
 pub struct ClientInfo {
     pub ip: String,
@@ -19,12 +21,7 @@ where
                 .get::<axum::extract::ConnectInfo<std::net::SocketAddr>>()
                 .map(|ci| ci.0.ip().to_string())
                 .unwrap_or_else(|| "unknown".into()),
-            user_agent: parts
-                .headers
-                .get("User-Agent")
-                .and_then(|v| v.to_str().ok())
-                .unwrap_or("unknown")
-                .to_string(),
+            user_agent: get_req_user_agent(&parts.headers).unwrap_or("unknown").into(),
         })
     }
 }

@@ -1,4 +1,8 @@
-use std::{env, fs, path::Path};
+use std::{
+    env, fs,
+    net::{IpAddr, UdpSocket},
+    path::Path,
+};
 
 use anyhow::{Context, Result};
 use config::{Config, File, FileFormat};
@@ -51,4 +55,10 @@ pub fn load_config() -> Result<RomiConfig> {
         })?
         .try_deserialize()
         .map_err(|e| anyhow::anyhow!("Failed to deserialize config: {}", e,))?)
+}
+
+pub fn get_network_ip() -> Option<IpAddr> {
+    let socket = UdpSocket::bind("0.0.0.0:0").ok()?;
+    socket.connect("8.8.8.8:80").ok()?;
+    socket.local_addr().ok()?.ip().into()
 }

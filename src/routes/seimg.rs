@@ -25,13 +25,11 @@ pub fn routes() -> Router<AppState> {
 
 async fn fetch(
     Query(params): Query<std::collections::HashMap<String, String>>,
-    State(state): State<AppState>,
+    State(AppState { ref conn, .. }): State<AppState>,
 ) -> ApiResult<Vec<ResSeimgData>> {
     let limit = params.get("limit").and_then(|l| l.parse().ok()).map_or(1, |l: i32| l.clamp(1, 10));
     let tag = params.get("tag").cloned();
     let r18 = params.get("r18").cloned();
-
-    l_info!(&state.logger, "Fetching seimg with limit={}, r18={:?}, tag={:?}", limit, r18, tag);
 
     let mut conditions = Vec::new();
 
@@ -63,14 +61,12 @@ async fn fetch(
 
     sql.push_str(&format!(" ORDER BY RAND() LIMIT {}", limit));
 
-    let result = romi_seimgs::Entity::find()
-        .from_raw_sql(Statement::from_string(DbBackend::MySql, sql))
-        .all(&state.conn)
-        .await
-        .context("Failed to fetch seimg")?;
-
     api_ok(
-        result
+        romi_seimgs::Entity::find()
+            .from_raw_sql(Statement::from_string(DbBackend::MySql, sql))
+            .all(conn)
+            .await
+            .context("Failed to fetch seimg")?
             .into_iter()
             .map(|img| ResSeimgData {
                 pid: img.pixiv_pid,
@@ -89,12 +85,10 @@ async fn fetch(
 }
 
 async fn create(
-    _admin_user: AdminUser,
-    State(state): State<AppState>,
+    AdminUser(admin_user): AdminUser,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(seimg): Json<ReqSeimgData>,
 ) -> ApiResult<romi_seimgs::Model> {
-    l_info!(&state.logger, "Creating new seimg");
-
     let result = romi_seimgs::ActiveModel {
         id: ActiveValue::not_set(),
         pixiv_pid: ActiveValue::set(seimg.pixiv_pid),
@@ -108,26 +102,31 @@ async fn create(
         r#type: ActiveValue::set(seimg.r#type.clone()),
         url: ActiveValue::set(seimg.url.clone()),
     }
-    .insert(&state.conn)
+    .insert(conn)
     .await
     .context("Failed to create seimg")?;
 
-    l_info!(&state.logger, "Successfully created seimg: id={}", result.id);
+    l_info!(
+        logger,
+        "Created seimg id {} ({}) by admin {} ({})",
+        result.id,
+        seimg.title,
+        admin_user.id,
+        admin_user.username
+    );
     api_ok(result)
 }
 
 async fn update(
-    _admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(seimg): Json<ReqSeimgData>,
-) -> ApiResult<romi_seimgs::Model> {
-    l_info!(&state.logger, "Updating seimg with id={}", id);
-
+) -> ApiResult {
     match romi_seimgs::Entity::find_by_id(id)
-        .one(&state.conn)
+        .one(conn)
         .await
-        .with_context(|| format!("Failed to find seimg with id={}", id))?
+        .with_context(|| format!("Failed to find seimg {}", id))?
     {
         Some(model) => {
             let mut active_model = model.into_active_model();
@@ -140,30 +139,38 @@ async fn update(
             active_model.r#type = ActiveValue::set(seimg.r#type.clone());
             active_model.url = ActiveValue::set(seimg.url.clone());
 
-            let result = active_model
-                .update(&state.conn)
+            active_model
+                .update(conn)
                 .await
-                .with_context(|| format!("Failed to update seimg with id={}", id))?;
+                .with_context(|| format!("Failed to update seimg {}", id))?;
 
-            l_info!(&state.logger, "Successfully updated seimg: id={}", result.id);
-            api_ok(result)
+            l_info!(
+                logger,
+                "Updated seimg {} ({}) by admin {} ({})",
+                id,
+                seimg.title,
+                admin_user.id,
+                admin_user.username
+            );
+            api_ok(())
         }
-        None => Err(ApiError::not_found(format!("Seimg {} not found", id))),
+        None => {
+            l_warn!(logger, "Seimg {} not found", id);
+            Err(ApiError::not_found(format!("Seimg {} not found", id)))
+        }
     }
 }
 
 async fn remove(
-    _admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Deleting seimg with id={}", id);
-
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+) -> ApiResult {
     romi_seimgs::Entity::delete_by_id(id)
-        .exec(&state.conn)
+        .exec(conn)
         .await
-        .with_context(|| format!("Failed to delete seimg with id={}", id))?;
+        .with_context(|| format!("Failed to delete seimg {}", id))?;
 
-    l_info!(&state.logger, "Successfully deleted seimg: id={}", id);
+    l_info!(logger, "Deleted seimg {} by admin {} ({})", id, admin_user.id, admin_user.username);
     api_ok(())
 }

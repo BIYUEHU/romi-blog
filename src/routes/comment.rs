@@ -9,6 +9,7 @@ use migration::Expr;
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, QueryFilter, TransactionTrait,
+    TryIntoModel,
 };
 
 use crate::{
@@ -27,23 +28,22 @@ pub fn routes() -> Router<AppState> {
         .route("/{id}", delete(remove))
 }
 
+// TODO
 async fn fetch_all(
     _admin_user: AdminUser,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
 ) -> ApiResult<Vec<ResCommentData>> {
-    l_info!(&state.logger, "Fetching all comments");
-
     try_join_all(
         romi_comments::Entity::find()
-            .all(&state.conn)
+            .all(conn)
             .await
             .context("Failed to fetch comments")?
             .iter()
             .map(|comment| async {
                 let user = romi_users::Entity::find_by_id(comment.clone().uid)
-                    .one(&state.conn)
+                    .one(conn)
                     .await
-                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))?;
+                    .with_context(|| format!("User {} not found for comment", comment.uid))?;
 
                 user.map(|user| ResCommentData {
                     cid: comment.cid,
@@ -54,29 +54,31 @@ async fn fetch_all(
                     text: comment.clone().text,
                     user_url: user.url,
                 })
-                .ok_or_else(|| ApiError::not_found("User not found"))
+                .ok_or_else(|| {
+                    l_warn!(logger, "User not found for comment {}", comment.cid);
+                    ApiError::not_found("User not found")
+                })
             }),
     )
     .await
     .map(api_ok)?
 }
 
+// TODO
 async fn fetch_by_post(
     Path(pid): Path<u32>,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
 ) -> ApiResult<Vec<ResCommentData>> {
-    l_info!(&state.logger, "Fetching comments for post {}", pid);
-
     try_join_all(
         romi_comments::Entity::find()
             .filter(romi_comments::Column::Pid.eq(pid))
-            .all(&state.conn)
+            .all(conn)
             .await
             .with_context(|| format!("Failed to fetch comments for post {}", pid))?
             .iter()
             .map(|comment| async {
                 let user = romi_users::Entity::find_by_id(comment.uid)
-                    .one(&state.conn)
+                    .one(conn)
                     .await
                     .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))?;
 
@@ -89,7 +91,10 @@ async fn fetch_by_post(
                     text: comment.clone().text,
                     user_url: user.url,
                 })
-                .ok_or_else(|| ApiError::not_found("User not found"))
+                .ok_or_else(|| {
+                    l_warn!(logger, "User not found for comment {}", comment.cid);
+                    ApiError::not_found("User not found")
+                })
             }),
     )
     .await
@@ -99,15 +104,13 @@ async fn fetch_by_post(
 async fn create(
     auth_user: AuthUser,
     client_info: ClientInfo,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(comment): Json<ReqCommentData>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Creating new comment: pid={}, uid={}", comment.pid, auth_user.id);
-
-    let txn = state.conn.begin().await.context("Failed to start transaction")?;
+) -> ApiResult {
+    let txn = conn.begin().await.context("Failed to start transaction")?;
 
     let ClientInfo { ip, user_agent } = client_info;
-    romi_comments::ActiveModel {
+    let comment_model = romi_comments::ActiveModel {
         cid: ActiveValue::not_set(),
         pid: ActiveValue::set(comment.pid),
         uid: ActiveValue::set(auth_user.id),
@@ -132,29 +135,34 @@ async fn create(
 
     txn.commit().await.context("Failed to commit transaction")?;
 
-    romi_users::Entity::find_by_id(auth_user.id)
-        .one(&state.conn)
-        .await
-        .with_context(|| format!("Failed to fetch user {}", auth_user.id))?
-        .ok_or_else(|| ApiError::not_found("User not found"))?;
+    let result = comment_model.try_into_model().context("Failed to convert model")?;
+    l_info!(
+        logger,
+        "Created comment {} for post {} by user {} ({})",
+        result.cid,
+        comment.pid,
+        auth_user.id,
+        auth_user.username
+    );
 
     api_ok(())
 }
 
 async fn remove(
-    _admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Deleting comment: id={}", id);
-
-    let txn = state.conn.begin().await.context("Failed to start transaction")?;
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+) -> ApiResult {
+    let txn = conn.begin().await.context("Failed to start transaction")?;
 
     let comment = romi_comments::Entity::find_by_id(id)
         .one(&txn)
         .await
         .with_context(|| format!("Failed to fetch comment {}", id))?
-        .ok_or_else(|| ApiError::not_found("Comment not found"))?;
+        .ok_or_else(|| {
+            l_warn!(logger, "Comment {} not found", id);
+            ApiError::not_found("Comment not found")
+        })?;
 
     romi_comments::Entity::delete_by_id(id)
         .exec(&txn)
@@ -169,5 +177,15 @@ async fn remove(
         .with_context(|| format!("Failed to update post {} comment count", comment.pid))?;
 
     txn.commit().await.context("Failed to commit transaction")?;
+
+    l_info!(
+        logger,
+        "Deleted comment {} of user {} for post {} by admin {} ({})",
+        id,
+        comment.uid,
+        comment.pid,
+        admin_user.id,
+        admin_user.username
+    );
     api_ok(())
 }

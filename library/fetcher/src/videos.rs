@@ -1,9 +1,10 @@
+use std::{error::Error, time::Duration};
+
 use reqwest::{
-    header::{HeaderMap, HeaderValue, USER_AGENT},
     ClientBuilder,
+    header::{HeaderMap, HeaderValue, USER_AGENT},
 };
 use serde::{Deserialize, Serialize};
-use std::{error::Error, time::Duration};
 use tokio::time::sleep;
 
 #[derive(Debug, Serialize, Clone)]
@@ -61,16 +62,12 @@ struct Owner {
 
 pub async fn fetch_videos(uid: u64, max_attempts: usize) -> Result<Vec<Video>, Box<dyn Error>> {
     let mut headers = HeaderMap::new();
-    headers.insert(
-        USER_AGENT,
-        HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"),
-    );
+    headers
+        .insert(USER_AGENT, HeaderValue::from_static("Mozilla/5.0 (Windows NT 10.0; Win64; x64)"));
 
     let client = ClientBuilder::new().default_headers(headers).build()?;
-    let url = format!(
-        "https://api.bilibili.com/x/space/arc/search?mid={}&pn=1&ps=4&order=pubdate",
-        uid
-    );
+    let url =
+        format!("https://api.bilibili.com/x/space/arc/search?mid={}&pn=1&ps=4&order=pubdate", uid);
 
     for attempt in 1..=max_attempts {
         let res = client.get(&url).send().await?;

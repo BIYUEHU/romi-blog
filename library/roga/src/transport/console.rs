@@ -36,8 +36,7 @@ impl<'a> Transport for ConsoleTransport<'a> {
             .label
             .iter()
             .map(|name| {
-                self.label_template
-                    .replace("{name}", &name.color(self.label_color).to_string())
+                self.label_template.replace("{name}", &name.color(self.label_color).to_string())
             })
             .collect::<Vec<_>>()
             .join(" ");

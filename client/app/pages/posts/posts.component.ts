@@ -1,4 +1,5 @@
 import { Component, type OnInit } from '@angular/core'
+import { map } from 'rxjs'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { ResPostData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
@@ -21,6 +22,10 @@ export class PostsComponent extends romiComponentFactory<ResPostData[]>('posts')
     this.notifyService.updateHeaderContent({ title: '文章列表', subTitle: [] })
 
     // TODO: handle posts and posts locked need auth but cache data cannot get
-    this.setData((set) => this.apiService.getPosts().subscribe((data) => set(handlePostList(sortByCreatedTime(data)))))
+    this.loadData(this.apiService.getPosts())
+      .pipe(map((data) => handlePostList(sortByCreatedTime(data))))
+      .subscribe((data) => {
+        this.data = data
+      })
   }
 }

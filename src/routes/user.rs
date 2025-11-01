@@ -1,7 +1,4 @@
-use std::{
-    env,
-    time::{Duration, SystemTime},
-};
+use std::time::{Duration, SystemTime};
 
 use anyhow::Context;
 use axum::{
@@ -35,19 +32,22 @@ pub fn routes() -> Router<AppState> {
 }
 
 async fn login(
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, ref secret, .. }): State<AppState>,
     Json(credentials): Json<LoginRequest>,
 ) -> ApiResult<LoginResponse> {
-    l_info!(&state.logger, "Login attempt for user: {}", credentials.username);
+    l_info!(logger, "Login attempt for user: {}", credentials.username);
 
     let user = match romi_users::Entity::find()
         .filter(romi_users::Column::Username.eq(&credentials.username))
-        .one(&state.conn)
+        .one(conn)
         .await
         .context("Failed to fetch user")?
     {
         Some(user) if user.password == credentials.password => user,
-        _ => return Err(ApiError::unauthorized("Invalid credentials")),
+        _ => {
+            l_warn!(logger, "Invalid credentials for user: {}", credentials.username);
+            return Err(ApiError::unauthorized("Invalid credentials"));
+        }
     };
 
     let claims = AuthUser {
@@ -63,7 +63,7 @@ async fn login(
         status: user.is_deleted.parse().unwrap_or(1),
     };
 
-    let conn_clone = state.conn.clone();
+    let conn_clone = conn.clone();
     let user_id_clone = user.uid;
     spawn(async move {
         if let Ok(Some(model)) =
@@ -77,27 +77,21 @@ async fn login(
         }
     });
 
-    let token = encode(
-        &Header::default(),
-        &claims,
-        &EncodingKey::from_secret(env::var("FREE_HONG_KONG_SECRET").unwrap().as_bytes()),
-    )
-    .map_err(|_| ApiError::internal("Token generation failed"))?;
+    let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(secret.as_bytes()))
+        .context("Failed to generate token")?;
 
     api_ok(LoginResponse { token })
 }
 
 async fn fetch_all(
     _admin_user: AdminUser,
-    State(state): State<AppState>,
+    State(AppState { ref conn, .. }): State<AppState>,
 ) -> ApiResult<Vec<ResUserData>> {
-    l_info!(&state.logger, "Fetching all users");
-
-    let users =
-        romi_users::Entity::find().all(&state.conn).await.context("Failed to fetch users")?;
-
     api_ok(
-        users
+        romi_users::Entity::find()
+            .all(conn)
+            .await
+            .context("Failed to fetch users")?
             .into_iter()
             .map(|user| ResUserData {
                 uid: user.uid,
@@ -116,13 +110,11 @@ async fn fetch_all(
 async fn fetch(
     _admin_user: AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
 ) -> ApiResult<ResUserData> {
-    l_info!(&state.logger, "Fetching user: id={}", id);
-
     match romi_users::Entity::find_by_id(id)
         .filter(romi_users::Column::IsDeleted.ne("1"))
-        .one(&state.conn)
+        .one(conn)
         .await
         .with_context(|| format!("Failed to fetch user {}", id))?
     {
@@ -136,38 +128,39 @@ async fn fetch(
             status: user.is_deleted.parse().unwrap_or(1),
             url: user.url,
         }),
-        None => Err(ApiError::not_found("User not found")),
+        None => {
+            l_warn!(logger, "User {} not found", id);
+            Err(ApiError::not_found("User not found"))
+        }
     }
 }
 
 async fn create(
-    _admin_user: AdminUser,
-    State(state): State<AppState>,
+    AdminUser(admin_user): AdminUser,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(user): Json<ReqUserData>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Creating new user: {}", user.username);
-
+) -> ApiResult {
     if romi_users::Entity::find()
         .filter(romi_users::Column::Username.eq(&user.username))
-        .one(&state.conn)
+        .one(conn)
         .await
         .context("Failed to fetch user")?
         .is_some()
         || romi_users::Entity::find()
             .filter(romi_users::Column::Email.eq(&user.email))
-            .one(&state.conn)
+            .one(conn)
             .await
             .context("Failed to fetch user")?
             .is_some()
     {
-        l_warn!(&state.logger, "Username or email already taken");
+        l_warn!(logger, "Username or email already taken");
         return Err(ApiError::bad_request("Username or email already taken"));
     }
 
     let salt = "random_salt";
     let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs() as u32;
 
-    romi_users::ActiveModel {
+    let result = romi_users::ActiveModel {
         uid: ActiveValue::not_set(),
         username: ActiveValue::set(user.username.clone()),
         password: ActiveValue::set(user.password.clone()),
@@ -181,23 +174,30 @@ async fn create(
         ),
         url: ActiveValue::set(user.url.clone()),
     }
-    .save(&state.conn)
+    .insert(conn)
     .await
     .context("Failed to create user")?;
+
+    l_info!(
+        logger,
+        "Created user {} ({}) by admin {} ({})",
+        result.uid,
+        user.username,
+        admin_user.id,
+        admin_user.username
+    );
 
     api_ok(())
 }
 
 async fn update(
-    _admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(user): Json<ReqUserData>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Updating user: id={}", id);
-
+) -> ApiResult {
     match romi_users::Entity::find_by_id(id)
-        .one(&state.conn)
+        .one(conn)
         .await
         .with_context(|| format!("Failed to fetch user {}", id))?
     {
@@ -218,34 +218,42 @@ async fn update(
                 );
             }
             active_model
-                .save(&state.conn)
+                .save(conn)
                 .await
                 .with_context(|| format!("Failed to update user {}", id))?;
 
+            l_info!(
+                logger,
+                "Updated user {} ({}) by admin {} ({})",
+                id,
+                user.username,
+                admin_user.id,
+                admin_user.username
+            );
             api_ok(())
         }
         None => {
-            l_warn!(&state.logger, "User not found for update: id={}", id);
+            l_warn!(logger, "User {} not found", id);
             Err(ApiError::not_found("User not found"))
         }
     }
 }
 
 async fn remove(
-    admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
-) -> ApiResult<()> {
-    l_info!(&state.logger, "Deleting user: id={}", id);
-    if admin_user.0.id == id {
-        return Err(ApiError::unauthorized("Cannot delete self"));
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+) -> ApiResult {
+    if admin_user.id == id {
+        l_warn!(logger, "Administrator {} cannot delete self", id);
+        return Err(ApiError::forbidden("Cannot delete self"));
     }
 
     romi_users::Entity::delete_by_id(id)
-        .exec(&state.conn)
+        .exec(conn)
         .await
         .with_context(|| format!("Failed to delete user {}", id))?;
 
-    l_info!(&state.logger, "Successfully deleted user: id={}", id);
+    l_info!(logger, "Deleted user {} by admin {} ({})", id, admin_user.id, admin_user.username);
     api_ok(())
 }

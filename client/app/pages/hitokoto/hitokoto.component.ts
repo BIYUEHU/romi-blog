@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { ResHitokotoData } from '../../models/api.model'
@@ -40,12 +40,8 @@ export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hi
   }
 
   private loadHitokoto(id?: number): void {
-    this.setData(
-      (set) =>
-        this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined).subscribe((data) => {
-          set(data)
-        }),
-      (data) => this.notifyService.setTitle(data.msg)
+    this.loadData(this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined)).subscribe((data) =>
+      this.notifyService.setTitle(data.msg)
     )
   }
 

@@ -43,8 +43,11 @@
 ## Development
 
 - Node.js
+- BiomeJS
 - Python3
 - Rust
+- Git
+- rustfmt (nightly)
 - cargo-watch: `cargo install cargo-watch`
 
 ## License

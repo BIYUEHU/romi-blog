@@ -27,20 +27,17 @@ export class TagComponent extends romiComponentFactory<ResPostData[]>('home') im
     this.tagName = this.route.snapshot.paramMap.get('name') ?? ''
     if (!this.tagName) return
 
-    this.setData(
-      (set) => this.apiService.getPosts().subscribe((data) => set(sortByCreatedTime(data))),
-      (data) => {
-        this.data = data.filter((post) => post.tags.includes(this.tagName))
-        if (this.data.length === 0) {
-          this.router.navigate(['/404'])
-          return
-        }
-        this.notifyService.setTitle(`${this.tagName} 标签`)
-        this.notifyService.updateHeaderContent({
-          title: `#${this.tagName}`,
-          subTitle: [`共 ${this.data.length} 篇文章`]
-        })
+    this.loadData(this.apiService.getPosts()).subscribe((data) => {
+      this.data = data.filter((post) => post.tags.includes(this.tagName))
+      if (this.data.length === 0) {
+        this.router.navigate(['/404'])
+        return
       }
-    )
+      this.notifyService.setTitle(`${this.tagName} 标签`)
+      this.notifyService.updateHeaderContent({
+        title: `#${this.tagName}`,
+        subTitle: [`共 ${this.data.length} 篇文章`]
+      })
+    })
   }
 }

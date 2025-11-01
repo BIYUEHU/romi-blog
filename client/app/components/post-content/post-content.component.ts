@@ -218,18 +218,15 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
         )
         .subscribe()
     } else {
-      this.setData(
-        (set) => this.apiService.getPost(this.id).subscribe((data) => set(data)),
-        (data) => {
-          this.notifyService.setTitle(data.title)
-          from(this.highlighterService.getHighlighter())
-            .pipe(
-              takeUntil(this.destroy$),
-              switchMap(() => from(Promise.resolve(this.renderContent(data))))
-            )
-            .subscribe()
-        }
-      )
+      this.loadData(this.apiService.getPost(this.id)).subscribe((data) => {
+        this.notifyService.setTitle(data.title)
+        from(this.highlighterService.getHighlighter())
+          .pipe(
+            takeUntil(this.destroy$),
+            switchMap(() => from(Promise.resolve(this.renderContent(data))))
+          )
+          .subscribe()
+      })
     }
 
     this.apiService

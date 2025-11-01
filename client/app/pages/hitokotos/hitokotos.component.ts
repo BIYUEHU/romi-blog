@@ -1,5 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { map } from 'rxjs'
 import { ResHitokotoData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
@@ -32,20 +33,14 @@ export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>(
       title: '语录墙'
     })
 
-    this.setData(
-      (set) =>
-        this.apiService.getHitokotos(true).subscribe((data) => {
-          set(this.shuffleArray(data))
-        }),
-      (data) => {
-        this.notifyService.updateHeaderContent({
-          title: '语录墙',
-          subTitle: [`共 ${data.length} 条语录`]
-        })
-        this.isLoading = false
-        this.loadMore()
-      }
-    )
+    this.loadData(this.apiService.getHitokotos(true).pipe(map((data) => this.shuffleArray(data)))).subscribe((data) => {
+      this.notifyService.updateHeaderContent({
+        title: '语录墙',
+        subTitle: [`共 ${data.length} 条语录`]
+      })
+      this.isLoading = false
+      this.loadMore()
+    })
   }
 
   private shuffleArray<T>(array: T[]): T[] {

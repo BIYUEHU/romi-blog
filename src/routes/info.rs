@@ -4,7 +4,6 @@ use anyhow::Context;
 use axum::{Router, extract::State, routing::get};
 use fetcher::playlist::SongInfo;
 use futures::try_join;
-use roga::*;
 use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
 use sysinfo::System;
 
@@ -18,7 +17,7 @@ use crate::{
     models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData},
     service::music::{MusicCache, get_music_cache},
     utils::{
-        api::{ApiError, ApiResult, api_ok},
+        api::{ApiResult, api_ok},
         cache::{get_projects_cache, get_settings_cache},
     },
 };
@@ -33,10 +32,8 @@ pub fn routes() -> Router<AppState> {
 
 async fn fetch_dashboard(
     _admin_user: AdminUser,
-    State(state): State<AppState>,
+    State(AppState { ref conn, .. }): State<AppState>,
 ) -> ApiResult<ResDashboardData> {
-    l_info!(&state.logger, "Fetching dashboard data");
-
     let (
         posts_count,
         categories_count,
@@ -48,19 +45,15 @@ async fn fetch_dashboard(
         seimgs_count,
         news_count,
     ) = try_join!(
-        romi_posts::Entity::find().count(&state.conn),
-        romi_metas::Entity::find()
-            .filter(romi_metas::Column::IsCategory.eq("1"))
-            .count(&state.conn),
-        romi_metas::Entity::find()
-            .filter(romi_metas::Column::IsCategory.ne("1"))
-            .count(&state.conn),
-        romi_comments::Entity::find().count(&state.conn),
-        romi_news_comments::Entity::find().count(&state.conn),
-        romi_users::Entity::find().count(&state.conn),
-        romi_hitokotos::Entity::find().count(&state.conn),
-        romi_seimgs::Entity::find().count(&state.conn),
-        romi_news::Entity::find().count(&state.conn),
+        romi_posts::Entity::find().count(conn),
+        romi_metas::Entity::find().filter(romi_metas::Column::IsCategory.eq("1")).count(conn),
+        romi_metas::Entity::find().filter(romi_metas::Column::IsCategory.ne("1")).count(conn),
+        romi_comments::Entity::find().count(conn),
+        romi_news_comments::Entity::find().count(conn),
+        romi_users::Entity::find().count(conn),
+        romi_hitokotos::Entity::find().count(conn),
+        romi_seimgs::Entity::find().count(conn),
+        romi_news::Entity::find().count(conn),
     )
     .context("Failed to fetch dashboard counts")?;
 
@@ -88,19 +81,18 @@ async fn fetch_dashboard(
     })
 }
 
-async fn fetch_settings(State(state): State<AppState>) -> ApiResult<ResSettingsData> {
-    l_info!(&state.logger, "Fetching site settings");
-    api_ok(get_settings_cache(&state.conn).await.map_err(|e| ApiError::internal(e.to_string()))?)
+async fn fetch_settings(
+    State(AppState { ref conn, .. }): State<AppState>,
+) -> ApiResult<ResSettingsData> {
+    api_ok(get_settings_cache(conn).await.context("Failed to fetch site settings")?)
 }
 
-async fn fetch_projects(State(state): State<AppState>) -> ApiResult<Vec<ResProjectData>> {
-    l_info!(&state.logger, "Fetching projects data from github repository");
-    api_ok(get_projects_cache().await.map_err(|e| ApiError::internal(e.to_string()))?)
+async fn fetch_projects() -> ApiResult<Vec<ResProjectData>> {
+    api_ok(get_projects_cache().await.context("Failed to fetch projects data")?)
 }
 
-async fn fetch_music(State(state): State<AppState>) -> ApiResult<Vec<ResMusicData>> {
-    l_info!(&state.logger, "Fetching music data from netease music");
-    api_ok(get_music_cache().await.map_err(|e| ApiError::internal(e.to_string())).map(
+async fn fetch_music() -> ApiResult<Vec<ResMusicData>> {
+    api_ok(get_music_cache().await.context("Failed to fetch music data").map(
         |MusicCache { data, .. }| {
             data.into_iter()
                 .map(|SongInfo { name, artist, url, cover, lrc }| ResMusicData {

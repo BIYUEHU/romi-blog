@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
+import { map } from 'rxjs/operators' // ✅ 导入 map
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResNewsData } from '../../models/api.model'
@@ -59,13 +60,10 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
       subTitle: []
     })
 
-    this.setData(
-      (set) => this.loadData(true).then((data) => set(sortByCreatedTime(data))),
-      (data) => {
-        this.isLoading = false
-        this.refresh(data)
-      }
-    )
+    this.loadData(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data)))).subscribe((data) => {
+      this.isLoading = false
+      this.refresh(data)
+    })
 
     if (!this.browserService.isBrowser) return
     this.url = `${location.origin}/news`
@@ -113,21 +111,13 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
       .subscribe(() => {
         this.notifyService.showMessage('发送成功', 'success')
         this.newText = ''
-        this.loadData(false)
+        this.reloadNews()
       })
   }
 
-  private loadData(isFirst: boolean): Promise<ResNewsData[]> {
-    return new Promise((resolve) => {
-      if (!isFirst) {
-        this.refresh(this.data as ResNewsData[])
-        return
-      }
-      this.isLoading = true
-      this.apiService.getNewses().subscribe((data) => {
-        this.isLoading = false
-        resolve(data)
-      })
+  private reloadNews() {
+    this.loadData(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data)))).subscribe((data) => {
+      this.refresh(data)
     })
   }
 

@@ -15,6 +15,7 @@ import { renderCharacterBWH } from '../../utils'
   selector: 'app-admin-chars',
   standalone: true,
   imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
+
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-chars.component.html'
 })

@@ -8,7 +8,7 @@ use futures::future::try_join_all;
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter,
-    TransactionTrait, TryIntoModel,
+    TransactionTrait,
 };
 
 use crate::{
@@ -27,13 +27,14 @@ pub fn routes() -> Router<AppState> {
         .route("/{id}", delete(remove))
 }
 
-async fn fetch_all(State(state): State<AppState>) -> ApiResult<Vec<ResMetaData>> {
-    l_info!(&state.logger, "Fetching all metas");
-
+// TODO
+async fn fetch_all(
+    State(AppState { ref conn, .. }): State<AppState>,
+) -> ApiResult<Vec<ResMetaData>> {
     api_ok(
         try_join_all(
             romi_metas::Entity::find()
-                .all(&state.conn)
+                .all(conn)
                 .await
                 .context("Failed to fetch metas")?
                 .iter()
@@ -43,7 +44,7 @@ async fn fetch_all(State(state): State<AppState>) -> ApiResult<Vec<ResMetaData>>
                         name: meta.clone().name,
                         count: romi_relationships::Entity::find()
                             .filter(romi_relationships::Column::Mid.eq(meta.mid))
-                            .count(&state.conn)
+                            .count(conn)
                             .await
                             .context("Failed to count relationships")?,
                         is_category: meta.clone().is_category.eq(&1.to_string()),
@@ -54,11 +55,12 @@ async fn fetch_all(State(state): State<AppState>) -> ApiResult<Vec<ResMetaData>>
     )
 }
 
-async fn fetch(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<ResMetaData> {
-    l_info!(&state.logger, "Fetching meta: id={}", id);
-
+async fn fetch(
+    Path(id): Path<u32>,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+) -> ApiResult<ResMetaData> {
     let meta = romi_metas::Entity::find_by_id(id)
-        .one(&state.conn)
+        .one(conn)
         .await
         .with_context(|| format!("Failed to fetch meta {}", id))?;
 
@@ -69,40 +71,37 @@ async fn fetch(Path(id): Path<u32>, State(state): State<AppState>) -> ApiResult<
                 name: meta.clone().name,
                 count: romi_relationships::Entity::find()
                     .filter(romi_relationships::Column::Mid.eq(id))
-                    .count(&state.conn)
+                    .count(conn)
                     .await
                     .context("Failed to count relationships")?,
                 is_category: meta.is_category.eq(&1.to_string()),
             };
 
-            l_debug!(&state.logger, "Successfully fetched meta: {}", meta.clone().name);
             api_ok(response)
         }
         None => {
-            l_warn!(&state.logger, "Meta not found: id={}", id);
+            l_warn!(logger, "Meta {} not found", id);
             Err(ApiError::not_found("Meta not found"))
         }
     }
 }
 
 async fn create(
-    _admin_user: AdminUser,
-    State(state): State<AppState>,
+    AdminUser(admin_user): AdminUser,
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
     Json(meta): Json<ReqMetaData>,
-) -> ApiResult<romi_metas::Model> {
-    l_info!(&state.logger, "Creating new meta: {}", meta.name);
-
+) -> ApiResult {
     if romi_metas::Entity::find()
         .filter(romi_metas::Column::Name.eq(meta.name.clone()))
         .filter(
             romi_metas::Column::IsCategory.eq(if meta.is_category { "1" } else { "0" }.to_string()),
         )
-        .one(&state.conn)
+        .one(conn)
         .await
         .with_context(|| format!("Failed to check if meta name exists: {}", meta.name))?
         .is_some()
     {
-        l_warn!(&state.logger, "Meta name already exists: {}", meta.name);
+        l_warn!(logger, "Meta name already exists: {}", meta.name);
         return Err(ApiError::bad_request("Meta name already exists"));
     }
 
@@ -111,70 +110,42 @@ async fn create(
         name: ActiveValue::set(meta.name.clone()),
         is_category: ActiveValue::set(if meta.is_category { "1" } else { "0" }.to_string()),
     }
-    .save(&state.conn)
+    .insert(conn)
     .await
-    .context("Failed to create meta")?
-    .try_into_model()
-    .context("Failed to convert meta model")?;
+    .context("Failed to create meta")?;
 
-    l_info!(&state.logger, "Successfully created meta: id={}", result.mid);
-    api_ok(result)
+    l_info!(
+        logger,
+        "Created meta {} ({}) by admin {} ({})",
+        result.mid,
+        meta.name,
+        admin_user.id,
+        admin_user.username
+    );
+    api_ok(())
 }
 
 async fn remove(
-    _admin_user: AdminUser,
+    AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(state): State<AppState>,
-) -> ApiResult<String> {
-    l_info!(&state.logger, "Deleting meta: id={}", id);
-
-    let meta = romi_metas::Entity::find_by_id(id)
-        .one(&state.conn)
-        .await
-        .with_context(|| format!("Failed to fetch meta {}", id))?
-        .ok_or_else(|| ApiError::not_found("Meta not found"))?;
-
-    let txn = state.conn.begin().await.context("Failed to begin transaction")?;
+    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+) -> ApiResult {
+    let txn = conn.begin().await.context("Failed to begin transaction")?;
 
     romi_metas::Entity::delete_by_id(id)
         .exec(&txn)
         .await
         .with_context(|| format!("Failed to delete meta {}", id))?;
 
+    romi_relationships::Entity::delete_many()
+        .filter(romi_relationships::Column::Mid.eq(id))
+        .exec(&txn)
+        .await
+        .with_context(|| format!("Failed to delete relationships for meta {}", id))?;
+
     txn.commit().await.context("Failed to commit transaction")?;
 
-    let conn_clone = state.conn.clone();
-    let meta_type = if meta.is_category == "1" { "category" } else { "tag" };
-    let logger_clone = state.logger.clone();
+    l_info!(logger, "Deleted meta {} by admin {} ({})", id, admin_user.id, admin_user.username);
 
-    tokio::spawn(async move {
-        match romi_relationships::Entity::delete_many()
-            .filter(romi_relationships::Column::Mid.eq(id))
-            .exec(&conn_clone)
-            .await
-        {
-            Ok(result) => {
-                l_info!(
-                    &logger_clone,
-                    "Successfully deleted {} relationships for {} {}",
-                    result.rows_affected,
-                    meta_type,
-                    id
-                );
-            }
-            Err(err) => {
-                l_error!(
-                    &logger_clone,
-                    "Failed to delete relationships for {} {}: {}",
-                    meta_type,
-                    id,
-                    err
-                );
-            }
-        }
-    });
-
-    l_info!(&state.logger, "Successfully deleted {} {}: id={}", meta_type, meta.name, id);
-
-    api_ok(format!("{} '{}' deleted", meta_type, meta.name))
+    api_ok(())
 }

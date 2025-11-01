@@ -4,9 +4,7 @@ use transport::console::ConsoleTransport;
 
 fn main() {
     let logger = Logger::new()
-        .with_transport(ConsoleTransport {
-            ..Default::default()
-        })
+        .with_transport(ConsoleTransport { ..Default::default() })
         .with_level(LoggerLevel::Trace)
         .with_label("Demo");
 
@@ -26,13 +24,7 @@ fn main() {
     let number = 42;
     let text = "sample text";
     let flag = true;
-    l_info!(
-        logger,
-        "Number: {} Text: {} Boolean: {}",
-        number,
-        text,
-        flag
-    );
+    l_info!(logger, "Number: {} Text: {} Boolean: {}", number, text, flag);
 
     println!("\n=== JSON Pretty Print Demo ===");
     let data = json!({
@@ -56,8 +48,5 @@ fn main() {
     println!("\n=== Format String Demo ===");
     let current_time = "2025-01-22 08:35:25";
     let username = "username";
-    l_info!(
-        logger,
-        format!("System check at {} by user {}", current_time, username)
-    );
+    l_info!(logger, format!("System check at {} by user {}", current_time, username));
 }

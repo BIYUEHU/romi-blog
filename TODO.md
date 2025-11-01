@@ -1,6 +1,6 @@
 # Todo
 
-- [ ] 优雅的退出 (axum + py)
+- [ ] buildingify some configuation（Website default title, nav, favicon, highlighter language）
 <!-- - [ ] Support more markdown-it plugins -->
 - [ ] Blog content search
 - [ ] Support private news

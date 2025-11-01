@@ -1,4 +1,4 @@
-import { AuthUser } from './api.model'
+import { AuthUser } from '../../output'
 
 export * from '../../output'
 

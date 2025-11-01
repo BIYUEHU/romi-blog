@@ -1,17 +1,23 @@
 use std::{env, fs, net::SocketAddr};
 
-use axum::{Router, routing::get};
 use roga::{transport::console::ConsoleTransport, *};
 use sea_orm::Database;
-use utils::bootstrap::{get_cors, initialize_directories, load_config, load_env_vars};
+use tokio::signal;
+use utils::bootstrap::{load_config, load_env_vars};
 use uuid::Uuid;
 
-use crate::{app::AppState, service::ssr::SSR};
+use crate::{
+    app::{AppState, build_app},
+    constant::{BUILD_TIME, HASH, VERSION},
+    service::ssr::SSR,
+    utils::bootstrap::{get_network_ip, initialize_directories},
+};
 
 mod app;
 mod constant;
 mod entity;
 mod guards;
+mod middlewares;
 mod models;
 mod routes;
 mod service;
@@ -53,24 +59,28 @@ async fn main() {
             }
         });
 
-    if !config.database_url.trim().is_empty() {
-        unsafe {
-            env::set_var("DATABASE_URL", config.clone().database_url);
-        }
-    }
-    let conn =
-        match Database::connect(env::var("DATABASE_URL").expect("DATABASE_URL not set")).await {
+    let conn = {
+        let database_url = match env::var("DATABASE_URL") {
+            Ok(url) => url,
+            Err(_) if !config.database_url.trim().is_empty() => config.database_url,
+            Err(_) => {
+                l_fatal!(&logger, "DATABASE_URL not set");
+                return;
+            }
+        };
+        match Database::connect(&database_url).await {
             Ok(conn) => conn,
             Err(err) => {
                 l_fatal!(
                     &logger,
                     "Failed to connect to database at {}, error: {}",
-                    config.database_url,
+                    database_url,
                     err
                 );
                 return;
             }
-        };
+        }
+    };
 
     if config.ssr_entry.trim().is_empty() {
         l_warn!(&logger, "SSR entry file not provided, SSR will not be launched")
@@ -84,34 +94,82 @@ async fn main() {
     }
 
     let ssr = SSR::new(config.ssr_entry.clone(), config.port + 1, logger.clone());
-    // let recorder = Recorder::new(logger.clone(), config.clone());
-    let app = Router::new()
-        .nest("/api/post", routes::post::routes())
-        .nest("/api/meta", routes::meta::routes())
-        .nest("/api/comment", routes::comment::routes())
-        .nest("/api/user", routes::user::routes())
-        .nest("/api/hitokoto", routes::hitokoto::routes())
-        .nest("/api/news", routes::news::routes())
-        .nest("/api/character", routes::character::routes())
-        .nest("/api/seimg", routes::seimg::routes())
-        .nest("/api/info", routes::info::routes())
-        .route("/{*path}", get(routes::global::ssr_handler))
-        .layer(get_cors())
-        .with_state(AppState {
-            secret: format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
-            logger: logger.clone(),
-            // config: config.clone(),
-            conn,
-            ssr,
-        });
 
-    let addr = SocketAddr::from((config.address.parse::<std::net::IpAddr>().unwrap(), config.port));
-    l_info!(&logger, "Listening on {}", addr);
+    let app = build_app(AppState {
+        secret: format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
+        logger: logger.clone(),
+        conn,
+        ssr: ssr.clone(),
+    });
 
-    let _ = axum::serve(tokio::net::TcpListener::bind(&addr).await.unwrap(), app)
-        .await
-        .map(|_| ())
-        .map_err(|e| {
-            l_fatal!(&logger, "Failed to launch server: {}", e);
-        });
+    let addr = SocketAddr::from((
+        match config.address.parse::<std::net::IpAddr>() {
+            Ok(addr) => addr,
+            Err(e) => {
+                l_fatal!(&logger, "Invalid address: {}, error: {}", config.address, e);
+                return;
+            }
+        },
+        config.port,
+    ));
+
+    let _ = axum::serve(
+        match tokio::net::TcpListener::bind(&addr).await {
+            Ok(listener) => {
+                l_info!(&logger, "Server launched ➜ http://{}", addr);
+                if config.address.as_str() == "0.0.0.0" {
+                    l_info!(&logger, "Server launched ➜ local http://127.0.0.1:{}", config.port);
+                    if let Some(ip) = get_network_ip() {
+                        l_info!(&logger, "Server launched ➜ network http://{}:{}", ip, config.port);
+                    }
+                }
+
+                l_info!(
+                    &logger,
+                    "RomiChan - By Arimura Sena | Version: v{} HASH: {} BUILD: {}",
+                    VERSION,
+                    HASH,
+                    BUILD_TIME
+                );
+
+                listener
+            }
+            Err(e) => {
+                l_fatal!(&logger, "Failed to bind to address {}, error: {}", addr, e);
+                return;
+            }
+        },
+        app,
+    )
+    .with_graceful_shutdown(shutdown_signal())
+    .await
+    .map_err(|e| {
+        l_fatal!(&logger, "Failed to launch server: {}", e);
+    });
+
+    l_warn!(&logger, "Server are shutting down...");
+    ssr.shutdown().await;
+    l_debug!(&logger, "Server shutdown complete");
+}
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c().await.expect("Failed to install Ctrl+C handler");
+    };
+
+    #[cfg(unix)]
+    let terminate = async {
+        signal::unix::signal(signal::unix::SignalKind::terminate())
+            .expect("Failed to install signal handler")
+            .recv()
+            .await;
+    };
+
+    #[cfg(not(unix))]
+    let terminate = std::future::pending::<()>();
+
+    tokio::select! {
+        _ = ctrl_c => {},
+        _ = terminate => {},
+    }
 }
