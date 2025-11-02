@@ -1,25 +1,26 @@
+use std::collections::HashMap;
+
 use anyhow::Context;
 use axum::{
     Json, Router,
     extract::{Path, State},
     routing::{delete, get, post},
 };
-use futures::future::try_join_all;
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter,
-    TransactionTrait,
+    QuerySelect, TransactionTrait,
 };
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::{romi_metas, romi_relationships},
     guards::admin::AdminUser,
     models::meta::{ReqMetaData, ResMetaData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch_all))
         .route("/", post(create))
@@ -27,37 +28,46 @@ pub fn routes() -> Router<AppState> {
         .route("/{id}", delete(remove))
 }
 
-// TODO
 async fn fetch_all(
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResMetaData>> {
+    let metas = romi_metas::Entity::find().all(conn).await.context("Failed to fetch metas")?;
+
+    if metas.is_empty() {
+        return api_ok(vec![]);
+    }
+
+    let meta_ids: Vec<u32> = metas.iter().map(|m| m.mid).collect();
+
+    let counts: Vec<(u32, i64)> = romi_relationships::Entity::find()
+        .filter(romi_relationships::Column::Mid.is_in(meta_ids))
+        .select_only()
+        .column(romi_relationships::Column::Mid)
+        .column_as(romi_relationships::Column::Mid.count(), "count")
+        .group_by(romi_relationships::Column::Mid)
+        .into_tuple()
+        .all(conn)
+        .await
+        .context("Failed to count relationships")?;
+
+    let count_map: HashMap<u32, i64> = counts.into_iter().collect();
+
     api_ok(
-        try_join_all(
-            romi_metas::Entity::find()
-                .all(conn)
-                .await
-                .context("Failed to fetch metas")?
-                .iter()
-                .map(|meta| async {
-                    Ok::<ResMetaData, ApiError>(ResMetaData {
-                        mid: meta.mid,
-                        name: meta.clone().name,
-                        count: romi_relationships::Entity::find()
-                            .filter(romi_relationships::Column::Mid.eq(meta.mid))
-                            .count(conn)
-                            .await
-                            .context("Failed to count relationships")?,
-                        is_category: meta.clone().is_category.eq(&1.to_string()),
-                    })
-                }),
-        )
-        .await?,
+        metas
+            .iter()
+            .map(|meta| ResMetaData {
+                mid: meta.mid,
+                name: meta.name.clone(),
+                count: (*count_map.get(&meta.mid).unwrap_or(&0)).try_into().unwrap_or(0),
+                is_category: meta.is_category == "1",
+            })
+            .collect(),
     )
 }
 
 async fn fetch(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResMetaData> {
     let meta = romi_metas::Entity::find_by_id(id)
         .one(conn)
@@ -88,7 +98,7 @@ async fn fetch(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(meta): Json<ReqMetaData>,
 ) -> ApiResult {
     if romi_metas::Entity::find()
@@ -128,7 +138,7 @@ async fn create(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     let txn = conn.begin().await.context("Failed to begin transaction")?;
 

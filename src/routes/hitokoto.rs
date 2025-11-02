@@ -11,14 +11,14 @@ use sea_orm::{
 };
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::romi_hitokotos,
     guards::admin::AdminUser,
     models::hitokoto::{ReqHitokotoData, ResHitokotoData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch))
         .route("/", post(create))
@@ -75,14 +75,14 @@ async fn get_hitokoto(
 
 async fn fetch(
     Query(params): Query<std::collections::HashMap<String, String>>,
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResHitokotoData> {
     get_hitokoto(params.get("length").and_then(|s| s.parse().ok()), conn, true).await
 }
 
 async fn fetch_by_id(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResHitokotoData> {
     match romi_hitokotos::Entity::find_by_id(id)
         .one(conn)
@@ -105,7 +105,7 @@ async fn fetch_by_id(
 }
 
 async fn fetch_public(
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResHitokotoData>> {
     api_ok(
         romi_hitokotos::Entity::find()
@@ -128,7 +128,7 @@ async fn fetch_public(
 
 async fn fetch_all(
     _admin_user: AdminUser,
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResHitokotoData>> {
     api_ok(
         romi_hitokotos::Entity::find()
@@ -150,7 +150,7 @@ async fn fetch_all(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(hitokoto): Json<ReqHitokotoData>,
 ) -> ApiResult {
     let result = romi_hitokotos::ActiveModel {
@@ -180,7 +180,7 @@ async fn create(
 async fn update(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(hitokoto): Json<ReqHitokotoData>,
 ) -> ApiResult {
     match romi_hitokotos::Entity::find_by_id(id)
@@ -219,7 +219,7 @@ async fn update(
 
 async fn like(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     match romi_hitokotos::Entity::find_by_id(id)
         .one(conn)
@@ -248,7 +248,7 @@ async fn like(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     romi_hitokotos::Entity::delete_by_id(id)
         .exec(conn)

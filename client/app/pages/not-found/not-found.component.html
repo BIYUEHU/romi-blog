@@ -35,13 +35,14 @@
 
       <div class="flex items-center justify-center gap-4">
         <r-button routerLink="/" type="primary" size="lg">
-          <r-icon name="home"></r-icon>
-          返回主页
+          去主页
         </r-button>
         <r-button (click)="goBack()" type="secondary" size="lg">
-          <r-icon name="arrow-left"></r-icon>
-          返回上页
+          回上页
         </r-button>
+        <button type="button" (click)="seekSena('https://himeno-sena.com')" class="text-white  bg-#E8AC96 hover:bg-#BF7D74 focus:ring-#EBBEB1 cursor-pointer items-center justify-center whitespace-nowrap rounded-md font-sans text-xs font-semibold leading-4 border-none shadow-sm disabled:cursor-not-allowed disabled:opacity-30 focus:outline-none focus:ring-offset-2 px-4 py-3">
+          你别奏
+        </button>
       </div>
     </div>
   </div>

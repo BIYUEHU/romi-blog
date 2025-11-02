@@ -32,8 +32,8 @@
                                                 <div class="text-sm text-accent-100">
                                                     {{ news.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
                                                 </div>
-                                                @if (news.hide) {
-                                                    <r-tag type="error">已隐藏</r-tag>
+                                                @if (news.private) {
+                                                    <r-tag type="error">私密</r-tag>
                                                 }
                                             </div>
 

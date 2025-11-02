@@ -23,7 +23,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
     created: '',
     modified: 0,
     text: '',
-    hide: false,
+    private: false,
     imgs: ''
   }
 
@@ -59,7 +59,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
       created: formatDate(news?.created ? new Date(news.created * 1000) : new Date()),
       modified: news?.modified ?? Math.floor(Date.now() / 1000),
       text: news?.text ?? '',
-      hide: news?.hide ?? false,
+      private: news?.private ?? false,
       imgs: news?.imgs.join(',') ?? ''
     }
   }
@@ -76,6 +76,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
     const data = {
       ...this.editForm,
+      hide: this.editForm.private.toString() === 'true',
       created: Math.floor(new Date(this.editForm.created).getTime() / 1000),
       imgs: this.editForm.imgs
         .split(',')

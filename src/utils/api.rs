@@ -40,6 +40,10 @@ impl ApiError {
     pub fn internal<T: Into<String>>(error: T) -> Self {
         Self { code: 500, msg: "Internal Server Error".to_string(), raw_error: Some(error.into()) }
     }
+
+    pub fn bad_gateway<T: Into<String>>(msg: T) -> Self {
+        Self::new(502, msg)
+    }
 }
 
 impl From<anyhow::Error> for ApiError {

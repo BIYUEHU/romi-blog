@@ -1,5 +1,5 @@
 <div class="max-w-98% w-4xl mx-auto flex-1">
-  @if (post) {
+  @if (data) {
   <div class="flex gap-8">
     <div class="flex-1 w-full">
       <ng-content select="[post-brefore]"></ng-content>
@@ -17,23 +17,23 @@
       @if (!hideCopyright) {
       <div
         class="text-size-lg line-height-loose mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
-        <strong> 本文链接：</strong><a [href]="post.url" class="text-bg-300 underline">{{ post.url }}</a><br />
+        <strong> 本文链接：</strong><a [href]="extra?.url" class="text-bg-300 underline">{{ extra?.url }}</a><br />
         <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
       </div>
       }
 
       @if (!hideOptions) {
-      @if (post.categories.length + post.tags.length > 0) {
+      @if (data.categories.length + (extra?.tags?.length ?? 0) > 0) {
       <div class="mx-auto line-height-loose mt-5">
         <r-divider class="mx-auto"></r-divider>
         <div class="flex my-4 gap-4 flex-wrap">
           @for (item of
-          post.categories; track $index) {
+          data.categories; track $index) {
           <r-tag hovered [routerLink]="['/category', item]">
             {{ item }}
           </r-tag>
           }
-          @for (item of post.tags; track $index) {
+          @for (item of extra?.tags ?? []; track $index) {
           <r-tag hovered [routerLink]="['/tag', item[0]]" [type]="item[1]">
             #{{ item[0] }}
           </r-tag>
@@ -44,7 +44,7 @@
       }
 
       <div class="mx-auto flex gap-4 mt-6">
-        <r-button size="lg" type="error" (click)="likePost()" [disabled]="isLiked">
+        <r-button size="lg" type="error" (click)="likePost()">
           点个赞
         </r-button>
         <r-button size="lg" type="success" (click)="donate()">
@@ -56,30 +56,30 @@
       </div>
       }
 
-      @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
+      @if (!hideRelatedPosts && !data.hide && (data.prev || data.next)) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
-        @if (post.prev) {
-        <a [href]="'/post/' + post.prev.id"
+        @if (data.prev) {
+        <a [href]="'/post/' + data.prev.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2">
             <span>上一篇</span>
           </div>
           <div class="'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors">
-            {{ post.prev.title }}
+            {{ data.prev.title }}
           </div>
         </a>
         } @else {
         <div class="group p-4 rounded-lg transition-colors"></div>
         }
 
-        @if (post.next) {
-        <a [href]="'/post/' + post.next.id"
+        @if (data.next) {
+        <a [href]="'/post/' + data.next.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
             <span>下一篇</span>
           </div>
           <div class="text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors text-right">
-            {{ post.next.title }}
+            {{ data.next.title }}
           </div>
         </a>
         }
@@ -87,7 +87,7 @@
       }
 
       @if (!hideComments) {
-      @if (post.allow_comment) {
+      @if (data.allow_comment) {
       <div class="mt-8 mb-6">
         <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
 

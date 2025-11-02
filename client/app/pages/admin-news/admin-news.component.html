@@ -14,7 +14,7 @@
       <thead class="bg-text-200">
         <tr>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">动态内容</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">状态</th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">权限状态</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">创建时间</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-bg-200 uppercase tracking-wider">修改时间</th>
           <th class="px-6 py-3 text-right text-xs font-medium text-bg-200 uppercase tracking-wider">操作</th>
@@ -25,8 +25,8 @@
         <tr class="hover:bg-text-300">
           <td class="px-6 py-4 ">{{ news.text.slice(0, 30) }}</td>
           <td class="px-6 py-4">
-            <r-tag [type]="news.hide === true ? 'error' : 'success'">
-              {{ news.hide === true ? '隐藏' : '显示' }}
+            <r-tag [type]="news.private === true ? 'error' : 'success'">
+              {{ news.private === true ? '私密' : '公开' }}
             </r-tag>
           </td>
           <td class="px-6 py-4 text-sm text-accent-100">
@@ -66,11 +66,11 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-bg-200 mb-1">状态</label>
-        <select [(ngModel)]="editForm.hide"
+        <label class="block text-sm font-medium text-bg-200 mb-1">权限状态</label>
+        <select [(ngModel)]="editForm.private"
           class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
-          <option value="false">显示</option>
-          <option value="true">隐藏</option>
+          <option value="false">公开</option>
+          <option value="true">私密</option>
         </select>
       </div>
 

@@ -1,10 +1,10 @@
 # Todo
 
-- [ ] Get ip bug fix
-- [ ] building-ify some configure files（Website default title, nav, favicon, highlighter language）
-
 <!-- - [ ] Support more markdown-it plugins -->
 
+- [ ] 前端实现加密文章解密
+- [ ] 文章页评论区的 “登录提示” 与 “评论框” 显示机制问题
+- [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language）
 - [ ] Blog content search
 - [ ] Support private news
 - [ ] Settings and customization
@@ -13,8 +13,7 @@
 - [ ] RSS feed
 - [ ] sitemap
 - [ ] Romi UI better building
-- [ ] Characters brithdays reminder
-- [ ] Web
+- [ ] Characters birthdays reminder
 - [ ] File transporter logger
 - [x] filter requests from Node.Js
 - [ ] Refactory php ial api, such as proxy, qqavatar, etc.
@@ -27,7 +26,7 @@
 - [ ] I18n
 - [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [x] Post view, like, share
-- [ ] News view, like
+- [x] News view, like
 - [x] Better website title
 - [x] Unify all localStorage keys name
 - [x] Music playlist cannot load to cache in first loading

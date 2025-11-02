@@ -6,10 +6,10 @@
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
     "ng": "ng",
-    "start": "python scripts/ip.py && ng serve --host 0.0.0.0 --disable-host-check",
+    "start": "python scripts/prebuild.py && ng serve --host 0.0.0.0 --disable-host-check",
     "dev": "python scripts/dev.py",
     "ui": "cd ui && pnpm dev",
-    "build": "cargo test export_bindings && python scripts/ip.py && cd ui && pnpm build && ng build",
+    "build": "cargo test export_bindings && python scripts/prebuild.py && cd ui && pnpm build && ng build",
     "watch": "ng build --watch --configuration development",
     "unocss:dev": "unocss --watch",
     "test": "ng test",

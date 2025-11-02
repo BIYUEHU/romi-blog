@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import {
@@ -21,7 +21,7 @@ import { sortByCreatedTime } from '../../utils'
 export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostData> implements OnInit {
   public filterStatus = ''
 
-  constructor(private readonly apiService: ApiService) {
+  public constructor(private readonly apiService: ApiService) {
     super()
     this.notifyService.setTitle('文章管理')
     this.emptyMessage = '暂无文章'

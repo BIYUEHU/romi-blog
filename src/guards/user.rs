@@ -4,16 +4,16 @@ use axum::{
 };
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     guards::auth::{Access, ApiError, AuthUser},
 };
 
-impl FromRequestParts<AppState> for AuthUser {
+impl FromRequestParts<RomiState> for AuthUser {
     type Rejection = ApiError;
 
     async fn from_request_parts(
         parts: &mut Parts,
-        state: &AppState,
+        state: &RomiState,
     ) -> Result<Self, Self::Rejection> {
         let access = Access::from_request_parts(parts, state).await?;
         match access.user {

@@ -1,37 +1,32 @@
+use std::net::SocketAddr;
+
 use axum::{
-    extract::{Request, State},
+    extract::{ConnectInfo, Request, State},
     middleware::Next,
     response::Response,
 };
 use roga::*;
 
-use crate::{
-    app::AppState,
-    constant::NODEJS_LOGGER_LABEL,
-    utils::http::{get_req_ip, get_req_user_agent},
-};
+use crate::{app::RomiState, constant::NODEJS_LOGGER_LABEL, utils::http::get_req_user_agent};
 
 fn setup_logger(logger: Logger, user_agent: Option<&str>) -> Logger {
     if user_agent == Some("node") { logger.with_label(NODEJS_LOGGER_LABEL) } else { logger }
 }
 
 pub async fn req_logger_middleware(
-    State(AppState { logger, .. }): State<AppState>,
+    State(RomiState { logger, .. }): State<RomiState>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
     req: Request,
     next: Next,
 ) -> Response {
-    let uri = req.uri().to_string();
-    let headers = req.headers();
-    let user_agent = get_req_user_agent(headers);
-    let ip = get_req_ip(headers).unwrap_or("unknown");
-
+    let user_agent = get_req_user_agent(req.headers());
     let logger = setup_logger(logger, user_agent);
 
     l_record!(
         logger.clone().with_label("Req").with_label(req.method().to_string().to_uppercase()),
         "Calling {} with ip: {}, user_agent: {}",
-        uri,
-        ip,
+        req.uri().to_string(),
+        addr.ip().to_string(),
         user_agent.unwrap_or("unknown")
     );
 
@@ -39,7 +34,7 @@ pub async fn req_logger_middleware(
 }
 
 pub async fn res_error_inspector_middleware(
-    State(AppState { logger, .. }): State<AppState>,
+    State(RomiState { logger, .. }): State<RomiState>,
     req: Request,
     next: Next,
 ) -> Response {

@@ -1,59 +1,80 @@
-use std::{fs, net::SocketAddr};
+use std::fs;
 
 use axum::{
     Router,
-    extract::Query,
+    extract::{Path, Query, State},
     http::{HeaderMap, StatusCode},
     response::{IntoResponse, Redirect},
     routing::get,
 };
-use serde::Deserialize;
+use rand::random;
 
-#[derive(Deserialize)]
-struct QQAvatarParams {
-    qq: Option<String>,
-    size: Option<u32>,
+use crate::{
+    app::{RomiConfig, RomiState},
+    constant::DATA_DIR,
+    models::utils::QueryAgent,
+    utils::api::ApiError,
+};
+
+pub fn routes() -> Router<RomiState> {
+    Router::new()
+        .route("/qqavatar", get(qqavatar_default))
+        .route("/qqavatar/{qid}", get(qqavatar_qid))
+        .route("/qqavatar/{qid}/{size}", get(qqavatar_qid_size))
+        .route("/background", get(background_default))
+        .route("/background/{id}", get(background_id))
+        .route("/agent", get(agent))
 }
 
-async fn qqavatar(Query(params): Query<QQAvatarParams>) -> impl IntoResponse {
-    let qq = params.qq.unwrap_or_else(|| "10001".to_string());
-    let size = params.size.unwrap_or(640);
-    let url = format!("https://q.qlogo.cn/g?b=qq&s={size}&nk={qq}");
-
-    match reqwest::get(&url).await {
+async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
+    match reqwest::get(&format!("https://q.qlogo.cn/g?b=qq&s={}&nk={}", size, qid)).await {
         Ok(resp) => {
             let bytes = resp.bytes().await.unwrap_or_default();
             let mut headers = HeaderMap::new();
             headers.insert("Content-Type", "image/jpeg".parse().unwrap());
             (headers, bytes).into_response()
         }
-        Err(_) => (StatusCode::BAD_GATEWAY, "failed to fetch qq avatar").into_response(),
+        Err(_) => ApiError::bad_gateway("Failed to fetch avatar").into_response(),
     }
 }
 
-#[derive(Deserialize)]
-struct BackgroundParams {
-    id: Option<String>,
+async fn qqavatar_default(
+    State(RomiState { config: RomiConfig { qid, .. }, .. }): State<RomiState>,
+) -> impl IntoResponse {
+    qqavatar(qid.unwrap_or("10101".to_string()), 640).await
 }
 
-async fn background(Query(params): Query<BackgroundParams>) -> impl IntoResponse {
-    let id = params.id.unwrap_or_else(|| "1".to_string());
-    let file_path = format!("./{id}.txt");
+async fn qqavatar_qid(Path(qid): Path<String>) -> impl IntoResponse {
+    qqavatar(qid, 640).await
+}
 
-    match fs::read_to_string(&file_path) {
+async fn qqavatar_qid_size(Path((qid, size)): Path<(String, u32)>) -> impl IntoResponse {
+    qqavatar(qid, size).await
+}
+
+async fn background(id: String) -> impl IntoResponse {
+    match fs::read_to_string(&format!("./{DATA_DIR}/background_{id}.txt")) {
         Ok(content) => {
             let lines: Vec<_> = content.lines().collect();
             if lines.is_empty() {
-                return (StatusCode::NOT_FOUND, "no urls found").into_response();
+                ApiError::not_found("No backgrounds available").into_response()
+            } else {
+                Redirect::to(lines[random::<usize>() % lines.len()]).into_response()
             }
-            let idx = rand::random::<usize>() % lines.len();
-            Redirect::to(lines[idx])
         }
-        Err(_) => (StatusCode::NOT_FOUND, "file not found").into_response(),
+        Err(_) => ApiError::not_found("No such background").into_response(),
     }
 }
 
-async fn agent(Query(params): Query<AgentParams>) -> impl IntoResponse {
+async fn background_default() -> impl IntoResponse {
+    background("1".to_string()).await
+}
+
+async fn background_id(Path(id): Path<String>) -> impl IntoResponse {
+    background(id).await
+}
+
+async fn agent(Query(params): Query<QueryAgent>) -> impl IntoResponse {
     if let Some(url) = params.url {
         match reqwest::get(&url).await {
             Ok(resp) => {

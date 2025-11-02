@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import type { Sizes, Types } from '../../preset'
 
@@ -26,10 +26,11 @@ export default class RButton extends LitElement {
               </a>
             `
           : html`
-              <button type="button" class="${classTag}" ?disabled="${this.disabled}" ?aria-disabled="${this.disabled}" >
-                <slot></slot>
-              </button>
-            `
+                <button type="button" class="${classTag}" ?disabled="${this.disabled}"
+                        ?aria-disabled="${this.disabled}">
+                  <slot></slot>
+                </button>
+              `
       }
       </span>
     `

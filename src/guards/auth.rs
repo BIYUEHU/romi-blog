@@ -7,7 +7,7 @@ use jsonwebtoken::{Algorithm, DecodingKey, Validation, decode};
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
-use crate::app::AppState;
+use crate::app::RomiState;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum AccessLevel {
@@ -49,14 +49,14 @@ impl IntoResponse for ApiError {
     }
 }
 
-impl FromRequestParts<AppState> for Access {
+impl FromRequestParts<RomiState> for Access {
     type Rejection = ApiError;
 
     async fn from_request_parts(
         parts: &mut Parts,
-        state: &AppState,
+        state: &RomiState,
     ) -> Result<Self, Self::Rejection> {
-        let State(AppState { secret, .. }) = State::from_request_parts(parts, state)
+        let State(RomiState { secret, .. }) = State::from_request_parts(parts, state)
             .await
             .map_err(|_| ApiError(StatusCode::INTERNAL_SERVER_ERROR, "state missing".into()))?;
 

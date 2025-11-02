@@ -226,6 +226,18 @@ export class ApiService {
     return this.http.get<ResNewsData>(`${this.apiUrl}/news/${id}`)
   }
 
+  public likeNews(id: number) {
+    return this.http.put<void>(`${this.apiUrl}/news/like/${id}`, null, {
+      headers: this.getSkipErrorHandlerHeaders()
+    })
+  }
+
+  public viewNews(id: number) {
+    return this.http.put<void>(`${this.apiUrl}/news/view/${id}`, null, {
+      headers: this.getSkipErrorHandlerHeaders()
+    })
+  }
+
   public createNews(data: ReqNewsData) {
     return this.http.post<void>(`${this.apiUrl}/news`, data)
   }

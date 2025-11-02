@@ -7,7 +7,7 @@ use utils::bootstrap::{load_config, load_env_vars};
 use uuid::Uuid;
 
 use crate::{
-    app::{AppState, build_app},
+    app::{RomiState, build_app},
     constant::{BUILD_TIME, HASH, VERSION},
     service::ssr::SSR,
     utils::bootstrap::{get_network_ip, initialize_directories},
@@ -62,7 +62,7 @@ async fn main() {
     let conn = {
         let database_url = match env::var("DATABASE_URL") {
             Ok(url) => url,
-            Err(_) if !config.database_url.trim().is_empty() => config.database_url,
+            Err(_) if !config.database_url.trim().is_empty() => config.database_url.clone(),
             Err(_) => {
                 l_fatal!(&logger, "DATABASE_URL not set");
                 return;
@@ -95,11 +95,12 @@ async fn main() {
 
     let ssr = SSR::new(config.ssr_entry.clone(), config.port + 1, logger.clone());
 
-    let app = build_app(AppState {
+    let app = build_app(RomiState {
         secret: format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
         logger: logger.clone(),
         conn,
         ssr: ssr.clone(),
+        config: config.clone(),
     });
 
     let addr = SocketAddr::from((
@@ -139,7 +140,7 @@ async fn main() {
                 return;
             }
         },
-        app,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
     )
     .with_graceful_shutdown(shutdown_signal())
     .await

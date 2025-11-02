@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
-import { NavigationStart, Router, RouterLink } from '@angular/router'
+import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { FooterComponent } from '../footer/footer.component'
@@ -18,6 +18,8 @@ import { APlayer } from '../../shared/types'
   templateUrl: './layout-using.component.html'
 })
 export class LayoutUsingComponent implements OnInit, OnDestroy {
+  private static SCROLL_OFFSET_HEIGHT_PX = -88
+
   @Input() public imageHeight = ''
   @Input() public fullBackground = false
   @Input() public displayFooter = true
@@ -80,6 +82,18 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   private handleRouteEvent(event: object) {
     if (event instanceof NavigationStart) {
       this.updateHeaderContent({})
+    } else if (event instanceof NavigationEnd) {
+      const tree = this.router.parseUrl(this.router.url)
+      if (tree.fragment) {
+        const el = document.getElementById(tree.fragment)
+        if (!el) return
+        setTimeout(() => {
+          window.scrollTo({
+            top: el.getBoundingClientRect().top + window.scrollY + LayoutUsingComponent.SCROLL_OFFSET_HEIGHT_PX,
+            behavior: 'smooth'
+          })
+        }, 100)
+      }
     }
   }
 

@@ -8,14 +8,14 @@ use roga::*;
 use sea_orm::{ActiveModelTrait, ActiveValue, DbBackend, EntityTrait, IntoActiveModel, Statement};
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::romi_seimgs,
     guards::admin::AdminUser,
     models::seimg::{ReqSeimgData, ResSeimgData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch))
         .route("/", post(create))
@@ -25,7 +25,7 @@ pub fn routes() -> Router<AppState> {
 
 async fn fetch(
     Query(params): Query<std::collections::HashMap<String, String>>,
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResSeimgData>> {
     let limit = params.get("limit").and_then(|l| l.parse().ok()).map_or(1, |l: i32| l.clamp(1, 10));
     let tag = params.get("tag").cloned();
@@ -86,7 +86,7 @@ async fn fetch(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(seimg): Json<ReqSeimgData>,
 ) -> ApiResult<romi_seimgs::Model> {
     let result = romi_seimgs::ActiveModel {
@@ -120,7 +120,7 @@ async fn create(
 async fn update(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(seimg): Json<ReqSeimgData>,
 ) -> ApiResult {
     match romi_seimgs::Entity::find_by_id(id)
@@ -164,7 +164,7 @@ async fn update(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     romi_seimgs::Entity::delete_by_id(id)
         .exec(conn)

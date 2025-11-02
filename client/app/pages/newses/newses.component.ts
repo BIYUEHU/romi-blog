@@ -1,4 +1,4 @@
-import { AsyncPipe, DatePipe } from '@angular/common'
+import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -28,7 +28,7 @@ interface GroupedNews {
 @Component({
   selector: 'app-newses',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, LoadingComponent, AsyncPipe],
+  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, LoadingComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newses.component.html'
 })
@@ -106,7 +106,7 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
         created: Math.floor(Date.now() / 1000),
         modified: Math.floor(Date.now() / 1000),
         text: this.newText,
-        hide: false,
+        private: false,
         imgs: []
       })
       .subscribe(() => {

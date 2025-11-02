@@ -4,18 +4,18 @@ use axum::{
 };
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     guards::auth::{ApiError, AuthUser},
 };
 
 pub struct AdminUser(pub AuthUser);
 
-impl FromRequestParts<AppState> for AdminUser {
+impl FromRequestParts<RomiState> for AdminUser {
     type Rejection = ApiError;
 
     async fn from_request_parts(
         parts: &mut Parts,
-        state: &AppState,
+        state: &RomiState,
     ) -> Result<Self, Self::Rejection> {
         let user = AuthUser::from_request_parts(parts, state).await?;
         if !user.is_admin {

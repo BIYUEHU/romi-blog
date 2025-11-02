@@ -7,7 +7,7 @@ pub struct ReqNewsData {
     pub created: u32,
     pub modified: u32,
     pub text: String,
-    pub hide: bool,
+    pub private: bool,
     pub imgs: Vec<String>,
 }
 
@@ -18,7 +18,7 @@ pub struct ResNewsData {
     pub created: u32,
     pub modified: u32,
     pub text: String,
-    pub hide: bool,
+    pub private: bool,
     pub views: i32,
     pub likes: i32,
     pub comments: i32,

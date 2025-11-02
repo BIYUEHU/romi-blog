@@ -3,51 +3,50 @@
 
 ### Get All Articles
 
-GET {{URL}}/api/articles/
+GET {{URL}}/api/articles
 
 ### Get Single Article
 
-GET {{URL}}/api/articles/4/
+GET {{URL}}/api/articles/4
 
 ### Create Article
 
-POST {{URL}}/api/articles/
+POST {{URL}}/api/articles
 Content-Type: application/json
 
 {
-    "title": "New Article",
-    "text": "This is the text of the new article."
+  "title": "New Article",
+  "text": "This is the text of the new article."
 }
 
 ### Update Article
 
-PUT {{URL}}/api/articles/2/
+PUT {{URL}}/api/articles/2
 Content-Type: application/json
 
 {
-    "title": "New Article2",
-    "text": "This is the text of the new article."
+  "title": "New Article2",
+  "text": "This is the text of the new article."
 }
 
 ### Delete Article
 
-DELETE {{URL}}/api/articles/1/
+DELETE {{URL}}/api/articles/1
 
 ### Get All Meta
-GET {{URL}}/api/meta/
+GET {{URL}}/api/meta
 
 ### Get Single Meta
-GET {{URL}}/api/meta/1/
-
+GET {{URL}}/api/meta/1
 
 ### User Login
 
-POST {{URL}}/api/user/login/
+POST {{URL}}/api/user/login
 Content-Type: application/json
 
 {
-    "username": "romi",
-    "password": "0517"
+  "username": "romi",
+  "password": "0517"
 }
 
 ### Create User
@@ -57,28 +56,36 @@ Content-Type: application/json
 Authorization: Bearer 222
 
 {
-    "username": "newuser",
-    "password": "0517",
-    "email": "newuser@example.com"
+  "username": "newuser",
+  "password": "0517",
+  "email": "newuser@example.com"
 }
 
 ### Get settings
 
-GET {{URL}}/api/info/settings/
-x
+GET {{URL}}/api/info/settings
+
 ### Get dashboard data
 
-GET {{URL}}/api/info/dashboard/
+GET {{URL}}/api/info/dashboard
 Authorization: Bearer
 
 
 ### Get characters
 
-GET {{URL}}/api/character/
+GET {{URL}}/api/character
 
 ### Get character
 
 GET {{URL}}/api/character/3
+
+### Get background
+
+GET {{URL}}/api/utils/background
+
+### Get qqavatar
+
+GET {{URL}}/api/utils/qqavatar?qq=123456
 
 ### Test
 
@@ -95,3 +102,5 @@ From:
 ### Test2
 
 GET https://music.163.com/api/v3/playlist/detail?id=2653919517
+
+

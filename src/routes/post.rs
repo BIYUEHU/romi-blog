@@ -6,15 +6,15 @@ use axum::{
     extract::{Path, State},
     routing::{delete, get, post, put},
 };
-use futures::{future::try_join_all, try_join};
 use roga::*;
 use sea_orm::{
     ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DatabaseTransaction, DbErr,
     EntityTrait, IntoActiveModel, QueryFilter, QueryOrder, TransactionTrait, TryIntoModel,
 };
+use tokio::try_join;
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::{romi_comments, romi_metas, romi_posts, romi_relationships},
     guards::{
         admin::AdminUser,
@@ -28,7 +28,7 @@ use crate::{
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch_all))
         .route("/", post(create))
@@ -63,7 +63,7 @@ async fn get_post_metas(
 }
 
 async fn fetch_all(
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
     access: Access,
 ) -> ApiResult<Vec<ResPostData>> {
     let is_admin = access.level.eq(&AccessLevel::Admin);
@@ -135,7 +135,7 @@ async fn fetch_all(
 
 async fn fetch(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     access: Access,
 ) -> ApiResult<ResPostSingleData> {
     match romi_posts::Entity::find_by_id(id)
@@ -173,7 +173,7 @@ async fn fetch(
                 text: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
                     model.text.clone()
                 } else {
-                    "".into()
+                    "This post is password protected.".into()
                 },
                 password: password.map(|p| {
                     access.level.eq(&AccessLevel::Admin).then(|| p).unwrap_or("password".into())
@@ -247,7 +247,7 @@ async fn handle_metas(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(post): Json<ReqPostData>,
 ) -> ApiResult {
     let txn = conn.begin().await.context("Failed to begin transaction")?;
@@ -309,7 +309,7 @@ async fn create(
 async fn update(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(post): Json<ReqPostData>,
 ) -> ApiResult {
     let txn = conn
@@ -347,30 +347,28 @@ async fn update(
         }
     };
 
-    let origin_metas = try_join_all(
-        romi_relationships::Entity::find()
-            .filter(romi_relationships::Column::Pid.eq(id))
-            .all(&txn)
-            .await
-            .with_context(|| format!("Failed to fetch existing relations for post {}", id))?
-            .iter()
-            .map(|model| async {
-                romi_metas::Entity::find_by_id(model.mid)
-                    .one(&txn)
-                    .await
-                    .with_context(|| format!("Failed to fetch meta {} for update", model.mid))
-            }),
-    )
-    .await?
-    .into_iter()
-    .filter_map(|meta| meta);
+    let all_metas = romi_metas::Entity::find()
+        .all(&txn)
+        .await
+        .with_context(|| format!("Failed to fetch existing metas for post {}", id))?;
+
+    let relationships = romi_relationships::Entity::find()
+        .filter(romi_relationships::Column::Pid.eq(id))
+        .all(&txn)
+        .await
+        .with_context(|| format!("Failed to fetch existing relations for post {}", id))?;
+
+    let origin_metas: Vec<_> = relationships
+        .iter()
+        .filter_map(|model| all_metas.iter().find(|meta| meta.mid == model.mid))
+        .collect();
 
     let origin_categories: Vec<_> = origin_metas
-        .clone()
+        .iter()
         .filter_map(|meta| if meta.is_category == "1" { Some(meta.name.clone()) } else { None })
         .collect();
     let origin_tags: Vec<_> = origin_metas
-        .clone()
+        .iter()
         .filter_map(|meta| if meta.is_category == "0" { Some(meta.name.clone()) } else { None })
         .collect();
 
@@ -394,7 +392,7 @@ async fn update(
 
     romi_relationships::Entity::delete_many()
         .filter(romi_relationships::Column::Pid.eq(id))
-        .filter(romi_relationships::Column::Mid.is_in(origin_metas.filter_map(|meta| {
+        .filter(romi_relationships::Column::Mid.is_in(origin_metas.iter().filter_map(|meta| {
             if !post.tags.contains(&meta.name) && !post.categories.contains(&meta.name) {
                 Some(meta.mid)
             } else {
@@ -436,7 +434,7 @@ async fn update(
 
 async fn like(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     match romi_posts::Entity::find_by_id(id)
         .one(conn)
@@ -447,6 +445,7 @@ async fn like(
             let mut active_model = model.clone().into_active_model();
             active_model.likes = ActiveValue::set(model.likes + 1);
             active_model.save(conn).await.with_context(|| format!("Failed to like post {}", id))?;
+            l_info!(logger, "Liked post {} ({})", id, model.title);
         }
         None => {
             l_warn!(logger, "Post {} not found", id);
@@ -454,13 +453,12 @@ async fn like(
         }
     };
 
-    l_info!(logger, "Liked post {}", id);
     api_ok(())
 }
 
 async fn view(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     match romi_posts::Entity::find_by_id(id)
         .one(conn)
@@ -471,6 +469,7 @@ async fn view(
             let mut active_model = model.clone().into_active_model();
             active_model.views = ActiveValue::set(model.views + 1);
             active_model.save(conn).await.with_context(|| format!("Failed to view post {}", id))?;
+            l_info!(logger, "Viewed post {} ({})", id, model.title);
         }
         None => {
             l_warn!(logger, "Post {} not found", id);
@@ -478,14 +477,13 @@ async fn view(
         }
     };
 
-    l_info!(logger, "Viewed post {}", id);
     api_ok(())
 }
 
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     let txn = conn
         .begin()
@@ -517,7 +515,7 @@ async fn remove(
 
 async fn decrypt(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(data): Json<ReqDecryptPostData>,
 ) -> ApiResult<ResDecryptPostData> {
     match romi_posts::Entity::find_by_id(id)

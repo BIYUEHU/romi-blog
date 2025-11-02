@@ -17,18 +17,19 @@ pub struct RomiConfig {
     pub database_url: String,
     pub ssr_entry: String,
     pub log_level: String,
+    pub qid: Option<String>,
 }
 
 #[derive(Clone)]
-pub struct AppState {
+pub struct RomiState {
     pub conn: DatabaseConnection,
     pub logger: Logger,
-    // pub config: RomiConfig,
+    pub config: RomiConfig,
     pub ssr: SSR,
     pub secret: String,
 }
 
-pub fn build_app(state: AppState) -> Router {
+pub fn build_app(state: RomiState) -> Router {
     let api = Router::new()
         .nest("/post", routes::post::routes())
         .nest("/meta", routes::meta::routes())
@@ -38,7 +39,8 @@ pub fn build_app(state: AppState) -> Router {
         .nest("/news", routes::news::routes())
         .nest("/character", routes::character::routes())
         .nest("/seimg", routes::seimg::routes())
-        .nest("/info", routes::info::routes());
+        .nest("/info", routes::info::routes())
+        .nest("/utils", routes::utils::routes());
 
     let app = Router::new()
         .nest("/api", api)

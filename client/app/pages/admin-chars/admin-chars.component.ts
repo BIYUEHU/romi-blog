@@ -20,7 +20,7 @@ import { renderCharacterBWH } from '../../utils'
   templateUrl: './admin-chars.component.html'
 })
 export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResCharacterData> implements OnInit {
-  constructor(private readonly apiService: ApiService) {
+  public constructor(private readonly apiService: ApiService) {
     super()
     this.notifyService.setTitle('角色管理')
     this.emptyMessage = '暂无角色'

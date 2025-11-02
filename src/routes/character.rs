@@ -10,14 +10,14 @@ use roga::*;
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel};
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::romi_characters,
     guards::admin::AdminUser,
     models::character::{ReqCharacterData, ResCharacterData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch_all))
         .route("/", post(create))
@@ -39,7 +39,7 @@ fn vec_to_opt_str(v: Vec<String>) -> Option<String> {
 }
 
 async fn fetch_all(
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResCharacterData>> {
     api_ok(
         romi_characters::Entity::find()
@@ -83,7 +83,7 @@ async fn fetch_all(
 
 async fn fetch(
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResCharacterData> {
     match romi_characters::Entity::find_by_id(id)
         .one(conn)
@@ -129,7 +129,7 @@ async fn fetch(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(character): Json<ReqCharacterData>,
 ) -> ApiResult {
     let result = romi_characters::ActiveModel {
@@ -144,7 +144,7 @@ async fn create(
         description: ActiveValue::set(character.description.clone()),
         comment: ActiveValue::set(character.comment.clone()),
         hitokoto: ActiveValue::set(character.hitokoto.clone()),
-        birthday: ActiveValue::set(character.birthday.map(|ts| ts as u32)),
+        birthday: ActiveValue::set(character.birthday),
         voice: ActiveValue::set(character.voice.clone()),
         series: ActiveValue::set(character.series.clone()),
         series_genre: ActiveValue::set(character.series_genre.clone()),
@@ -183,7 +183,7 @@ async fn create(
 async fn update(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(character): Json<ReqCharacterData>,
 ) -> ApiResult {
     let existing = romi_characters::Entity::find_by_id(id)
@@ -208,7 +208,7 @@ async fn update(
     active.description = ActiveValue::set(character.description.clone());
     active.comment = ActiveValue::set(character.comment.clone());
     active.hitokoto = ActiveValue::set(character.hitokoto.clone());
-    active.birthday = ActiveValue::set(character.birthday.map(|ts| ts as u32));
+    active.birthday = ActiveValue::set(character.birthday);
     active.voice = ActiveValue::set(character.voice.clone());
     active.series = ActiveValue::set(character.series.clone());
     active.series_genre = ActiveValue::set(character.series_genre.clone());
@@ -242,7 +242,7 @@ async fn update(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     if romi_characters::Entity::delete_by_id(id)
         .exec(conn)

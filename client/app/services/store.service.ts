@@ -9,7 +9,9 @@ enum SymbolKeys {
   POST_VIEWED = 'post-viewed-$',
   POST_DRAFT_NEW = 'post-draft-new',
   POST_DRAFT = 'post-draft-$',
-  POST_DRAFT_TIME = 'post-draft-$-time'
+  POST_DRAFT_TIME = 'post-draft-$-time',
+  NEWS_LIKED = 'news-liked-$',
+  NEWS_VIEWED = 'news-viewed-$'
 }
 
 export const KEYS = {
@@ -22,6 +24,8 @@ export const KEYS = {
   POST_DRAFT_NEW: SymbolKeys.POST_DRAFT_NEW,
   POST_DRAFT: (id: number) => KEYS.replace(SymbolKeys.POST_DRAFT, id),
   POST_DRAFT_TIME: (id: number) => KEYS.replace(SymbolKeys.POST_DRAFT_TIME, id),
+  NEWS_LIKED: (id: number) => KEYS.replace(SymbolKeys.NEWS_LIKED, id),
+  NEWS_VIEWED: (id: number) => KEYS.replace(SymbolKeys.NEWS_VIEWED, id),
   replace: (key: SymbolKeys, value: string | number | boolean) => key.replaceAll('$', String(value)) as SymbolKeys
 }
 

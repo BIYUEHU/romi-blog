@@ -3,12 +3,12 @@ use std::{env, process::Command};
 use anyhow::Context;
 use axum::{Router, extract::State, routing::get};
 use fetcher::playlist::SongInfo;
-use futures::try_join;
 use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
 use sysinfo::System;
+use tokio::try_join;
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::{
         romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
         romi_seimgs, romi_users,
@@ -22,7 +22,7 @@ use crate::{
     },
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/dashboard", get(fetch_dashboard))
         .route("/settings", get(fetch_settings))
@@ -32,7 +32,7 @@ pub fn routes() -> Router<AppState> {
 
 async fn fetch_dashboard(
     _admin_user: AdminUser,
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResDashboardData> {
     let (
         posts_count,
@@ -82,7 +82,7 @@ async fn fetch_dashboard(
 }
 
 async fn fetch_settings(
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResSettingsData> {
     api_ok(get_settings_cache(conn).await.context("Failed to fetch site settings")?)
 }

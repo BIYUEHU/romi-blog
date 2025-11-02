@@ -15,30 +15,7 @@ export function romiComponentFactory<T = unknown>(key: string) {
 
     public data?: T
 
-    protected load2Data(source$: Observable<T>): Observable<T> {
-      if (this.transferState.hasKey(this.CACHE_KEY)) {
-        const cached = this.transferState.get(this.CACHE_KEY, null) as T
-
-        if (this.browserService.isBrowser) {
-          setTimeout(() => {
-            this.transferState.remove(this.CACHE_KEY)
-          }, 0)
-        }
-
-        return of(cached)
-      }
-
-      return source$.pipe(
-        tap((data) => {
-          if (!this.browserService.isBrowser) {
-            this.transferState.set(this.CACHE_KEY, data)
-          }
-        })
-      )
-    }
-
-    // TODO: new method with automatic set
-    protected load(source$: Observable<T>, callback?: (data: T) => void) {
+    protected load(source$: Observable<T>, callback?: (data: T) => void | Promise<void>) {
       if (this.transferState.hasKey(this.CACHE_KEY)) {
         this.data = this.transferState.get(this.CACHE_KEY, null) as T
         callback?.(this.data)
@@ -59,7 +36,9 @@ export function romiComponentFactory<T = unknown>(key: string) {
           )
           .subscribe((data) => {
             this.data = data
-            callback?.(data)
+            setTimeout(() => {
+              callback?.(data)
+            }, 0)
           })
       }
     }

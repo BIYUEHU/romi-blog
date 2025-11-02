@@ -14,14 +14,14 @@ use sea_orm::{
 use tokio::spawn;
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::romi_users,
     guards::{admin::AdminUser, auth::AuthUser},
     models::user::{LoginRequest, LoginResponse, ReqUserData, ResUserData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/login", post(login))
         .route("/", get(fetch_all))
@@ -32,7 +32,7 @@ pub fn routes() -> Router<AppState> {
 }
 
 async fn login(
-    State(AppState { ref logger, ref conn, ref secret, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, ref secret, .. }): State<RomiState>,
     Json(credentials): Json<LoginRequest>,
 ) -> ApiResult<LoginResponse> {
     l_info!(logger, "Login attempt for user: {}", credentials.username);
@@ -85,7 +85,7 @@ async fn login(
 
 async fn fetch_all(
     _admin_user: AdminUser,
-    State(AppState { ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResUserData>> {
     api_ok(
         romi_users::Entity::find()
@@ -110,7 +110,7 @@ async fn fetch_all(
 async fn fetch(
     _admin_user: AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResUserData> {
     match romi_users::Entity::find_by_id(id)
         .filter(romi_users::Column::IsDeleted.ne("1"))
@@ -137,7 +137,7 @@ async fn fetch(
 
 async fn create(
     AdminUser(admin_user): AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(user): Json<ReqUserData>,
 ) -> ApiResult {
     if romi_users::Entity::find()
@@ -193,7 +193,7 @@ async fn create(
 async fn update(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(user): Json<ReqUserData>,
 ) -> ApiResult {
     match romi_users::Entity::find_by_id(id)
@@ -242,7 +242,7 @@ async fn update(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     if admin_user.id == id {
         l_warn!(logger, "Administrator {} cannot delete self", id);

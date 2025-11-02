@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
@@ -20,7 +20,11 @@ export class NotFoundComponent {
     )
   }
 
-  public goBack(): void {
+  public goBack() {
     window.history.back()
+  }
+
+  public seekSena(url: 'https://himeno-sena.com') {
+    window.open(url, '_blank')
   }
 }

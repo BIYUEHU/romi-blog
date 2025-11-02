@@ -29,7 +29,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
   }
   public admin: UserAuthData | null = null
 
-  constructor(
+  public constructor(
     private readonly apiService: ApiService,
     private readonly authService: AuthService
   ) {

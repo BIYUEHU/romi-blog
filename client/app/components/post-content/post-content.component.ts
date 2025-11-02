@@ -1,14 +1,13 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
 import markdownIt from 'markdown-it'
 import MarkdownIt from 'markdown-it'
-import { from, Subject } from 'rxjs'
+import { from, of, Subject, tap } from 'rxjs'
 import { switchMap, takeUntil } from 'rxjs/operators'
 import { BundledLanguage, BundledTheme, HighlighterGeneric } from 'shiki'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
@@ -17,6 +16,7 @@ import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
 import { randomRTagType } from '../../utils'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { LoadingComponent } from '../loading/loading.component'
 
 interface TocItem {
   level: number
@@ -35,7 +35,10 @@ interface CommentItem extends ResCommentData {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-content.component.html'
 })
-export class PostContentComponent extends romiComponentFactory<ResPostSingleData>('post-content') implements OnInit {
+export class PostContentComponent
+  extends romiComponentFactory<ResPostSingleData>('post-content')
+  implements OnInit, OnDestroy
+{
   @Input({ required: true }) public id!: number
   @Input() public hideSubTitle = false
   @Input() public hideToc = false
@@ -46,8 +49,10 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
   @Input() public setTitle = false
   @Input() public defaultPostData?: ResPostSingleData
 
+  private viewedTimeoutId?: number
   private mdParser: MarkdownIt
   private highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>
+  private destroy$ = new Subject<void>()
 
   public renderedContent: SafeHtml = ''
   public commentText = ''
@@ -55,10 +60,8 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
   public comments: CommentItem[] = []
   public currentUser: UserAuthData | null = null
   public replyingTo: { username: string; cid: number } | null = null
-  public post?: Omit<ResPostSingleData, 'tags'> & { url: string; tags: [string, string][] }
   public currentPage = 1
   public pageSize = 10
-  private destroy$ = new Subject<void>()
 
   public get isNotLoggedIn() {
     return this.currentUser === null
@@ -68,16 +71,19 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
     return Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1)
   }
 
-  public get isLiked() {
-    return !!this.browserService.store?.getItem(KEYS.POST_LIKED(this.id))
+  public get pagedComments() {
+    const start = (this.currentPage - 1) * this.pageSize
+    return this.comments.slice(start, start + this.pageSize)
   }
 
-  constructor(
+  public extra?: { url: string; tags: [string, string][] }
+
+  public constructor(
     private readonly router: Router,
     private readonly notifyService: NotifyService,
     private readonly authService: AuthService,
     private readonly sanitizer: DomSanitizer,
-    private readonly highlighterService: HighlighterService // <- 注入 Angular service
+    private readonly highlighterService: HighlighterService
   ) {
     super()
 
@@ -102,6 +108,103 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
     })
 
     this.setupRendererRules()
+  }
+
+  public ngOnInit() {
+    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
+      this.currentUser = user
+    })
+
+    this.load(this.defaultPostData ? of(this.defaultPostData) : this.apiService.getPost(this.id), async (data) => {
+      if (!this.defaultPostData) this.notifyService.setTitle(data.title)
+      await this.renderContent(data)
+      this.viewPost()
+    })
+
+    if (this.hideComments) return
+    this.apiService
+      .getCommentsByPost(this.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((comments) => {
+        this.comments = this.parseComments(comments)
+      })
+  }
+
+  public ngOnDestroy() {
+    if (this.viewedTimeoutId) clearTimeout(this.viewedTimeoutId)
+  }
+
+  public goToPage(page: number) {
+    this.currentPage = page
+  }
+
+  public donate() {
+    this.notifyService.showMessage('还没有开通啦~', 'secondary')
+  }
+
+  public viewPost() {
+    if (!this.browserService.isBrowser || this.browserService.store?.getItem(KEYS.POST_VIEWED(this.id))) return
+    this.viewedTimeoutId = Number(
+      setTimeout(
+        () =>
+          this.apiService
+            .viewPost(this.id)
+            .subscribe(() => this.browserService.store?.setItem(KEYS.POST_VIEWED(this.id), true)),
+        5000
+      )
+    )
+  }
+
+  public likePost() {
+    if (this.browserService.store?.getItem(KEYS.POST_LIKED(this.id))) {
+      this.notifyService.showMessage('已经点过赞了', 'warning')
+      return
+    }
+    this.apiService.likePost(this.id).subscribe(() => {
+      this.browserService.store?.setItem(KEYS.POST_LIKED(this.id), true)
+      if (this.data) this.data.likes += 1
+      this.updateHeaderContent()
+      this.notifyService.showMessage('点赞成功', 'success')
+    })
+  }
+
+  public async sharePost() {
+    const copyText = `${this.data?.title} - ${this.extra?.url}`
+    try {
+      await navigator.clipboard.writeText(copyText)
+      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+    } catch (_) {
+      this.notifyService.showMessage('链接复制失败', 'error')
+    }
+  }
+
+  public async addComment() {
+    if (!this.commentText) return
+
+    this.apiService
+      .sendComment(
+        this.id,
+        this.replyingTo ? `@${this.replyingTo.username}#${this.replyingTo.cid} ${this.commentText}` : this.commentText
+      )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.apiService
+          .getCommentsByPost(this.id)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((comments) => {
+            this.comments = this.parseComments(comments)
+            this.commentText = ''
+            this.replyingTo = null
+          })
+      })
+  }
+
+  public setReplyTo(username: string, cid: number) {
+    this.replyingTo = { username, cid }
+  }
+
+  public cancelReply() {
+    this.replyingTo = null
   }
 
   private setupRendererRules() {
@@ -171,12 +274,9 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
   }
 
   private async renderContent(data: ResPostSingleData) {
-    if (!this.highlighter) {
-      this.highlighter = await this.highlighterService.getHighlighter()
-    }
+    if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter()
 
-    this.post = {
-      ...data,
+    this.extra = {
       url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(
         this.browserService.windowRef
       ),
@@ -188,104 +288,5 @@ export class PostContentComponent extends romiComponentFactory<ResPostSingleData
 
     if (!this.hideToc) this.toc = this.generateToc(data.text)
     this.updateHeaderContent()
-  }
-
-  public goToPage(page: number) {
-    this.currentPage = page
-  }
-
-  public get pagedComments() {
-    const start = (this.currentPage - 1) * this.pageSize
-    return this.comments.slice(start, start + this.pageSize)
-  }
-
-  public ngOnInit() {
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.currentUser = user
-    })
-
-    from(this.highlighterService.getHighlighter())
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((h) => {
-        this.highlighter = h
-      })
-
-    if (this.defaultPostData) {
-      from(this.highlighterService.getHighlighter())
-        .pipe(
-          takeUntil(this.destroy$),
-          switchMap(() => from(Promise.resolve(this.renderContent(this.defaultPostData!))))
-        )
-        .subscribe()
-    } else {
-      this.load(this.apiService.getPost(this.id), (data) => {
-        this.notifyService.setTitle(data.title)
-        from(this.highlighterService.getHighlighter())
-          .pipe(
-            takeUntil(this.destroy$),
-            switchMap(() => from(Promise.resolve(this.renderContent(data))))
-          )
-          .subscribe()
-      })
-    }
-
-    this.apiService
-      .getCommentsByPost(this.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((comments) => {
-        this.comments = this.parseComments(comments)
-      })
-  }
-
-  public donate() {}
-
-  public viewPost() {}
-
-  public likePost() {
-    this.apiService.likePost(this.id).subscribe(() => {
-      this.browserService.store?.setItem(KEYS.POST_LIKED(this.id), true)
-      if (this.post) this.post.likes += 1
-      this.updateHeaderContent()
-      this.notifyService.showMessage('点赞成功', 'success')
-    })
-  }
-
-  public async sharePost() {
-    const copyText = `${this.post?.title} - ${this.post?.url}`
-    try {
-      await navigator.clipboard.writeText(copyText)
-      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
-    } catch (_) {
-      this.notifyService.showMessage('链接复制失败', 'error')
-    }
-  }
-
-  public async addComment() {
-    if (!this.commentText) return
-
-    this.apiService
-      .sendComment(
-        this.id,
-        this.replyingTo ? `@${this.replyingTo.username}#${this.replyingTo.cid} ${this.commentText}` : this.commentText
-      )
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.apiService
-          .getCommentsByPost(this.id)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((comments) => {
-            this.comments = this.parseComments(comments)
-            this.commentText = ''
-            this.replyingTo = null
-          })
-      })
-  }
-
-  public setReplyTo(username: string, cid: number) {
-    this.replyingTo = { username, cid }
-  }
-
-  public cancelReply() {
-    this.replyingTo = null
   }
 }

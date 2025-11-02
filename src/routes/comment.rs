@@ -1,10 +1,12 @@
+use std::{collections::HashMap, net::SocketAddr};
+
 use anyhow::Context;
 use axum::{
     Json, Router,
-    extract::{Path, State},
+    extract::{ConnectInfo, Path, State},
     routing::{delete, get, post},
 };
-use futures::future::try_join_all;
+use http::HeaderMap;
 use migration::Expr;
 use roga::*;
 use sea_orm::{
@@ -13,14 +15,17 @@ use sea_orm::{
 };
 
 use crate::{
-    app::AppState,
+    app::RomiState,
     entity::{romi_comments, romi_posts, romi_users},
-    guards::{admin::AdminUser, auth::AuthUser, client_info::ClientInfo},
+    guards::{admin::AdminUser, auth::AuthUser},
     models::comment::{ReqCommentData, ResCommentData},
-    utils::api::{ApiError, ApiResult, api_ok},
+    utils::{
+        api::{ApiError, ApiResult, api_ok},
+        http::get_req_user_agent,
+    },
 };
 
-pub fn routes() -> Router<AppState> {
+pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch_all))
         .route("/post/{pid}", get(fetch_by_post))
@@ -28,88 +33,93 @@ pub fn routes() -> Router<AppState> {
         .route("/{id}", delete(remove))
 }
 
-// TODO
 async fn fetch_all(
     _admin_user: AdminUser,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResCommentData>> {
-    try_join_all(
-        romi_comments::Entity::find()
-            .all(conn)
-            .await
-            .context("Failed to fetch comments")?
-            .iter()
-            .map(|comment| async {
-                let user = romi_users::Entity::find_by_id(comment.clone().uid)
-                    .one(conn)
-                    .await
-                    .with_context(|| format!("User {} not found for comment", comment.uid))?;
+    let comments =
+        romi_comments::Entity::find().all(conn).await.context("Failed to fetch comments")?;
 
-                user.map(|user| ResCommentData {
+    if comments.is_empty() {
+        return api_ok(vec![]);
+    }
+
+    let user_ids: Vec<u32> = comments.iter().map(|c| c.uid).collect();
+    let users = romi_users::Entity::find()
+        .filter(romi_users::Column::Uid.is_in(user_ids))
+        .all(conn)
+        .await
+        .context("Failed to fetch users")?;
+
+    let user_map: HashMap<u32, &romi_users::Model> = users.iter().map(|u| (u.uid, u)).collect();
+
+    api_ok(
+        comments
+            .iter()
+            .filter_map(|comment| {
+                user_map.get(&comment.uid).map(|user| ResCommentData {
                     cid: comment.cid,
                     pid: comment.pid,
                     uid: comment.uid,
-                    username: user.username,
+                    username: user.username.clone(),
                     created: comment.created,
-                    text: comment.clone().text,
-                    user_url: user.url,
+                    text: comment.text.clone(),
+                    user_url: user.url.clone(),
                 })
-                .ok_or_else(|| {
-                    l_warn!(logger, "User not found for comment {}", comment.cid);
-                    ApiError::not_found("User not found")
-                })
-            }),
+            })
+            .collect(),
     )
-    .await
-    .map(api_ok)?
 }
 
-// TODO
 async fn fetch_by_post(
     Path(pid): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResCommentData>> {
-    try_join_all(
-        romi_comments::Entity::find()
-            .filter(romi_comments::Column::Pid.eq(pid))
-            .all(conn)
-            .await
-            .with_context(|| format!("Failed to fetch comments for post {}", pid))?
-            .iter()
-            .map(|comment| async {
-                let user = romi_users::Entity::find_by_id(comment.uid)
-                    .one(conn)
-                    .await
-                    .with_context(|| format!("Failed to fetch user {} for comment", comment.uid))?;
+    let comments = romi_comments::Entity::find()
+        .filter(romi_comments::Column::Pid.eq(pid))
+        .all(conn)
+        .await
+        .with_context(|| format!("Failed to fetch comments for post {}", pid))?;
 
-                user.map(|user| ResCommentData {
+    if comments.is_empty() {
+        return api_ok(vec![]);
+    }
+
+    let user_ids: Vec<u32> = comments.iter().map(|c| c.uid).collect();
+    let users = romi_users::Entity::find()
+        .filter(romi_users::Column::Uid.is_in(user_ids))
+        .all(conn)
+        .await
+        .context("Failed to fetch users")?;
+    let user_map: HashMap<u32, &romi_users::Model> = users.iter().map(|u| (u.uid, u)).collect();
+
+    api_ok(
+        comments
+            .iter()
+            .filter_map(|comment| {
+                user_map.get(&comment.uid).map(|user| ResCommentData {
                     cid: comment.cid,
                     pid: comment.pid,
                     uid: comment.uid,
-                    username: user.username,
+                    username: user.username.clone(),
                     created: comment.created,
-                    text: comment.clone().text,
-                    user_url: user.url,
+                    text: comment.text.clone(),
+                    user_url: user.url.clone(),
                 })
-                .ok_or_else(|| {
-                    l_warn!(logger, "User not found for comment {}", comment.cid);
-                    ApiError::not_found("User not found")
-                })
-            }),
+            })
+            .collect(),
     )
-    .await
-    .map(api_ok)?
 }
 
 async fn create(
     auth_user: AuthUser,
-    client_info: ClientInfo,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
     Json(comment): Json<ReqCommentData>,
 ) -> ApiResult {
     let txn = conn.begin().await.context("Failed to start transaction")?;
 
-    let ClientInfo { ip, user_agent } = client_info;
     let comment_model = romi_comments::ActiveModel {
         cid: ActiveValue::not_set(),
         pid: ActiveValue::set(comment.pid),
@@ -118,8 +128,8 @@ async fn create(
             std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs()
                 as u32,
         ),
-        ip: ActiveValue::set(ip),
-        ua: ActiveValue::set(user_agent),
+        ip: ActiveValue::set(addr.ip().to_string()),
+        ua: ActiveValue::set(get_req_user_agent(&headers).unwrap_or_default().to_string()),
         text: ActiveValue::set(comment.text.clone()),
     }
     .save(&txn)
@@ -151,7 +161,7 @@ async fn create(
 async fn remove(
     AdminUser(admin_user): AdminUser,
     Path(id): Path<u32>,
-    State(AppState { ref logger, ref conn, .. }): State<AppState>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
     let txn = conn.begin().await.context("Failed to start transaction")?;
 
