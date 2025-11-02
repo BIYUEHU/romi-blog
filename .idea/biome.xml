@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BiomeSettings">
+    <option name="formatOnSave" value="true" />
+    <option name="sortImportOnSave" value="true" />
+    <option name="supportedExtensions">
+      <list>
+        <option value=".astro" />
+        <option value=".css" />
+        <option value=".gql" />
+        <option value=".graphql" />
+        <option value=".js" />
+        <option value=".mjs" />
+        <option value=".cjs" />
+        <option value=".jsx" />
+        <option value=".json" />
+        <option value=".jsonc" />
+        <option value=".svelte" />
+        <option value=".ts" />
+        <option value=".mts" />
+        <option value=".cts" />
+        <option value=".tsx" />
+        <option value=".vue" />
+        <option value=".html" />
+      </list>
+    </option>
+  </component>
+</project>
