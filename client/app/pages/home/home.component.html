@@ -1,7 +1,7 @@
 <app-layout-using [imageHeight]="'min-h-screen'">
   <div background class="bg-black/35 rounded-xl p-8 overflow-hidden hover:bg-black/40 hover:shadow-md">
     <div class="relative z-1 flex items-center gap-8">
-      <img src="https://api.hotaru.icu/ial/qqavatar/index.php?qq=FrTFF7fjGbS2Fg%3D%3D&size=640" alt="Avatar"
+      <img [src]="header.avatarUrl" alt="Avatar"
         class="hidden md:block w-32 h-32 rounded-full border-4 border-primary-100" />
       <div class="flex-1 max-w-2xl">
         <h1 class="text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">

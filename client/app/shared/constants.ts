@@ -3,10 +3,11 @@ import pkg from '../../../package.json'
 import { environment as env } from '../../environments/environment'
 import { environment as envDev } from '../../environments/environment.development'
 import { LoggerService } from '../services/logger.service'
+import buildMeta from '../../environments/build-meta'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
-export const ROMI_METADATA = { pkg }
+export const ROMI_METADATA = { pkg, build: buildMeta }
 
 export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
 
@@ -66,7 +67,8 @@ const _ = (() => {
     'color: red; font-size: 1.7em; font-weight: bold;'
   )
   logger.info('The website is running on <magentaBright>Romi Blog</magentaBright>')
-  logger.info(`Version: ${pkg.version} License: ${pkg.license} Author: ${pkg.author}`)
+  logger.info(`Version: ${pkg.version} Hash: ${buildMeta.HASH} Build Time: ${new Date(buildMeta.BUILD_TIME).toISOString()}`)
+  logger.info(`License: ${pkg.license} Author: ${pkg.author}`)
   logger.info('Open source: https://github.com/biyuehu/romi-blog')
   logger.debug(`API Base URL: ${API_BASE_URL}`)
   logger.record('<blueBright>Romi Blog is from the future, it shall end the old Web Blog era!</blueBright>')

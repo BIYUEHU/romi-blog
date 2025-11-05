@@ -34,25 +34,15 @@ def get_build_time() -> int:
     return int(datetime.now(timezone.utc).timestamp() * 1000)
 
 
-def get_version(package_json_path: Path) -> str:
-    try:
-        data: dict[str, object] = json.loads(
-            package_json_path.read_text(encoding="utf-8")
-        )
-        version = data.get("version")
-        if not isinstance(version, str):
-            raise ValueError("Missing or invalid 'version' in package.json")
-        return version
-    except Exception as e:
-        raise Exception(f"Unable to get version from {package_json_path}: {e}")
-
-
 def write_meta_file(path: Path, data: dict[str, object]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text((
-        "// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.\n"
-        f"export default {json.dumps(data, indent=2)} as const;\n"
-    ), encoding="utf-8")
+    path.write_text(
+        (
+            "// THIS FILE IS AUTO-GENERATED. DO NOT EDIT.\n"
+            f"export default {json.dumps(data, indent=2)} as const;\n"
+        ),
+        encoding="utf-8",
+    )
     print(f"Generated build meta {path} ->", json.dumps(data))
 
 
@@ -62,7 +52,6 @@ def main() -> None:
     write_meta_file(
         root / "client" / "environments" / "build-meta.ts",
         {
-            "VERSION": get_version(root / "package.json"),
             "HASH": get_git_hash(),
             "BUILD_TIME": get_build_time(),
             "LAN_IP": get_lan_ip(),

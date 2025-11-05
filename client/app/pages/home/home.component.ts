@@ -10,6 +10,7 @@ import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { APlayer } from '../../shared/types'
+import { API_BASE_URL } from '../../shared/constants'
 
 @Component({
   selector: 'app-home',
@@ -46,7 +47,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       ['i-mdi:reddit', 'Reddit'],
       ['i-mdi:discord', 'Discord'],
       ['i-mdi:xbox', 'Xbox', '']
-    ]
+    ],
+    avatarUrl: `${API_BASE_URL}/qqavatar`
   }
 
   public constructor(

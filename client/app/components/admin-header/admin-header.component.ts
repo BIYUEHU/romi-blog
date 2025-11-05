@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router'
 import { UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
 import { NotifyService } from '../../services/notify.service'
+import { API_BASE_URL } from '../../shared/constants'
 
 @Component({
   selector: 'app-admin-header',
@@ -17,6 +18,8 @@ export class AdminHeaderComponent {
   public createDate = new Date()
 
   public isSidebarOpen$
+
+  public avatarUrl = `${API_BASE_URL}/qqavatar` // TODO: github avatar
 
   public constructor(
     private readonly authService: AuthService,

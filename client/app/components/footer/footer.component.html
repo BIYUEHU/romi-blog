@@ -4,10 +4,10 @@
     <div class="text-left">
       <p>© 2019 - 2025 Romi Blog</p>
       <p>感谢陪伴：{{ currentTime }}</p>
-      @if (hitokoto) {
+      @if (data) {
       <p>
-        <a [routerLink]="'/hitokoto/' + hitokoto.id">{{
-          hitokoto.msg
+        <a [routerLink]="'/hitokoto/' + data.id">{{
+          data.msg
           }}</a>
       </p>
       }
