@@ -13,7 +13,7 @@ import { CardComponent } from '../card/card.component'
 export class ProjectListComponent {
   @Input({ required: true }) public repos!: ResProjectData[]
 
-  private readonly languageColors: Record<string, string> = {
+  private static readonly LANGUAGE_COLORS: Record<string, string> = {
     TypeScript: '#3178c6',
     JavaScript: '#f1e05a',
     Vue: '#41b883',
@@ -49,7 +49,9 @@ export class ProjectListComponent {
   }
 
   public getLanguageColor(language?: string): string {
-    return language && language in this.languageColors ? this.languageColors[language] : '#6e7681'
+    return language && language in ProjectListComponent.LANGUAGE_COLORS
+      ? ProjectListComponent.LANGUAGE_COLORS[language]
+      : '#6e7681'
   }
 
   public windowOpen(url: string): void {

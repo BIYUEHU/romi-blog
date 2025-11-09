@@ -2090,6 +2090,7 @@ dependencies = [
  "migration",
  "once_cell",
  "rand",
+ "regex",
  "reqwest",
  "roga",
  "sea-orm",

@@ -1,5 +1,5 @@
-import { PluginOption, defineConfig } from 'vite'
 import unocss from 'unocss/vite'
+import { defineConfig, PluginOption } from 'vite'
 import config from '../uno.config'
 
 export default defineConfig({

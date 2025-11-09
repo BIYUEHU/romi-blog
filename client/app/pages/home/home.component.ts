@@ -1,16 +1,24 @@
 import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { forkJoin, map } from 'rxjs'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
-import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
-import { ApiService } from '../../services/api.service'
-import { BrowserService } from '../../services/browser.service'
+import { ResMusicData, ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { APlayer } from '../../shared/types'
 import { API_BASE_URL } from '../../shared/constants'
+import { APlayer } from '../../shared/types'
+import { romiComponentFactory } from '../../utils/romi-component-factory'
+
+type HomeData = {
+  posts: ResPostData[]
+  news: ResNewsData[]
+  videos: Video[]
+  projects: ResProjectData[]
+  music: ResMusicData[]
+}
 
 @Component({
   selector: 'app-home',
@@ -19,11 +27,7 @@ import { API_BASE_URL } from '../../shared/constants'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  public posts?: ResPostData[]
-  public news?: ResNewsData[]
-  public videos?: Video[]
-  public projects?: ResProjectData[]
+export class HomeComponent extends romiComponentFactory<HomeData>('Home') implements OnInit, OnDestroy {
   private aplayer?: APlayer
   public header = {
     title: 'Arimura Sena',
@@ -48,43 +52,41 @@ export class HomeComponent implements OnInit, OnDestroy {
       ['i-mdi:discord', 'Discord'],
       ['i-mdi:xbox', 'Xbox', '']
     ],
-    avatarUrl: `${API_BASE_URL}/qqavatar`
+    avatarUrl: `${API_BASE_URL}/utils/qqavatar`
   }
 
-  public constructor(
-    private readonly notifyService: NotifyService,
-    private readonly apiService: ApiService,
-    private readonly browserService: BrowserService
-  ) {
+  public constructor(private readonly notifyService: NotifyService) {
+    super()
     this.notifyService.setTitle()
   }
 
   public ngOnInit() {
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
-    this.apiService.getPosts().subscribe((data) => {
-      this.posts = data
-        .filter(({ hide }) => !hide)
-        .slice(0, 4)
-        .sort((a, b) => b.created - a.created)
-    })
-    this.apiService.getNewses().subscribe((data) => {
-      this.news = data.slice(0, 4).sort((a, b) => b.created - a.created)
-    })
-    this.apiService.getVideos().subscribe((data) => {
-      this.videos = data.slice(0, 4).sort((a, b) => b.created - a.created)
-    })
-    this.apiService.getProjects().subscribe((data) => {
-      this.projects = data.slice(0, 4)
-    })
-    this.apiService.getMusic().subscribe((data) => {
-      if (!this.browserService.isBrowser) return
-      this.aplayer = new APlayer({
-        container: document.getElementById('recent-music'),
-        theme: 'var(--primary-100)',
-        listMaxHeight: '320px',
-        audio: data
-      })
-    })
+    this.load(
+      forkJoin({
+        posts: this.apiService.getPosts().pipe(
+          map((data) =>
+            data
+              .filter(({ hide }) => !hide)
+              .sort((a, b) => b.created - a.created)
+              .slice(0, 4)
+          )
+        ),
+        news: this.apiService.getNewses().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
+        videos: this.apiService.getVideos().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
+        projects: this.apiService.getProjects().pipe(map((data) => data.slice(0, 4))),
+        music: this.apiService.getMusic()
+      }),
+      ({ music }) => {
+        if (!this.browserService.isBrowser || music.length) return
+        this.aplayer = new APlayer({
+          container: document.getElementById('recent-music'),
+          theme: 'var(--primary-100)',
+          listMaxHeight: '320px',
+          audio: music
+        })
+      }
+    )
   }
 
   public ngOnDestroy() {

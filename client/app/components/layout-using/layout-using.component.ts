@@ -8,8 +8,8 @@ import '../../shared/types'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { KEYS } from '../../services/store.service'
-import { APlayer } from '../../shared/types'
 import { API_BASE_URL } from '../../shared/constants'
+import { APlayer } from '../../shared/types'
 
 @Component({
   selector: 'app-layout-using',
@@ -28,7 +28,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   private initHeaderData = {
     title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
-    imageUrl: `${API_BASE_URL}/utils/background/2`
+    imageUrl: `${API_BASE_URL}/utils/background`
   }
 
   private musicList?: ResMusicData[]
@@ -45,7 +45,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
     private readonly notifyService: NotifyService,
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
-  ) { }
+  ) {}
 
   public ngOnInit() {
     this.headerImageHeight = this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
@@ -73,9 +73,10 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
       ...data
     }
     if (!this.imageHeight && !this.fullBackground) {
-      this.headerImageHeight = `h-${(this.headerData.title?.length ??
+      this.headerImageHeight = `h-${
+        (this.headerData.title?.length ??
           0 + (this.headerData.subTitle?.reduce((acc, cur) => acc + cur.length, 0) ?? 0)) * 160
-        }px`
+      }px`
     }
   }
 

@@ -129,7 +129,7 @@
             <img [src]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username" alt="avatar"
               class="w-10 h-10 rounded-full bg-text-200 flex-shrink-0 overflow-hidden" />
             <div class="flex-1">
-              <div class="flex items-center gap-2">
+              <div class="flex flex-wrap items-center gap-2 truncate whitespace-nowrap">
                 @if (comment.user_url) {
                 <a [href]="comment.user_url" target="_blank" class="text-sm text-primary-100 hover:text-primary-200">
                   {{ '@' + comment.username }}
@@ -141,7 +141,7 @@
                   {{ comment.created * 1000 | date : "yyyy-MM-dd HH:mm" }}
                 </span>
               </div>
-              <p class="mt-2 text-bg-200">
+              <p class="mt-2 text-bg-200 break-words break-all">
                 @if (comment.replyTo) {
                 <span class="text-primary-100">回复 {{ '@' +comment.replyTo }}：</span>
                 }

@@ -35,7 +35,15 @@ async fn main() {
     }
 
     let config = match load_config() {
-        Ok(cfg) => cfg,
+        Ok(mut config) => {
+            if let Ok(qid) = env::var("QID") {
+                config.qid = Some(qid);
+            }
+            if let Ok(database_url) = env::var("DATABASE_URL") {
+                config.database_url = database_url;
+            }
+            config
+        }
         Err(e) => {
             eprintln!("{}", e);
             return;
@@ -60,13 +68,11 @@ async fn main() {
         });
 
     let conn = {
-        let database_url = match env::var("DATABASE_URL") {
-            Ok(url) => url,
-            Err(_) if !config.database_url.trim().is_empty() => config.database_url.clone(),
-            Err(_) => {
-                l_fatal!(&logger, "DATABASE_URL not set");
-                return;
-            }
+        let database_url = if config.database_url.trim().is_empty() {
+            l_fatal!(&logger, "DATABASE_URL not set");
+            return;
+        } else {
+            config.database_url.clone()
         };
         match Database::connect(&database_url).await {
             Ok(conn) => conn,

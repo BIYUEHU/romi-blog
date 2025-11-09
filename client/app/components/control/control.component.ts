@@ -11,12 +11,12 @@ type DependentPage = {
   using: number
 } & (
   | {
-      routinue: true
+      routine: true
       hideToc: boolean
       hideComments: boolean
     }
   | {
-      routinue: false
+      routine: false
       template: string
     }
 )
@@ -36,7 +36,7 @@ export class ControlComponent {
       name: 'about',
       title: '关于',
       using: 25,
-      routinue: true,
+      routine: true,
       hideToc: true,
       hideComments: false
     },
@@ -44,7 +44,7 @@ export class ControlComponent {
       name: 'log',
       title: '日志',
       using: 26,
-      routinue: true,
+      routine: true,
       hideToc: false,
       hideComments: true
     },
@@ -52,7 +52,7 @@ export class ControlComponent {
       name: 'links',
       title: '友情链接',
       using: 6,
-      routinue: false,
+      routine: false,
       template: 'links'
     }
   ]

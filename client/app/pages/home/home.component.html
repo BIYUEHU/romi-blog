@@ -28,126 +28,114 @@
   </div>
 
   <div main class="w-5xl max-w-90% mx-auto flex-1 space-y-16">
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
-        <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
-      </div>
-
-      @if (posts) {
-      <div class="columns-1 md:columns-2 gap-x-6">
-        @for (post of posts; track post.id) {
-        <app-card [routerLink]="'/post/' + post.id"
-          class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
-          @if (post.banner) {
-          <div class="aspect-video overflow-hidden">
-            <img [src]="post.banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-              [alt]="post.title" />
-          </div>
-          }
-          <div class="p-6">
-            <h3 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors">
-              {{ post.title }}
-            </h3>
-            <p class="text-accent-100 mt-2 line-clamp-2">{{ post.summary }}</p>
-            <div class="flex items-center gap-4 mt-4 text-sm text-accent-100">
-              <span>{{ post.created * 1000 | date:'yyyy-MM-dd' }}</span>
-              <span>{{ post.views }} 次阅读</span>
+    @if (data) {
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
+                <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
             </div>
-          </div>
-        </app-card>
-        }
-      </div>
-      } @else {
-      <app-loading />
-      }
-    </section>
 
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-bg-100">近期动态</h2>
-        <r-button [routerLink]="'/news/'" type="primary">查看更多</r-button>
-      </div>
-
-      @if (news) {
-      <div class="columns-1 md:columns-2 gap-x-6">
-        @for (item of news; track item.id) {
-        <app-card [routerLink]="'/news/' + item.id"
-          class="hover:cursor-pointer break-inside-avoid mb-6 hover:shadow-md transition-all">
-          <div class="bg-text-200 rounded-xl p-6">
-            <div class="text-bg-100 break-words">{{ item.text.slice(0, 150) }}...</div>
-            <div class="text-accent-100 text-sm mt-4">
-              {{ item.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+            <div class="columns-1 md:columns-2 gap-x-6">
+                @for (post of data!.posts; track post.id) {
+                    <app-card [routerLink]="'/post/' + post.id"
+                              class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
+                        @if (post.banner) {
+                            <div class="aspect-video overflow-hidden">
+                                <img [src]="post.banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                     [alt]="post.title" />
+                            </div>
+                        }
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors">
+                                {{ post.title }}
+                            </h3>
+                            <p class="text-accent-100 mt-2 line-clamp-2">{{ post.summary }}</p>
+                            <div class="flex items-center gap-4 mt-4 text-sm text-accent-100">
+                                <span>{{ post.created * 1000 | date:'yyyy-MM-dd' }}</span>
+                                <span>{{ post.views }} 次阅读</span>
+                            </div>
+                        </div>
+                    </app-card>
+                }
             </div>
-          </div>
-        </app-card>
-        }
-      </div>
-      } @else {
-      <app-loading />
-      }
-    </section>
+        </section>
 
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-bg-100">近期视频</h2>
-        <a href="https://space.bilibili.com/293767574" target="_blank">
-          <r-button type="primary">去B站关注</r-button>
-        </a>
-      </div>
-
-      @if (videos) {
-      <div class="columns-1 md:columns-2 gap-x-6">
-        @for (video of videos; track video.aid) {
-        <app-card [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
-          class="break-inside-avoid mb-6 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:cursor-pointer">
-          <div class="aspect-video relative overflow-hidden">
-            <img [src]="video.pic" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-            <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
-              {{ video.length }}
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-bg-100">近期动态</h2>
+                <r-button [routerLink]="'/news/'" type="primary">查看更多</r-button>
             </div>
-          </div>
-          <div class="p-4">
-            <h3 class="text-bg-100 font-medium line-clamp-2 group-hover:text-primary-100 transition-colors">
-              {{ video.title }}
-            </h3>
-            <div class="flex items-center gap-4 mt-2 text-sm text-accent-100">
+
+            <div class="columns-1 md:columns-2 gap-x-6">
+                @for (item of data.news; track item.id) {
+                    <app-card [routerLink]="'/news/' + item.id"
+                              class="hover:cursor-pointer break-inside-avoid mb-6 hover:shadow-md transition-all">
+                        <div class="bg-text-200 rounded-xl p-6">
+                            <div class="text-bg-100 break-words">{{ item.text.slice(0, 150) }}...</div>
+                            <div class="text-accent-100 text-sm mt-4">
+                                {{ item.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+                            </div>
+                        </div>
+                    </app-card>
+                }
+            </div>
+        </section>
+
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-bg-100">近期视频</h2>
+                <a href="https://space.bilibili.com/293767574" target="_blank">
+                    <r-button type="primary">去B站关注</r-button>
+                </a>
+            </div>
+
+            <div class="columns-1 md:columns-2 gap-x-6">
+                @for (video of data.videos; track video.aid) {
+                    <app-card [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
+                              class="break-inside-avoid mb-6 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:cursor-pointer">
+                        <div class="aspect-video relative overflow-hidden">
+                            <img [src]="video.pic" class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                            <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
+                                {{ video.length }}
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-bg-100 font-medium line-clamp-2 group-hover:text-primary-100 transition-colors">
+                                {{ video.title }}
+                            </h3>
+                            <div class="flex items-center gap-4 mt-2 text-sm text-accent-100">
               <span class="flex items-center gap-1">
                 <i class="i-mdi:clock-outline text-2xl"></i>
-                {{ video.play }}
+                  {{ video.play }}
               </span>
-              <span class="flex items-center gap-1">
+                                <span class="flex items-center gap-1">
                 <i class="i-mdi:eye-outline text-2xl"></i>
-                {{ video.comment }}
+                                    {{ video.comment }}
               </span>
+                            </div>
+                        </div>
+                    </app-card>
+                }
             </div>
-          </div>
-        </app-card>
-        }
-      </div>
-      } @else {
-      <app-loading />
-      }
-    </section>
+        </section>
 
-    <section>
-      <h2 class="text-2xl font-bold text-bg-100 mb-6">最近在听</h2>
-      <div class="bg-text-200 rounded-xl p-6">
-        <div id="recent-music"></div>
-      </div>
-    </section>
+        <section>
+            <h2 class="text-2xl font-bold text-bg-100 mb-6">最近在听</h2>
+            <div class="bg-text-200 rounded-xl p-6">
+                <div id="recent-music"></div>
+            </div>
+        </section>
 
-    <section>
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-2xl font-bold text-bg-100">近期项目</h2>
-        <r-button [routerLink]="'/project'" type="primary">查看更多</r-button>
-      </div>
+        <section>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-bg-100">近期项目</h2>
+                <r-button [routerLink]="'/project'" type="primary">查看更多</r-button>
+            </div>
 
-      @if (projects) {
-      <app-project-list [repos]="projects" />
-      } @else {
-      <app-loading />
-      }
-    </section>
+            <app-project-list [repos]="data.projects" />
+        </section>
+    } @else {
+        <app-loading />
+    }
   </div>
 </app-layout-using>

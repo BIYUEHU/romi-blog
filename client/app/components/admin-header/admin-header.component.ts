@@ -19,7 +19,7 @@ export class AdminHeaderComponent {
 
   public isSidebarOpen$
 
-  public avatarUrl = `${API_BASE_URL}/qqavatar` // TODO: github avatar
+  public avatarUrl = `${API_BASE_URL}/utils/qqavatar` // TODO: github avatar
 
   public constructor(
     private readonly authService: AuthService,

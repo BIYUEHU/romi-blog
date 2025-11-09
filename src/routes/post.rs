@@ -24,7 +24,7 @@ use crate::{
         ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
         ResPostSingleDataRelatedPost,
     },
-    tools::markdown::summary_markdown,
+    tools::markdown::{collect_markdown_languages, summary_markdown},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -174,6 +174,11 @@ async fn fetch(
                     model.text.clone()
                 } else {
                     "This post is password protected.".into()
+                },
+                languages: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                    collect_markdown_languages(model.text.clone().as_str())
+                } else {
+                    vec![]
                 },
                 password: password.map(|p| {
                     access.level.eq(&AccessLevel::Admin).then(|| p).unwrap_or("password".into())
@@ -526,7 +531,10 @@ async fn decrypt(
         Some(model) => {
             if let Some(password) = model.password {
                 if password == data.password {
-                    api_ok(ResDecryptPostData { text: model.text })
+                    api_ok(ResDecryptPostData {
+                        text: model.text.clone(),
+                        languages: collect_markdown_languages(model.text.as_str()),
+                    })
                 } else {
                     l_warn!(logger, "Incorrect password for post {}", id);
                     Err(ApiError::unauthorized("Incorrect password"))

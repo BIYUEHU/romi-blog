@@ -16,6 +16,8 @@ use crate::{
     utils::api::ApiError,
 };
 
+const DEFAULT_BACKGROUNDS: &'static str = include_str!("../../data/background_2.txt");
+
 pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/qqavatar", get(qqavatar_default))
@@ -52,22 +54,25 @@ async fn qqavatar_qid_size(Path((qid, size)): Path<(String, u32)>) -> impl IntoR
     qqavatar(qid, size).await
 }
 
+fn choose_background(content: String) -> impl IntoResponse {
+    let imgs = content.lines().collect::<Vec<_>>();
+    if imgs.is_empty() {
+        ApiError::not_found("No backgrounds available").into_response()
+    } else {
+        Redirect::to(imgs[random::<usize>() % imgs.len()]).into_response()
+    }
+}
+
 async fn background(id: String) -> impl IntoResponse {
-    match fs::read_to_string(&format!("./{DATA_DIR}/background_{id}.txt")) {
-        Ok(content) => {
-            let lines: Vec<_> = content.lines().collect();
-            if lines.is_empty() {
-                ApiError::not_found("No backgrounds available").into_response()
-            } else {
-                Redirect::to(lines[random::<usize>() % lines.len()]).into_response()
-            }
-        }
-        Err(_) => ApiError::not_found("No such background").into_response(),
+    if let Ok(content) = fs::read_to_string(format!("{}/background_{}.txt", DATA_DIR, id)) {
+        choose_background(content).into_response()
+    } else {
+        ApiError::not_found("No such background").into_response()
     }
 }
 
 async fn background_default() -> impl IntoResponse {
-    background("1".to_string()).await
+    choose_background(DEFAULT_BACKGROUNDS.to_string()).into_response()
 }
 
 async fn background_id(Path(id): Path<String>) -> impl IntoResponse {

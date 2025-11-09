@@ -78,7 +78,7 @@ async fn save_and_update_cache(data: Vec<SongInfo>) -> Result<()> {
     };
     let json_data = serde_json::to_string(&cache).context("Failed to serialize cache data")?;
     write(MUSIC_CACHE_FILE, json_data).context("Failed to write cache file")?;
-    MUSIC_CACHE.get_or_update(|| async { Ok(cache) }).await?;
+    MUSIC_CACHE.update(cache).await;
     Ok(())
 }
 

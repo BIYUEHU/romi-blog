@@ -28,16 +28,28 @@ export class LinksComponent {
       description: 'ArimuraSena 的个人网站'
     },
     {
+      name: 'Sena Language',
+      link: 'https://l.himeno-sena.com',
+      avatar: 'https://l.himeno-sena.com/favicon-7a447ed069013842.ico',
+      description: '基于 Rust 的实验性一等类型&依赖类型编程语言'
+    },
+    {
+      name: 'Himeno Sena',
+      link: 'https://himeno-sena.com',
+      avatar: 'https://himeno-sena.com/favicon.ico',
+      description: '姬野星奏的专属网站'
+    },
+    {
       name: 'KanaRhythm',
       link: 'https://kana.hotaru.icu/',
       avatar: 'https://kana.hotaru.icu/favicon.png',
-      description: '基于 MoonBit 的日语假名学习游戏'
+      description: '基于 MoonBit 语言的日语假名学习游戏'
     },
     {
       name: 'Nanno',
-      link: 'http://gal.hotaru.icu/',
-      avatar: 'http://gal.hotaru.icu/assets/cover.png',
-      description: '基于 Tauri 的 GAL 管理工具'
+      link: 'https://gal.hotaru.icu/',
+      avatar: 'https://gal.hotaru.icu/assets/cover.png',
+      description: '基于 Rust 的 GAL 管理、统计、同步工具'
     },
     {
       name: 'SenaTab',
@@ -46,10 +58,16 @@ export class LinksComponent {
       description: '基于 React 的浏览器起始页'
     },
     {
+      name: 'AvgJS',
+      link: 'https://avg.js.org',
+      avatar: 'https://avg.js.org/favicon.svg',
+      description: '轻量级视觉小说游戏制作引擎'
+    },
+    {
       name: 'KotoriDoc',
       link: 'https://kotori.js.org',
       avatar: 'https://kotori.js.org/favicon.svg',
-      description: '基于 TS 跨平台聊天机器人框架'
+      description: 'TS 跨平台聊天机器人框架'
     },
     {
       name: 'HULITOOL',

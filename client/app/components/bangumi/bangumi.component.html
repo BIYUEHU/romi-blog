@@ -1,9 +1,8 @@
 <div class="max-w-98% w-4xl mx-auto space-y-6">
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-    @if (isLoading && !items.length) {
+  @if (isLoading && !items.length) {
     <app-loading />
-    }
-
+  } @else {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     @for (item of items; track $index) {
     <app-card class="flex flex-col lg:flex-row gap-6  hover:cursor-pointer">
       <a [href]="'https://bgm.tv/subject/' + item.subject_id" target="_blank" class="block">
@@ -47,4 +46,5 @@
     <r-button type="warning" (click)="loadMore()">加载更多</r-button>
     }
   </div>
+  }
 </div>

@@ -37,3 +37,4 @@ sysinfo = "0.37"
 uuid = { version = "1.13.1", features = ["v4"] }
 ts-rs = "11.0.1"
 rand = "0.8.5"
+regex = "1.11.0"

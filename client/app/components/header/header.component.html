@@ -24,7 +24,7 @@
         <div
           class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
           @for (child of item.children; track child.text) {
-          <a [href]="child.link" class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
+          <a [routerLink]="child.link" class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
             {{ child.text }}
           </a>
           }

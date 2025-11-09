@@ -6,7 +6,7 @@
 - [ ] 文章页评论区的 “登录提示” 与 “评论框” 显示机制问题
 - [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language）
 - [ ] Blog content search
-- [ ] Support private news
+- [x] Support private news
 - [ ] Settings and customization
 - [ ] Website color scheme
 - [ ] Rust rendering html to implement custom footer, header scripts and meta description, tags
@@ -16,7 +16,7 @@
 - [ ] Characters birthdays reminder
 - [ ] File transporter logger
 - [x] filter requests from Node.Js
-- [ ] Refactory php ial api, such as proxy, qqavatar, etc.
+- [x] Refactory php ial api, such as proxy, qqavatar, etc.
 - [ ] Post password protection (Include images and comments)
 - [ ] Post and news comments and user system
 - [ ] Comments status: 0 resolved; 1 pending; 2 spam

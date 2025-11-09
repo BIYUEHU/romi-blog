@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
 import { CardComponent } from '../card/card.component'
+import { LoadingComponent } from '../loading/loading.component'
 
 @Component({
   selector: 'app-post-list',

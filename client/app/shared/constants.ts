@@ -1,9 +1,9 @@
 import { isDevMode } from '@angular/core'
 import pkg from '../../../package.json'
+import buildMeta from '../../environments/build-meta'
 import { environment as env } from '../../environments/environment'
 import { environment as envDev } from '../../environments/environment.development'
 import { LoggerService } from '../services/logger.service'
-import buildMeta from '../../environments/build-meta'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
@@ -13,44 +13,7 @@ export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
 
 export const POSTS_PER_PAGE = 10
 
-export const SUPPORTS_HIGHLIGHT_LANGUAGES = [
-  'python',
-  'javascript',
-  'java',
-  'c++',
-  'c#',
-  'php',
-  'ruby',
-  'go',
-  'rust',
-  'typescript',
-  'kotlin',
-  'julia',
-  'haskell',
-  'perl',
-  'lua',
-  'r',
-  'bash',
-  'powershell',
-  'html',
-  'css',
-  'json',
-  'yaml',
-  'xml',
-  'yaml',
-  'toml',
-  'properties',
-  'dotenv',
-  'nginx',
-  'apache',
-  'ini',
-  'toml',
-  'c',
-  'ocaml',
-  'markdown'
-]
-
-const _ = (() => {
+const _ = ((): undefined => {
   if (typeof window === 'undefined') return
   const logger = new LoggerService()
   console.log(
@@ -67,7 +30,9 @@ const _ = (() => {
     'color: red; font-size: 1.7em; font-weight: bold;'
   )
   logger.info('The website is running on <magentaBright>Romi Blog</magentaBright>')
-  logger.info(`Version: ${pkg.version} Hash: ${buildMeta.HASH} Build Time: ${new Date(buildMeta.BUILD_TIME).toISOString()}`)
+  logger.info(
+    `Version: ${pkg.version} Hash: ${buildMeta.HASH} Build Time: ${new Date(buildMeta.BUILD_TIME).toISOString()}`
+  )
   logger.info(`License: ${pkg.license} Author: ${pkg.author}`)
   logger.info('Open source: https://github.com/biyuehu/romi-blog')
   logger.debug(`API Base URL: ${API_BASE_URL}`)
@@ -82,4 +47,5 @@ const _ = (() => {
   logger.record(
     '<whiteBright>Fucking C, CPP, Java, Python, CSharp, Golang! The future will belong to</whiteBright> <redBright>Rust and More Languages based on PLT and TT!</redBright>'
   )
+  return
 })()

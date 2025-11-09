@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -37,25 +37,25 @@ export class MusicComponent implements OnInit, OnDestroy {
       const isEmpty = !this.musicList
       this.musicList = data
       this.isLoading = false
-      this.initAplayer()
-      if (!this.browserService.isBrowser || !isEmpty || !this.aplayer) return
-      this.aplayer.list.add(data)
+      if (!this.browserService.isBrowser) return
+
+      setTimeout(() => {
+        this.aplayer = new APlayer({
+          container: document.getElementById('aplayer'),
+          theme: 'var(--primary-100)',
+          listMaxHeight: '70vh',
+          lrcType: 1,
+          audio: this.musicList ?? []
+        })
+
+        if (!this.browserService.isBrowser || !isEmpty || !this.aplayer) return
+        this.aplayer.list.add(data)
+      }, 0)
     })
 
     this.notifyService.updateHeaderContent({
       title: '歌单收藏',
       subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
-    })
-  }
-
-  private initAplayer() {
-    if (!this.browserService.isBrowser) return
-    this.aplayer = new APlayer({
-      container: document.getElementById('aplayer'),
-      theme: 'var(--primary-100)',
-      listMaxHeight: '70vh',
-      lrcType: 1,
-      audio: this.musicList ?? []
     })
   }
 

@@ -5,8 +5,8 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Router, RouterLink } from '@angular/router'
 import markdownIt from 'markdown-it'
 import MarkdownIt from 'markdown-it'
-import { from, of, Subject, tap } from 'rxjs'
-import { switchMap, takeUntil } from 'rxjs/operators'
+import { of, Subject } from 'rxjs'
+import { takeUntil } from 'rxjs/operators'
 import { BundledLanguage, BundledTheme, HighlighterGeneric } from 'shiki'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
@@ -274,7 +274,7 @@ export class PostContentComponent
   }
 
   private async renderContent(data: ResPostSingleData) {
-    if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter()
+    if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter(data.languages)
 
     this.extra = {
       url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(

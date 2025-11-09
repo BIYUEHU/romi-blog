@@ -20,13 +20,48 @@
     </cargoProject>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="" />
+    <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/header/header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/header/header.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/loading/loading.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/loading/loading.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/loading/loading.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/loading/loading.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/shared/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/post.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/post.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/utils.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/service/music.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/music.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tools/markdown.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/markdown.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/cache.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/cache.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui/vite.config.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:dev" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -111,46 +146,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;HTTP 请求.request | Create User.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get All Meta.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get Single Meta.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get background.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get backgrounds.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get characters.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get qqavatar.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Test2.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | User Login.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;npm.Angular CLI Server.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Settings.JavaScript&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;G:\\Repos\\romichan\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor": "Debug",
+    "HTTP 请求.request | Create User.executor": "Run",
+    "HTTP 请求.request | Get All Meta.executor": "Run",
+    "HTTP 请求.request | Get Single Meta.executor": "Run",
+    "HTTP 请求.request | Get background.executor": "Run",
+    "HTTP 请求.request | Get backgrounds.executor": "Run",
+    "HTTP 请求.request | Get characters.executor": "Run",
+    "HTTP 请求.request | Get qqavatar.executor": "Run",
+    "HTTP 请求.request | Test2.executor": "Run",
+    "HTTP 请求.request | User Login.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "npm.Angular CLI Server.executor": "Run",
+    "npm.dev.executor": "Run",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "G:\\Repos\\romichan\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunAnythingCache">
     <option name="myCommands">
       <command value="{" />
@@ -162,7 +198,6 @@
         <entry key="HttpClient.HttpRequestRunConfigurationType">
           <value>
             <map>
-              <entry key="request | Get background" value="STOPPED" />
               <entry key="request | Get backgrounds" value="STOPPED" />
               <entry key="request | Get qqavatar" value="STOPPED" />
               <entry key="request | Test2" value="STOPPED" />
@@ -173,7 +208,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="npm.dev">
+  <component name="RunManager" selected="Cargo.Test tools::markdown::tests::test_collect_markdown_languages">
     <configuration name="Run romichan" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package romichan --bin romichan" />
@@ -209,8 +244,23 @@
         <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
       </method>
     </configuration>
-    <configuration name="request | Get background" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/scripts/request.http" executionIdentifier="Get background" index="14" runType="运行单个请求">
-      <method v="2" />
+    <configuration name="Test tools::markdown::tests::test_collect_markdown_languages" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="buildProfileId" value="test" />
+      <option name="command" value="test --package romichan --bin romichan tools::markdown::tests::test_collect_markdown_languages -- --exact" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
     </configuration>
     <configuration name="request | Get backgrounds" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/scripts/request.http" executionIdentifier="Get backgrounds" index="14" runType="运行单个请求">
       <method v="2" />
@@ -249,11 +299,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP 请求.request | Get background" />
-        <item itemvalue="HTTP 请求.request | Get qqavatar" />
-        <item itemvalue="HTTP 请求.request | Test2" />
-        <item itemvalue="HTTP 请求.request | Get backgrounds" />
+        <item itemvalue="Cargo.Test tools::markdown::tests::test_collect_markdown_languages" />
         <item itemvalue="HTTP 请求.request | User Login" />
+        <item itemvalue="HTTP 请求.request | Test2" />
+        <item itemvalue="HTTP 请求.request | Get qqavatar" />
+        <item itemvalue="HTTP 请求.request | Get backgrounds" />
       </list>
     </recent_temporary>
   </component>
@@ -284,6 +334,10 @@
       <workItem from="1762064081498" duration="1294000" />
       <workItem from="1762065564146" duration="9273000" />
       <workItem from="1762074990825" duration="615000" />
+      <workItem from="1762075647242" duration="84000" />
+      <workItem from="1762670076934" duration="52000" />
+      <workItem from="1762670168087" duration="2245000" />
+      <workItem from="1762672450502" duration="7241000" />
     </task>
     <servers />
   </component>

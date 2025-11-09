@@ -41,6 +41,11 @@ where
         *self.entry.write().await = Some((new_data.clone(), now + self.ttl));
         Ok(new_data)
     }
+
+    pub async fn update(&self, data: T) {
+        let now = SystemTime::now();
+        *self.entry.write().await = Some((data, now + self.ttl));
+    }
 }
 
 #[macro_export]

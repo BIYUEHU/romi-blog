@@ -56,6 +56,7 @@ pub struct ResPostSingleData {
     pub created: u32,
     pub modified: u32,
     pub text: String,
+    pub languages: Vec<String>,
     pub password: Option<String>,
     pub hide: bool,
     pub allow_comment: bool,
@@ -73,4 +74,5 @@ pub struct ResPostSingleData {
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResDecryptPostData {
     pub text: String,
+    pub languages: Vec<String>,
 }

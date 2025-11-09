@@ -30,7 +30,6 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
 
     let filtered = [...this.data]
 
-    // 搜索过滤
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase()
       filtered = filtered.filter(
@@ -41,7 +40,6 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
       )
     }
 
-    // 语言过滤
     if (this.selectedLanguage) {
       filtered = filtered.filter((repo) => repo.language === this.selectedLanguage)
     }
