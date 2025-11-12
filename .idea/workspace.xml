@@ -21,40 +21,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/header/header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/header/header.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/loading/loading.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/loading/loading.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/loading/loading.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/loading/loading.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/shared/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/constants.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/utils.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/service/music.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/service/music.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/markdown.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/markdown.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/cache.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/cache.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui/vite.config.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -149,7 +121,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor": "Debug",
+    "Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor": "Run",
     "HTTP 请求.request | Create User.executor": "Run",
     "HTTP 请求.request | Get All Meta.executor": "Run",
     "HTTP 请求.request | Get Single Meta.executor": "Run",
@@ -208,7 +180,7 @@
       </map>
     </option>
   </component>
-  <component name="RunManager" selected="Cargo.Test tools::markdown::tests::test_collect_markdown_languages">
+  <component name="RunManager" selected="npm.dev">
     <configuration name="Run romichan" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
       <option name="buildProfileId" value="dev" />
       <option name="command" value="run --package romichan --bin romichan" />
@@ -337,7 +309,8 @@
       <workItem from="1762075647242" duration="84000" />
       <workItem from="1762670076934" duration="52000" />
       <workItem from="1762670168087" duration="2245000" />
-      <workItem from="1762672450502" duration="7241000" />
+      <workItem from="1762672450502" duration="7583000" />
+      <workItem from="1762920979032" duration="2298000" />
     </task>
     <servers />
   </component>

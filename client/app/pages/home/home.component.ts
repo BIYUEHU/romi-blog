@@ -8,7 +8,7 @@ import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { ResMusicData, ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { API_BASE_URL } from '../../shared/constants'
+import { API_BASE_URL2 } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
 import { romiComponentFactory } from '../../utils/romi-component-factory'
 
@@ -29,7 +29,7 @@ type HomeData = {
 })
 export class HomeComponent extends romiComponentFactory<HomeData>('Home') implements OnInit, OnDestroy {
   private aplayer?: APlayer
-  public header = {
+  public readonly header = {
     title: 'Arimura Sena',
     subTitle: [
       '👋 Hi there, this is my personal website and blog',
@@ -52,7 +52,7 @@ export class HomeComponent extends romiComponentFactory<HomeData>('Home') implem
       ['i-mdi:discord', 'Discord'],
       ['i-mdi:xbox', 'Xbox', '']
     ],
-    avatarUrl: `${API_BASE_URL}/utils/qqavatar`
+    avatarUrl: `${API_BASE_URL2}/utils/qqavatar`
   }
 
   public constructor(private readonly notifyService: NotifyService) {
@@ -78,7 +78,7 @@ export class HomeComponent extends romiComponentFactory<HomeData>('Home') implem
         music: this.apiService.getMusic()
       }),
       ({ music }) => {
-        if (!this.browserService.isBrowser || music.length) return
+        if (!this.browserService.isBrowser || !music.length) return
         this.aplayer = new APlayer({
           container: document.getElementById('recent-music'),
           theme: 'var(--primary-100)',

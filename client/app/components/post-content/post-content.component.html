@@ -59,7 +59,7 @@
       @if (!hideRelatedPosts && !data.hide && (data.prev || data.next)) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
         @if (data.prev) {
-        <a [href]="'/post/' + data.prev.id"
+        <a [routerLink]="'/post/' + data.prev.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2">
             <span>上一篇</span>
@@ -73,7 +73,7 @@
         }
 
         @if (data.next) {
-        <a [href]="'/post/' + data.next.id"
+        <a [routerLink]="'/post/' + data.next.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
             <span>下一篇</span>

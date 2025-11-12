@@ -11,7 +11,7 @@ export const ROMI_METADATA = { pkg, build: buildMeta }
 
 export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
 
-export const POSTS_PER_PAGE = 10
+export const API_BASE_URL2 = isDevMode() ? envDev.api_base_url : '/api'
 
 const _ = ((): undefined => {
   if (typeof window === 'undefined') return
