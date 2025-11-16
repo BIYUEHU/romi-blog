@@ -11,9 +11,7 @@
                 </div>
             }
 
-            @if (isLoading) {
-                <app-loading/>
-            } @else if (groupedNews.length === 0) {
+            @if (groupedNews.length === 0) {
                 <div class="text-center text-accent-100 py-8">暂无动态</div>
             } @else {
                 <div class="space-y-12">

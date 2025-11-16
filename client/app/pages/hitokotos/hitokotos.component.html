@@ -1,9 +1,5 @@
 <div class="max-w-98% w-4xl mx-auto space-y-6">
-  @if (isLoading) {
-  <div class="col-span-full text-center">
-    <r-loading label="加载中..." />
-  </div>
-  } @else {
+
   <div class="columns-1 md:columns-2 gap-x-4">
     @for (hitokoto of hitokotos; track $index) {
     <div class="break-inside-avoid mb-4 bg-text-200 rounded-lg border p-4 transition-colors relative "
@@ -34,9 +30,8 @@
     </div>
     }
   </div>
-  }
 
-  @if (!isLoading && hitokotos.length > 0) {
+  @if (hitokotos.length > 0) {
   <div class="flex justify-center">
     <r-button type="info" (click)="loadMore()">加载更多</r-button>
   </div>

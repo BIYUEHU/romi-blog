@@ -1,8 +1,8 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { BangumiData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { CardComponent } from '../card/card.component'
 
 @Component({
@@ -12,7 +12,7 @@ import { CardComponent } from '../card/card.component'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './bangumi.component.html'
 })
-export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi') implements OnInit {
+export class BangumiComponent implements OnInit {
   @Input({ required: true }) public isAnime!: boolean
 
   public isLoading = true
@@ -21,14 +21,19 @@ export class BangumiComponent extends romiComponentFactory<BangumiData>('bangumi
   private offset = 0
   private total = 0
 
-  public constructor(private readonly notifyService: NotifyService) {
-    super()
-  }
+  public data?: BangumiData
+
+  public constructor(
+    private readonly notifyService: NotifyService,
+    private readonly apiService: ApiService
+  ) {}
 
   public ngOnInit(): void {
     this.isLoading = true
 
-    this.load(this.apiService.getBangumi(0, this.isAnime), (data) => {
+    // TODO: 像其它第三方API，后端进行缓存，这样这里也可以改用为 SSR resolver
+    this.apiService.getBangumi(0, this.isAnime).subscribe((data) => {
+      this.data = data
       this.isLoading = false
       this.items = data.data
       this.total = data.total

@@ -2,9 +2,9 @@
   <div main>
     @if (dependentPageUsing) {
     @if (dependentPageUsing.routine) {
-    <app-post-content [hideOptions]="true" [hideSubTitle]="true" [hideRelatedPosts]="true" [hideCopyright]="true"
-      [id]="dependentPageUsing.using" [title]="dependentPageUsing.title" [hideToc]="dependentPageUsing.hideToc"
-      [hideComments]="dependentPageUsing.hideComments" />
+<!--    <app-post-content [hideOptions]="true" [hideSubTitle]="true" [hideRelatedPosts]="true" [hideCopyright]="true"-->
+<!--      [id]="dependentPageUsing.using" [title]="dependentPageUsing.title" [hideToc]="dependentPageUsing.hideToc"-->
+<!--      [hideComments]="dependentPageUsing.hideComments" />-->
     } @else if (dependentPageUsing.template === 'links') {
     <app-links [id]="dependentPageUsing.using" />
     } @else {

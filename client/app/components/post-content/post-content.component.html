@@ -1,5 +1,5 @@
 <div class="max-w-98% w-4xl mx-auto flex-1">
-  @if (data && renderedContent) {
+  @if (renderedContent) {
   <div class="flex gap-8">
     <div class="flex-1 w-full">
       <ng-content select="[post-brefore]"></ng-content>
@@ -23,12 +23,12 @@
       }
 
       @if (!hideOptions) {
-      @if (data.categories.length + (extra?.tags?.length ?? 0) > 0) {
+      @if (post.categories.length + (extra?.tags?.length ?? 0) > 0) {
       <div class="mx-auto line-height-loose mt-5">
         <r-divider class="mx-auto"></r-divider>
         <div class="flex my-4 gap-4 flex-wrap">
           @for (item of
-          data.categories; track $index) {
+          post.categories; track $index) {
           <r-tag hovered [routerLink]="['/category', item]">
             {{ item }}
           </r-tag>
@@ -56,30 +56,30 @@
       </div>
       }
 
-      @if (!hideRelatedPosts && !data.hide && (data.prev || data.next)) {
+      @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
-        @if (data.prev) {
-        <a [routerLink]="'/post/' + data.prev.id"
+        @if (post.prev) {
+        <a [routerLink]="'/post/' + post.prev.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2">
             <span>上一篇</span>
           </div>
           <div class="'text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors">
-            {{ data.prev.title }}
+            {{ post.prev.title }}
           </div>
         </a>
         } @else {
         <div class="group p-4 rounded-lg transition-colors"></div>
         }
 
-        @if (data.next) {
-        <a [routerLink]="'/post/' + data.next.id"
+        @if (post.next) {
+        <a [routerLink]="'/post/' + post.next.id"
           class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
           <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
             <span>下一篇</span>
           </div>
           <div class="text-lg text-primary-200 hover:text-primary-100 line-clamp-1 transition-colors text-right">
-            {{ data.next.title }}
+            {{ post.next.title }}
           </div>
         </a>
         }
@@ -87,7 +87,7 @@
       }
 
       @if (!hideComments) {
-      @if (data.allow_comment) {
+      @if (post.allow_comment) {
       <div class="mt-8 mb-6">
         <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
 

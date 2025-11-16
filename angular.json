@@ -35,7 +35,7 @@
               "ui/dist/romi-ui.umd.cjs"
             ],
             "server": "client/main.server.ts",
-            "prerender": true,
+            "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
             }

@@ -57,6 +57,7 @@ export class ControlComponent {
     }
   ]
 
+  // TODO: 更好的处理
   public constructor(private readonly router: Router) {
     this.routerParams = this.router.url
       .split('#')[0]

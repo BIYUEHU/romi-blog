@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core'
-import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router'
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
 
 @Component({
@@ -23,7 +23,9 @@ export class ProgressComponent implements OnInit, AfterViewInit {
 
   private handleRouteEvent(event: object) {
     if (event instanceof NavigationStart) this.startProgress()
-    if (event instanceof NavigationEnd || event instanceof NavigationError) this.endProgress()
+    if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+      this.endProgress()
+    }
   }
 
   private startProgress() {

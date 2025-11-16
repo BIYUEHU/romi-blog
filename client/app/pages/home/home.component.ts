@@ -1,24 +1,15 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
-import { RouterLink } from '@angular/router'
-import { forkJoin, map } from 'rxjs'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
-import { ResMusicData, ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
+import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { API_BASE_URL2 } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
-
-type HomeData = {
-  posts: ResPostData[]
-  news: ResNewsData[]
-  videos: Video[]
-  projects: ResProjectData[]
-  music: ResMusicData[]
-}
+import type { homeResolver } from './home.resolver'
 
 @Component({
   selector: 'app-home',
@@ -27,8 +18,11 @@ type HomeData = {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
-export class HomeComponent extends romiComponentFactory<HomeData>('Home') implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
+  @Input() public readonly home!: typeof homeResolver extends ResolveFn<infer T> ? T : never
+
   private aplayer?: APlayer
+
   public readonly header = {
     title: 'Arimura Sena',
     subTitle: [
@@ -55,38 +49,22 @@ export class HomeComponent extends romiComponentFactory<HomeData>('Home') implem
     avatarUrl: `${API_BASE_URL2}/utils/qqavatar`
   }
 
-  public constructor(private readonly notifyService: NotifyService) {
-    super()
-    this.notifyService.setTitle()
-  }
+  public constructor(
+    private readonly notifyService: NotifyService,
+    private readonly browserService: BrowserService
+  ) {}
 
   public ngOnInit() {
+    this.notifyService.setTitle()
     this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
-    this.load(
-      forkJoin({
-        posts: this.apiService.getPosts().pipe(
-          map((data) =>
-            data
-              .filter(({ hide }) => !hide)
-              .sort((a, b) => b.created - a.created)
-              .slice(0, 4)
-          )
-        ),
-        news: this.apiService.getNewses().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
-        videos: this.apiService.getVideos().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
-        projects: this.apiService.getProjects().pipe(map((data) => data.slice(0, 4))),
-        music: this.apiService.getMusic()
-      }),
-      ({ music }) => {
-        if (!this.browserService.isBrowser || !music.length) return
-        this.aplayer = new APlayer({
-          container: document.getElementById('recent-music'),
-          theme: 'var(--primary-100)',
-          listMaxHeight: '320px',
-          audio: music
-        })
-      }
-    )
+
+    if (!this.browserService.isBrowser || !this.home.music.length) return
+    this.aplayer = new APlayer({
+      container: document.getElementById('recent-music'),
+      theme: 'var(--primary-100)',
+      listMaxHeight: '320px',
+      audio: this.home.music
+    })
   }
 
   public ngOnDestroy() {

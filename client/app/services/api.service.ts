@@ -45,7 +45,7 @@ export class ApiService {
     return new HttpHeaders().set('Skip-Error-Handler', 'true')
   }
 
-  private getSkipBringTokenhHeaders() {
+  private getSkipBringTokenHeaders() {
     return new HttpHeaders().set('Skip-Bring-Token', 'true')
   }
 
@@ -214,7 +214,7 @@ export class ApiService {
         offset,
         subject_type: isAnime ? 2 : 4
       },
-      headers: this.getSkipBringTokenhHeaders()
+      headers: this.getSkipBringTokenHeaders()
     })
   }
 

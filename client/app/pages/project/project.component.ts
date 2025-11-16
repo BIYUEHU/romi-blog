@@ -1,11 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { ResProjectData } from '../../../output'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { ResProjectData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-project',
@@ -14,21 +13,18 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './project.component.html'
 })
-export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('project') implements OnInit {
-  public isLoading = true
+export class ProjectComponent implements OnInit {
+  @Input() public readonly projects!: ResProjectData[]
 
   public searchQuery = ''
   public selectedLanguage = ''
 
   public constructor(private readonly notifyService: NotifyService) {
-    super()
     this.notifyService.setTitle('开源项目')
   }
 
   public get filteredRepos() {
-    if (!this.data) return []
-
-    let filtered = [...this.data]
+    let filtered = [...this.projects]
 
     if (this.searchQuery) {
       const query = this.searchQuery.toLowerCase()
@@ -47,19 +43,13 @@ export class ProjectComponent extends romiComponentFactory<ResProjectData[]>('pr
   }
 
   public get languages(): string[] {
-    if (!this.data) return []
-    const langs = new Set(this.data.map((repo) => repo.language).filter(Boolean) as string[])
-    return Array.from(langs).sort()
+    return Array.from(new Set(this.projects.map((repo) => repo.language).filter(Boolean) as string[])).sort()
   }
 
   public ngOnInit() {
     this.notifyService.updateHeaderContent({
       title: '开源项目',
       subTitle: ['这里是我的一些开源作品，大部分都是练手或者实用的小工具']
-    })
-
-    this.load(this.apiService.getProjects(), () => {
-      this.isLoading = false
     })
   }
 }

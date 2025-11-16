@@ -1,10 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
 import { ResHitokotoData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
@@ -14,57 +14,60 @@ import { HitokotosComponent } from '../hitokotos/hitokotos.component'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './hitokoto.component.html'
 })
-export class HitokotoComponent extends romiComponentFactory<ResHitokotoData>('hitokoto') implements OnInit {
+export class HitokotoComponent implements OnInit {
+  @Input() public hitokoto!: ResHitokotoData
+  @Input() public readonly id?: string
+
+  public isLoading = false
+
   public showHelpDialog = false
   public get isLiked() {
-    return !!this.data && !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(this.data.id))
+    return !!this.hitokoto && !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(this.hitokoto.id))
   }
 
   public constructor(
     private readonly notifyService: NotifyService,
-    private readonly route: ActivatedRoute
-  ) {
-    super()
-  }
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
+  ) {}
 
   public readonly getTagType = HitokotosComponent.prototype.getTagType
 
   public readonly getTypeName = HitokotosComponent.prototype.getTypeName
 
-  public ngOnInit(): void {
+  public ngOnInit() {
+    this.notifyService.setTitle(this.hitokoto.msg)
     this.notifyService.updateHeaderContent({
       title: '蛍の一言ひとこと',
       subTitle: []
     })
-    this.loadHitokoto(Number(this.route.snapshot.paramMap.get('id')))
   }
 
-  private loadHitokoto(id?: number): void {
-    this.load(this.apiService.getHitokoto(id && !Number.isNaN(id) && id > 0 ? id : undefined), (data) =>
+  public nextHitokoto() {
+    this.isLoading = true
+    this.apiService.getHitokoto().subscribe((data) => {
+      this.hitokoto = data
       this.notifyService.setTitle(data.msg)
-    )
+      this.isLoading = false
+    })
   }
 
-  public nextHitokoto(): void {
-    this.loadHitokoto()
-  }
-
-  public likeHitokoto(): void {
-    if (!this.data || this.isLiked) {
+  public likeHitokoto() {
+    if (this.isLiked) {
       this.notifyService.showMessage('已经点过赞了', 'info')
       return
     }
 
-    this.apiService.likeHitokoto(this.data.id).subscribe(() => {
-      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED((this.data as ResHitokotoData).id), true)
-      ;(this.data as ResHitokotoData).likes += 1
+    this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
+      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED((this.hitokoto as ResHitokotoData).id), true)
+      ;(this.hitokoto as ResHitokotoData).likes += 1
       this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
-  public shareHitokoto(): void {
-    if (!this.data) return
-    const url = `${location.origin}/hitokoto/${this.data.id}`
+  public shareHitokoto() {
+    if (!this.hitokoto) return
+    const url = `${location.origin}/hitokoto/${this.hitokoto.id}`
     navigator.clipboard.writeText(url).then(
       () => this.notifyService.showMessage('链接已复制', 'secondary'),
       () => this.notifyService.showMessage('复制失败', 'error')

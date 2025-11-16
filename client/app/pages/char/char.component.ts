@@ -1,101 +1,80 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
-import { map } from 'rxjs'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
-import { LoadingComponent } from '../../components/loading/loading.component'
-import { ResCharacterData, ResMusicData } from '../../models/api.model'
-import { BrowserService } from '../../services/browser.service'
+import { ResCharacterData } from '../../models/api.model'
 import { NotifyService } from '../../services/notify.service'
 import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-char',
   standalone: true,
-  imports: [LoadingComponent, DatePipe, CardComponent],
+  imports: [DatePipe, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })
-export class CharComponent
-  extends romiComponentFactory<Omit<ResCharacterData, 'tags'> & { tags: [string, string][] }>('char')
-  implements OnInit, OnDestroy
-{
-  public isLoading = true
+export class CharComponent implements OnInit, OnDestroy {
+  @Input() public readonly char!: ResCharacterData
+
+  public tags!: [string, string][]
 
   protected aplayer?: APlayer
 
-  private musicList: ResMusicData[] = []
-
-  private getMusic() {
-    if (this.data && !this.data.id) return undefined
-    if (!this.data || this.musicList.length === 0) return []
-    const music = this.musicList.find((music) =>
-      music.url.includes(`id=${(this.data as unknown as ResCharacterData).song_id}.mp3`)
-    )
-    return music ? [music] : undefined
-  }
+  // private musicList: ResMusicData[] = []
+  //
+  // private getMusic() {
+  //   if (this.data && !this.data.id) return undefined
+  //   if (!this.data || this.musicList.length === 0) return []
+  //   const music = this.musicList.find((music) =>
+  //     music.url.includes(`id=${(this.data as unknown as ResCharacterData).song_id}.mp3`)
+  //   )
+  //   return music ? [music] : undefined
+  // }
 
   public get BWH() {
-    return this.data ? renderCharacterBWH(this.data as unknown as ResCharacterData) : ''
+    return this.char ? renderCharacterBWH(this.char as unknown as ResCharacterData) : ''
   }
 
   public constructor(
-    private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly notifyService: NotifyService
-  ) {
-    super()
-  }
+  ) {}
 
   public ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'))
-    if (Number.isNaN(id) || id <= 0) {
-      this.router.navigate(['/404'])
-      return
-    }
+    // TODO: 获取音乐
+    // this.apiService.getMusic().subscribe((data) => {
+    //   this.musicList = data
+    //   if (!this.aplayer) return
+    //   const music = this.getMusic()
+    //   if (music === undefined) {
+    //     this.aplayer.destroy()
+    //     return
+    //   }
+    //   this.aplayer.list.add(music)
+    //   if (music.length > 0) this.aplayer.play()
+    // })
 
-    this.apiService.getMusic().subscribe((data) => {
-      this.musicList = data
-      if (!this.aplayer) return
-      const music = this.getMusic()
-      if (music === undefined) {
-        this.aplayer.destroy()
-        return
-      }
-      this.aplayer.list.add(music)
-      if (music.length > 0) this.aplayer.play()
+    this.notifyService.updateHeaderContent({
+      title: this.char.name,
+      subTitle: [this.char.romaji, this.char.description]
     })
+    this.notifyService.setTitle(`${this.char.name} ${this.char.romaji}`)
+    this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
-    this.load(
-      this.apiService
-        .getCharacter(id)
-        .pipe(map((data) => ({ ...data, tags: data.tags.map((tag) => [tag, randomRTagType()]) }))),
-      (data) => {
-        this.isLoading = false
-        this.notifyService.updateHeaderContent({
-          title: data.name,
-          subTitle: [data.romaji, data.description]
-        })
-        if (!this.browserService.isBrowser) return
-
-        this.notifyService.setTitle(`${data.name} ${data.romaji}`)
-
-        setTimeout(() => {
-          const music = this.getMusic()
-          if (music === undefined) return
-          this.aplayer = new APlayer({
-            container: document.getElementById('aplayer'),
-            theme: 'var(--primary-100)',
-            lrcType: 1,
-            audio: music,
-            ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
-          })
-          if (music.length > 0) this.aplayer.play()
-        }, 0)
-      }
-    )
+    // if (!this.browserService.isBrowser) return
+    // setTimeout(() => {
+    //   const music = this.getMusic()
+    //   if (music === undefined) return
+    //   this.aplayer = new APlayer({
+    //     container: document.getElementById('aplayer'),
+    //     theme: 'var(--primary-100)',
+    //     lrcType: 1,
+    //     audio: music,
+    //     ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
+    //   })
+    //   if (music.length > 0) this.aplayer.play()
+    // }, 0)
   }
 
   public ngOnDestroy(): void {

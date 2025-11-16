@@ -1,11 +1,12 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import { ResNewsData } from '../../../output'
 import { LoadingComponent } from '../../components/loading/loading.component'
-import { ResNewsData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-news',
@@ -14,31 +15,22 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './news.component.html'
 })
-export class NewsComponent extends romiComponentFactory<ResNewsData>('news') implements OnInit, OnDestroy {
+export class NewsComponent implements OnInit, OnDestroy {
+  @Input() public news!: ResNewsData
+
   private viewedTimeoutId?: number
 
-  public isLoading = true
-
   public constructor(
-    private readonly route: ActivatedRoute,
     private readonly router: Router,
-    private readonly notifyService: NotifyService
-  ) {
-    super()
-  }
+    private readonly notifyService: NotifyService,
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
+  ) {}
 
   public ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'))
-    if (Number.isNaN(id) || id <= 0) {
-      this.router.navigate(['/404']).then(() => {})
-      return
-    }
-    this.load(this.apiService.getNews(id), (data) => {
-      this.isLoading = false
-      this.notifyService.setTitle(data.text)
-      this.updateHeaderContent()
-      this.viewNews()
-    })
+    this.notifyService.setTitle(this.news.text)
+    this.updateHeaderContent()
+    this.viewNews()
   }
 
   public ngOnDestroy() {
@@ -46,35 +38,33 @@ export class NewsComponent extends romiComponentFactory<ResNewsData>('news') imp
   }
 
   public viewNews() {
-    const id = this.data?.id
-    if (!id) return
-    if (!this.browserService.isBrowser || this.browserService.store?.getItem(KEYS.NEWS_VIEWED(id))) return
+    if (!this.browserService.isBrowser || this.browserService.store?.getItem(KEYS.NEWS_VIEWED(this.news.id))) return
     this.viewedTimeoutId = Number(
       setTimeout(
         () =>
-          this.apiService.viewNews(id).subscribe(() => this.browserService.store?.setItem(KEYS.NEWS_VIEWED(id), true)),
+          this.apiService
+            .viewNews(this.news.id)
+            .subscribe(() => this.browserService.store?.setItem(KEYS.NEWS_VIEWED(this.news.id), true)),
         5000
       )
     )
   }
 
   public likeNews() {
-    const id = this.data?.id
-    if (!id) return
-    if (this.browserService.store?.getItem(KEYS.NEWS_LIKED(id))) {
+    if (this.browserService.store?.getItem(KEYS.NEWS_LIKED(this.news.id))) {
       this.notifyService.showMessage('已经点过赞了', 'warning')
       return
     }
-    this.apiService.likeNews(id).subscribe(() => {
-      this.browserService.store?.setItem(KEYS.NEWS_LIKED(id), true)
-      if (this.data) this.data.likes += 1
+    this.apiService.likeNews(this.news.id).subscribe(() => {
+      this.browserService.store?.setItem(KEYS.NEWS_LIKED(this.news.id), true)
+      if (this.news) this.news.likes += 1
       this.updateHeaderContent()
       this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
   public async shareNews() {
-    const copyText = `${this.data?.text.slice(0, 25)}${this.data && this.data.text.length > 25 ? '...' : ''} - ${((
+    const copyText = `${this.news.text.slice(0, 25)}${this.news && this.news.text.length > 25 ? '...' : ''} - ${((
       ref
     ) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(this.browserService.windowRef)}`
     try {
@@ -85,12 +75,10 @@ export class NewsComponent extends romiComponentFactory<ResNewsData>('news') imp
     }
   }
 
-  private updateHeaderContent() {
-    const { data } = this
-    if (!data) return
+  public updateHeaderContent() {
     this.notifyService.updateHeaderContent({
       title: '动态详情',
-      subTitle: [`${data.views} 次阅读 • ${data.comments} 条评论 • ${data.likes} 人喜欢`]
+      subTitle: [`${this.news.views} 次阅读 • ${this.news.comments} 条评论 • ${this.news.likes} 人喜欢`]
     })
   }
 }

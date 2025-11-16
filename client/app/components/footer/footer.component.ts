@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs'
-import { ResHitokotoData } from '../../models/api.model'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
+import { ResHitokotoData } from '../../../output'
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 
 @Component({
   selector: 'app-footer',
@@ -10,7 +11,7 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
   imports: [RouterLink],
   templateUrl: './footer.component.html'
 })
-export class FooterComponent extends romiComponentFactory<ResHitokotoData>('footer') implements OnInit {
+export class FooterComponent implements OnInit {
   public currentTime = this.getTimeString()
 
   public footerItems = [
@@ -19,15 +20,26 @@ export class FooterComponent extends romiComponentFactory<ResHitokotoData>('foot
     { link: '/links', text: '友情链接' }
   ]
 
+  public data?: ResHitokotoData
+
+  public constructor(
+    private readonly apiService: ApiService,
+    private readonly browserService: BrowserService
+  ) {}
+
   public ngOnInit() {
-    this.load(
-      this.apiService.getHitokoto().pipe(
+    // TODO: 全局 resolver
+    this.apiService
+      .getHitokoto()
+      .pipe(
         map((data) => {
           const msg = data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg
           return { ...data, msg: `${msg}${data.from.trim() ? ` —— ${data.from}` : ''}` }
         })
       )
-    )
+      .subscribe((data) => {
+        this.data = data
+      })
 
     if (!this.browserService.isBrowser) return
     setInterval(() => {

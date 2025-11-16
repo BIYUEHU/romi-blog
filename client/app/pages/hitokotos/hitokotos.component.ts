@@ -1,10 +1,10 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { map } from 'rxjs'
 import { ResHitokotoData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { KEYS } from '../../services/store.service'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 @Component({
   selector: 'app-hitokotos',
@@ -13,34 +13,27 @@ import { romiComponentFactory } from '../../utils/romi-component-factory'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './hitokotos.component.html'
 })
-export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>('hitokotos') implements OnInit {
-  public hitokotos: ResHitokotoData[] = []
-  public isLoading = true
-
+export class HitokotosComponent implements OnInit {
   public static readonly typeColors = ['#4CAF50', '#FF9800', '#03A9F4', '#F44336']
   public static readonly typeNames = ['二刺猿', '文艺', '俗语', '杂类']
   public static readonly tagTypes = ['success', 'warning', 'info', 'error']
 
-  public constructor(private readonly notifyService: NotifyService) {
-    super()
-    this.notifyService.setTitle('语录墙')
-  }
+  @Input() public hitokotos: ResHitokotoData[] = []
+
+  public constructor(
+    private readonly notifyService: NotifyService,
+    private readonly apiService: ApiService,
+    private readonly browserService: BrowserService
+  ) {}
 
   public ngOnInit(): void {
-    this.isLoading = true
-
+    this.notifyService.setTitle('语录墙')
+    this.hitokotos = this.shuffleArray(this.hitokotos)
     this.notifyService.updateHeaderContent({
-      title: '语录墙'
+      title: '语录墙',
+      subTitle: [`共 ${this.hitokotos.length} 条语录`]
     })
-
-    this.load(this.apiService.getHitokotos(true).pipe(map((data) => this.shuffleArray(data))), (data) => {
-      this.notifyService.updateHeaderContent({
-        title: '语录墙',
-        subTitle: [`共 ${data.length} 条语录`]
-      })
-      this.isLoading = false
-      this.loadMore()
-    })
+    this.loadMore()
   }
 
   private shuffleArray<T>(array: T[]): T[] {
@@ -48,13 +41,13 @@ export class HitokotosComponent extends romiComponentFactory<ResHitokotoData[]>(
   }
 
   public loadMore(): void {
-    if (!this.data) return
-    if (this.data.length === 0) {
+    if (!this.hitokotos) return
+    if (this.hitokotos.length === 0) {
       this.notifyService.showMessage('没有更多了', 'warning')
       return
     }
-    this.hitokotos = [...this.hitokotos, ...this.data.slice(0, 20)]
-    this.data = this.data.slice(20)
+    this.hitokotos = [...this.hitokotos, ...this.hitokotos.slice(0, 20)]
+    this.hitokotos = this.hitokotos.slice(20)
   }
 
   public likeHitokoto(id: number): void {

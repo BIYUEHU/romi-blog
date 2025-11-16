@@ -1,64 +1,59 @@
-import { HttpHandlerFn, HttpRequest } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http'
+import { inject } from '@angular/core'
 import { catchError, EMPTY, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 import { LoggerService } from '../services/logger.service'
 import { NotifyService } from '../services/notify.service'
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthInterceptor /* implements HttpInterceptor */ {
-  public constructor(
-    private readonly authService: AuthService,
-    private readonly browserService: BrowserService,
-    private readonly notifyService: NotifyService,
-    private readonly loggerService: LoggerService
-  ) {}
+export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  if (!inject(BrowserService).isBrowser) return next(request)
 
-  public intercept(request: HttpRequest<unknown>, next: HttpHandlerFn) {
-    if (!this.browserService.isBrowser) return next(request)
+  const auth = inject(AuthService)
+  const notify = inject(NotifyService)
 
-    const skipErrorHandler = request.headers.has('Skip-Error-Handler')
-    const skipBringToken = request.headers.has('Skip-Bring-Token')
-    let headers = skipErrorHandler ? request.headers.delete('Skip-Error-Handler') : request.headers
-    headers = skipBringToken ? headers.delete('Skip-Bring-Token') : headers
-    const token = skipBringToken ? null : this.authService.getToken()
+  const skipError = request.headers.has('Skip-Error-Handler')
+  const skipToken = request.headers.has('Skip-Bring-Token')
 
-    return next(
-      request.clone({
-        headers: token ? headers.set('Authorization', `Bearer ${token}`) : headers
-      })
-    ).pipe(
-      catchError((error) => {
-        this.loggerService.label('HTTP').error(error)
+  let headers = request.headers
+  if (skipError) headers = headers.delete('Skip-Error-Handler')
+  if (skipToken) headers = headers.delete('Skip-Bring-Token')
 
-        if (token && error.status === 401) {
-          if (location.href.includes('/admin/')) {
-            this.notifyService.showMessage('登录已过期，请重新登录', 'error')
-            this.authService.logout()
-          }
-          return EMPTY
-        }
+  const token = skipToken ? null : auth.getToken()
 
-        if (
-          error.status === 404 &&
-          ['/news/', '/post/', '/char', '/admin/edit/'].some((url) => request.url.includes(url))
-        ) {
-          location.href = '/404'
-          return EMPTY
-        }
+  const cloned = request.clone({
+    headers: token ? headers.set('Authorization', `Bearer ${token}`) : headers
+  })
 
-        if (skipErrorHandler) return throwError(() => error)
+  return next(cloned).pipe(
+    catchError((err) => {
+      inject(LoggerService).label('HTTP').error(err)
 
-        if (error.statusText.trim()) {
-          this.notifyService.showMessage(`错误：${error.statusText} 状态码：${error.status} `, 'error')
-        } else {
-          this.notifyService.showMessage(`未知错误，请联系管理员 状态码：${error.status} `, 'error')
+      if (token && err.status === 401) {
+        if (location.href.includes('/admin/')) {
+          notify.showMessage('登录已过期，请重新登录', 'error')
+          auth.logout()
         }
         return EMPTY
-      })
-    )
-  }
+      }
+
+      if (
+        err.status === 404 &&
+        ['/news/', '/post/', '/char', '/admin/edit/'].some((url) => request.url.includes(url))
+      ) {
+        location.href = '/404'
+        return EMPTY
+      }
+
+      if (skipError) return throwError(() => err)
+
+      if (err.statusText?.trim()) {
+        notify.showMessage(`错误：${err.statusText} 状态码：${err.status}`, 'error')
+      } else {
+        notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error')
+      }
+
+      return EMPTY
+    })
+  )
 }

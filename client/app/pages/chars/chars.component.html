@@ -3,9 +3,7 @@
     <r-input type="search" [(ngModel)]="searchQuery" placeholder="搜索角色名..." class="w-full max-w-md" />
   </div>
 
-  @if (isLoading) {
-  <app-loading />
-  } @else if (filteredChars.length === 0) {
+  @if (filteredChars.length === 0) {
   <div class="text-center text-accent-100 py-8">未找到角色</div>
   } @else {
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">

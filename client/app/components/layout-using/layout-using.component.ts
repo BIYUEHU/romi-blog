@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
-import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router'
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { FooterComponent } from '../footer/footer.component'
@@ -10,11 +10,12 @@ import { ApiService } from '../../services/api.service'
 import { KEYS } from '../../services/store.service'
 import { API_BASE_URL } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
+import { LoadingComponent } from '../loading/loading.component'
 
 @Component({
   selector: 'app-layout-using',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, RouterLink],
+  imports: [HeaderComponent, FooterComponent, RouterLink, LoadingComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './layout-using.component.html'
 })
@@ -39,23 +40,24 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   public showBackTop = false
   public headerData: Partial<typeof this.initHeaderData> = this.initHeaderData
   public headerImageHeight = 'h-350px'
+  public isLoading = false
 
   public constructor(
     private readonly router: Router,
     private readonly notifyService: NotifyService,
-    private readonly browserService: BrowserService,
-    private readonly apiService: ApiService
+    private readonly browserService: BrowserService
+    // private readonly apiService: ApiService
   ) {}
 
   public ngOnInit() {
     this.headerImageHeight = this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
 
-    this.apiService.getMusic().subscribe((data) => {
-      const isEmpty = !this.musicList
-      this.musicList = data
-      if (!this.browserService.isBrowser || !isEmpty) return
-      this.aplayer?.list.add(data)
-    })
+    // this.apiService.getMusic().subscribe((data) => {
+    //   const isEmpty = !this.musicList
+    //   this.musicList = data
+    //   if (!this.browserService.isBrowser || !isEmpty) return
+    //   this.aplayer?.list.add(data)
+    // })
 
     this.notifyService.headerUpdated$.subscribe((data) => this.updateHeaderContent(data))
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
@@ -83,6 +85,7 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
   private handleRouteEvent(event: object) {
     if (event instanceof NavigationStart) {
       this.updateHeaderContent({})
+      this.isLoading = true
     } else if (event instanceof NavigationEnd) {
       const tree = this.router.parseUrl(this.router.url)
       if (tree.fragment) {
@@ -95,6 +98,10 @@ export class LayoutUsingComponent implements OnInit, OnDestroy {
           })
         }, 100)
       }
+    }
+
+    if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+      this.isLoading = false
     }
   }
 

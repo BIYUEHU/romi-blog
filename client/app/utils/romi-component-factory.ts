@@ -1,5 +1,5 @@
 import { inject, makeStateKey, TransferState } from '@angular/core'
-import { Observable, of, tap } from 'rxjs'
+import { Observable, tap } from 'rxjs'
 import { ApiService } from '../services/api.service'
 import { BrowserService } from '../services/browser.service'
 

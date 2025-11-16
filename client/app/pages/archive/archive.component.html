@@ -1,4 +1,4 @@
-@if (groupedPosts.length > 0) {
+@if (archive.length > 0) {
 <div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="mb-12">
     <h2 class="text-2xl font-bold mb-6">分类</h2>
@@ -27,7 +27,7 @@
   <div>
     <h2 class="text-2xl font-bold mb-6">文章归档</h2>
     <div class="space-y-4">
-      @for (arr of groupedPosts; track $index) {
+      @for (arr of archive; track $index) {
       <div>
         <r-collapse [label]="arr[0] + ' 年 (' + arr[1].length + ' 篇)'">
           <div class="space-y-5 py-2 w-full">

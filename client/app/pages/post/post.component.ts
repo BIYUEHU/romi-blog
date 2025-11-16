@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Component, Input } from '@angular/core'
 import { ResPostSingleData } from '../../../output'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
 
@@ -9,20 +8,6 @@ import { PostContentComponent } from '../../components/post-content/post-content
   imports: [PostContentComponent],
   templateUrl: './post.component.html'
 })
-export class PostComponent implements OnInit {
-  public id?: number
-
-  public post?: ResPostSingleData
-
-  public constructor(
-    private readonly route: ActivatedRoute,
-    private readonly router: Router
-  ) {}
-
-  public ngOnInit() {
-    // biome-ignore lint: *
-    this.post = this.route.snapshot.data['post']
-    this.id = Number(this.route.snapshot.paramMap.get('id'))
-    if (Number.isNaN(this.id) || this.id <= 0) this.router.navigate(['/404'])
-  }
+export class PostComponent {
+  @Input() public readonly post!: ResPostSingleData
 }

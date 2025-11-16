@@ -1,15 +1,16 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
-import { map } from 'rxjs/operators' // ✅ 导入 map
+import { map } from 'rxjs/operators'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResNewsData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
+import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { sortByCreatedTime } from '../../utils'
-import { romiComponentFactory } from '../../utils/romi-component-factory'
 
 interface TocItem {
   year: number
@@ -32,11 +33,12 @@ interface GroupedNews {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newses.component.html'
 })
-export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses') implements OnInit {
+export class NewsesComponent implements OnInit {
   private static readonly PAGE_SIZE = 15
 
+  @Input() public newses!: ResNewsData[]
+
   public isAdmin = false
-  public isLoading = true
   public newText = ''
   public displayedNews: ResNewsData[] = []
   public groupedNews: GroupedNews[] = []
@@ -49,50 +51,22 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
 
   public constructor(
     private readonly authService: AuthService,
-    private readonly notifyService: NotifyService
-  ) {
-    super()
-    this.notifyService.setTitle('近期动态')
-    this.authService.user$.subscribe((user) => {
-      this.isAdmin = !!user?.is_admin
-    })
-  }
+    private readonly notifyService: NotifyService,
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
+  ) {}
 
   public ngOnInit() {
+    this.notifyService.setTitle('近期动态')
     this.notifyService.updateHeaderContent({
       title: '近期动态',
       subTitle: []
     })
-
-    this.load(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data))), (data) => {
-      this.isLoading = false
-      this.refresh(data)
+    this.authService.user$.subscribe((user) => {
+      this.isAdmin = !!user?.is_admin
     })
-  }
-
-  private generateToc(news: ResNewsData[]) {
-    const yearMap = new Map<number, Map<number, number>>()
-
-    news.forEach((item) => {
-      const date = new Date(item.created * 1000)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1
-
-      if (!yearMap.has(year)) {
-        yearMap.set(year, new Map())
-      }
-      const monthMap = yearMap.get(year) as Map<number, number>
-      monthMap.set(month, (monthMap.get(month) || 0) + 1)
-    })
-
-    this.toc = Array.from(yearMap.entries())
-      .sort(([a], [b]) => b - a)
-      .map(([year, months]) => ({
-        year,
-        months: Array.from(months.entries())
-          .sort(([a], [b]) => b - a)
-          .map(([month, count]) => ({ month, count }))
-      }))
+    this.newses = sortByCreatedTime(this.newses)
+    this.refresh()
   }
 
   public async sendNews() {
@@ -117,7 +91,12 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
   }
 
   private reloadNews() {
-    this.load(this.apiService.getNewses().pipe(map((data) => sortByCreatedTime(data))), (data) => this.refresh(data))
+    this.apiService
+      .getNewses()
+      .pipe(map((data) => sortByCreatedTime(data)))
+      .subscribe((data) => {
+        this.newses = data
+      })
   }
 
   private groupNewsByDate(news: ResNewsData[]) {
@@ -146,14 +125,34 @@ export class NewsesComponent extends romiComponentFactory<ResNewsData[]>('newses
       })
   }
 
-  private refresh(data: ResNewsData[]) {
-    const grouped = this.groupNewsByDate(data)
+  private refresh() {
+    const grouped = this.groupNewsByDate(this.newses)
     this.groupedNews = grouped
     this.displayedNews = grouped
       .slice(0, this.currentPage)
       .flatMap((group) => group.news)
       .slice(0, NewsesComponent.PAGE_SIZE)
-    this.generateToc(data)
+
+    const yearMap = new Map<number, Map<number, number>>()
+    for (const item of this.newses) {
+      const date = new Date(item.created * 1000)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1
+
+      if (!yearMap.has(year)) {
+        yearMap.set(year, new Map())
+      }
+      const monthMap = yearMap.get(year) as Map<number, number>
+      monthMap.set(month, (monthMap.get(month) || 0) + 1)
+    }
+    this.toc = Array.from(yearMap.entries())
+      .sort(([a], [b]) => b - a)
+      .map(([year, months]) => ({
+        year,
+        months: Array.from(months.entries())
+          .sort(([a], [b]) => b - a)
+          .map(([month, count]) => ({ month, count }))
+      }))
   }
 
   public loadMore() {

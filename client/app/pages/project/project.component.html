@@ -11,9 +11,7 @@
     </select>
   </div>
 
-  @if (isLoading) {
-  <app-loading />
-  } @else if (filteredRepos.length === 0) {
+  @if (filteredRepos.length === 0) {
   <div class="text-center text-accent-100 py-8">
     @if (searchQuery || selectedLanguage) {
     未找到匹配的项目
