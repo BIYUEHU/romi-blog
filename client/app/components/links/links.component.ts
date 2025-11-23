@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ResPostSingleData } from '../../../output'
-import { CardComponent } from '../../components/card/card.component'
-import { PostContentComponent } from '../../components/post-content/post-content.component'
 import { LayoutService } from '../../services/layout.service'
+import { CardComponent } from '../card/card.component'
+import { PostContentComponent } from '../post-content/post-content.component'
 
 interface ResFriendData {
   name: string

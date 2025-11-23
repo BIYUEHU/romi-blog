@@ -25,3 +25,19 @@ export interface LayoutConfig {
   headerSubTitle: string[]
   headerImageUrl: string
 }
+
+export type DependentPage = {
+  name: string
+  title: string
+  id: number
+} & (
+  | {
+      routine: true
+      hideToc: boolean
+      hideComments: boolean
+    }
+  | {
+      routine: false
+      template: string
+    }
+)

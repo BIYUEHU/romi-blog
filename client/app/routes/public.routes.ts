@@ -6,8 +6,8 @@ import { CharComponent } from '../pages/char/char.component'
 import { charResolver } from '../pages/char/char.resolver'
 import { CharsComponent } from '../pages/chars/chars.component'
 import { charsResolver } from '../pages/chars/chars.resolver'
-import { ControlComponent } from '../pages/control/control.component'
-import { controlResolver } from '../pages/control/control.resolver'
+import { DynamicComponent } from '../pages/dynamic/dynamic.component'
+import { dynamicResolver } from '../pages/dynamic/dynamic.resolver'
 import { GalComponent } from '../pages/gal/gal.component'
 import { HitokotoComponent } from '../pages/hitokoto/hitokoto.component'
 import { HitokotosComponent } from '../pages/hitokotos/hitokotos.component'
@@ -19,6 +19,7 @@ import { NewsComponent } from '../pages/news/news.component'
 import { newsResolver } from '../pages/news/news.resolver'
 import { NewsesComponent } from '../pages/newses/newses.component'
 import { newsesResolver } from '../pages/newses/newses.resolver'
+import { NotFoundComponent } from '../pages/not-found/not-found.component'
 import { PostComponent } from '../pages/post/post.component'
 import { postResolver } from '../pages/post/post.resolver'
 import { PostsComponent } from '../pages/posts/posts.component'
@@ -129,6 +130,10 @@ export const publicRoutes = defineRoutes([
         resolve: {
           projects: projectResolver
         }
+      },
+      {
+        path: '404',
+        component: NotFoundComponent
       }
     ]
   },
@@ -147,10 +152,10 @@ export const publicRoutes = defineRoutes([
     }
   },
   {
-    path: '**',
-    component: ControlComponent,
+    path: ':slug',
+    component: DynamicComponent,
     resolve: {
-      post: controlResolver
+      post: dynamicResolver
     },
     pathMatch: 'full'
   }
