@@ -3,7 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@an
 import { Router } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { ResCharacterData } from '../../models/api.model'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
 
@@ -38,7 +38,7 @@ export class CharComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly notifyService: NotifyService
+    private readonly layoutService: LayoutService
   ) {}
 
   public ngOnInit() {
@@ -55,11 +55,11 @@ export class CharComponent implements OnInit, OnDestroy {
     //   if (music.length > 0) this.aplayer.play()
     // })
 
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title: this.char.name,
       subTitle: [this.char.romaji, this.char.description]
     })
-    this.notifyService.setTitle(`${this.char.name} ${this.char.romaji}`)
+    this.layoutService.setTitle(`${this.char.name} ${this.char.romaji}`)
     this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
     // if (!this.browserService.isBrowser) return

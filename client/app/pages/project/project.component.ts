@@ -4,7 +4,7 @@ import { ResProjectData } from '../../../output'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-project',
@@ -19,8 +19,8 @@ export class ProjectComponent implements OnInit {
   public searchQuery = ''
   public selectedLanguage = ''
 
-  public constructor(private readonly notifyService: NotifyService) {
-    this.notifyService.setTitle('开源项目')
+  public constructor(private readonly layoutService: LayoutService) {
+    this.layoutService.setTitle('开源项目')
   }
 
   public get filteredRepos() {
@@ -47,7 +47,7 @@ export class ProjectComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title: '开源项目',
       subTitle: ['这里是我的一些开源作品，大部分都是练手或者实用的小工具']
     })

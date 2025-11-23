@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { RouterLink, RouterLinkActive } from '@angular/router'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -45,9 +45,9 @@ export class AdminSidebarComponent {
     }
   ]
 
-  public constructor(private readonly notifyService: NotifyService) {}
+  public constructor(private readonly layoutService: LayoutService) {}
 
   public onMenuClick() {
-    if (window.innerWidth < 1024) this.notifyService.closeSidebar()
+    if (window.innerWidth < 1024) this.layoutService.closeSidebar()
   }
 }

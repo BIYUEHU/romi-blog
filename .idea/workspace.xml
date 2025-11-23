@@ -21,60 +21,69 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/client/app/interceptors/transferInterceptor.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/char/char.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/chars/chars.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/home/home.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/news/news.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/posts/posts.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/project/project.resolver.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/routes/admin.routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/routes/public.routes.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/shared/resolvers-key.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/components/layout-wrapper/layout-wrapper.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/pages/control/control.component.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/pages/control/control.resolver.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/app/shared/tools.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/app.config.server.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.config.server.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-base-list/admin-base-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-base-list/admin-base-list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-sidebar/admin-sidebar.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-sidebar/admin-sidebar.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/control/control.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/footer/footer.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/footer/footer.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/control/control.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/control/control.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout-using/layout-using.component.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/message/message.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/message/message.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/message/message.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/message/message.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/progress/progress.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/progress/progress.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/interceptors/auth.interceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/auth.interceptor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/archive/archive.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/archive/archive.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-char-edit/admin-char-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-char-edit/admin-char-edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-chars/admin-chars.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-chars/admin-chars.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-comments/admin-comments.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-comments/admin-comments.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-dashboard/admin-dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-dashboard/admin-dashboard.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-hitokotos/admin-hitokotos.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-hitokotos/admin-hitokotos.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-metas/admin-metas.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-metas/admin-metas.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-news/admin-news.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-news/admin-news.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-users/admin-users.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-users/admin-users.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/anime/anime.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/anime/anime.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/archive/archive.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/archive/archive.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/category/category.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/category/category.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/chars/chars.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/chars/chars.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/chars/chars.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/chars/chars.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/gal/gal.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/gal/gal.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.resolver.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.resolver.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/news/news.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/news/news.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/links/links.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/newses/newses.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.resolver.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.resolver.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/posts/posts.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/posts/posts.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/project/project.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/project/project.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/project/project.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/tag/tag.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/tag/tag.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/api.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/api.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/utils/romi-component-factory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/utils/romi-component-factory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/routes/admin.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/routes/admin.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/routes/public.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/routes/public.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/services/notify.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/layout.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/shared/resolvers-key.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/shared/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,48 +176,48 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor": "Run",
-    "HTTP 请求.request | Create User.executor": "Run",
-    "HTTP 请求.request | Get All Meta.executor": "Run",
-    "HTTP 请求.request | Get Single Meta.executor": "Run",
-    "HTTP 请求.request | Get background.executor": "Run",
-    "HTTP 请求.request | Get backgrounds.executor": "Run",
-    "HTTP 请求.request | Get characters.executor": "Run",
-    "HTTP 请求.request | Get qqavatar.executor": "Run",
-    "HTTP 请求.request | Test2.executor": "Run",
-    "HTTP 请求.request | User Login.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "G:/Repos/romichan/client/app/pages/home",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "pnpm",
-    "npm.Angular CLI Server.executor": "Run",
-    "npm.dev.executor": "Run",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "G:\\Repos\\romichan\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Create User.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get All Meta.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get Single Meta.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get background.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get backgrounds.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get characters.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Get qqavatar.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | Test2.executor&quot;: &quot;Run&quot;,
+    &quot;HTTP 请求.request | User Login.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;G:/Repos/romichan/client/app/pages/home&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
+    &quot;npm.Angular CLI Server.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;G:\\Repos\\romichan\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="G:\Repos\romichan\client\app\pages\home" />
@@ -216,6 +225,10 @@
       <recent name="G:\Repos\romichan\client\app\pages\music" />
       <recent name="G:\Repos\romichan\client\app\pages\newses" />
       <recent name="G:\Repos\romichan\client\app\pages\project" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="G:\Repos\romichan\client\app\pages" />
+      <recent name="G:\Repos\romichan\client\app\components" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -372,6 +385,9 @@
       <workItem from="1762920979032" duration="2298000" />
       <workItem from="1763007312005" duration="2850000" />
       <workItem from="1763273859991" duration="11520000" />
+      <workItem from="1763306074034" duration="1939000" />
+      <workItem from="1763877225896" duration="123000" />
+      <workItem from="1763877369658" duration="12766000" />
     </task>
     <servers />
   </component>

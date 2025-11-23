@@ -3,7 +3,7 @@ import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { API_BASE_URL2 } from '../../shared/constants'
 
 @Component({
@@ -23,17 +23,17 @@ export class AdminHeaderComponent {
 
   public constructor(
     private readonly authService: AuthService,
-    private readonly notifyService: NotifyService
+    private readonly layoutService: LayoutService
   ) {
     this.authService.user$.subscribe((user) => {
       if (user) this.user = user
     })
     this.createDate = new Date((this.user?.created ?? 0) * 1000)
-    this.isSidebarOpen$ = this.notifyService.isSidebarOpen$
+    this.isSidebarOpen$ = this.layoutService.isSidebarOpen$
   }
 
   public toggleSidebar() {
-    this.notifyService.toggleSidebar()
+    this.layoutService.toggleSidebar()
   }
 
   public logout() {

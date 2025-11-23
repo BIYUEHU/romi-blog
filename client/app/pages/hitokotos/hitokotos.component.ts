@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { KEYS } from '../../services/store.service'
 
 @Component({
@@ -21,15 +21,15 @@ export class HitokotosComponent implements OnInit {
   @Input() public hitokotos: ResHitokotoData[] = []
 
   public constructor(
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit(): void {
-    this.notifyService.setTitle('语录墙')
+    this.layoutService.setTitle('语录墙')
     this.hitokotos = this.shuffleArray(this.hitokotos)
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title: '语录墙',
       subTitle: [`共 ${this.hitokotos.length} 条语录`]
     })
@@ -43,7 +43,7 @@ export class HitokotosComponent implements OnInit {
   public loadMore(): void {
     if (!this.hitokotos) return
     if (this.hitokotos.length === 0) {
-      this.notifyService.showMessage('没有更多了', 'warning')
+      this.layoutService.showMessage('没有更多了', 'warning')
       return
     }
     this.hitokotos = [...this.hitokotos, ...this.hitokotos.slice(0, 20)]

@@ -1,16 +1,16 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
-import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
+import { LayoutComponent } from '../../components/layout/layout.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { KEYS } from '../../services/store.service'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
   selector: 'app-hitokoto',
   standalone: true,
-  imports: [LayoutUsingComponent],
+  imports: [LayoutComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './hitokoto.component.html'
 })
@@ -26,7 +26,7 @@ export class HitokotoComponent implements OnInit {
   }
 
   public constructor(
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
   ) {}
@@ -36,8 +36,8 @@ export class HitokotoComponent implements OnInit {
   public readonly getTypeName = HitokotosComponent.prototype.getTypeName
 
   public ngOnInit() {
-    this.notifyService.setTitle(this.hitokoto.msg)
-    this.notifyService.updateHeaderContent({
+    this.layoutService.setTitle(this.hitokoto.msg)
+    this.layoutService.updateHeader({
       title: '蛍の一言ひとこと',
       subTitle: []
     })
@@ -47,21 +47,21 @@ export class HitokotoComponent implements OnInit {
     this.isLoading = true
     this.apiService.getHitokoto().subscribe((data) => {
       this.hitokoto = data
-      this.notifyService.setTitle(data.msg)
+      this.layoutService.setTitle(data.msg)
       this.isLoading = false
     })
   }
 
   public likeHitokoto() {
     if (this.isLiked) {
-      this.notifyService.showMessage('已经点过赞了', 'info')
+      this.layoutService.showMessage('已经点过赞了', 'info')
       return
     }
 
     this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
       this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED((this.hitokoto as ResHitokotoData).id), true)
       ;(this.hitokoto as ResHitokotoData).likes += 1
-      this.notifyService.showMessage('点赞成功', 'success')
+      this.layoutService.showMessage('点赞成功', 'success')
     })
   }
 
@@ -69,8 +69,8 @@ export class HitokotoComponent implements OnInit {
     if (!this.hitokoto) return
     const url = `${location.origin}/hitokoto/${this.hitokoto.id}`
     navigator.clipboard.writeText(url).then(
-      () => this.notifyService.showMessage('链接已复制', 'secondary'),
-      () => this.notifyService.showMessage('复制失败', 'error')
+      () => this.layoutService.showMessage('链接已复制', 'secondary'),
+      () => this.layoutService.showMessage('复制失败', 'error')
     )
   }
 }

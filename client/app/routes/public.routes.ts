@@ -1,6 +1,4 @@
-import type { Routes } from '@angular/router'
-import { ControlComponent } from '../components/control/control.component'
-import { LayoutComponent } from '../components/layout/layout.component'
+import { LayoutWrapperComponent } from '../components/layout-wrapper/layout-wrapper.component'
 import { AnimeComponent } from '../pages/anime/anime.component'
 import { ArchiveComponent } from '../pages/archive/archive.component'
 import { CategoryComponent } from '../pages/category/category.component'
@@ -8,10 +6,13 @@ import { CharComponent } from '../pages/char/char.component'
 import { charResolver } from '../pages/char/char.resolver'
 import { CharsComponent } from '../pages/chars/chars.component'
 import { charsResolver } from '../pages/chars/chars.resolver'
+import { ControlComponent } from '../pages/control/control.component'
+import { controlResolver } from '../pages/control/control.resolver'
 import { GalComponent } from '../pages/gal/gal.component'
 import { HitokotoComponent } from '../pages/hitokoto/hitokoto.component'
 import { HitokotosComponent } from '../pages/hitokotos/hitokotos.component'
 import { hitokotosResolver } from '../pages/hitokotos/hitokotos.resolver'
+import { HomeComponent } from '../pages/home/home.component'
 import { homeResolver } from '../pages/home/home.resolver'
 import { MusicComponent } from '../pages/music/music.component'
 import { NewsComponent } from '../pages/news/news.component'
@@ -25,14 +26,20 @@ import { postsResolver } from '../pages/posts/posts.resolver'
 import { ProjectComponent } from '../pages/project/project.component'
 import { projectResolver } from '../pages/project/project.resolver'
 import { TagComponent } from '../pages/tag/tag.component'
+import { defineRoutes } from '../shared/tools'
 
-export const publicRoutes: Routes = [
+export const publicRoutes = defineRoutes([
   {
     path: '',
-    component: LayoutComponent,
+    component: HomeComponent,
     resolve: {
       home: homeResolver
     },
+    pathMatch: 'full'
+  },
+  {
+    path: '',
+    component: LayoutWrapperComponent,
     children: [
       {
         path: 'post/:id',
@@ -142,6 +149,9 @@ export const publicRoutes: Routes = [
   {
     path: '**',
     component: ControlComponent,
+    resolve: {
+      post: controlResolver
+    },
     pathMatch: 'full'
   }
-]
+])

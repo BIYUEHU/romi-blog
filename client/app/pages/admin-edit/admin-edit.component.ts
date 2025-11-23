@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import Vditor from 'vditor'
@@ -8,7 +8,7 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { KEYS } from '../../services/store.service'
 import { formatDate } from '../../utils'
 
@@ -119,7 +119,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   private getPostText() {
     if (!this.browserService.isBrowser) return this.postForm.text
 
-    const notify = () => this.notifyService.showMessage('文章内容来自自动保存草稿', 'info')
+    const notify = () => this.layoutService.showMessage('文章内容来自自动保存草稿', 'info')
     const keys = this.getDraftKey()
     if (typeof keys === 'string') {
       try {
@@ -172,10 +172,10 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly browserService: BrowserService
   ) {
-    this.notifyService.setTitle('文章编辑')
+    this.layoutService.setTitle('文章编辑')
   }
 
   public ngOnInit() {
@@ -279,7 +279,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public savePost() {
     this.postForm.text = this.editor?.getValue() ?? ''
     if (!this.postForm.title || !this.postForm.text) {
-      this.notifyService.showMessage('标题和内容不能为空', 'warning')
+      this.layoutService.showMessage('标题和内容不能为空', 'warning')
       return
     }
 
@@ -295,7 +295,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       if (!this.isEdit) {
         this.browserService.store!.removeItem(KEYS.POST_DRAFT_NEW)
       }
-      this.notifyService.showMessage('文章保存成功', 'success')
+      this.layoutService.showMessage('文章保存成功', 'success')
       this.goBack()
     })
   }

@@ -42,7 +42,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
   public constructor(private readonly apiService: ApiService) {
     super()
     this.loadItems()
-    this.notifyService.setTitle('一言管理')
+    this.layoutService.setTitle('一言管理')
   }
 
   protected loadItems(): void {
@@ -62,7 +62,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
   protected deleteItem(id: number): void {
     if (this.confirmDelete()) {
       this.apiService.deleteHitokoto(id).subscribe(() => {
-        this.notifyService.showMessage('一言删除成功', 'secondary')
+        this.layoutService.showMessage('一言删除成功', 'secondary')
         this.items = this.items.filter((h) => h.id !== id)
       })
     }
@@ -70,14 +70,14 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
 
   public createHitokoto() {
     if (!this.newHitokoto.msg.trim()) {
-      this.notifyService.showMessage('请输入一言内容', 'warning')
+      this.layoutService.showMessage('请输入一言内容', 'warning')
       return
     }
 
     this.apiService.createHitokoto({ ...this.newHitokoto, type: Number(this.newHitokoto.type) }).subscribe(() => {
       this.loadItems()
       this.cancelEdit()
-      this.notifyService.showMessage('一言创建成功', 'success')
+      this.layoutService.showMessage('一言创建成功', 'success')
     })
   }
 
@@ -104,7 +104,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
       .subscribe(() => {
         this.loadItems()
         this.cancelEdit()
-        this.notifyService.showMessage('一言更新成功', 'success')
+        this.layoutService.showMessage('一言更新成功', 'success')
       })
   }
 }

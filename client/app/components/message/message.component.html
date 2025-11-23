@@ -1,5 +1,5 @@
-@if (messageData.message) {
+@if (message.message) {
 <div @slideRight class="fixed top-7% right-4 z-50 w-auto min-w-[200px] max-w-[90vw]">
-  <r-alert [type]="messageData.type">{{messageData.message}}</r-alert>
+  <r-alert [type]="message.type">{{message.message}}</r-alert>
 </div>
 }

@@ -4,7 +4,7 @@
     <div [class]="[
     'fixed lg:relative lg:flex z-40 transition-transform duration-300 ease-in-out w-full h-full',
   ]">
-      @if (isSidebarOpen$ | async) {
+      @if (isSidebarOpen$()) {
       <app-admin-sidebar />
       }
     </div>

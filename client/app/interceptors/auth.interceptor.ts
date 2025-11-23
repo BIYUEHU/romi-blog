@@ -3,14 +3,14 @@ import { inject } from '@angular/core'
 import { catchError, EMPTY, throwError } from 'rxjs'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
+import { LayoutService } from '../services/layout.service'
 import { LoggerService } from '../services/logger.service'
-import { NotifyService } from '../services/notify.service'
 
 export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
   if (!inject(BrowserService).isBrowser) return next(request)
 
   const auth = inject(AuthService)
-  const notify = inject(NotifyService)
+  const notify = inject(LayoutService)
 
   const skipError = request.headers.has('Skip-Error-Handler')
   const skipToken = request.headers.has('Skip-Bring-Token')

@@ -14,7 +14,7 @@ import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { KEYS } from '../../services/store.service'
 import { randomRTagType } from '../../utils'
 import { LoadingComponent } from '../loading/loading.component'
@@ -45,7 +45,6 @@ export class PostContentComponent implements OnInit, OnDestroy {
   @Input() public hideOptions = false
   @Input() public hideCopyright = false
   @Input() public setTitle = false
-  // @Input() public defaultPostData?: ResPostSingleData
 
   private viewedTimeoutId?: number
   private mdParser?: MarkdownIt
@@ -78,7 +77,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly authService: AuthService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService,
@@ -93,7 +92,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
       this.currentUser = user
     })
 
-    this.notifyService.setTitle(this.post.title)
+    this.layoutService.setTitle(this.post.title)
     this.renderContent().then(() => this.viewPost())
 
     // TODO: 去掉 hideComments 由上游直接提供可选的评论数据决定是否显示
@@ -115,7 +114,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public donate() {
-    this.notifyService.showMessage('还没有开通啦~', 'secondary')
+    this.layoutService.showMessage('还没有开通啦~', 'secondary')
   }
 
   public viewPost() {
@@ -133,14 +132,14 @@ export class PostContentComponent implements OnInit, OnDestroy {
 
   public likePost() {
     if (this.browserService.store?.getItem(KEYS.POST_LIKED(this.post.id))) {
-      this.notifyService.showMessage('已经点过赞了', 'warning')
+      this.layoutService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likePost(this.post.id).subscribe(() => {
       this.browserService.store?.setItem(KEYS.POST_LIKED(this.post.id), true)
       if (this.post) this.post.likes += 1
-      this.updateHeaderContent()
-      this.notifyService.showMessage('点赞成功', 'success')
+      this.updateHeader()
+      this.layoutService.showMessage('点赞成功', 'success')
     })
   }
 
@@ -148,9 +147,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
     const copyText = `${this.post?.title} - ${this.extra?.url}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+      this.layoutService.showMessage('链接已复制到剪贴板', 'success')
     } catch (_) {
-      this.notifyService.showMessage('链接复制失败', 'error')
+      this.layoutService.showMessage('链接复制失败', 'error')
     }
   }
 
@@ -253,10 +252,10 @@ export class PostContentComponent implements OnInit, OnDestroy {
     })
   }
 
-  private updateHeaderContent() {
+  private updateHeader() {
     const { post } = this
     if (!post) return
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title: post.title,
       subTitle: this.hideSubTitle
         ? []
@@ -284,6 +283,6 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(rawHtml)
 
     if (!this.hideToc) this.toc = this.generateToc(this.post.text)
-    this.updateHeaderContent()
+    this.updateHeader()
   }
 }

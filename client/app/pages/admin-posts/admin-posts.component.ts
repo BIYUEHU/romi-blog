@@ -23,7 +23,7 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
 
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.notifyService.setTitle('文章管理')
+    this.layoutService.setTitle('文章管理')
     this.emptyMessage = '暂无文章'
   }
 
@@ -42,7 +42,7 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
   protected deleteItem(id: number): void {
     if (this.confirmDelete()) {
       this.apiService.deletePost(id).subscribe(() => {
-        this.notifyService.showMessage('文章删除成功', 'secondary')
+        this.layoutService.showMessage('文章删除成功', 'secondary')
         this.items = this.items.filter((post) => post.id !== id)
       })
     }

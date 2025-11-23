@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { BundledLanguage, BundledTheme, bundledLanguages, createHighlighter, HighlighterGeneric } from 'shiki'
-import { NotifyService } from './notify.service'
+import { LayoutService } from './layout.service'
 
 @Injectable({ providedIn: 'root' })
 export class HighlighterService {
@@ -24,7 +24,7 @@ export class HighlighterService {
   private highlighterPromise: Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> | null = null
   private loadedLangs = new Set<string>()
 
-  public constructor(private readonly notifyService: NotifyService) {}
+  public constructor(private readonly layoutService: LayoutService) {}
 
   public async getHighlighter(langs: string[]): Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> {
     if (!this.highlighterPromise) {
@@ -47,7 +47,7 @@ export class HighlighterService {
 
     if (missed.length > 0) {
       const msg = missed.join(', ')
-      this.notifyService.showMessage(
+      this.layoutService.showMessage(
         `${msg.length > 25 ? `${msg.substring(0, 22)}...` : msg} 语言高亮不支持`,
         'warning'
       )

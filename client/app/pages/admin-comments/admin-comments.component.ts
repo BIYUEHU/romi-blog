@@ -21,7 +21,7 @@ import { sortByCreatedTime } from '../../utils'
 export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCommentData> {
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.notifyService.setTitle('评论管理')
+    this.layoutService.setTitle('评论管理')
     this.loadItems()
   }
 
@@ -40,7 +40,7 @@ export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCo
   public deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteComment(id).subscribe(() => {
-        this.notifyService.showMessage('删除成功', 'secondary')
+        this.layoutService.showMessage('删除成功', 'secondary')
         this.items = this.items.filter((item) => item.cid !== id)
       })
     }

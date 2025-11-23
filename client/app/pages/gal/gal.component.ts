@@ -1,6 +1,6 @@
 import { Component } from '@angular/core'
 import { BangumiComponent } from '../../components/bangumi/bangumi.component'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-gal',
@@ -9,7 +9,7 @@ import { NotifyService } from '../../services/notify.service'
   template: `<app-bangumi [isAnime]="false"/>`
 })
 export class GalComponent {
-  public constructor(private readonly notifyService: NotifyService) {
-    this.notifyService.setTitle('Gal 列表')
+  public constructor(private readonly layoutService: LayoutService) {
+    this.layoutService.setTitle('Gal 列表')
   }
 }

@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
@@ -19,7 +19,7 @@ export class CategoryComponent implements OnInit {
 
   public constructor(
     private readonly router: Router,
-    private readonly notifyService: NotifyService
+    private readonly layoutService: LayoutService
   ) {}
 
   public ngOnInit() {
@@ -30,8 +30,8 @@ export class CategoryComponent implements OnInit {
       return
     }
 
-    this.notifyService.setTitle(`${this.name} 分类`)
-    this.notifyService.updateHeaderContent({
+    this.layoutService.setTitle(`${this.name} 分类`)
+    this.layoutService.updateHeader({
       title: this.categoryName,
       subTitle: [`共 ${this.posts?.length ?? 0} 篇文章`]
     })

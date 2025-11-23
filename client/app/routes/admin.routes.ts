@@ -1,7 +1,7 @@
-import type { Routes } from '@angular/router'
 import { AuthGuard } from '../guards/auth.guard'
+import { defineRoutes } from '../shared/tools'
 
-export const adminRoutes: Routes = [
+export const adminRoutes = defineRoutes([
   {
     path: '',
     loadComponent: () =>
@@ -63,4 +63,4 @@ export const adminRoutes: Routes = [
     path: 'login',
     loadComponent: () => import('../pages/admin-login/admin-login.component').then((m) => m.AdminLoginComponent)
   }
-]
+])

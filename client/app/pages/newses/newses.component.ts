@@ -9,7 +9,7 @@ import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
 interface TocItem {
@@ -51,14 +51,14 @@ export class NewsesComponent implements OnInit {
 
   public constructor(
     private readonly authService: AuthService,
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
   ) {}
 
   public ngOnInit() {
-    this.notifyService.setTitle('近期动态')
-    this.notifyService.updateHeaderContent({
+    this.layoutService.setTitle('近期动态')
+    this.layoutService.updateHeader({
       title: '近期动态',
       subTitle: []
     })
@@ -71,7 +71,7 @@ export class NewsesComponent implements OnInit {
 
   public async sendNews() {
     if (!this.newText.trim()) {
-      this.notifyService.showMessage('请输入内容', 'warning')
+      this.layoutService.showMessage('请输入内容', 'warning')
       return
     }
 
@@ -84,7 +84,7 @@ export class NewsesComponent implements OnInit {
         imgs: []
       })
       .subscribe(() => {
-        this.notifyService.showMessage('发送成功', 'success')
+        this.layoutService.showMessage('发送成功', 'success')
         this.newText = ''
         this.reloadNews()
       })
@@ -162,7 +162,7 @@ export class NewsesComponent implements OnInit {
       (this.currentPage + 1) * NewsesComponent.PAGE_SIZE
     )
     if (nextItems.length === 0) {
-      this.notifyService.showMessage('没有更多了', 'info')
+      this.layoutService.showMessage('没有更多了', 'info')
       return
     }
     this.displayedNews = [...this.displayedNews, ...nextItems]

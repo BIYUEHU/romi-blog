@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { BangumiData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { CardComponent } from '../card/card.component'
 
 @Component({
@@ -24,7 +24,7 @@ export class BangumiComponent implements OnInit {
   public data?: BangumiData
 
   public constructor(
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly apiService: ApiService
   ) {}
 
@@ -45,7 +45,7 @@ export class BangumiComponent implements OnInit {
 
   public loadMore(): void {
     if (this.offset >= this.total) {
-      this.notifyService.showMessage('没有更多了', 'info')
+      this.layoutService.showMessage('没有更多了', 'info')
       return
     }
 
@@ -59,7 +59,7 @@ export class BangumiComponent implements OnInit {
     const title = this.isAnime ? '追番列表' : 'Gal 列表'
     const typeName = this.isAnime ? '番剧' : 'Gal'
 
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title,
       subTitle: [`共 ${this.total} 部${typeName}`]
     })

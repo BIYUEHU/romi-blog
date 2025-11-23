@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { ResPostSingleData } from '../../../output'
 import { CardComponent } from '../../components/card/card.component'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 interface ResFriendData {
   name: string
@@ -18,7 +19,7 @@ interface ResFriendData {
   templateUrl: './links.component.html'
 })
 export class LinksComponent {
-  @Input({ required: true }) public id!: number
+  @Input({ required: true }) public post!: ResPostSingleData
 
   public links: ResFriendData[] = [
     {
@@ -83,7 +84,7 @@ export class LinksComponent {
     }
   ]
 
-  public constructor(private readonly notifyService: NotifyService) {
-    this.notifyService.setTitle('友情链接')
+  public constructor(private readonly layoutService: LayoutService) {
+    this.layoutService.setTitle('友情链接')
   }
 }

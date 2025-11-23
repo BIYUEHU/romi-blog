@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
-import { NotifyService } from '../../services/notify.service'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect } from '@angular/core'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-message',
@@ -17,21 +17,20 @@ import { NotifyService } from '../../services/notify.service'
     ])
   ]
 })
-export class MessageComponent implements OnInit {
-  public messageData = {
+export class MessageComponent {
+  public message = {
     message: '',
     type: 'info' as 'error' | 'info' | 'success' | 'warning' | 'secondary' | 'primary'
   }
 
-  public constructor(private readonly notifyService: NotifyService) {}
-
-  public ngOnInit() {
-    this.notifyService.messageNotify$.subscribe((messageData) => {
-      if (!messageData) return
-      this.messageData = messageData
+  public constructor(layoutService: LayoutService) {
+    effect(() => {
+      const message = layoutService.messageNotify$()
+      if (!message) return
+      this.message = message
       const timer = Number(
         setTimeout(() => {
-          this.messageData = { message: '', type: 'info' }
+          this.message = { message: '', type: 'info' }
           clearTimeout(timer)
         }, 3000)
       )

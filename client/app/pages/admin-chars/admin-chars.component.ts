@@ -22,7 +22,7 @@ import { renderCharacterBWH } from '../../utils'
 export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResCharacterData> implements OnInit {
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.notifyService.setTitle('角色管理')
+    this.layoutService.setTitle('角色管理')
     this.emptyMessage = '暂无角色'
   }
 
@@ -45,7 +45,7 @@ export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResChara
   protected deleteItem(id: number): void {
     if (this.confirmDelete()) {
       this.apiService.deleteCharacter(id).subscribe(() => {
-        this.notifyService.showMessage('角色删除成功', 'secondary')
+        this.layoutService.showMessage('角色删除成功', 'secondary')
         this.items = this.items.filter((character) => character.id !== id)
       })
     }

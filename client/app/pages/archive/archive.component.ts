@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-archive',
@@ -26,10 +26,10 @@ export class ArchiveComponent implements OnInit {
   public tags: string[] = []
   public categories: string[] = []
 
-  public constructor(private readonly notifyService: NotifyService) {}
+  public constructor(private readonly layoutService: LayoutService) {}
 
   public async ngOnInit() {
-    this.notifyService.setTitle('归档整理')
+    this.layoutService.setTitle('归档整理')
     this.archive = this.posts.reduce((acc, post) => {
       const date = new Date(post.created * 1000)
       const year = date.getFullYear().toString()

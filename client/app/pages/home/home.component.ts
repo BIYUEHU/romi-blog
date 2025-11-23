@@ -2,11 +2,10 @@ import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
-import { LayoutUsingComponent } from '../../components/layout-using/layout-using.component'
-import { LoadingComponent } from '../../components/loading/loading.component'
+import { LayoutComponent } from '../../components/layout/layout.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { API_BASE_URL2 } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
 import type { homeResolver } from './home.resolver'
@@ -14,7 +13,7 @@ import type { homeResolver } from './home.resolver'
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe, RouterLink, ProjectListComponent, LayoutUsingComponent, LoadingComponent, CardComponent],
+  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
@@ -50,21 +49,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public constructor(
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
-    this.notifyService.setTitle()
-    this.notifyService.updateHeaderContent({ title: '', subTitle: [] })
-
-    if (!this.browserService.isBrowser || !this.home.music.length) return
-    this.aplayer = new APlayer({
-      container: document.getElementById('recent-music'),
-      theme: 'var(--primary-100)',
-      listMaxHeight: '320px',
-      audio: this.home.music
+    this.layoutService.setTitle()
+    this.layoutService.updateHeader({
+      title: '',
+      subTitle: []
     })
+
+    // if (!this.browserService.isBrowser || !this.home.music.length) return
+    // this.aplayer = new APlayer({
+    //   container: document.getElementById('recent-music'),
+    //   theme: 'var(--primary-100)',
+    //   listMaxHeight: '320px',
+    //   audio: this.home.music
+    // })
   }
 
   public ngOnDestroy() {

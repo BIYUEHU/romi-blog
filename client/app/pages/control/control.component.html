@@ -1,0 +1,17 @@
+<app-layout>
+  <div main>
+    @if (dependentPageUsing) {
+    @if (dependentPageUsing.routine) {
+    <app-post-content [hideOptions]="true" [hideSubTitle]="true" [hideRelatedPosts]="true" [hideCopyright]="true"
+      [title]="dependentPageUsing.title" [hideToc]="dependentPageUsing.hideToc"
+      [hideComments]="dependentPageUsing.hideComments" [post]="post" />
+    } @else if (dependentPageUsing.template === 'links') {
+    <app-links [post]="post" />
+    } @else {
+    <app-not-found />
+    }
+    } @else {
+    <app-not-found />
+    }
+  </div>
+</app-layout>

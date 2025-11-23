@@ -5,7 +5,7 @@ import { ResDashboardData, ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { ROMI_METADATA } from '../../shared/constants'
 
 @Component({
@@ -105,9 +105,9 @@ export class AdminDashboardComponent implements OnInit {
     private readonly apiService: ApiService,
     private readonly authService: AuthService,
     private readonly browserService: BrowserService,
-    private readonly notifyService: NotifyService
+    private readonly layoutService: LayoutService
   ) {
-    this.notifyService.setTitle('控制台')
+    this.layoutService.setTitle('控制台')
   }
 
   public ngOnInit() {

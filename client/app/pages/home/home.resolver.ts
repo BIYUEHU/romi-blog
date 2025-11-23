@@ -1,7 +1,7 @@
 import { inject } from '@angular/core'
 import { ResolveFn } from '@angular/router'
 import { forkJoin, map } from 'rxjs'
-import { ResMusicData, ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
+import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 
 type HomeData = {
@@ -9,7 +9,7 @@ type HomeData = {
   news: ResNewsData[]
   videos: Video[]
   projects: ResProjectData[]
-  music: ResMusicData[]
+  // music: ResMusicData[]
 }
 
 export const homeResolver: ResolveFn<HomeData> = () => {
@@ -26,7 +26,7 @@ export const homeResolver: ResolveFn<HomeData> = () => {
     ),
     news: apiService.getNewses().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
     videos: apiService.getVideos().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
-    projects: apiService.getProjects().pipe(map((data) => data.slice(0, 4))),
-    music: apiService.getMusic()
+    projects: apiService.getProjects().pipe(map((data) => data.slice(0, 4)))
+    // music: apiService.getMusic()
   })
 }

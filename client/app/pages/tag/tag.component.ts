@@ -3,7 +3,7 @@ import { Router } from '@angular/router'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { ApiService } from '../../services/api.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-tag',
@@ -17,7 +17,7 @@ export class TagComponent implements OnInit {
 
   public constructor(
     private readonly router: Router,
-    private readonly notifyService: NotifyService
+    private readonly layoutService: LayoutService
   ) {}
 
   public ngOnInit() {
@@ -27,8 +27,8 @@ export class TagComponent implements OnInit {
       this.router.navigate(['/404'])
       return
     }
-    this.notifyService.setTitle(`${this.name} 标签`)
-    this.notifyService.updateHeaderContent({
+    this.layoutService.setTitle(`${this.name} 标签`)
+    this.layoutService.updateHeader({
       title: `#${this.name}`,
       subTitle: [`共 ${this.posts.length} 篇文章`]
     })

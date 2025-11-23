@@ -3,7 +3,7 @@ import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { NotifyService } from '../../services/notify.service'
+import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 
 @Component({
@@ -26,10 +26,10 @@ export class MusicComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly browserService: BrowserService,
-    private readonly notifyService: NotifyService,
+    private readonly layoutService: LayoutService,
     private readonly apiService: ApiService
   ) {
-    this.notifyService.setTitle('歌单收藏')
+    this.layoutService.setTitle('歌单收藏')
   }
 
   public ngOnInit() {
@@ -53,7 +53,7 @@ export class MusicComponent implements OnInit, OnDestroy {
       }, 0)
     })
 
-    this.notifyService.updateHeaderContent({
+    this.layoutService.updateHeader({
       title: '歌单收藏',
       subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
     })
