@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
 import { Router } from '@angular/router'
 import { BehaviorSubject } from 'rxjs'
 import { UserAuthData } from '../models/api.model'
@@ -9,6 +9,8 @@ import { KEYS } from './store.service'
   providedIn: 'root'
 })
 export class AuthService {
+  // private user = signal<UserAuthData | null>(null)
+  // public user$ = this.user.asReadonly()
   private userSubject = new BehaviorSubject<UserAuthData | null>(null)
   public user$ = this.userSubject.asObservable()
 

@@ -1,6 +1,8 @@
 import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http'
 import { inject } from '@angular/core'
+import { Router } from '@angular/router'
 import { catchError, EMPTY, throwError } from 'rxjs'
+import { match } from 'ts-pattern'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 import { LayoutService } from '../services/layout.service'
@@ -37,11 +39,11 @@ export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>
         return EMPTY
       }
 
-      if (
-        err.status === 404 &&
-        ['/news/', '/post/', '/char', '/admin/edit/'].some((url) => request.url.includes(url))
-      ) {
-        location.href = '/404'
+      if (request.method.toUpperCase() === 'GET') {
+        const router = inject(Router)
+        match(err.status)
+          .with(404, () => router.navigate(['/404']))
+          .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))
         return EMPTY
       }
 

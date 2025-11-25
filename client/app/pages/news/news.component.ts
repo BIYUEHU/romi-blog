@@ -2,7 +2,6 @@ import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResNewsData } from '../../../output'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
@@ -11,7 +10,7 @@ import { KEYS } from '../../services/store.service'
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [DatePipe, LoadingComponent],
+  imports: [DatePipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './news.component.html'
 })

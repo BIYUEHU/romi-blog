@@ -56,6 +56,12 @@ importers:
       shiki:
         specifier: ^1.24.2
         version: 1.24.2
+      ts-adt:
+        specifier: ^2.1.2
+        version: 2.1.2
+      ts-pattern:
+        specifier: ^5.9.0
+        version: 5.9.0
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -4991,6 +4997,12 @@ packages:
 
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
+
+  ts-adt@2.1.2:
+    resolution: {integrity: sha512-UD0lr7eyiBjxogQjb1xMCjF7skrnxGZLNm4iROeU3ky5tJzXN0yQkkS4DfNGfM4RaUGMhgyrzf2wUynqK8AdWQ==}
+
+  ts-pattern@5.9.0:
+    resolution: {integrity: sha512-6s5V71mX8qBUmlgbrfL33xDUwO0fq48rxAu2LBE11WBeGdpCPOsXksQbZJHvHwhrd3QjUusd3mAOM5Gg0mFBLg==}
 
   tslib@2.6.3:
     resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
@@ -10830,6 +10842,10 @@ snapshots:
   tree-kill@1.2.2: {}
 
   trim-lines@3.0.1: {}
+
+  ts-adt@2.1.2: {}
+
+  ts-pattern@5.9.0: {}
 
   tslib@2.6.3: {}
 

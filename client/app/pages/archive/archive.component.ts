@@ -1,13 +1,12 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { ResPostData } from '../../models/api.model'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
   selector: 'app-archive',
   standalone: true,
-  imports: [LoadingComponent, RouterLink],
+  imports: [RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './archive.component.html'
 })

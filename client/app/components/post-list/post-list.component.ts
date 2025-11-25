@@ -3,17 +3,16 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResPostData } from '../../models/api.model'
 import { CardComponent } from '../card/card.component'
-import { LoadingComponent } from '../loading/loading.component'
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [DatePipe, LoadingComponent, RouterLink, CardComponent],
+  imports: [DatePipe, RouterLink, CardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-list.component.html'
 })
 export class PostListComponent implements OnInit {
-  @Input() posts?: ResPostData[]
+  @Input({ required: true }) posts!: ResPostData[]
   @Input() pageSize = 6
 
   public currentPage = 1
@@ -22,20 +21,13 @@ export class PostListComponent implements OnInit {
 
   public ngOnInit() {
     this.updateDisplayedPosts()
-  }
-
-  public ngOnChanges() {
-    if (this.posts) {
-      this.posts = this.posts.filter(({ hide }) => !hide)
-      this.totalPages = Math.ceil(this.posts.length / this.pageSize)
-      this.currentPage = 1
-      this.updateDisplayedPosts()
-    }
+    this.posts = this.posts.filter(({ hide }) => !hide)
+    this.totalPages = Math.ceil(this.posts.length / this.pageSize)
+    this.currentPage = 1
+    this.updateDisplayedPosts()
   }
 
   private updateDisplayedPosts() {
-    if (!this.posts) return
-
     const startIndex = (this.currentPage - 1) * this.pageSize
     const endIndex = startIndex + this.pageSize
     this.displayedPosts = this.posts.slice(startIndex, endIndex)

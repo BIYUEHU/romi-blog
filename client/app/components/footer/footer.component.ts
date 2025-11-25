@@ -28,7 +28,6 @@ export class FooterComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    // TODO: 全局 resolver
     this.apiService
       .getHitokoto()
       .pipe(

@@ -1,7 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ResProjectData } from '../../../output'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { LayoutService } from '../../services/layout.service'
@@ -9,7 +8,7 @@ import { LayoutService } from '../../services/layout.service'
 @Component({
   selector: 'app-project',
   standalone: true,
-  imports: [FormsModule, LoadingComponent, WebComponentInputAccessorDirective, ProjectListComponent],
+  imports: [FormsModule, WebComponentInputAccessorDirective, ProjectListComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './project.component.html'
 })

@@ -21,7 +21,6 @@
         <option value=".cts" />
         <option value=".tsx" />
         <option value=".vue" />
-        <option value=".html" />
       </list>
     </option>
   </component>

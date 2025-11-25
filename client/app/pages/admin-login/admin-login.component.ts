@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
@@ -28,8 +28,11 @@ export class AdminLoginComponent {
     private readonly browserService: BrowserService,
     private readonly layoutService: LayoutService
   ) {
-    if (this.browserService.isBrowser && this.authService.isLoggedIn()) location.href = '/admin/dashboard'
-    this.layoutService.setTitle('管理员登录')
+    if (this.browserService.isBrowser && this.authService.isLoggedIn()) {
+      inject(Router).navigate(['/admin/dashboard']).then()
+    } else {
+      this.layoutService.setTitle('管理员登录')
+    }
   }
 
   public async handleSubmit() {

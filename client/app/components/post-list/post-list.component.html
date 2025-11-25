@@ -1,85 +1,77 @@
 <div class="w-5xl max-w-90% mx-auto flex-1">
 
-  @if (posts) {
   <div class="columns-1 md:columns-2 gap-6">
     @for (post of displayedPosts; track post.id) {
-    <!-- 外层加一个 wrapper，用来打断列内拆分 -->
-    <app-card
-      class="group rounded-xl overflow-hidden hover:shadow-lg transition-all hover:cursor-pointer break-inside-avoid mb-6"
-      [routerLink]="['/post', post.id]">
-      <!-- 下面保持你原来的卡片内容不变 -->
-      @if (post.banner) {
-      <div class="aspect-video overflow-hidden">
-        <img [src]="post.banner" [alt]="post.title"
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-      </div>
-      }
+      <app-card
+              class="group rounded-xl overflow-hidden hover:shadow-lg transition-all hover:cursor-pointer break-inside-avoid mb-6"
+              [routerLink]="['/post', post.id]">
+        @if (post.banner) {
+          <div class="aspect-video overflow-hidden">
+            <img [src]="post.banner" [alt]="post.title"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+          </div>
+        }
 
-      <div class="p-6">
-        <!-- 标题和摘要 -->
-        <div class="mb-4">
-          <h2 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors mb-2">
+        <div class="p-6">
+          <div class="mb-4">
+            <h2 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors mb-2">
             <span class="hover:text-primary-100">
               {{ post.title }}
             </span>
-          </h2>
-          <p class="text-accent-100 line-clamp-2">{{ post.summary }}</p>
-        </div>
+            </h2>
+            <p class="text-accent-100 line-clamp-2">{{ post.summary }}</p>
+          </div>
 
-        <!-- 文章信息 -->
-        <div class="flex items-center gap-4 text-sm text-accent-100">
+          <div class="flex items-center gap-4 text-sm text-accent-100">
           <span class="flex items-center gap-1">
             <i class="i-mdi-clock-outline"></i>
             {{ post.created * 1000 | date:'yyyy-MM-dd' }}
           </span>
-          <span class="flex items-center gap-1">
+            <span class="flex items-center gap-1">
             <i class="i-mdi-eye-outline"></i>
-            {{ post.views }}
+              {{ post.views }}
           </span>
-          @if (post.allow_comment) {
-          <span class="flex items-center gap-1">
+            @if (post.allow_comment) {
+              <span class="flex items-center gap-1">
             <i class="i-mdi-comment-text-multiple-outline"></i>
-            {{ post.comments }}
+                {{ post.comments }}
           </span>
-          }
-        </div>
+            }
+          </div>
 
-        <!-- 标签 -->
-        @if (post.tags.length > 0) {
-        <div class="flex flex-wrap gap-2 mt-4">
-          @for (tag of post.tags; track tag) {
-          <r-tag size="sm" type="accent">{{ tag }}</r-tag>
+          @if (post.tags.length > 0) {
+            <div class="flex flex-wrap gap-2 mt-4">
+              @for (tag of post.tags; track tag) {
+                <r-tag size="sm" type="accent">{{ tag }}</r-tag>
+              }
+            </div>
           }
         </div>
-        }
-      </div>
-    </app-card>
+      </app-card>
     }
   </div>
 
-  <!-- 分页导航 -->
   @if (totalPages > 1) {
-  <div class="flex justify-center items-center gap-2 mt-12 mb-4">
-    @for (item of getPageNumbers(); track $index) {
-    @if (item === 'prev') {
-    <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
-      &lt;&lt; </r-button>
-    } @else if (item === 'next') {
-    <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === totalPages">
-      >>
-    </r-button>
-    } @else if (item === '...') {
-    <span class="px-2 text-accent-100">...</span>
-    } @else {
-    <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'"
-      class="w-10 h-10 rounded-lg">
-      {{ item }}
-    </r-button>
-    }
-    }
-  </div>
-  }
-  } @else {
-  <app-loading />
+    <div class="flex justify-center items-center gap-2 mt-12 mb-4">
+      @for (item of getPageNumbers(); track $index) {
+        @if (item === 'prev') {
+          <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
+            &lt;&lt;
+          </r-button>
+        } @else if (item === 'next') {
+          <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg"
+                    [disabled]="currentPage === totalPages">
+            >>
+          </r-button>
+        } @else if (item === '...') {
+          <span class="px-2 text-accent-100">...</span>
+        } @else {
+          <r-button (click)="goToPage(item)" [type]="currentPage === item ? 'primary' : 'default'"
+                    class="w-10 h-10 rounded-lg">
+            {{ item }}
+          </r-button>
+        }
+      }
+    </div>
   }
 </div>

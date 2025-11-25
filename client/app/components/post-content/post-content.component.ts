@@ -16,7 +16,7 @@ import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { LayoutService } from '../../services/layout.service'
 import { KEYS } from '../../services/store.service'
-import { randomRTagType } from '../../utils'
+import { formatDate, randomRTagType } from '../../utils'
 import { LoadingComponent } from '../loading/loading.component'
 
 interface TocItem {
@@ -54,7 +54,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
   public renderedContent: SafeHtml = ''
   public commentText = ''
   public toc: TocItem[] = []
-  public comments: CommentItem[] = []
+  public comments: CommentItem[] | null = null
   public currentUser: UserAuthData | null = null
   public replyingTo: { username: string; cid: number } | null = null
   public currentPage = 1
@@ -65,10 +65,11 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public get pages() {
-    return Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1)
+    return this.comments ? Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1) : []
   }
 
   public get pagedComments() {
+    if (!this.comments) return []
     const start = (this.currentPage - 1) * this.pageSize
     return this.comments.slice(start, start + this.pageSize)
   }
@@ -95,8 +96,10 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.layoutService.setTitle(this.post.title)
     this.renderContent().then(() => this.viewPost())
 
-    // TODO: 去掉 hideComments 由上游直接提供可选的评论数据决定是否显示
-    if (this.hideComments) return
+    if (this.hideComments) {
+      this.comments = []
+      return
+    }
     this.apiService
       .getCommentsByPost(this.post.id)
       .pipe(takeUntil(this.destroy$))
@@ -260,9 +263,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
       subTitle: this.hideSubTitle
         ? []
         : [
-            `创建时间：${new Date(post.created * 1000).toLocaleDateString()} | 更新时间：${new Date(
-              post.modified * 1000
-            ).toLocaleDateString()}`,
+            `创建时间：${formatDate(new Date(post.created * 1000))} | 更新时间：${formatDate(
+              new Date(post.modified * 1000)
+            )}`,
             `${post.views} 次阅读 ${post.allow_comment ? `•  ${post.comments} 条评论 ` : ''}•  ${post.likes} 人喜欢`
           ],
       ...(post.banner ? { imageUrl: post.banner } : {})

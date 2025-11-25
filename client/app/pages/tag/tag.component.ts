@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
-import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({

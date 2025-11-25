@@ -3,7 +3,6 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs/operators'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -29,7 +28,7 @@ interface GroupedNews {
 @Component({
   selector: 'app-newses',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, LoadingComponent],
+  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newses.component.html'
 })

@@ -1,13 +1,12 @@
-@if (archive.length > 0) {
 <div class="max-w-90% w-4xl mx-auto flex-1">
   <div class="mb-12">
     <h2 class="text-2xl font-bold mb-6">分类</h2>
     <div class="flex flex-wrap gap-3">
       @for (category of categories; track $index) {
-      <a [routerLink]="['/category', category]"
-        class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors font-bold">
-        {{ category }}
-      </a>
+        <a [routerLink]="['/category', category]"
+           class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors font-bold">
+          {{ category }}
+        </a>
       }
     </div>
   </div>
@@ -16,10 +15,10 @@
     <h2 class="text-2xl font-bold mb-6">标签</h2>
     <div class="flex flex-wrap gap-3">
       @for (tag of tags; track $index) {
-      <a [routerLink]="['/tag', tag]"
-        class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors">
-        #{{ tag }}
-      </a>
+        <a [routerLink]="['/tag', tag]"
+           class="px-4 py-2 bg-text-200 hover:bg-text-300 text-primary-200 hover:text-primary-100 rounded-full text-lg transition-colors">
+          #{{ tag }}
+        </a>
       }
     </div>
   </div>
@@ -28,28 +27,25 @@
     <h2 class="text-2xl font-bold mb-6">文章归档</h2>
     <div class="space-y-4">
       @for (arr of archive; track $index) {
-      <div>
-        <r-collapse [label]="arr[0] + ' 年 (' + arr[1].length + ' 篇)'">
-          <div class="space-y-5 py-2 w-full">
-            @for (post of arr[1]; track post.id) {
-            <div class="flex items-center gap-4">
-              <span class="text-gray-500 whitespace-nowrap">{{ post.date }}</span>
-              <a [routerLink]="['/post', post.id]"
-                class="text-primary-200 hover:text-primary-100 transition-colors line-clamp-1">
-                {{ post.title }}
-              </a>
+        <div>
+          <r-collapse [label]="arr[0] + ' 年 (' + arr[1].length + ' 篇)'">
+            <div class="space-y-5 py-2 w-full">
+              @for (post of arr[1]; track post.id) {
+                <div class="flex items-center gap-4">
+                  <span class="text-gray-500 whitespace-nowrap">{{ post.date }}</span>
+                  <a [routerLink]="['/post', post.id]"
+                     class="text-primary-200 hover:text-primary-100 transition-colors line-clamp-1">
+                    {{ post.title }}
+                  </a>
+                </div>
+                <div class="m-auto w-98%">
+                  <r-divider align="center" thickness="1"></r-divider>
+                </div>
+              }
             </div>
-            <div class="m-auto w-98%">
-              <r-divider align="center" thickness="1"></r-divider>
-            </div>
-            }
-          </div>
-        </r-collapse>
-      </div>
+          </r-collapse>
+        </div>
       }
     </div>
   </div>
 </div>
-} @else {
-<app-loading />
-}

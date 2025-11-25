@@ -28,7 +28,6 @@ import type {
   Video
 } from '../models/api.model'
 import { API_BASE_URL } from '../shared/constants'
-import { CacheService } from './cache.service'
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +35,7 @@ import { CacheService } from './cache.service'
 export class ApiService {
   private readonly apiUrl = API_BASE_URL
 
-  public constructor(
-    private readonly http: HttpClient,
-    private readonly cacheService: CacheService
-  ) {}
+  public constructor(private readonly http: HttpClient) {}
 
   private getSkipErrorHandlerHeaders() {
     return new HttpHeaders().set('Skip-Error-Handler', 'true')
@@ -49,9 +45,8 @@ export class ApiService {
     return new HttpHeaders().set('Skip-Bring-Token', 'true')
   }
 
-  public getPosts(cache = false) {
-    const cachedPosts = this.cacheService.getPosts()
-    return cache && cachedPosts ? of(cachedPosts) : this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
+  public getPosts() {
+    return this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
   }
 
   public getPost(id: number) {

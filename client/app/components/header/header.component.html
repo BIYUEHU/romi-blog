@@ -31,7 +31,7 @@
         </div>
       </div>
       } @else {
-      <a [href]="item.link" class="text-primary-100 hover:text-text-200">
+      <a [routerLink]="item.link" class="text-primary-100 hover:text-text-200">
         {{ item.text }}
       </a>
       }
@@ -44,7 +44,7 @@
       <div class="grid grid-cols-2 gap-4 p-3">
         @for (item of navItems; track $index) {
         @if (!item.children) {
-        <a [href]="item.link"
+        <a [routerLink]="item.link"
           class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
           (click)="toggleMenu()">
           {{ item.text }}
@@ -59,7 +59,7 @@
         <h3 class="text-primary-100 text-lg mb-2 text-center">{{ item.text }}</h3>
         <div class="grid grid-cols-2 gap-4">
           @for (child of item.children; track child.text) {
-          <a [href]="child.link"
+          <a [routerLink]="child.link"
             class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
             (click)="toggleMenu()">
             {{ child.text }}
