@@ -13,7 +13,7 @@ export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
 
 export const API_BASE_URL2 = isDevMode() ? envDev.api_base_url : '/api'
 
-const _ = ((): undefined => {
+;((): undefined => {
   if (typeof window === 'undefined') return
   const logger = new LoggerService()
   console.log(

@@ -99,8 +99,7 @@ impl SSR {
             .await
             .context("Failed to connect to Node.js server")?;
 
-        let status =
-            http::StatusCode::from_u16(response.status().as_u16()).unwrap_or(http::StatusCode::OK);
+        let status = StatusCode::from_u16(response.status().as_u16()).unwrap_or(StatusCode::OK);
 
         let headers_raw = response.headers().clone();
         let body = response.bytes().await?.to_vec();
@@ -126,7 +125,7 @@ impl SSR {
 }
 
 pub struct SSRResponse {
-    pub status: http::StatusCode,
+    pub status: StatusCode,
     pub headers: Vec<(String, String)>,
     pub body: Vec<u8>,
 }
@@ -143,7 +142,7 @@ impl IntoResponse for SSRResponse {
         }
         builder.body(axum::body::Body::from(self.body)).unwrap_or_else(|_| {
             http::Response::builder()
-                .status(http::StatusCode::INTERNAL_SERVER_ERROR)
+                .status(StatusCode::INTERNAL_SERVER_ERROR)
                 .body(axum::body::Body::from("Internal Server Error"))
                 .unwrap()
         })

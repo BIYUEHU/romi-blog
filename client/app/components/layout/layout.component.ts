@@ -1,9 +1,10 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router'
 import { ResMusicData } from '../../models/api.model'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 import { APlayer } from '../../shared/types'
 import { FooterComponent } from '../footer/footer.component'
 import { HeaderComponent } from '../header/header.component'
@@ -11,13 +12,14 @@ import { HeaderComponent } from '../header/header.component'
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, RouterLink],
+  imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './layout.component.html'
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   private static SCROLL_OFFSET_HEIGHT_PX = -88
 
+  @Input() public imageHeight = ''
   @Input() public fullBackground = false
   @Input() public disabledFooter = false
 
@@ -32,6 +34,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly router: Router,
     private readonly browserService: BrowserService,
+    private readonly storeService: StoreService,
     public readonly layoutService: LayoutService
   ) {
     // router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
@@ -40,6 +43,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
     //   const layoutData: LayoutConfig = route.snapshot.data['layout']
     //   if (layoutData) this.layoutService.updateHeader(layoutData)
     // })
+  }
+
+  public get headerImageHeight() {
+    return this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
   }
 
   public ngOnInit() {
@@ -85,24 +92,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   public togglePlayer(isFirst: boolean) {
-    if (
-      this.router.url === '/music' ||
-      (isFirst && this.browserService.store!.getItem(KEYS.APLAYER_DISABLED) === 'true')
-    ) {
+    if (this.router.url === '/music' || (isFirst && this.storeService.getItem(KEYS.APLAYER_DISABLED) === 'true')) {
       return
     }
 
     if (this.aplayer) {
-      this.browserService.store!.setItem(KEYS.APLAYER_DISABLED, 'true')
+      this.storeService.setItem(KEYS.APLAYER_DISABLED, 'true')
       this.aplayer.destroy()
       this.aplayer = undefined
       return
     }
 
-    const aliveTime = Number(this.browserService.store!.getItem(KEYS.APLAYER_ALIVE_TIME) ?? 0)
+    const aliveTime = Number(this.storeService.getItem(KEYS.APLAYER_ALIVE_TIME) ?? 0)
     if (!Number.isNaN(aliveTime) && Date.now() - aliveTime < 1010) return
 
-    this.browserService.store!.setItem(KEYS.APLAYER_DISABLED, 'false')
+    this.storeService.setItem(KEYS.APLAYER_DISABLED, 'false')
     this.aplayer = new APlayer({
       container: document.getElementById('aplayer-global'),
       autoplay: true,
@@ -116,7 +120,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     if (!this.aplayerTimer) {
       this.aplayerTimer = Number(
         setInterval(() => {
-          if (this.aplayer) this.browserService.store!.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
+          if (this.aplayer) this.storeService.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
         }, 1000)
       )
     }

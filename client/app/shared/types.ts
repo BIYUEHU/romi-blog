@@ -17,15 +17,6 @@ export type APlayer = {
 
 export const APlayer = (globalThis as unknown as { APlayer: new (options: object) => APlayer }).APlayer
 
-export interface LayoutConfig {
-  imageHeight: string
-  fullBackground: boolean
-  disabledFooter: boolean
-  headerTitle: string
-  headerSubTitle: string[]
-  headerImageUrl: string
-}
-
 export type DependentPage = {
   name: string
   title: string

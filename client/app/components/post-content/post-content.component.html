@@ -22,6 +22,7 @@
           </div>
         }
 
+
         @if (!hideOptions) {
           @if (post.categories.length + (extra?.tags?.length ?? 0) > 0) {
             <div class="mx-auto line-height-loose mt-5">
@@ -91,33 +92,35 @@
             <div class="mt-8 mb-6">
               <h3 class="text-2xl font-bold mb-6 flex items-center gap-2">评论区</h3>
 
-              @if (isNotLoggedIn) {
-                <div class="mb-8 p-6 bg-text-300 rounded-lg text-center">
-                  <p class="text-accent-100 mb-4">登录后才能发表评论</p>
-                  <r-button [routerLink]="['/admin/login']" type="primary">
-                    去登录
-                  </r-button>
-                </div>
-              } @else if (currentUser) {
-                <div class="mb-8">
-                  @if (replyingTo) {
-                    <div class="mb-2 flex items-center gap-2">
+              @if (browserService.isBrowser) {
+                @if (authService.user$(); as user) {
+                  <div class="mb-8">
+                    @if (replyingTo) {
+                      <div class="mb-2 flex items-center gap-2">
                                             <span class="text-accent-100">回复 {{ "@" }}{{ replyingTo.username }}
                                               :</span>
-                      <r-button type="primary" size="sm" (click)="cancelReply()">
-                        取消回复
-                      </r-button>
+                        <r-button type="primary" size="sm" (click)="cancelReply()">
+                          取消回复
+                        </r-button>
+                      </div>
+                    }
+                    <r-input is="textarea" class="text-lg" rows="4" [(ngModel)]="commentText"
+                             placeholder="写下你的想法..."></r-input>
+                    <div class="flex flex-wrap justify-between mt-4 gap-4 items-center">
+                      <div class="text-accent-100">
+                        当前登录：{{ user.username }}
+                      </div>
+                      <r-button (click)="addComment()" type="primary">发表评论</r-button>
                     </div>
-                  }
-                  <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="commentText"
-                           placeholder="写下你的想法..."></r-input>
-                  <div class="flex flex-wrap justify-between mt-4 gap-4 items-center">
-                    <div class="text-accent-100">
-                      当前登录：{{ currentUser.username }}
-                    </div>
-                    <r-button (click)="addComment()" type="primary">发表评论</r-button>
                   </div>
-                </div>
+                } @else {
+                  <div class="mb-8 p-6 bg-text-300 rounded-lg text-center">
+                    <p class="text-accent-100 mb-4">登录后才能发表评论</p>
+                    <r-button [routerLink]="['/admin/login']" type="primary">
+                      去登录
+                    </r-button>
+                  </div>
+                }
               }
 
               @if (comments) {
@@ -129,7 +132,8 @@
                   <div class="space-y-6 mb-6">
                     @for (comment of pagedComments; track comment.cid) {
                       <div class="flex gap-4">
-                        <img [src]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
+                        <img src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
+                             fill
                              alt="avatar"
                              class="w-10 h-10 rounded-full bg-text-200 flex-shrink-0 overflow-hidden"/>
                         <div class="flex-1">

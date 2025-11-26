@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 type ModalWidth = 'sm' | 'base' | 'md' | 'lg' | 'xl' | 'full'
@@ -46,24 +46,23 @@ export default class RModal extends LitElement {
     }
   }
 
-  connectedCallback() {
+  public override connectedCallback() {
     super.connectedCallback()
     this.createModalContainer()
   }
 
-  disconnectedCallback() {
+  public override disconnectedCallback() {
     super.disconnectedCallback()
     this.removeModalContainer()
   }
 
-  protected render() {
+  protected override render() {
     if (!this.modalContainer) return null
 
     const modalContent = html`
       <div 
-        class="fixed inset-0 overflow-y-auto transition-all ease-in"
+        class="fixed inset-0 overflow-y-auto transition-all ease-in ${this.modelValue ? 'visible' : 'invisible duration-100 ease-in'}"
         style="z-index: ${this.zIndex}"
-        class="${this.modelValue ? 'visible' : 'invisible duration-100 ease-in'}"
       >
         <!-- overlay -->
         <div 
@@ -151,5 +150,5 @@ export default class RModal extends LitElement {
     return widthClasses[this.width] || widthClasses.base
   }
 
-  static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

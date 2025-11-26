@@ -1,5 +1,5 @@
-import { LitElement, html, css } from 'lit'
-import { customElement, property, state, query } from 'lit/decorators.js'
+import { css, html, LitElement } from 'lit'
+import { customElement, property, query, state } from 'lit/decorators.js'
 
 interface DropdownOption {
   value: string
@@ -14,7 +14,7 @@ export default class RDropdown extends LitElement {
   @property({ type: String }) public trigger: 'click' | 'hover' = 'click'
 
   @query('.target') private targetRef!: HTMLElement
-  @query('.dropdown') private dropdownRef: HTMLElement
+  @query('.dropdown') private dropdownRef!: HTMLElement
 
   @state() private show = false
   private timeout?: ReturnType<typeof setTimeout>
@@ -73,17 +73,17 @@ export default class RDropdown extends LitElement {
     }
   }
 
-  public connectedCallback() {
+  public override connectedCallback() {
     super.connectedCallback()
     document.addEventListener('click', this.handleClickOutside.bind(this))
   }
 
-  public disconnectedCallback() {
+  public override disconnectedCallback() {
     super.disconnectedCallback()
     document.removeEventListener('click', this.handleClickOutside.bind(this))
   }
 
-  public render() {
+  public override render() {
     return html`
       <div 
         class="relative inline-block text-left"
@@ -153,5 +153,5 @@ export default class RDropdown extends LitElement {
     `
   }
 
-  public static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

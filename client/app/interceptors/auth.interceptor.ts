@@ -30,9 +30,10 @@ export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>
   return next(cloned).pipe(
     catchError((err) => {
       inject(LoggerService).label('HTTP').error(err)
+      const router = inject(Router)
 
       if (token && err.status === 401) {
-        if (location.href.includes('/admin/')) {
+        if (router.url.includes('/admin/')) {
           notify.showMessage('登录已过期，请重新登录', 'error')
           auth.logout()
         }
@@ -40,7 +41,6 @@ export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>
       }
 
       if (request.method.toUpperCase() === 'GET') {
-        const router = inject(Router)
         match(err.status)
           .with(404, () => router.navigate(['/404']))
           .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))

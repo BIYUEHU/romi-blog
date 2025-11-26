@@ -2,9 +2,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 
 @Component({
   selector: 'app-hitokotos',
@@ -23,7 +22,7 @@ export class HitokotosComponent implements OnInit {
   public constructor(
     private readonly layoutService: LayoutService,
     private readonly apiService: ApiService,
-    private readonly browserService: BrowserService
+    private readonly storeService: StoreService
   ) {}
 
   public ngOnInit(): void {
@@ -53,14 +52,14 @@ export class HitokotosComponent implements OnInit {
   public likeHitokoto(id: number): void {
     if (this.isLiked(id)) return
     this.apiService.likeHitokoto(id).subscribe(() => {
-      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED(id), true)
+      this.storeService.setItem(KEYS.HITOKOTO_LIKED(id), true)
       const hitokoto = this.hitokotos.find((h) => h.id === id)
       if (hitokoto) hitokoto.likes++
     })
   }
 
   public isLiked(id: number): boolean {
-    return !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(id))
+    return !!this.storeService.getItem(KEYS.HITOKOTO_LIKED(id))
   }
 
   public getTypeColor(type: number): string {

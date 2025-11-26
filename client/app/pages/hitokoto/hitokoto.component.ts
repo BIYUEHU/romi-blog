@@ -2,9 +2,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
@@ -20,15 +19,14 @@ export class HitokotoComponent implements OnInit {
 
   public isLoading = false
 
-  public showHelpDialog = false
   public get isLiked() {
-    return !!this.hitokoto && !!this.browserService.store?.getItem(KEYS.HITOKOTO_LIKED(this.hitokoto.id))
+    return !!this.hitokoto && !!this.storeService.getItem(KEYS.HITOKOTO_LIKED(this.hitokoto.id))
   }
 
   public constructor(
     private readonly layoutService: LayoutService,
-    private readonly browserService: BrowserService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly storeService: StoreService
   ) {}
 
   public readonly getTagType = HitokotosComponent.prototype.getTagType
@@ -59,7 +57,7 @@ export class HitokotoComponent implements OnInit {
     }
 
     this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
-      this.browserService.store!.setItem(KEYS.HITOKOTO_LIKED((this.hitokoto as ResHitokotoData).id), true)
+      this.storeService.setItem(KEYS.HITOKOTO_LIKED((this.hitokoto as ResHitokotoData).id), true)
       ;(this.hitokoto as ResHitokotoData).likes += 1
       this.layoutService.showMessage('点赞成功', 'success')
     })
@@ -67,8 +65,7 @@ export class HitokotoComponent implements OnInit {
 
   public shareHitokoto() {
     if (!this.hitokoto) return
-    const url = `${location.origin}/hitokoto/${this.hitokoto.id}`
-    navigator.clipboard.writeText(url).then(
+    navigator.clipboard.writeText(`${location.origin}/hitokoto/${this.hitokoto.id}`).then(
       () => this.layoutService.showMessage('链接已复制', 'secondary'),
       () => this.layoutService.showMessage('复制失败', 'error')
     )

@@ -1,7 +1,4 @@
-use std::{
-    thread::sleep,
-    time::{Duration, Instant},
-};
+use std::time::{Duration, Instant};
 
 use reqwest::{
     ClientBuilder,
@@ -224,7 +221,7 @@ pub async fn fetch_playlist(
                             attempt + 1,
                             max_attempt
                         );
-                        sleep(Duration::from_secs(1 + attempt));
+                        tokio::time::sleep(Duration::from_secs(1 + attempt)).await;
                     } else {
                         l_error!(logger, "Failed to fetch song {} detail or parse detail", id,)
                     };
@@ -235,5 +232,5 @@ pub async fn fetch_playlist(
 
     let duration = start.elapsed();
     l_info!(logger, "Finished in {:.2?}. Total: {}, Success: {}", duration, total, results.len());
-    return Some(results);
+    Some(results)
 }

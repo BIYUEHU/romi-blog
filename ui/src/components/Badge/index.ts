@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Sizes, Types } from '../../preset'
 
@@ -44,5 +44,5 @@ export default class RBadge extends LitElement {
     error: 'text-white bg-error-500'
   }
 
-  public static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

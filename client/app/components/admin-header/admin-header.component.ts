@@ -19,15 +19,12 @@ export class AdminHeaderComponent {
 
   public isSidebarOpen$
 
-  public readonly avatarUrl = `${API_BASE_URL2}/utils/qqavatar` // TODO: github avatar}
+  public readonly avatarUrl = `${API_BASE_URL2}/utils/qqavatar` // TODO: github avatar
 
   public constructor(
     private readonly authService: AuthService,
     private readonly layoutService: LayoutService
   ) {
-    this.authService.user$.subscribe((user) => {
-      if (user) this.user = user
-    })
     this.createDate = new Date((this.user?.created ?? 0) * 1000)
     this.isSidebarOpen$ = this.layoutService.isSidebarOpen$
   }

@@ -58,7 +58,7 @@ async fn login(
         exp: (SystemTime::now() + Duration::from_secs(60 * 60 * 24 * 12))
             .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap()
-            .as_secs() as u64,
+            .as_secs(),
         is_admin: user.is_admin.eq(&"1".to_string()),
         status: user.is_deleted.parse().unwrap_or(1),
     };

@@ -1,3 +1,4 @@
+import { Routes } from '@angular/router'
 import { LayoutWrapperComponent } from '../components/layout-wrapper/layout-wrapper.component'
 import { AnimeComponent } from '../pages/anime/anime.component'
 import { ArchiveComponent } from '../pages/archive/archive.component'
@@ -10,6 +11,7 @@ import { DynamicComponent } from '../pages/dynamic/dynamic.component'
 import { dynamicResolver } from '../pages/dynamic/dynamic.resolver'
 import { GalComponent } from '../pages/gal/gal.component'
 import { HitokotoComponent } from '../pages/hitokoto/hitokoto.component'
+import { hitokotoResolver } from '../pages/hitokoto/hitokoto.resolver'
 import { HitokotosComponent } from '../pages/hitokotos/hitokotos.component'
 import { hitokotosResolver } from '../pages/hitokotos/hitokotos.resolver'
 import { HomeComponent } from '../pages/home/home.component'
@@ -27,9 +29,8 @@ import { postsResolver } from '../pages/posts/posts.resolver'
 import { ProjectComponent } from '../pages/project/project.component'
 import { projectResolver } from '../pages/project/project.resolver'
 import { TagComponent } from '../pages/tag/tag.component'
-import { defineRoutes } from '../shared/tools'
 
-export const publicRoutes = defineRoutes([
+export const publicRoutes: Routes = [
   {
     path: '',
     component: HomeComponent,
@@ -148,15 +149,15 @@ export const publicRoutes = defineRoutes([
     path: 'hitokoto/:id',
     component: HitokotoComponent,
     resolve: {
-      hitokotos: hitokotosResolver
+      hitokoto: hitokotoResolver
     }
   },
   {
     path: ':slug',
     component: DynamicComponent,
     resolve: {
-      post: dynamicResolver
+      dynamic: dynamicResolver
     },
     pathMatch: 'full'
   }
-])
+]

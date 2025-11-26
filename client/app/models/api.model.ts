@@ -2,10 +2,10 @@ import { AuthUser } from '../../output'
 
 export * from '../../output'
 
-export interface Author {
-  username: string
-  avatar: string
-}
+// export interface Author {
+//   username: string
+//   avatar: string
+// }
 
 export type UserAuthData = AuthUser & { token: string }
 

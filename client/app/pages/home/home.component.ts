@@ -4,7 +4,6 @@ import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { API_BASE_URL2 } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
@@ -48,10 +47,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     avatarUrl: `${API_BASE_URL2}/utils/qqavatar`
   }
 
-  public constructor(
-    private readonly layoutService: LayoutService,
-    private readonly browserService: BrowserService
-  ) {}
+  public constructor(private readonly layoutService: LayoutService) {}
 
   public ngOnInit() {
     this.layoutService.setTitle()

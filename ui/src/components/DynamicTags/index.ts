@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
 import '../Tag'
 import { getUniqueID } from '../../utils'
@@ -56,7 +56,7 @@ export default class RDynamicTags extends LitElement {
     )
   }
 
-  protected render() {
+  protected override render() {
     return html`
       <div class="flex flex-wrap items-center">
         ${
@@ -152,5 +152,5 @@ export default class RDynamicTags extends LitElement {
     `
   }
 
-  static styles = css`@unocss-placeholder`
+  public static override styles = css`@unocss-placeholder`
 }

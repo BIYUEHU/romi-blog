@@ -21,7 +21,7 @@ pub fn load_env_vars() -> Result<(), String> {
             return Err(format!("Failed to load environment variables from .env file: {}", e));
         }
     }
-    return Ok(());
+    Ok(())
 }
 
 pub fn initialize_directories() -> Result<(), String> {

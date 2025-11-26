@@ -49,7 +49,7 @@ export class ProgressComponent implements OnInit, AfterViewInit {
   private endProgress() {
     if (!this.browserService.isBrowser) return
 
-    const progressBar = document.getElementById('progress-bar')
+    const progressBar = window.document.getElementById('progress-bar')
     if (progressBar) {
       progressBar.style.width = '0%'
       setTimeout(() => {

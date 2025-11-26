@@ -26,7 +26,7 @@ export class CategoryComponent implements OnInit {
     this.posts = sortByCreatedTime(this.posts).filter((post) => post.categories.includes(this.name))
 
     if (this.posts.length === 0) {
-      this.router.navigate(['/404']).then(() => {})
+      this.router.navigate(['/404'])
       return
     }
 

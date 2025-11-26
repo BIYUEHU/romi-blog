@@ -103,18 +103,15 @@ export class AdminDashboardComponent implements OnInit {
 
   public constructor(
     private readonly apiService: ApiService,
-    private readonly authService: AuthService,
     private readonly browserService: BrowserService,
-    private readonly layoutService: LayoutService
+    private readonly layoutService: LayoutService,
+    public readonly authService: AuthService
   ) {
     this.layoutService.setTitle('控制台')
   }
 
   public ngOnInit() {
     if (!this.browserService.isBrowser) return
-    this.authService.user$.subscribe((user) => {
-      this.username = user?.username ?? ''
-    })
 
     setInterval(() => {
       this.currentTime = new Date()

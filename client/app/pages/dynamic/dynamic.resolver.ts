@@ -4,7 +4,6 @@ import { EMPTY, forkJoin, of } from 'rxjs'
 import { ResPostSingleData } from '../../../output'
 import { ApiService } from '../../services/api.service'
 import { DependentPage } from '../../shared/types'
-import { DynamicComponent } from './dynamic.component'
 
 const DEPENDENT_PAGES: DependentPage[] = [
   {
@@ -39,7 +38,7 @@ export const dynamicResolver: ResolveFn<[DependentPage, ResPostSingleData]> = (r
   const data = DEPENDENT_PAGES.find(({ name }) => name === slug)
 
   if (!data) {
-    router.navigate(['/404']).then()
+    router.navigate(['/404'])
     return EMPTY
   }
 

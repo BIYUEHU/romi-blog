@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common'
 import { Component, HostListener } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
@@ -10,7 +9,7 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [AsyncPipe, RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
+  imports: [RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
   templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {

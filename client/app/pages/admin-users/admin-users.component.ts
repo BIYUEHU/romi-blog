@@ -31,14 +31,11 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
 
   public constructor(
     private readonly apiService: ApiService,
-    private readonly authService: AuthService
+    public readonly authService: AuthService
   ) {
     super()
     this.layoutService.setTitle('用户管理')
     this.emptyMessage = '暂无用户'
-    this.authService.user$.subscribe((user) => {
-      this.admin = user
-    })
   }
 
   protected loadItems(): void {

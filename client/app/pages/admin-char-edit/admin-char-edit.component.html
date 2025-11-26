@@ -88,7 +88,7 @@
             @for (image of charForm.images; track image) {
             <r-tag closeable (close)="removeImage(image)">
               <a [href]="image" target="_blank">
-                <img [src]="image" class="max-w-28 rounded-lg" />
+                <img [alt]="image" fill [ngSrc]="image" class="max-w-28 rounded-lg" />
               </a>
             </r-tag>
             }

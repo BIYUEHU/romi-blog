@@ -1,3 +1,4 @@
+<!--suppress ALL -->
 <app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
   (pageChange)="goToPage($event)">
   <div search-area class="flex flex-wrap items-center gap-4">
@@ -25,8 +26,8 @@
         <tr class="hover:bg-text-300">
           <td class="px-6 py-4 ">{{ news.text.slice(0, 30) }}</td>
           <td class="px-6 py-4">
-            <r-tag [type]="news.private === true ? 'error' : 'success'">
-              {{ news.private === true ? '私密' : '公开' }}
+            <r-tag [type]="news.private ? 'error' : 'success'">
+              {{ news.private ? '私密' : '公开' }}
             </r-tag>
           </td>
           <td class="px-6 py-4 text-sm text-accent-100">

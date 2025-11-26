@@ -424,7 +424,7 @@ async fn update(
             .with_context(|| format!("Failed to create new relations for post {}", id))?;
     }
 
-    txn.commit().await.with_context(|| format!("Failed to commit transaction"))?;
+    txn.commit().await.with_context(|| "Failed to commit transaction".to_string())?;
 
     l_info!(
         logger,

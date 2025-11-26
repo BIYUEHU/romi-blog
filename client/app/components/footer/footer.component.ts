@@ -28,6 +28,7 @@ export class FooterComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    if (!this.browserService.isBrowser) return
     this.apiService
       .getHitokoto()
       .pipe(

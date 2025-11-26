@@ -27,7 +27,7 @@ where
     pub async fn get_or_update<F, Fut>(&self, updater: F) -> Result<T, anyhow::Error>
     where
         F: FnOnce() -> Fut,
-        Fut: std::future::Future<Output = Result<T, anyhow::Error>>,
+        Fut: Future<Output = Result<T, anyhow::Error>>,
     {
         let now = SystemTime::now();
 

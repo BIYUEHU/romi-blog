@@ -1,185 +1,184 @@
 /* Global */
 
 :root {
-  --primary-100: #d87cb6;
-  --primary-200: #e094c5;
-  --primary-300: #e7acb4;
-  --accent-100: #9573a2;
-  --accent-200: #b4a0b1;
-  --accent-300: #c3b9c1;
-  --text-100: #ffffff;
-  --text-200: #fafafa;
-  --text-300: #f7f7f7;
-  --bg-100: #1a1a1a;
-  --bg-200: #292929;
-  --bg-300: #404040;
-  scrollbar-color: var(--primary-100) var(--accent-100);
-  scrollbar-width: thin;
-  font-family: 16px/1.5 'Microsoft Yahei', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    --primary-100: #d87cb6;
+    --primary-200: #e094c5;
+    --primary-300: #e7acb4;
+    --accent-100: #9573a2;
+    --accent-200: #b4a0b1;
+    --accent-300: #c3b9c1;
+    --text-100: #ffffff;
+    --text-200: #fafafa;
+    --text-300: #f7f7f7;
+    --bg-100: #1a1a1a;
+    --bg-200: #292929;
+    --bg-300: #404040;
+    scrollbar-color: var(--primary-100) var(--accent-100);
+    scrollbar-width: thin;
+    font-family: "Microsoft Yahei", "PingFang SC", "Hiragino Sans GB", sans-serif;
 }
 
 ::selection {
-  background-color: var(--accent-300);
+    background-color: var(--accent-300);
 }
 
 a {
-  color: var(--primary-100);
-  text-decoration: none;
+    color: var(--primary-100);
+    text-decoration: none;
 }
 
 a:hover {
-  color: var(--accent-100);
+    color: var(--accent-100);
 }
 
 /* Markdown */
 
 .post-body {
-  background-color: var(--text-200);
-  font-family: sans-serif;
-  line-height: 1.8;
-  font-weight: 300;
-  margin-inline: auto;
-  word-wrap: break-word;
-  scrollbar-color: var(--bg-300) var(--text-300);
-  border-width: 1px;
-  border-color: var(--text-200);
+    background-color: var(--text-200);
+    font-family: sans-serif;
+    line-height: 1.8;
+    font-weight: 300;
+    margin-inline: auto;
+    word-wrap: break-word;
+    scrollbar-color: var(--bg-300) var(--text-300);
+    border-width: 1px;
+    border-color: var(--text-200);
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-weight: 400;
-    /* margin-top: 24px; */
-    /* margin-bottom: 1rem; */
-    /* line-height: 1.3; */
-  }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 400;
+        /* margin-top: 24px; */
+        /* margin-bottom: 1rem; */
+        /* line-height: 1.3; */
+    }
 
-  h1 {
-    font-size: 1.6rem;
-  }
+    h1 {
+        font-size: 1.6rem;
+    }
 
-  h2 {
-    font-size: 1.4rem;
-  }
+    h2 {
+        font-size: 1.4rem;
+    }
 
-  h3 {
-    font-size: 1.2rem;
-  }
+    h3 {
+        font-size: 1.2rem;
+    }
 
-  h4 {
-    font-size: 1rem;
-  }
+    h4 {
+        font-size: 1rem;
+    }
 
-  h5 {
-    font-size: 0.8rem;
-  }
+    h5 {
+        font-size: 0.8rem;
+    }
 
-  h6 {
-    font-size: 0.6rem;
-  }
+    h6 {
+        font-size: 0.6rem;
+    }
 
+    * {
+        max-width: 100%;
+    }
 
-  * {
-    max-width: 100%;
-  }
+    table {
+        margin: 1rem auto;
+        max-width: 100%;
+        border-collapse: collapse;
+        overflow-x: auto;
+        display: block;
+    }
 
-  table {
-    margin: 1rem auto;
-    max-width: 100%;
-    border-collapse: collapse;
-    overflow-x: auto;
-    display: block;
-  }
+    table-wrapper {
+        overflow-x: auto;
+    }
 
-  table-wrapper {
-    overflow-x: auto;
-  }
+    th,
+    td {
+        padding: 8px 12px;
+        border: 1px solid var(--bg-300);
+        text-align: left;
+    }
 
-  th,
-  td {
-    padding: 8px 12px;
-    border: 1px solid var(--bg-300);
-    text-align: left;
-  }
+    th {
+        background-color: var(--text-300);
+        font-weight: bold;
+    }
 
-  th {
-    background-color: var(--text-300);
-    font-weight: bold;
-  }
+    tr:nth-child(even) {
+        background-color: var(--text-300);
+    }
 
-  tr:nth-child(even) {
-    background-color: var(--text-300);
-  }
+    ul,
+    ol {
+        padding-left: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
 
-  ul,
-  ol {
-    padding-left: 20px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
+    li {
+        margin-bottom: 8px;
+    }
 
-  li {
-    margin-bottom: 8px;
-  }
+    ul li::before {
+        margin-right: 8px;
+    }
 
-  ul li::before {
-    margin-right: 8px;
-  }
+    ol {
+        list-style-type: decimal;
+    }
 
-  ol {
-    list-style-type: decimal;
-  }
+    ol li {
+        padding-left: 5px;
+    }
 
-  ol li {
-    padding-left: 5px;
-  }
+    blockquote {
+        padding: 0.25rem 1rem 0.25rem 0;
+        margin: 1rem auto;
+        width: 98%;
+        border-left: 4px solid var(--bg-300);
+        padding-left: 16px;
+        background-color: var(--text-300);
+    }
 
-  blockquote {
-    padding: 0.25rem 1rem 0.25rem 0;
-    margin: 1rem auto;
-    width: 98%;
-    border-left: 4px solid var(--bg-300);
-    padding-left: 16px;
-    background-color: var(--text-300);
-  }
+    pre {
+        border-radius: 8px;
+        border: 1px solid var(--bg-300);
+        background-color: var(--text-200) !important;
+        padding: 0.5em;
+        overflow-x: auto;
+        /* white-space: pre-wrap; */
+        width: 98%;
+        margin: 1rem auto;
+    }
 
-  pre {
-    border-radius: 8px;
-    border: 1px solid var(--bg-300);
-    background-color: var(--text-200) !important;
-    padding: 0.5em;
-    overflow-x: auto;
-    /* white-space: pre-wrap; */
-    width: 98%;
-    margin: 1rem auto;
-  }
+    a {
+        color: var(--bg-300);
+        text-decoration: underline;
+    }
 
-  a {
-    color: var(--bg-300);
-    text-decoration: underline;
-  }
+    a:hover {
+        color: var(--bg-100);
+        text-decoration: underline;
+    }
 
-  a:hover {
-    color: var(--bg-100);
-    text-decoration: underline;
-  }
+    img,
+    .romi-img,
+    svg,
+    video {
+        border-radius: 8px;
+        max-width: 90%;
+        margin: 1.2rem auto;
+        max-height: 400px;
+        display: block;
+    }
 
-  img,
-  .romi-img,
-  svg,
-  video {
-    border-radius: 8px;
-    max-width: 90%;
-    margin: 1.2rem auto;
-    max-height: 400px;
-    display: block;
-  }
-
-  hr {
-    border: 0;
-    border-top: 1px solid var(--text-300);
-    margin: 24px 0;
-  }
+    hr {
+        border: 0;
+        border-top: 1px solid var(--text-300);
+        margin: 24px 0;
+    }
 }

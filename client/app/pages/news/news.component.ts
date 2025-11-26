@@ -5,7 +5,7 @@ import { ResNewsData } from '../../../output'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 
 @Component({
   selector: 'app-news',
@@ -22,8 +22,9 @@ export class NewsComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly router: Router,
     private readonly layoutService: LayoutService,
+    private readonly apiService: ApiService,
     private readonly browserService: BrowserService,
-    private readonly apiService: ApiService
+    private readonly storeService: StoreService
   ) {}
 
   public ngOnInit() {
@@ -37,25 +38,25 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   public viewNews() {
-    if (!this.browserService.isBrowser || this.browserService.store?.getItem(KEYS.NEWS_VIEWED(this.news.id))) return
+    if (this.storeService.getItem(KEYS.NEWS_VIEWED(this.news.id))) return
     this.viewedTimeoutId = Number(
       setTimeout(
         () =>
           this.apiService
             .viewNews(this.news.id)
-            .subscribe(() => this.browserService.store?.setItem(KEYS.NEWS_VIEWED(this.news.id), true)),
+            .subscribe(() => this.storeService.setItem(KEYS.NEWS_VIEWED(this.news.id), true)),
         5000
       )
     )
   }
 
   public likeNews() {
-    if (this.browserService.store?.getItem(KEYS.NEWS_LIKED(this.news.id))) {
+    if (this.storeService.getItem(KEYS.NEWS_LIKED(this.news.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likeNews(this.news.id).subscribe(() => {
-      this.browserService.store?.setItem(KEYS.NEWS_LIKED(this.news.id), true)
+      this.storeService.setItem(KEYS.NEWS_LIKED(this.news.id), true)
       if (this.news) this.news.likes += 1
       this.updateHeader()
       this.layoutService.showMessage('点赞成功', 'success')

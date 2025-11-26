@@ -9,7 +9,7 @@ import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
 
 @Component({
@@ -124,7 +124,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     if (typeof keys === 'string') {
       try {
         const { text, password, title, hide, allow_comment, tags, categories, banner } = JSON.parse(
-          this.browserService.store?.getItem(keys) ?? ''
+          this.storeService.getItem(keys) ?? ''
         )
         this.postForm = {
           ...this.postForm,
@@ -147,8 +147,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
     const update = this.postForm.modified * 1000
     const [draftKey, draftTimeKey] = keys
-    const draft = this.browserService.store?.getItem(draftKey)
-    const draftTime = Number(this.browserService.store?.getItem(draftTimeKey))
+    const draft = this.storeService.getItem(draftKey)
+    const draftTime = Number(this.storeService.getItem(draftTimeKey))
     if (draft && draftTime && !Number.isNaN(draftTime) && draftTime >= update) {
       if (draft !== this.postForm.text) {
         notify()
@@ -156,8 +156,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       }
       return draft
     }
-    this.browserService.store?.removeItem(draftKey)
-    this.browserService.store?.removeItem(draftTimeKey)
+    this.storeService.removeItem(draftKey)
+    this.storeService.removeItem(draftTimeKey)
     return this.postForm.text
   }
 
@@ -173,7 +173,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly layoutService: LayoutService,
-    private readonly browserService: BrowserService
+    private readonly browserService: BrowserService,
+    private readonly storeService: StoreService
   ) {
     this.layoutService.setTitle('文章编辑')
   }
@@ -209,11 +210,11 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
         this.lastSaveDraftTime = Date.now()
         if (typeof keys === 'string') {
-          this.browserService.store!.setItem(keys, JSON.stringify({ ...this.postForm, text }))
+          this.storeService.setItem(keys, JSON.stringify({ ...this.postForm, text }))
         } else {
           const [draftKey, draftTimeKey] = keys
-          this.browserService.store!.setItem(draftKey, text)
-          this.browserService.store!.setItem(draftTimeKey, String(this.lastSaveDraftTime))
+          this.storeService.setItem(draftKey, text)
+          this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
         }
       }, 5 * 1000)
     )
@@ -293,7 +294,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
     request.subscribe(() => {
       if (!this.isEdit) {
-        this.browserService.store!.removeItem(KEYS.POST_DRAFT_NEW)
+        this.storeService.removeItem(KEYS.POST_DRAFT_NEW)
       }
       this.layoutService.showMessage('文章保存成功', 'success')
       this.goBack()

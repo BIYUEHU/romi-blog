@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { BrowserService } from './browser.service'
 
 enum SymbolKeys {
   APLAYER_DISABLED = 'aplayer-disabled',
@@ -33,23 +34,25 @@ export const KEYS = {
   providedIn: 'root'
 })
 export class StoreService {
-  public getStorage(persist: boolean) {
+  private getStorage(persist: boolean) {
     return persist ? localStorage : sessionStorage
   }
+
+  public constructor(private readonly browserService: BrowserService) {}
 
   public getKey(key: SymbolKeys) {
     return `romi-${key}`
   }
 
   public setItem(key: SymbolKeys, value: string | number | boolean, persist = true) {
-    this.getStorage(persist).setItem(this.getKey(key), String(value))
+    if (this.browserService.isBrowser) this.getStorage(persist).setItem(this.getKey(key), String(value))
   }
 
   public getItem(key: SymbolKeys, persist = true): string | null {
-    return this.getStorage(persist).getItem(this.getKey(key))
+    return this.browserService.isBrowser ? this.getStorage(persist).getItem(this.getKey(key)) : null
   }
 
   public removeItem(key: SymbolKeys, persist = true) {
-    this.getStorage(persist).removeItem(this.getKey(key))
+    if (this.browserService.isBrowser) this.getStorage(persist).removeItem(this.getKey(key))
   }
 }

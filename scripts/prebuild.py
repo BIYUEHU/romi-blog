@@ -1,5 +1,4 @@
 from socket import socket, AF_INET, SOCK_DGRAM
-from os import path
 import subprocess
 import json
 from pathlib import Path

@@ -1,6 +1,5 @@
 import { Component, Input, type OnInit } from '@angular/core'
-import { map } from 'rxjs'
-import { ResPostData, ResPostSingleData } from '../../../output'
+import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'

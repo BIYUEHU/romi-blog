@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -10,7 +11,7 @@ import { LayoutService } from '../../services/layout.service'
 @Component({
   selector: 'app-admin-char-edit',
   standalone: true,
-  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective],
+  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-char-edit.component.html'
 })

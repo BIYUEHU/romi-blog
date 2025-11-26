@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs/operators'
@@ -7,7 +7,6 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
@@ -44,25 +43,22 @@ export class NewsesComponent implements OnInit {
   public toc: TocItem[] = []
   public currentPage = 1
 
-  public get url() {
-    return this.browserService.isBrowser ? window.location.href : ''
-  }
-
   public constructor(
-    private readonly authService: AuthService,
     private readonly layoutService: LayoutService,
-    private readonly browserService: BrowserService,
-    private readonly apiService: ApiService
-  ) {}
+    private readonly apiService: ApiService,
+    authService: AuthService
+  ) {
+    effect(() => {
+      const user = authService.user$()
+      this.isAdmin = !!user?.is_admin
+    })
+  }
 
   public ngOnInit() {
     this.layoutService.setTitle('近期动态')
     this.layoutService.updateHeader({
       title: '近期动态',
       subTitle: []
-    })
-    this.authService.user$.subscribe((user) => {
-      this.isAdmin = !!user?.is_admin
     })
     this.newses = sortByCreatedTime(this.newses)
     this.refresh()

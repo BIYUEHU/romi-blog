@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { CanActivate } from '@angular/router'
+import { CanActivate, Router } from '@angular/router'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 
@@ -9,14 +9,15 @@ import { BrowserService } from '../services/browser.service'
 export class AuthGuard implements CanActivate {
   public constructor(
     private readonly authService: AuthService,
-    private readonly browserService: BrowserService
+    private readonly browserService: BrowserService,
+    private readonly router: Router
   ) {}
 
   public canActivate() {
     if (!this.browserService.isBrowser) return true
     if (this.authService.isLoggedIn()) return true
-    if (location.href.includes('/admin/login')) return true
-    location.href = '/admin/login'
+    if (this.router.url.includes('/admin/login')) return true
+    this.router.navigate(['/admin/login'])
     return false
   }
 }

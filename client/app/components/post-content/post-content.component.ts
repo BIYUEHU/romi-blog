@@ -9,13 +9,13 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { BundledLanguage, BundledTheme, HighlighterGeneric } from 'shiki'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { ResCommentData, ResPostSingleData, UserAuthData } from '../../models/api.model'
+import { ResCommentData, ResPostSingleData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS } from '../../services/store.service'
+import { KEYS, StoreService } from '../../services/store.service'
 import { formatDate, randomRTagType } from '../../utils'
 import { LoadingComponent } from '../loading/loading.component'
 
@@ -55,14 +55,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
   public commentText = ''
   public toc: TocItem[] = []
   public comments: CommentItem[] | null = null
-  public currentUser: UserAuthData | null = null
   public replyingTo: { username: string; cid: number } | null = null
   public currentPage = 1
   public pageSize = 10
-
-  public get isNotLoggedIn() {
-    return this.currentUser === null
-  }
 
   public get pages() {
     return this.comments ? Array.from({ length: Math.ceil(this.comments.length / this.pageSize) }, (_, i) => i + 1) : []
@@ -79,24 +74,21 @@ export class PostContentComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly router: Router,
     private readonly layoutService: LayoutService,
-    private readonly authService: AuthService,
     private readonly apiService: ApiService,
-    private readonly browserService: BrowserService,
+    private readonly storeService: StoreService,
     private readonly sanitizer: DomSanitizer,
-    private readonly highlighterService: HighlighterService
+    private readonly highlighterService: HighlighterService,
+    public readonly browserService: BrowserService,
+    public readonly authService: AuthService
   ) {}
 
   public ngOnInit() {
     this.mdParser = this.setupMdParser()
 
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe((user) => {
-      this.currentUser = user
-    })
-
     this.layoutService.setTitle(this.post.title)
     this.renderContent().then(() => this.viewPost())
 
-    if (this.hideComments) {
+    if (!this.browserService.isBrowser || this.hideComments) {
       this.comments = []
       return
     }
@@ -121,25 +113,25 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public viewPost() {
-    if (!this.browserService.isBrowser || this.browserService.store?.getItem(KEYS.POST_VIEWED(this.post.id))) return
+    if (this.storeService.getItem(KEYS.POST_VIEWED(this.post.id))) return
     this.viewedTimeoutId = Number(
       setTimeout(
         () =>
           this.apiService
             .viewPost(this.post.id)
-            .subscribe(() => this.browserService.store?.setItem(KEYS.POST_VIEWED(this.post.id), true)),
+            .subscribe(() => this.storeService.setItem(KEYS.POST_VIEWED(this.post.id), true)),
         5000
       )
     )
   }
 
   public likePost() {
-    if (this.browserService.store?.getItem(KEYS.POST_LIKED(this.post.id))) {
+    if (this.storeService.getItem(KEYS.POST_LIKED(this.post.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likePost(this.post.id).subscribe(() => {
-      this.browserService.store?.setItem(KEYS.POST_LIKED(this.post.id), true)
+      this.storeService.setItem(KEYS.POST_LIKED(this.post.id), true)
       if (this.post) this.post.likes += 1
       this.updateHeader()
       this.layoutService.showMessage('点赞成功', 'success')
