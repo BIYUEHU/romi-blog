@@ -33,6 +33,3 @@ export {
   RSwitch,
   RTag
 }
-
-export * from './preset'
-export * from './utils'

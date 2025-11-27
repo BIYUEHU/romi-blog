@@ -27,15 +27,15 @@ export class LayoutService {
   public readonly isSidebarOpen$ = this.isSidebarOpen.asReadonly()
 
   public constructor(
-    private readonly browserService: BrowserService,
-    private readonly title: Title
+    private readonly title: Title,
+    browserService: BrowserService
   ) {
-    this.isSidebarOpen.set((this.browserService.windowRef?.innerWidth ?? 0) >= 1024)
+    browserService.on(() => this.isSidebarOpen.set(window.innerWidth >= 1024))
     effect(() => {
       const isOpen = this.isSidebarOpen()
-      if (this.browserService.isBrowser && window.innerWidth < 1024) {
-        document.body.style.overflow = isOpen ? 'hidden' : ''
-      }
+      browserService.on(() => {
+        if (window.innerWidth < 1024) document.body.style.overflow = isOpen ? 'hidden' : ''
+      })
     })
   }
 

@@ -4,7 +4,7 @@
     <div [class]="[
     'fixed lg:relative lg:flex z-40 transition-transform duration-300 ease-in-out w-full h-full',
   ]">
-      @if (isSidebarOpen$()) {
+      @if (layoutService.isSidebarOpen$()) {
       <app-admin-sidebar />
       }
     </div>
@@ -13,7 +13,7 @@
       <app-admin-header />
       <main class="flex-1 p-4 lg:p-6">
         <div class="max-w-full lg:max-w-80% w-full lg:w-360 mx-auto">
-          @if (isView) {
+          @if (browserService.is) {
           <router-outlet />
           }
         </div>

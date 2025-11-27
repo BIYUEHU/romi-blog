@@ -10,7 +10,7 @@ import { BrowserService } from '../../services/browser.service'
 export class ProgressComponent implements OnInit, AfterViewInit {
   public constructor(
     private readonly router: Router,
-    private readonly browserService: BrowserService
+    private browserService: BrowserService
   ) {}
 
   public ngOnInit() {
@@ -29,10 +29,9 @@ export class ProgressComponent implements OnInit, AfterViewInit {
   }
 
   private startProgress() {
-    if (!this.browserService.isBrowser) return
-
-    const progressBar = document.getElementById('progress-bar')
-    if (progressBar) {
+    this.browserService.on(() => {
+      const progressBar = document.getElementById('progress-bar')
+      if (!progressBar) return
       progressBar.style.transition = 'none'
       progressBar.style.width = '90%'
       setTimeout(() => {
@@ -43,14 +42,13 @@ export class ProgressComponent implements OnInit, AfterViewInit {
       setTimeout(() => {
         progressBar.style.width = '0%'
       }, 500)
-    }
+    })
   }
 
   private endProgress() {
-    if (!this.browserService.isBrowser) return
-
-    const progressBar = window.document.getElementById('progress-bar')
-    if (progressBar) {
+    this.browserService.on(() => {
+      const progressBar = document.getElementById('progress-bar')
+      if (!progressBar) return
       progressBar.style.width = '0%'
       setTimeout(() => {
         progressBar.style.width = '100%'
@@ -59,21 +57,21 @@ export class ProgressComponent implements OnInit, AfterViewInit {
         progressBar.style.transition = ''
         progressBar.style.width = '0%'
       }, 1100)
-    }
+    })
   }
 
   private initProgress() {
-    if (!this.browserService.isBrowser) return
-
-    const progressBar = document.createElement('div')
-    progressBar.id = 'progress-bar'
-    progressBar.style.position = 'fixed'
-    progressBar.style.top = '0'
-    progressBar.style.left = '0'
-    progressBar.style.height = '4px'
-    progressBar.style.backgroundColor = 'var(--primary-100)'
-    progressBar.style.width = '100%'
-    progressBar.style.zIndex = '9999'
-    document.body.appendChild(progressBar)
+    this.browserService.on(() => {
+      const progressBar = document.createElement('div')
+      progressBar.id = 'progress-bar'
+      progressBar.style.position = 'fixed'
+      progressBar.style.top = '0'
+      progressBar.style.left = '0'
+      progressBar.style.height = '4px'
+      progressBar.style.backgroundColor = 'var(--primary-100)'
+      progressBar.style.width = '100%'
+      progressBar.style.zIndex = '9999'
+      document.body.appendChild(progressBar)
+    })
   }
 }

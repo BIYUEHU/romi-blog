@@ -117,8 +117,6 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   }
 
   private getPostText() {
-    if (!this.browserService.isBrowser) return this.postForm.text
-
     const notify = () => this.layoutService.showMessage('文章内容来自自动保存草稿', 'info')
     const keys = this.getDraftKey()
     if (typeof keys === 'string') {
@@ -200,24 +198,24 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       this.allCategories = metas.filter(({ is_category }) => is_category).map(({ name }) => name)
     })
 
-    if (!this.browserService.isBrowser) return
+    this.browserService.on(() => {
+      const keys = this.getDraftKey()
+      this.draftTimerId = Number(
+        setInterval(() => {
+          const text = this.editor?.getValue()
+          if (!text || text === this.postForm.text) return
 
-    const keys = this.getDraftKey()
-    this.draftTimerId = Number(
-      setInterval(() => {
-        const text = this.editor?.getValue()
-        if (!text || text === this.postForm.text) return
-
-        this.lastSaveDraftTime = Date.now()
-        if (typeof keys === 'string') {
-          this.storeService.setItem(keys, JSON.stringify({ ...this.postForm, text }))
-        } else {
-          const [draftKey, draftTimeKey] = keys
-          this.storeService.setItem(draftKey, text)
-          this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
-        }
-      }, 5 * 1000)
-    )
+          this.lastSaveDraftTime = Date.now()
+          if (typeof keys === 'string') {
+            this.storeService.setItem(keys, JSON.stringify({ ...this.postForm, text }))
+          } else {
+            const [draftKey, draftTimeKey] = keys
+            this.storeService.setItem(draftKey, text)
+            this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
+          }
+        }, 5 * 1000)
+      )
+    })
   }
 
   public ngOnDestroy() {

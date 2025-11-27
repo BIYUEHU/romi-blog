@@ -33,17 +33,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly browserService: BrowserService,
     private readonly storeService: StoreService,
+    private readonly browserService: BrowserService,
     public readonly layoutService: LayoutService
-  ) {
-    // router.events.pipe(filter((e) => e instanceof NavigationEnd)).subscribe(() => {
-    //   const route = this.getActiveRoute()
-    //   // biome-ignore lint: *
-    //   const layoutData: LayoutConfig = route.snapshot.data['layout']
-    //   if (layoutData) this.layoutService.updateHeader(layoutData)
-    // })
-  }
+  ) {}
 
   public get headerImageHeight() {
     return this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
@@ -51,19 +44,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
-    if (!this.browserService.isBrowser) return
 
-    window.addEventListener('scroll', () => {
-      this.showBackTop = window.scrollY > 100
+    this.browserService.on(() => {
+      window.addEventListener('scroll', () => {
+        this.showBackTop = window.scrollY > 100
+      })
+      this.togglePlayer(true)
     })
-    this.togglePlayer(true)
   }
-
-  // private getActiveRoute(): ActivatedRoute {
-  //   let route = inject(ActivatedRoute)
-  //   while (route.firstChild) route = route.firstChild
-  //   return route
-  // }
 
   private handleRouteEvent(event: object) {
     if (event instanceof NavigationStart) {
@@ -81,10 +69,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
         })
       }, 100)
     }
-
-    // if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
-    //   this.isLoading = false
-    // }
   }
 
   public scrollToTop() {

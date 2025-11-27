@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import { defineConfig, presetIcons, presetUno } from 'unocss'
-import { presetRomiUI } from './ui/src'
+import { presetRomiUI } from './ui/src/preset'
 
 export default defineConfig({
   cli: {

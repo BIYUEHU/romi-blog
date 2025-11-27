@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
@@ -15,7 +15,7 @@ import { LayoutService } from '../../services/layout.service'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-login.component.html'
 })
-export class AdminLoginComponent {
+export class AdminLoginComponent implements OnInit {
   public username = ''
   public password = ''
   public rememberMe = false
@@ -27,12 +27,12 @@ export class AdminLoginComponent {
     private readonly authService: AuthService,
     private readonly browserService: BrowserService,
     private readonly layoutService: LayoutService
-  ) {
-    if (this.browserService.isBrowser && this.authService.isLoggedIn()) {
-      this.router.navigate(['/admin/dashboard'])
-    } else {
-      this.layoutService.setTitle('管理员登录')
-    }
+  ) {}
+
+  public ngOnInit() {
+    this.browserService.on(() =>
+      this.layoutService.setTitle(`${window.innerWidth >= 768 ? '电脑' : '手机'}哥给我干哪去了啊？？`)
+    )
   }
 
   public async handleSubmit() {

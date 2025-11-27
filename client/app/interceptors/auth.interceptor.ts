@@ -9,7 +9,7 @@ import { LayoutService } from '../services/layout.service'
 import { LoggerService } from '../services/logger.service'
 
 export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  if (!inject(BrowserService).isBrowser) return next(request)
+  if (!inject(BrowserService).is) return next(request)
 
   const auth = inject(AuthService)
   const notify = inject(LayoutService)

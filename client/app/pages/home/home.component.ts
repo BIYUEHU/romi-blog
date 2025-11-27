@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       subTitle: []
     })
 
-    // if (!this.browserService.isBrowser || !this.home.music.length) return
+    // if (!this.browserService.is || !this.home.music.length) return
     // this.aplayer = new APlayer({
     //   container: document.getElementById('recent-music'),
     //   theme: 'var(--primary-100)',

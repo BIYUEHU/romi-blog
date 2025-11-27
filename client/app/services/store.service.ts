@@ -45,14 +45,14 @@ export class StoreService {
   }
 
   public setItem(key: SymbolKeys, value: string | number | boolean, persist = true) {
-    if (this.browserService.isBrowser) this.getStorage(persist).setItem(this.getKey(key), String(value))
+    if (this.browserService.is) this.getStorage(persist).setItem(this.getKey(key), String(value))
   }
 
   public getItem(key: SymbolKeys, persist = true): string | null {
-    return this.browserService.isBrowser ? this.getStorage(persist).getItem(this.getKey(key)) : null
+    return this.browserService.is ? this.getStorage(persist).getItem(this.getKey(key)) : null
   }
 
   public removeItem(key: SymbolKeys, persist = true) {
-    if (this.browserService.isBrowser) this.getStorage(persist).removeItem(this.getKey(key))
+    if (this.browserService.is) this.getStorage(persist).removeItem(this.getKey(key))
   }
 }

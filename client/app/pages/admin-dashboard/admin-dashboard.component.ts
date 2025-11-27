@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { ROMI_METADATA } from '../../shared/constants'
@@ -104,25 +103,24 @@ export class AdminDashboardComponent implements OnInit {
   public constructor(
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService,
-    private readonly layoutService: LayoutService,
-    public readonly authService: AuthService
+    private readonly layoutService: LayoutService
   ) {
     this.layoutService.setTitle('控制台')
   }
 
   public ngOnInit() {
-    if (!this.browserService.isBrowser) return
+    this.browserService.on(() => {
+      setInterval(() => {
+        this.currentTime = new Date()
+      }, 1000)
 
-    setInterval(() => {
-      this.currentTime = new Date()
-    }, 1000)
+      this.apiService.getDashboard().subscribe((data) => {
+        this.dashboardData = data
+      })
 
-    this.apiService.getDashboard().subscribe((data) => {
-      this.dashboardData = data
-    })
-
-    this.apiService.getPosts().subscribe((data) => {
-      this.recentPosts = data
+      this.apiService.getPosts().subscribe((data) => {
+        this.recentPosts = data
+      })
     })
   }
 }

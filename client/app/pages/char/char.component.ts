@@ -62,7 +62,7 @@ export class CharComponent implements OnInit, OnDestroy {
     this.layoutService.setTitle(`${this.char.name} ${this.char.romaji}`)
     this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
-    // if (!this.browserService.isBrowser) return
+    // if (!this.browserService.is) return
     // setTimeout(() => {
     //   const music = this.getMusic()
     //   if (music === undefined) return

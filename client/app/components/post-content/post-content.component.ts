@@ -88,16 +88,16 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.layoutService.setTitle(this.post.title)
     this.renderContent().then(() => this.viewPost())
 
-    if (!this.browserService.isBrowser || this.hideComments) {
+    if (this.hideComments) {
       this.comments = []
-      return
+    } else {
+      this.apiService
+        .getCommentsByPost(this.post.id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((comments) => {
+          this.comments = this.parseComments(comments)
+        })
     }
-    this.apiService
-      .getCommentsByPost(this.post.id)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((comments) => {
-        this.comments = this.parseComments(comments)
-      })
   }
 
   public ngOnDestroy() {
@@ -268,9 +268,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
     if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter(this.post.languages)
 
     this.extra = {
-      url: ((ref) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(
-        this.browserService.windowRef
-      ),
+      url: this.browserService.on(() => `${location.origin}${this.router.url.split('#')[0]}`) ?? '',
       tags: this.post.tags.map((tag) => [tag, randomRTagType()])
     }
 

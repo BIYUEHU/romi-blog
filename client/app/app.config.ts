@@ -5,11 +5,12 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import { provideRouter, withComponentInputBinding } from '@angular/router'
 import { routes } from './app.routes'
 import { authInterceptor } from './interceptors/auth.interceptor'
+import { transferInterceptor } from './interceptors/transferInterceptor'
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, transferInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
     provideClientHydration()

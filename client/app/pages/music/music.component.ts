@@ -25,37 +25,37 @@ export class MusicComponent implements OnInit, OnDestroy {
   }
 
   public constructor(
-    private readonly browserService: BrowserService,
     private readonly layoutService: LayoutService,
+    private readonly browserService: BrowserService,
     private readonly apiService: ApiService
   ) {
     this.layoutService.setTitle('歌单收藏')
   }
 
   public ngOnInit() {
-    this.apiService.getMusic().subscribe((data) => {
-      const isEmpty = !this.musicList
-      this.musicList = data
-      this.isLoading = false
-      if (!this.browserService.isBrowser) return
+    this.browserService.on(() => {
+      this.apiService.getMusic().subscribe((data) => {
+        const isEmpty = !this.musicList
+        this.musicList = data
+        this.isLoading = false
 
-      setTimeout(() => {
-        this.aplayer = new APlayer({
-          container: document.getElementById('aplayer'),
-          theme: 'var(--primary-100)',
-          listMaxHeight: '70vh',
-          lrcType: 1,
-          audio: this.musicList ?? []
-        })
+        setTimeout(() => {
+          this.aplayer = new APlayer({
+            container: document.getElementById('aplayer'),
+            theme: 'var(--primary-100)',
+            listMaxHeight: '70vh',
+            lrcType: 1,
+            audio: this.musicList ?? []
+          })
 
-        if (!this.browserService.isBrowser || !isEmpty || !this.aplayer) return
-        this.aplayer.list.add(data)
-      }, 0)
-    })
+          if (isEmpty && this.aplayer) this.aplayer.list.add(data)
+        }, 0)
+      })
 
-    this.layoutService.updateHeader({
-      title: '歌单收藏',
-      subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
+      this.layoutService.updateHeader({
+        title: '歌单收藏',
+        subTitle: [`共 ${this.musicCount} 首歌曲`, '内容从网易云歌单中同步']
+      })
     })
   }
 

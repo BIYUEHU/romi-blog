@@ -18,10 +18,10 @@
     "build": "vite build && cd ../ && pnpx @unocss/cli build"
   },
   "devDependencies": {
-    "typescript": "~5.7.2",
-    "vite": "^6.0.1",
     "@iconify-json/mdi": "^1.2.3",
-    "@unocss/preset-icons": "^65.4.3"
+    "@unocss/preset-icons": "^65.4.3",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.1"
   },
   "dependencies": {
     "lit": "^3.2.1"

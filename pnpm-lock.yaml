@@ -151,6 +151,9 @@ importers:
       '@unocss/preset-icons':
         specifier: ^65.4.3
         version: 65.4.3
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       typescript:
         specifier: ~5.7.2
         version: 5.7.3

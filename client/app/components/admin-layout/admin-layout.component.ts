@@ -13,16 +13,10 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
   templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {
-  public isView = false
-  public isSidebarOpen$
-
   public constructor(
-    private readonly browserService: BrowserService,
-    private readonly layoutService: LayoutService
-  ) {
-    this.isView = this.browserService.isBrowser
-    this.isSidebarOpen$ = this.layoutService.isSidebarOpen$
-  }
+    public readonly layoutService: LayoutService,
+    public readonly browserService: BrowserService
+  ) {}
 
   @HostListener('window:resize')
   public onResize() {

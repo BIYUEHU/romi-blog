@@ -64,9 +64,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   public async shareNews() {
-    const copyText = `${this.news.text.slice(0, 25)}${this.news && this.news.text.length > 25 ? '...' : ''} - ${((
-      ref
-    ) => (ref ? `${ref.location.origin}${this.router.url.split('#')[0]}` : ''))(this.browserService.windowRef)}`
+    const copyText = `${this.news.text.slice(0, 25)}${this.news && this.news.text.length > 25 ? '...' : ''} - ${this.browserService.on(() => `${location.origin}${this.router.url.split('#')[0]}`) ?? ''}`
     try {
       await navigator.clipboard.writeText(copyText)
       this.layoutService.showMessage('链接已复制到剪贴板', 'success')

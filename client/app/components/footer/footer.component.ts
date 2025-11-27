@@ -28,7 +28,6 @@ export class FooterComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    if (!this.browserService.isBrowser) return
     this.apiService
       .getHitokoto()
       .pipe(
@@ -41,10 +40,11 @@ export class FooterComponent implements OnInit {
         this.data = data
       })
 
-    if (!this.browserService.isBrowser) return
-    setInterval(() => {
-      this.currentTime = this.getTimeString()
-    }, 1000)
+    this.browserService.on(() =>
+      setInterval(() => {
+        this.currentTime = this.getTimeString()
+      }, 1000)
+    )
   }
 
   public getTimeString() {
