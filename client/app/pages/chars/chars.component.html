@@ -1,42 +1,43 @@
 <div class="max-w-98% w-4xl mx-auto flex-1">
   <div class="mb-6">
-    <r-input type="search" [(ngModel)]="searchQuery" placeholder="搜索角色名..." class="w-full max-w-md" />
+    <r-input type="search" [(ngModel)]="searchQuery" placeholder="搜索角色名..." class="w-full max-w-md"/>
   </div>
 
   @if (filteredChars.length === 0) {
-  <div class="text-center text-accent-100 py-8">未找到角色</div>
+    <div class="text-center text-accent-100 py-8">未找到角色</div>
   } @else {
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-    @for (char of filteredChars; track char.id) {
-    <a [routerLink]="['/char', char.id]"
-      class="bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:-translate-y-1"
-      [style.border-color]="'#' + char.color" style="border-width: 2px; border-style: solid;">
-      <div class="aspect-[3/4] overflow-hidden">
-        <img [src]="char.images[0]" [alt]="char.name"
-          class="w-full h-full object-cover hover:scale-110 transition-transform" />
-      </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+      @for (char of filteredChars; track char.id) {
+        <a [routerLink]="['/char', char.id]"
+           class="bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:-translate-y-1"
+           [style.border-color]="'#' + char.color" style="border-width: 2px; border-style: solid;">
+          <div class="aspect-[3/4] overflow-hidden relative">
+            <img fill [ngSrc]="char.images[0]" [alt]="char.name"
+                 class="w-full h-full object-cover hover:scale-110 transition-transform"/>
+          </div>
 
-      <div class="p-4">
-        <div class="flex items-center justify-between gap-2 mb-2">
-          <h3 class="text-lg font-bold text-bg-100 line-clamp-1" [style]="'color:#' + char.color">{{ char.name }}</h3>
-          <r-tag>
-            {{ char.gender === 'FEMALE' ? '♀' : '♂' }}
-          </r-tag>
-        </div>
+          <div class="p-4">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <h3 class="text-lg font-bold text-bg-100 line-clamp-1"
+                  [style]="'color:#' + char.color">{{ char.name }}</h3>
+              <r-tag>
+                {{ char.gender === 'FEMALE' ? '♀' : '♂' }}
+              </r-tag>
+            </div>
 
-        <div class="text-sm text-accent-100 mb-2">{{ char.romaji }}</div>
+            <div class="text-sm text-accent-100 mb-2">{{ char.romaji }}</div>
 
-        <div class="flex flex-wrap gap-1 mt-2">
-          @for (tag of char.tags.slice(0, 3); track tag) {
-          <r-tag size="sm" type="accent">{{ tag }}</r-tag>
-          }
-          @if (char.tags.length > 3) {
-          <r-tag size="sm" type="primary">+{{ char.tags.length - 3 }}</r-tag>
-          }
-        </div>
-      </div>
-    </a>
-    }
-  </div>
+            <div class="flex flex-wrap gap-1 mt-2">
+              @for (tag of char.tags.slice(0, 3); track tag) {
+                <r-tag size="sm" type="accent">{{ tag }}</r-tag>
+              }
+              @if (char.tags.length > 3) {
+                <r-tag size="sm" type="primary">+{{ char.tags.length - 3 }}</r-tag>
+              }
+            </div>
+          </div>
+        </a>
+      }
+    </div>
   }
 </div>

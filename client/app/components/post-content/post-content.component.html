@@ -132,10 +132,9 @@
                   <div class="space-y-6 mb-6">
                     @for (comment of pagedComments; track comment.cid) {
                       <div class="flex gap-4">
-                        <img src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
-                             fill
+                        <img width="40" height="40" [ngSrc]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
                              alt="avatar"
-                             class="w-10 h-10 rounded-full bg-text-200 flex-shrink-0 overflow-hidden"/>
+                             class="rounded-full bg-text-200 flex-shrink-0 overflow-hidden"/>
                         <div class="flex-1">
                           <div class="flex flex-wrap items-center gap-2 truncate whitespace-nowrap">
                             @if (comment.user_url) {

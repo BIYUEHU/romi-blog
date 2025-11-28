@@ -63,7 +63,7 @@
               "fileReplacements": [
                 {
                   "replace": "client/environments/environment.ts",
-                  "with": "client/environments/environment.development.ts"
+                  "with": "client/environments/environment.ts"
                 }
               ]
             }
@@ -72,6 +72,9 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "ssr:build:production"

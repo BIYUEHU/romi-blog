@@ -79,7 +79,7 @@
           <td class="px-6 py-4">
             <div class="flex items-center">
               @if (char.images.length > 0) {
-              <img [src]="char.images[0]" class="hidden 2xl:inline h-12 object-cover rounded mr-3"
+              <img fill [ngSrc]="char.images[0]" class="hidden 2xl:inline h-12 object-cover rounded mr-3"
                 alt="Character images" />
               }
               <div>

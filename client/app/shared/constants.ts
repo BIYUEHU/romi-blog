@@ -1,17 +1,11 @@
-import { isDevMode } from '@angular/core'
 import pkg from '../../../package.json'
 import buildMeta from '../../environments/build-meta'
-import { environment as env } from '../../environments/environment'
-import { environment as envDev } from '../../environments/environment.development'
+import { environment } from '../../environments/environment'
 import { LoggerService } from '../services/logger.service'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
 export const ROMI_METADATA = { pkg, build: buildMeta }
-
-export const API_BASE_URL = isDevMode() ? envDev.api_base_url : env.api_base_url
-
-export const API_BASE_URL2 = isDevMode() ? envDev.api_base_url : '/api'
 
 ;((): undefined => {
   if (typeof window === 'undefined') return
@@ -35,7 +29,7 @@ export const API_BASE_URL2 = isDevMode() ? envDev.api_base_url : '/api'
   )
   logger.info(`License: ${pkg.license} Author: ${pkg.author}`)
   logger.info('Open source: https://github.com/biyuehu/romi-blog')
-  logger.debug(`API Base URL: ${API_BASE_URL}`)
+  logger.debug(`API Base URL: ${environment.api_base_url}`)
   logger.record('<blueBright>Romi Blog is from the future, it shall end the old Web Blog era!</blueBright>')
   logger.record('<yellowBright>Fucking WordPress, Typecho, Hexo and more! PHP and templates is shit!</yellowBright>')
   logger.record(

@@ -1,7 +1,7 @@
 import { effect, Injectable, signal } from '@angular/core'
 import { Title } from '@angular/platform-browser'
 import { MessageComponent } from '../components/message/message.component'
-import { API_BASE_URL2, DEFAULT_TITLE } from '../shared/constants'
+import { DEFAULT_TITLE } from '../shared/constants'
 import { BrowserService } from './browser.service'
 
 @Injectable({
@@ -11,7 +11,7 @@ export class LayoutService {
   private static readonly DEFAULT_HEADER = {
     title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
-    imageUrl: `${API_BASE_URL2}/utils/background`
+    imageUrl: 'api/utils/background'
   }
 
   private readonly messageNotify = signal<MessageComponent['message'] | null>(null)

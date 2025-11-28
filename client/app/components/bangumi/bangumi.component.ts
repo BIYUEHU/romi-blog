@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { LoadingComponent } from '../../components/loading/loading.component'
 import { BangumiData } from '../../models/api.model'
@@ -8,7 +9,7 @@ import { CardComponent } from '../card/card.component'
 @Component({
   selector: 'app-bangumi',
   standalone: true,
-  imports: [LoadingComponent, CardComponent],
+  imports: [LoadingComponent, CardComponent, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './bangumi.component.html'
 })

@@ -1,15 +1,14 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
 import { LayoutService } from '../../services/layout.service'
-import { API_BASE_URL2 } from '../../shared/constants'
 
 @Component({
   selector: 'app-admin-header',
   standalone: true,
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, NgOptimizedImage],
   templateUrl: './admin-header.component.html'
 })
 export class AdminHeaderComponent {
@@ -19,7 +18,7 @@ export class AdminHeaderComponent {
 
   public isSidebarOpen$
 
-  public readonly avatarUrl = `${API_BASE_URL2}/utils/qqavatar` // TODO: github avatar
+  public readonly avatarUrl = '/api/utils/qqavatar' // TODO: github avatar
 
   public constructor(
     private readonly authService: AuthService,

@@ -1,8 +1,8 @@
 <app-layout imageHeight="min-h-screen">
   <div background class="bg-black/35 rounded-xl p-8 overflow-hidden hover:bg-black/40 hover:shadow-md">
     <div class="relative z-1 flex items-center gap-8">
-      <img [src]="header.avatarUrl" alt="Avatar"
-           class="hidden md:block w-32 h-32 rounded-full border-4 border-primary-100"/>
+      <img width="128" height="128" [ngSrc]="header.avatarUrl" alt="Avatar"
+           class="hidden md:block rounded-full border-4 border-primary-100"/>
       <div class="flex-1 max-w-2xl">
         <h1 class="text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
           {{ header.title }}
@@ -39,8 +39,8 @@
           <app-card [routerLink]="'/post/' + post.id"
                     class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
             @if (post.banner) {
-              <div class="aspect-video overflow-hidden">
-                <img [src]="post.banner"
+              <div class="aspect-video overflow-hidden relative">
+                <img fill [ngSrc]="post.banner"
                      class="w-full h-full object-cover group-hover:scale-105 transition-transform"
                      [alt]="post.title"/>
               </div>
@@ -94,7 +94,7 @@
           <app-card [href]="'https://www.bilibili.com/video/' + video.bvid" target="_blank"
                     class="break-inside-avoid mb-6 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:cursor-pointer">
             <div class="aspect-video relative overflow-hidden">
-              <img [src]="video.pic"
+              <img [alt]="video.title" fill [ngSrc]="video.pic"
                    class="w-full h-full object-cover group-hover:scale-105 transition-transform"/>
               <div class="absolute bottom-0 right-0 bg-black/70 text-text-100 px-2 py-1 text-sm rounded-tl">
                 {{ video.length }}

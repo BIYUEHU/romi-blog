@@ -1,18 +1,17 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { LayoutService } from '../../services/layout.service'
-import { API_BASE_URL2 } from '../../shared/constants'
 import { APlayer } from '../../shared/types'
 import type { homeResolver } from './home.resolver'
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent],
+  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
@@ -44,7 +43,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       ['i-mdi:discord', 'Discord'],
       ['i-mdi:xbox', 'Xbox', '']
     ],
-    avatarUrl: `${API_BASE_URL2}/utils/qqavatar`
+    avatarUrl: '/api/utils/qqavatar'
   }
 
   public constructor(private readonly layoutService: LayoutService) {}

@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -8,7 +9,7 @@ import { LayoutService } from '../../services/layout.service'
 @Component({
   selector: 'app-chars',
   standalone: true,
-  imports: [RouterLink, WebComponentInputAccessorDirective, FormsModule],
+  imports: [RouterLink, WebComponentInputAccessorDirective, FormsModule, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './chars.component.html'
 })

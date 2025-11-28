@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { jwtDecode } from 'jwt-decode'
 import { catchError, map, of } from 'rxjs'
+import { environment } from '../../environments/environment'
 import type {
   AuthUser,
   BangumiData,
@@ -27,14 +28,11 @@ import type {
   UserAuthData,
   Video
 } from '../models/api.model'
-import { API_BASE_URL } from '../shared/constants'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private readonly apiUrl = API_BASE_URL
-
   public constructor(private readonly http: HttpClient) {}
 
   private getSkipErrorHandlerHeaders() {
@@ -46,53 +44,53 @@ export class ApiService {
   }
 
   public getPosts() {
-    return this.http.get<ResPostData[]>(`${this.apiUrl}/post`)
+    return this.http.get<ResPostData[]>(`${environment.api_base_url}/post`)
   }
 
   public getPost(id: number) {
-    return this.http.get<ResPostSingleData>(`${this.apiUrl}/post/${id}`)
+    return this.http.get<ResPostSingleData>(`${environment.api_base_url}/post/${id}`)
   }
 
   public createPost(data: ReqPostData) {
-    return this.http.post<void>(`${this.apiUrl}/post`, data)
+    return this.http.post<void>(`${environment.api_base_url}/post`, data)
   }
 
   public updatePost(id: number, data: ReqPostData) {
-    return this.http.put<void>(`${this.apiUrl}/post/${id}`, data)
+    return this.http.put<void>(`${environment.api_base_url}/post/${id}`, data)
   }
 
   public likePost(id: number) {
-    return this.http.put<void>(`${this.apiUrl}/post/like/${id}`, null, {
+    return this.http.put<void>(`${environment.api_base_url}/post/like/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }
 
   public viewPost(id: number) {
-    return this.http.put<void>(`${this.apiUrl}/post/view/${id}`, null, {
+    return this.http.put<void>(`${environment.api_base_url}/post/view/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }
 
   public deletePost(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/post/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/post/${id}`)
   }
 
   public getMetas() {
-    return this.http.get<ResMetaData[]>(`${this.apiUrl}/meta`)
+    return this.http.get<ResMetaData[]>(`${environment.api_base_url}/meta`)
   }
 
   public createMeta(data: ReqMetaData) {
-    return this.http.post<void>(`${this.apiUrl}/meta`, data)
+    return this.http.post<void>(`${environment.api_base_url}/meta`, data)
   }
 
   public deleteMeta(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/meta/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/meta/${id}`)
   }
 
   public login(username: string, password: string) {
     return this.http
       .post<LoginResponse>(
-        `${this.apiUrl}/user/login`,
+        `${environment.api_base_url}/user/login`,
         {
           username,
           password
@@ -119,87 +117,87 @@ export class ApiService {
   }
 
   public getUsers() {
-    return this.http.get<ResUserData[]>(`${this.apiUrl}/user`)
+    return this.http.get<ResUserData[]>(`${environment.api_base_url}/user`)
   }
 
   public getUser(id: number) {
-    return this.http.get<ResUserData>(`${this.apiUrl}/user/${id}`)
+    return this.http.get<ResUserData>(`${environment.api_base_url}/user/${id}`)
   }
 
   public createUser(data: ReqUserData) {
-    return this.http.post<void>(`${this.apiUrl}/user`, data)
+    return this.http.post<void>(`${environment.api_base_url}/user`, data)
   }
 
   public updateUser(id: number, data: ReqUserData) {
-    return this.http.put<void>(`${this.apiUrl}/user/${id}`, data)
+    return this.http.put<void>(`${environment.api_base_url}/user/${id}`, data)
   }
 
   public deleteUser(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/user/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/user/${id}`)
   }
 
   public getComments() {
-    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment`)
+    return this.http.get<ResCommentData[]>(`${environment.api_base_url}/comment`)
   }
 
   public getCommentsByPost(id: number) {
-    return this.http.get<ResCommentData[]>(`${this.apiUrl}/comment/post/${id}`)
+    return this.http.get<ResCommentData[]>(`${environment.api_base_url}/comment/post/${id}`)
   }
 
   public sendComment(pid: number, text: string) {
-    return this.http.post<void>(`${this.apiUrl}/comment`, { pid, text })
+    return this.http.post<void>(`${environment.api_base_url}/comment`, { pid, text })
   }
 
   public deleteComment(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/comment/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/comment/${id}`)
   }
 
   public getHitokoto(id?: number) {
-    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto${id ? `/${id}` : ''}`)
+    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto${id ? `/${id}` : ''}`)
   }
 
   public getHitokotos(isPublic: boolean) {
-    return this.http.get<ResHitokotoData[]>(`${this.apiUrl}/hitokoto/${isPublic ? 'public' : 'all'}`)
+    return this.http.get<ResHitokotoData[]>(`${environment.api_base_url}/hitokoto/${isPublic ? 'public' : 'all'}`)
   }
 
   public createHitokoto(data: ReqHitokotoData) {
-    return this.http.post<void>(`${this.apiUrl}/hitokoto`, data)
+    return this.http.post<void>(`${environment.api_base_url}/hitokoto`, data)
   }
 
   public updateHitokoto(id: number, data: ReqHitokotoData) {
-    return this.http.put<void>(`${this.apiUrl}/hitokoto/${id}`, data)
+    return this.http.put<void>(`${environment.api_base_url}/hitokoto/${id}`, data)
   }
 
   public likeHitokoto(id: number) {
-    return this.http.put<void>(`${this.apiUrl}/hitokoto/like/${id}`, {})
+    return this.http.put<void>(`${environment.api_base_url}/hitokoto/like/${id}`, {})
   }
 
   public deleteHitokoto(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/hitokoto/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/hitokoto/${id}`)
   }
 
   public getHitokotoById(id: number) {
-    return this.http.get<ResHitokotoData>(`${this.apiUrl}/hitokoto/${id}`)
+    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto/${id}`)
   }
 
   public getCharacters() {
-    return this.http.get<ResCharacterData[]>(`${this.apiUrl}/character`)
+    return this.http.get<ResCharacterData[]>(`${environment.api_base_url}/character`)
   }
 
   public getCharacter(id: number) {
-    return this.http.get<ResCharacterData>(`${this.apiUrl}/character/${id}`)
+    return this.http.get<ResCharacterData>(`${environment.api_base_url}/character/${id}`)
   }
 
   public createCharacter(data: ReqCharacterData) {
-    return this.http.post<void>(`${this.apiUrl}/character`, data)
+    return this.http.post<void>(`${environment.api_base_url}/character`, data)
   }
 
   public updateCharacter(id: number, data: ReqCharacterData) {
-    return this.http.put<void>(`${this.apiUrl}/character/${id}`, data)
+    return this.http.put<void>(`${environment.api_base_url}/character/${id}`, data)
   }
 
   public deleteCharacter(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/character/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/character/${id}`)
   }
 
   public getBangumi(offset: number, isAnime: boolean) {
@@ -214,51 +212,51 @@ export class ApiService {
   }
 
   public getNewses() {
-    return this.http.get<ResNewsData[]>(`${this.apiUrl}/news`)
+    return this.http.get<ResNewsData[]>(`${environment.api_base_url}/news`)
   }
 
   public getNews(id: number) {
-    return this.http.get<ResNewsData>(`${this.apiUrl}/news/${id}`)
+    return this.http.get<ResNewsData>(`${environment.api_base_url}/news/${id}`)
   }
 
   public likeNews(id: number) {
-    return this.http.put<void>(`${this.apiUrl}/news/like/${id}`, null, {
+    return this.http.put<void>(`${environment.api_base_url}/news/like/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }
 
   public viewNews(id: number) {
-    return this.http.put<void>(`${this.apiUrl}/news/view/${id}`, null, {
+    return this.http.put<void>(`${environment.api_base_url}/news/view/${id}`, null, {
       headers: this.getSkipErrorHandlerHeaders()
     })
   }
 
   public createNews(data: ReqNewsData) {
-    return this.http.post<void>(`${this.apiUrl}/news`, data)
+    return this.http.post<void>(`${environment.api_base_url}/news`, data)
   }
 
   public updateNews(id: number, data: ReqNewsData) {
-    return this.http.put<void>(`${this.apiUrl}/news/${id}`, data)
+    return this.http.put<void>(`${environment.api_base_url}/news/${id}`, data)
   }
 
   public deleteNews(id: number) {
-    return this.http.delete<void>(`${this.apiUrl}/news/${id}`)
+    return this.http.delete<void>(`${environment.api_base_url}/news/${id}`)
   }
 
   public getSettings() {
-    return this.http.get<ResSettingsData>(`${this.apiUrl}/info/settings`)
+    return this.http.get<ResSettingsData>(`${environment.api_base_url}/info/settings`)
   }
 
   public getDashboard() {
-    return this.http.get<ResDashboardData>(`${this.apiUrl}/info/dashboard`)
+    return this.http.get<ResDashboardData>(`${environment.api_base_url}/info/dashboard`)
   }
 
   public getProjects() {
-    return /* isDevMode() ? of([]) : */ this.http.get<ResProjectData[]>(`${this.apiUrl}/info/projects`)
+    return /* isDevMode() ? of([]) : */ this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`)
   }
 
   public getMusic() {
-    return this.http.get<ResMusicData[]>(`${this.apiUrl}/info/music`)
+    return this.http.get<ResMusicData[]>(`${environment.api_base_url}/info/music`)
   }
 
   public getVideos() {

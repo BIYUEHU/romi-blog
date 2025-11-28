@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { BrowserService } from '../../services/browser.service'
@@ -6,7 +7,7 @@ import { LayoutService } from '../../services/layout.service'
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './not-found.component.html'
 })

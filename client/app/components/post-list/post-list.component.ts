@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResPostData } from '../../models/api.model'
@@ -7,7 +7,7 @@ import { CardComponent } from '../card/card.component'
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [DatePipe, RouterLink, CardComponent],
+  imports: [DatePipe, RouterLink, CardComponent, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-list.component.html'
 })
@@ -45,7 +45,7 @@ export class PostListComponent implements OnInit {
     if (this.totalPages <= 1) return []
     const pages: (number | string)[] = []
 
-    for (let i = 2; i < this.totalPages; i++) {
+    for (let i = 2; i < this.totalPages; i += 1) {
       if (i === this.currentPage - 1) {
         if (i !== 2) pages.push('...')
         pages.push(i)

@@ -51,10 +51,9 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                           @for (img of news.imgs; track $index) {
                             <a [href]="img" target="_blank"
-                               class="block hover:opacity-90 transition-opacity">
-                              <img [src]="img"
-                                   class="w-full h-40 object-cover rounded-lg"
-                                   loading="lazy"/>
+                               class="block hover:opacity-90 transition-opacity relative">
+                              <img alt="news image" fill [ngSrc]="img"
+                                   class="w-full h-40 object-cover rounded-lg"/>
                             </a>
                           }
                         </div>

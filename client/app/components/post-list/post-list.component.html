@@ -6,9 +6,9 @@
               class="group rounded-xl overflow-hidden hover:shadow-lg transition-all hover:cursor-pointer break-inside-avoid mb-6"
               [routerLink]="['/post', post.id]">
         @if (post.banner) {
-          <div class="aspect-video overflow-hidden">
-            <img [src]="post.banner" [alt]="post.title"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+          <div class="aspect-video overflow-hidden relative">
+            <img fill [ngSrc]="post.banner" [alt]="post.title"
+                 class="object-cover group-hover:scale-105 transition-transform duration-300"/>
           </div>
         }
 

@@ -20,7 +20,7 @@
     <div class="relative group">
       <button
         class="hover:cursor-pointer border-0 flex items-center gap-2 px-3 py-1.5 text-sm text-bg-300 hover:bg-primary-100  rounded border-1 border-bg-300">
-        <img [src]="avatarUrl" class="w-6 h-6 rounded-full" />
+        <img alt="avatar" [ngSrc]="avatarUrl" width="24" height="24" class="rounded-full" />
         <span>{{ user?.username }}</span>
         <i class="i-mdi:chevron-down text-gray-500"></i>
       </button>

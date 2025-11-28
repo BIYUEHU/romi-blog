@@ -56,3 +56,4 @@ static
 #/data
 .venv
 .vscode
+proxy.conf.json

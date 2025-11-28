@@ -1,3 +1,4 @@
+import { NgOptimizedImage } from '@angular/common'
 import { Component, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ResPostSingleData } from '../../../output'
@@ -15,7 +16,7 @@ interface ResFriendData {
 @Component({
   selector: 'app-links',
   standalone: true,
-  imports: [FormsModule, PostContentComponent, CardComponent],
+  imports: [FormsModule, PostContentComponent, CardComponent, NgOptimizedImage],
   templateUrl: './links.component.html'
 })
 export class LinksComponent {

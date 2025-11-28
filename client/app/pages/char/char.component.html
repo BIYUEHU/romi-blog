@@ -3,10 +3,51 @@
     <div class="flex flex-col items-center lg:items-start shrink-0 w-full lg:w-80 space-y-4">
       <app-card class="w-full overflow-hidden border">
         <div class="text-center lg:text-left space-y-1">
-          <a [href]="char.images[0]" target="_blank">
-            <img [src]="char.images[0]" [alt]="char.name"
-              class="max-h-70 lg:max-h-auto lg:w-full text-center mx-auto object-cover" />
-          </a>
+
+          <div class="block relative aspect-[2/3] lg:w-full overflow-hidden group">
+
+            <a [href]="currentImageUrl" target="_blank"
+               class="block w-full h-full">
+              <img priority fill [ngSrc]="currentImageUrl" [alt]="char.name"
+                   class="object-cover transition-transform duration-300"/>
+            </a>
+
+            @if (char.images && char.images.length > 1) {
+              <div (click)="prevImage($event)"
+                      class="absolute top-0 left-0 w-1/4 h-full flex items-center justify-start p-2 opacity-0 group-hover:opacity-100 transition duration-300">
+                <div class="p-1 rounded-full bg-black/50 hover:bg-black/70 text-text-100 shadow-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div (click)="nextImage($event)"
+                      class="absolute top-0 right-0 w-1/4 h-full flex items-center justify-end p-2 opacity-0 group-hover:opacity-100 transition duration-300">
+                <div class="p-1 rounded-full bg-black/50 hover:bg-black/70 text-text-100 shadow-lg">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                       stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                  </svg>
+                </div>
+              </div>
+            }
+
+            @if (char.images && char.images.length > 1) {
+              <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-1">
+                @for (img of char.images; track $index) {
+                  <span
+                          class="h-2 w-2 rounded-full cursor-pointer transition-colors duration-200"
+                          [class.bg-white]="currentImageIndex === $index"
+                          [class.bg-white]="currentImageIndex !== $index"
+                          (click)="currentImageIndex = $index">
+                  </span>
+                }
+              </div>
+            }
+
+          </div>
           <h1 class="text-2xl font-bold text-primary-100 truncate" [style]="char.color ? 'color:#' + char.color : ''">
             {{ char.name }}
           </h1>
@@ -23,80 +64,81 @@
     <div class="flex-1 flex flex-col space-y-6">
       <app-card class="w-full">
         <div class="w-full italic text-primary-100 text-6 mb-5 text-center"
-          [style]="char.color ? 'color:#' + char.color : ''">
+             [style]="char.color ? 'color:#' + char.color : ''">
           「{{ char.hitokoto }}」
         </div>
 
         <h2 class="text-lg font-semibold text-primary-100 mb-4">基本信息</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
           @if (char.age !== null) {
-          <div>
-            <span class="text-xs text-accent-100">年龄</span>
-            <div class="text-bg-300">{{ char.age }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">年龄</span>
+              <div class="text-bg-300">{{ char.age }}</div>
+            </div>
           }
           @if (char.birthday !== null) {
-          <div>
-            <span class="text-xs text-accent-100">生日</span>
-            <div class="text-bg-300">
-                {{ (char.birthday * 1000 | date:'MM-dd' : 'UTC') }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">生日</span>
+              <div class="text-bg-300">
+                {{ (char.birthday * 1000 | date:'MM-dd' : 'UTC') }}
+              </div>
+            </div>
           }
           @if (char.series) {
-          <div>
-            <span class="text-xs text-accent-100">作品</span>
-            <div class="text-bg-300">{{ char.series }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">作品</span>
+              <div class="text-bg-300">{{ char.series }}</div>
+            </div>
           }
           @if (char.series_genre) {
-          <div>
-            <span class="text-xs text-accent-100">类型</span>
-            <div class="text-bg-300">{{ char.series_genre }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">类型</span>
+              <div class="text-bg-300">{{ char.series_genre }}</div>
+            </div>
           }
           @if (char.voice) {
-          <div>
-            <span class="text-xs text-accent-100">声优</span>
-            <div class="text-bg-300">{{ char.voice }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">声优</span>
+              <div class="text-bg-300">{{ char.voice }}</div>
+            </div>
           }
           @if (char.hair_color) {
-          <div>
-            <span class="text-xs text-accent-100">发色</span>
-            <div class="text-bg-300">{{ char.hair_color }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">发色</span>
+              <div class="text-bg-300">{{ char.hair_color }}</div>
+            </div>
           }
           @if (char.eye_color) {
-          <div>
-            <span class="text-xs text-accent-100">瞳色</span>
-            <div class="text-bg-300">{{ char.eye_color }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">瞳色</span>
+              <div class="text-bg-300">{{ char.eye_color }}</div>
+            </div>
           }
           @if (char.height) {
-          <div>
-            <span class="text-xs text-accent-100">身高</span>
-            <div class="text-bg-300">{{ char.height }} cm</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">身高</span>
+              <div class="text-bg-300">{{ char.height }} cm</div>
+            </div>
           }
           @if (char.weight) {
-          <div>
-            <span class="text-xs text-accent-100">体重</span>
-            <div class="text-bg-300">{{ char.weight }} kg</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">体重</span>
+              <div class="text-bg-300">{{ char.weight }} kg</div>
+            </div>
           }
           @if (char.blood_type) {
-          <div>
-            <span class="text-xs text-accent-100">血型</span>
-            <div class="text-bg-300">{{ char.blood_type }}</div>
-          </div>
+            <div>
+              <span class="text-xs text-accent-100">血型</span>
+              <div class="text-bg-300">{{ char.blood_type }}</div>
+            </div>
           }
           @if (BWH) {
-          <div class="col-span-2 sm:col-span-1 lg:col-span-1">
-            <span class="text-xs text-accent-100">三围</span>
-            <div class="text-bg-300">
-              {{ BWH }}
+            <div class="col-span-2 sm:col-span-1 lg:col-span-1">
+              <span class="text-xs text-accent-100">三围</span>
+              <div class="text-bg-300">
+                {{ BWH }}
+              </div>
             </div>
-          </div>
           }
         </div>
       </app-card>
@@ -109,47 +151,47 @@
         </div>
 
         @if (char.alias.length > 0) {
-        <h2 class="text-lg font-semibold text-primary-100 mb-3">别名</h2>
-        <div class="flex flex-wrap gap-2 mb-4">
-          @for (alias of char.alias; track alias) {
-          <r-tag size="sm">{{ alias }}</r-tag>
-          }
-        </div>
+          <h2 class="text-lg font-semibold text-primary-100 mb-3">别名</h2>
+          <div class="flex flex-wrap gap-2 mb-4">
+            @for (alias of char.alias; track alias) {
+              <r-tag size="sm">{{ alias }}</r-tag>
+            }
+          </div>
         }
 
         @if (char.tags.length > 0) {
-        <h2 class="text-lg font-semibold text-primary-100 mb-3">标签</h2>
-        <div class="flex flex-wrap gap-2">
-          @for (tag of tags; track tag) {
-          <r-tag [type]="tag[1]" size="sm">{{ tag[0] }}</r-tag>
-          }
-        </div>
+          <h2 class="text-lg font-semibold text-primary-100 mb-3">标签</h2>
+          <div class="flex flex-wrap gap-2">
+            @for (tag of tags; track tag) {
+              <r-tag [type]="tag[1]" size="sm">{{ tag[0] }}</r-tag>
+            }
+          </div>
         }
       </app-card>
 
       @if (char.comment || char.url.length > 0 || char.song_id) {
-      <app-card class="w-full">
-        <div id="aplayer"></div>
+        <app-card class="w-full">
+          <div id="aplayer"></div>
 
-        @if (char.comment) {
-        <h2 class="text-lg font-semibold text-primary-100 mb-3">评价</h2>
-        <div class="text-bg-300 whitespace-pre-wrap break-words mb-4">
-          {{ char.comment }}
-        </div>
-        }
-
-        @if (char.url.length > 0) {
-        <h2 class="text-lg font-semibold text-primary-100 mb-3">链接</h2>
-        <div class="flex flex-wrap gap-2">
-          @for (url of char.url; track url) {
-          <a [href]="url" target="_blank"
-            class="text-primary-100 hover:text-primary-200 hover:underline break-words max-w-full">
-            {{ url }}
-          </a>
+          @if (char.comment) {
+            <h2 class="text-lg font-semibold text-primary-100 mb-3">评价</h2>
+            <div class="text-bg-300 whitespace-pre-wrap break-words mb-4">
+              {{ char.comment }}
+            </div>
           }
-        </div>
-        }
-      </app-card>
+
+          @if (char.url.length > 0) {
+            <h2 class="text-lg font-semibold text-primary-100 mb-3">链接</h2>
+            <div class="flex flex-wrap gap-2">
+              @for (url of char.url; track url) {
+                <a [href]="url" target="_blank"
+                   class="text-primary-100 hover:text-primary-200 hover:underline break-words max-w-full">
+                  {{ url }}
+                </a>
+              }
+            </div>
+          }
+        </app-card>
       }
     </div>
   </div>

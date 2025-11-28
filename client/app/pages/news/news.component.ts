@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import {DatePipe, NgOptimizedImage} from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResNewsData } from '../../../output'
@@ -10,7 +10,7 @@ import { KEYS, StoreService } from '../../services/store.service'
 @Component({
   selector: 'app-news',
   standalone: true,
-  imports: [DatePipe],
+    imports: [DatePipe, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './news.component.html'
 })

@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, Input, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -27,7 +27,7 @@ interface GroupedNews {
 @Component({
   selector: 'app-newses',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective],
+  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './newses.component.html'
 })
@@ -161,6 +161,6 @@ export class NewsesComponent implements OnInit {
       return
     }
     this.displayedNews = [...this.displayedNews, ...nextItems]
-    this.currentPage++
+    this.currentPage += 1
   }
 }

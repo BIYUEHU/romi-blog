@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import {DatePipe, NgOptimizedImage} from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -14,7 +14,7 @@ import { sortByCreatedTime } from '../../utils'
 @Component({
   selector: 'app-admin-posts',
   standalone: true,
-  imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
+    imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-posts.component.html'
 })

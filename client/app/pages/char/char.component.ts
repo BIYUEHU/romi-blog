@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
@@ -10,7 +10,7 @@ import { randomRTagType, renderCharacterBWH } from '../../utils'
 @Component({
   selector: 'app-char',
   standalone: true,
-  imports: [DatePipe, CardComponent],
+  imports: [DatePipe, CardComponent, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })
@@ -18,6 +18,8 @@ export class CharComponent implements OnInit, OnDestroy {
   @Input() public readonly char!: ResCharacterData
 
   public tags!: [string, string][]
+
+  public currentImageIndex = 0
 
   protected aplayer?: APlayer
 
@@ -34,6 +36,13 @@ export class CharComponent implements OnInit, OnDestroy {
 
   public get BWH() {
     return this.char ? renderCharacterBWH(this.char as unknown as ResCharacterData) : ''
+  }
+
+  get currentImageUrl(): string {
+    if (this.char && this.char.images && this.char.images.length > this.currentImageIndex) {
+      return this.char.images[this.currentImageIndex]
+    }
+    return ''
   }
 
   public constructor(
@@ -75,6 +84,19 @@ export class CharComponent implements OnInit, OnDestroy {
     //   })
     //   if (music.length > 0) this.aplayer.play()
     // }, 0)
+  }
+
+  public nextImage(event: Event): void {
+    event.preventDefault()
+    if (this.char.images.length <= 1) return
+    this.currentImageIndex = (this.currentImageIndex + 1) % this.char.images.length
+  }
+
+  public prevImage(event: Event): void {
+    event.preventDefault()
+    if (this.char.images.length <= 1) return
+    const len = this.char.images.length
+    this.currentImageIndex = (this.currentImageIndex - 1 + len) % len
   }
 
   public ngOnDestroy(): void {

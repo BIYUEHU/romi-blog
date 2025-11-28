@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
@@ -32,7 +32,7 @@ interface CommentItem extends ResCommentData {
 @Component({
   selector: 'app-post-content',
   standalone: true,
-  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective],
+  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-content.component.html'
 })
@@ -86,7 +86,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.mdParser = this.setupMdParser()
 
     this.layoutService.setTitle(this.post.title)
-    this.renderContent().then(() => this.viewPost())
+    this.renderContent().then(() => this.browserService.on(() => this.viewPost()))
 
     if (this.hideComments) {
       this.comments = []

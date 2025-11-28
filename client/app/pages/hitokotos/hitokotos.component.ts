@@ -54,7 +54,7 @@ export class HitokotosComponent implements OnInit {
     this.apiService.likeHitokoto(id).subscribe(() => {
       this.storeService.setItem(KEYS.HITOKOTO_LIKED(id), true)
       const hitokoto = this.hitokotos.find((h) => h.id === id)
-      if (hitokoto) hitokoto.likes++
+      if (hitokoto) hitokoto.likes += 1
     })
   }
 

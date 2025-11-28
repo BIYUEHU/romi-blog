@@ -1,75 +1,76 @@
 <div class="bg-black/50 backdrop-blur-10 z-3 fixed top-0 left-0 w-full">
   <div class="mx-3 h-12 mx-0 px-0 py-1.5 lg:py-5 my-auto flex lg:justify-center items-center flex-1 relative h-full">
     <div class="lg:hidden left-0 -translate-x-1 p-2" (click)="toggleMenu()">
-      <img alt="hamburger" [src]="
+      <img alt="hamburger" width="24" height="24" [ngSrc]="
           isMenuOpen
             ? '/assets/hamburger_open.svg'
             : '/assets/hamburger_close.svg'
-        " class="w-6 h-6" />
+        "/>
     </div>
 
     <a [routerLink]="'/'"
-      class="text-7 absolute font-bold space-inline-xs text-primary-100 left-1/2 -translate-x-1/2 lg:left-0 lg:-translate-x-1">
+       class="text-7 absolute font-bold space-inline-xs text-primary-100 left-1/2 -translate-x-1/2 lg:left-0 lg:-translate-x-1">
       Romi Blog
     </a>
 
     <nav class="hidden lg:flex items-center gap-6">
       @for (item of navItems; track $index) {
-      @if (item.children) {
-      <div class="relative group">
+        @if (item.children) {
+          <div class="relative group">
         <span class="text-primary-100 hover:text-text-200 cursor-pointer py-4">
           {{ item.text }}
           <i class="i-mdi:chevron-down ml-1 text-xs"></i>
         </span>
-        <div
-          class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
-          @for (child of item.children; track child.text) {
-          <a [routerLink]="child.link" class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
-            {{ child.text }}
+            <div
+                    class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
+              @for (child of item.children; track child.text) {
+                <a [routerLink]="child.link"
+                   class="block px-4 py-2 text-primary-100 hover:text-text-200 hover:bg-black/40">
+                  {{ child.text }}
+                </a>
+              }
+            </div>
+          </div>
+        } @else {
+          <a [routerLink]="item.link" class="text-primary-100 hover:text-text-200">
+            {{ item.text }}
           </a>
-          }
-        </div>
-      </div>
-      } @else {
-      <a [routerLink]="item.link" class="text-primary-100 hover:text-text-200">
-        {{ item.text }}
-      </a>
-      }
+        }
       }
     </nav>
   </div>
   @if (isMenuOpen) {
-  <div class="fixed w-screen h-screen mt-0 bg-black/50 z--14" (click)="toggleMenu()">
-    <div class="w-full h-full overflow-y-auto">
-      <div class="grid grid-cols-2 gap-4 p-3">
-        @for (item of navItems; track $index) {
-        @if (!item.children) {
-        <a [routerLink]="item.link"
-          class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
-          (click)="toggleMenu()">
-          {{ item.text }}
-        </a>
-        }
-        }
-      </div>
-
-      @for (item of navItems; track $index) {
-      @if (item.children) {
-      <div class="mb-4 px-3">
-        <h3 class="text-primary-100 text-lg mb-2 text-center">{{ item.text }}</h3>
-        <div class="grid grid-cols-2 gap-4">
-          @for (child of item.children; track child.text) {
-          <a [routerLink]="child.link"
-            class="block text-center outline-0 border-none text-primary-100 hover:text-text-200 py-3 px-4 text-lg"
-            (click)="toggleMenu()">
-            {{ child.text }}
-          </a>
+    <div class="fixed w-screen h-screen mt-0 bg-black/70 z--14" (click)="toggleMenu()">
+      <div class="w-full h-full overflow-y-auto">
+        <div class="grid grid-cols-2 gap-4 p-3">
+          @for (item of navItems; track $index) {
+            @if (!item.children) {
+              <a [routerLink]="item.link"
+                 class="block text-center outline-0 border-none text-primary-200 hover:text-text-200 py-3 px-4 text-lg"
+                 (click)="toggleMenu()">
+                {{ item.text }}
+              </a>
+            }
           }
         </div>
+
+        @for (item of navItems; track $index) {
+          @if (item.children) {
+            <div class="mb-4 px-3">
+              <h3 class="text-primary-200 text-lg mb-2 text-center">{{ item.text }}</h3>
+              <div class="grid grid-cols-2 gap-4">
+                @for (child of item.children; track child.text) {
+                  <a [routerLink]="child.link"
+                     class="block text-center outline-0 border-none text-primary-200 hover:text-text-200 py-3 px-4 text-lg"
+                     (click)="toggleMenu()">
+                    {{ child.text }}
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        }
       </div>
-      }
-      }
     </div>
-  </div>
   }
 </div>
