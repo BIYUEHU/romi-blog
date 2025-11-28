@@ -36,17 +36,14 @@
 
             @if (char.images && char.images.length > 1) {
               <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-1">
-                @for (img of char.images; track $index) {
+                @for (_ of char.images; track $index) {
                   <span
                           class="h-2 w-2 rounded-full cursor-pointer transition-colors duration-200"
-                          [class.bg-white]="currentImageIndex === $index"
-                          [class.bg-white]="currentImageIndex !== $index"
-                          (click)="currentImageIndex = $index">
+                          [class.bg-white]="currentImageIndex === $index">
                   </span>
                 }
               </div>
             }
-
           </div>
           <h1 class="text-2xl font-bold text-primary-100 truncate" [style]="char.color ? 'color:#' + char.color : ''">
             {{ char.name }}
@@ -56,6 +53,9 @@
             <r-tag [type]="char.gender === 'FEMALE' ? 'error' : 'info'" size="md">
               {{ char.gender === 'FEMALE' ? '♀' : '♂' }}
             </r-tag>
+            <r-button size="md" type="primary" (click)="shareCharacter()">
+              分享
+            </r-button>
           </div>
         </div>
       </app-card>

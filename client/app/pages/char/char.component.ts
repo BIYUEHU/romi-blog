@@ -1,8 +1,10 @@
 import { DatePipe, NgOptimizedImage } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
 import { Router } from '@angular/router'
+import { interval, Subscription } from 'rxjs'
 import { CardComponent } from '../../components/card/card.component'
 import { ResCharacterData } from '../../models/api.model'
+import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
@@ -14,8 +16,12 @@ import { randomRTagType, renderCharacterBWH } from '../../utils'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './char.component.html'
 })
-export class CharComponent implements OnInit, OnDestroy {
+export class CharComponent implements OnInit, OnChanges, OnDestroy {
+  private static readonly CAROUSEL_INTERVAL_MS = 7000
+
   @Input() public readonly char!: ResCharacterData
+
+  private carouselSubscription: Subscription | null = null
 
   public tags!: [string, string][]
 
@@ -38,16 +44,31 @@ export class CharComponent implements OnInit, OnDestroy {
     return this.char ? renderCharacterBWH(this.char as unknown as ResCharacterData) : ''
   }
 
-  get currentImageUrl(): string {
-    if (this.char && this.char.images && this.char.images.length > this.currentImageIndex) {
-      return this.char.images[this.currentImageIndex]
+  public get currentImageUrl() {
+    return this.char.images.length > this.currentImageIndex ? this.char.images[this.currentImageIndex] : ''
+  }
+
+  private clearCarousel() {
+    if (this.carouselSubscription) {
+      this.carouselSubscription.unsubscribe()
+      this.carouselSubscription = null
     }
-    return ''
+  }
+
+  private setupCarousel() {
+    if (!this.browserService.is) return
+    this.clearCarousel()
+
+    if (this.char.images.length <= 1) return
+    this.currentImageIndex = 0
+
+    this.carouselSubscription = interval(CharComponent.CAROUSEL_INTERVAL_MS).subscribe(() => this.nextImage())
   }
 
   public constructor(
     private readonly router: Router,
-    private readonly layoutService: LayoutService
+    private readonly layoutService: LayoutService,
+    private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
@@ -71,6 +92,7 @@ export class CharComponent implements OnInit, OnDestroy {
     this.layoutService.setTitle(`${this.char.name} ${this.char.romaji}`)
     this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
+    this.setupCarousel()
     // if (!this.browserService.is) return
     // setTimeout(() => {
     //   const music = this.getMusic()
@@ -86,14 +108,31 @@ export class CharComponent implements OnInit, OnDestroy {
     // }, 0)
   }
 
-  public nextImage(event: Event): void {
-    event.preventDefault()
-    if (this.char.images.length <= 1) return
-    this.currentImageIndex = (this.currentImageIndex + 1) % this.char.images.length
+  public async shareCharacter() {
+    const copyText = `${this.char.name} (${this.char.romaji}) - ${location.origin}${this.router.url}`
+    try {
+      await navigator.clipboard.writeText(copyText)
+      this.layoutService.showMessage('链接已复制到剪贴板', 'success')
+    } catch (_) {
+      this.layoutService.showMessage('链接复制失败', 'error')
+    }
   }
 
-  public prevImage(event: Event): void {
-    event.preventDefault()
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes['char']) this.setupCarousel()
+  }
+
+  public nextImage(event?: Event): void {
+    if (event) event.preventDefault()
+    if (this.char.images.length <= 1) return
+    this.setupCarousel()
+    const index = this.currentImageIndex + 1
+    console.log(index, this.currentImageIndex)
+    this.currentImageIndex = index === this.char.images.length ? 0 : index
+  }
+
+  public prevImage(event?: Event): void {
+    if (event) event.preventDefault()
     if (this.char.images.length <= 1) return
     const len = this.char.images.length
     this.currentImageIndex = (this.currentImageIndex - 1 + len) % len
@@ -101,5 +140,6 @@ export class CharComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy(): void {
     this.aplayer?.destroy()
+    this.clearCarousel()
   }
 }
