@@ -12,11 +12,10 @@ import { AuthService } from '../../services/auth.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-admin-users',
-  standalone: true,
-  imports: [DatePipe, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-users.component.html'
+    selector: 'app-admin-users',
+    imports: [DatePipe, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-users.component.html'
 })
 export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserData> implements OnInit {
   public editingUser: ResUserData | true | null = null

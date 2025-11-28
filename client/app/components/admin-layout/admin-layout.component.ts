@@ -7,10 +7,9 @@ import { AdminHeaderComponent } from '../admin-header/admin-header.component'
 import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 
 @Component({
-  selector: 'app-admin-layout',
-  standalone: true,
-  imports: [RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
-  templateUrl: './admin-layout.component.html'
+    selector: 'app-admin-layout',
+    imports: [RouterOutlet, AdminHeaderComponent, AdminSidebarComponent, AdminFooterComponent],
+    templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {
   public constructor(

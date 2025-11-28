@@ -10,16 +10,15 @@ import { ReqHitokotoData, ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 
 @Component({
-  selector: 'app-admin-hitokotos',
-  standalone: true,
-  imports: [
-    FormsModule,
-    WebComponentInputAccessorDirective,
-    WebComponentSwitchAccessorDirective,
-    AdminBaseListComponent
-  ],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-hitokotos.component.html'
+    selector: 'app-admin-hitokotos',
+    imports: [
+        FormsModule,
+        WebComponentInputAccessorDirective,
+        WebComponentSwitchAccessorDirective,
+        AdminBaseListComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-hitokotos.component.html'
 })
 export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResHitokotoData> {
   public filterType = 0

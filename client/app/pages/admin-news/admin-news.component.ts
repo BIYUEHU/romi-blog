@@ -11,11 +11,10 @@ import { ApiService } from '../../services/api.service'
 import { formatDate, sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-admin-news',
-  standalone: true,
-  imports: [DatePipe, FormsModule, AdminBaseListComponent, WebComponentInputAccessorDirective],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-news.component.html'
+    selector: 'app-admin-news',
+    imports: [DatePipe, FormsModule, AdminBaseListComponent, WebComponentInputAccessorDirective],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-news.component.html'
 })
 export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsData> implements OnInit {
   public editingNews: ResNewsData | true | null = null

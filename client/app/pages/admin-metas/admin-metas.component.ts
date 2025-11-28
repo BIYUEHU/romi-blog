@@ -6,11 +6,10 @@ import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-admin-meta',
-  standalone: true,
-  imports: [FormsModule, WebComponentInputAccessorDirective],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-metas.component.html'
+    selector: 'app-admin-meta',
+    imports: [FormsModule, WebComponentInputAccessorDirective],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-metas.component.html'
 })
 export class AdminMetasComponent implements OnInit {
   public metas: ResMetaData[] = []

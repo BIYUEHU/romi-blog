@@ -6,10 +6,9 @@ import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-category',
-  standalone: true,
-  imports: [PostListComponent],
-  template: `<app-post-list [posts]="posts" />`
+    selector: 'app-category',
+    imports: [PostListComponent],
+    template: `<app-post-list [posts]="posts" />`
 })
 export class CategoryComponent implements OnInit {
   @Input() public readonly name!: string

@@ -8,11 +8,10 @@ import { LayoutService } from '../../services/layout.service'
 import { KEYS, StoreService } from '../../services/store.service'
 
 @Component({
-  selector: 'app-news',
-  standalone: true,
+    selector: 'app-news',
     imports: [DatePipe, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './news.component.html'
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './news.component.html'
 })
 export class NewsComponent implements OnInit, OnDestroy {
   @Input() public news!: ResNewsData

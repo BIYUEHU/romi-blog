@@ -9,11 +9,10 @@ import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-admin-login',
-  standalone: true,
-  imports: [FormsModule, WebComponentInputAccessorDirective, WebComponentCheckboxAccessorDirective],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-login.component.html'
+    selector: 'app-admin-login',
+    imports: [FormsModule, WebComponentInputAccessorDirective, WebComponentCheckboxAccessorDirective],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-login.component.html'
 })
 export class AdminLoginComponent implements OnInit {
   public username = ''

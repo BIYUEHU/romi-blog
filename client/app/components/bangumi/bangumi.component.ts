@@ -7,11 +7,10 @@ import { LayoutService } from '../../services/layout.service'
 import { CardComponent } from '../card/card.component'
 
 @Component({
-  selector: 'app-bangumi',
-  standalone: true,
-  imports: [LoadingComponent, CardComponent, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './bangumi.component.html'
+    selector: 'app-bangumi',
+    imports: [LoadingComponent, CardComponent, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './bangumi.component.html'
 })
 export class BangumiComponent implements OnInit {
   @Input({ required: true }) public isAnime!: boolean

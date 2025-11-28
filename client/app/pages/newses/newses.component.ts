@@ -25,11 +25,10 @@ interface GroupedNews {
 }
 
 @Component({
-  selector: 'app-newses',
-  standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './newses.component.html'
+    selector: 'app-newses',
+    imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './newses.component.html'
 })
 export class NewsesComponent implements OnInit {
   private static readonly PAGE_SIZE = 15

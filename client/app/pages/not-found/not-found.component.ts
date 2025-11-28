@@ -5,11 +5,10 @@ import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-not-found',
-  standalone: true,
-  imports: [RouterLink, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './not-found.component.html'
+    selector: 'app-not-found',
+    imports: [RouterLink, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './not-found.component.html'
 })
 export class NotFoundComponent {
   public constructor(layoutService: LayoutService, browserService: BrowserService) {

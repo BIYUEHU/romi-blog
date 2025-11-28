@@ -10,11 +10,10 @@ import { FooterComponent } from '../footer/footer.component'
 import { HeaderComponent } from '../header/header.component'
 
 @Component({
-  selector: 'app-layout',
-  standalone: true,
-  imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './layout.component.html'
+    selector: 'app-layout',
+    imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './layout.component.html'
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   private static SCROLL_OFFSET_HEIGHT_PX = -88

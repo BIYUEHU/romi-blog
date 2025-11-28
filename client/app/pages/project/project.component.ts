@@ -6,11 +6,10 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-project',
-  standalone: true,
-  imports: [FormsModule, WebComponentInputAccessorDirective, ProjectListComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './project.component.html'
+    selector: 'app-project',
+    imports: [FormsModule, WebComponentInputAccessorDirective, ProjectListComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './project.component.html'
 })
 export class ProjectComponent implements OnInit {
   @Input() public readonly projects!: ResProjectData[]

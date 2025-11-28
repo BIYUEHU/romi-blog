@@ -4,11 +4,10 @@ import { ResProjectData } from '../../models/api.model'
 import { CardComponent } from '../card/card.component'
 
 @Component({
-  selector: 'app-project-list',
-  standalone: true,
-  imports: [DatePipe, CardComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './project-list.component.html'
+    selector: 'app-project-list',
+    imports: [DatePipe, CardComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './project-list.component.html'
 })
 export class ProjectListComponent {
   @Input({ required: true }) public repos!: ResProjectData[]

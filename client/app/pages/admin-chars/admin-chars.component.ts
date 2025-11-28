@@ -12,12 +12,10 @@ import { ApiService } from '../../services/api.service'
 import { renderCharacterBWH } from '../../utils'
 
 @Component({
-  selector: 'app-admin-chars',
-  standalone: true,
+    selector: 'app-admin-chars',
     imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent, NgOptimizedImage],
-
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-chars.component.html'
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-chars.component.html'
 })
 export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResCharacterData> implements OnInit {
   public constructor(private readonly apiService: ApiService) {

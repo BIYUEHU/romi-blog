@@ -13,11 +13,10 @@ import { KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
 
 @Component({
-  selector: 'app-admin-edit',
-  standalone: true,
-  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, DatePipe],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-edit.component.html'
+    selector: 'app-admin-edit',
+    imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, DatePipe],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
   private readonly editorOptions: IOptions = {

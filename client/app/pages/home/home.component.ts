@@ -9,11 +9,10 @@ import { APlayer } from '../../shared/types'
 import type { homeResolver } from './home.resolver'
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './home.component.html'
+    selector: 'app-home',
+    imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @Input() public readonly home!: typeof homeResolver extends ResolveFn<infer T> ? T : never

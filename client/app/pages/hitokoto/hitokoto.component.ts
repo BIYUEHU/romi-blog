@@ -7,11 +7,10 @@ import { KEYS, StoreService } from '../../services/store.service'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
-  selector: 'app-hitokoto',
-  standalone: true,
-  imports: [LayoutComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './hitokoto.component.html'
+    selector: 'app-hitokoto',
+    imports: [LayoutComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './hitokoto.component.html'
 })
 export class HitokotoComponent implements OnInit {
   @Input() public hitokoto!: ResHitokotoData

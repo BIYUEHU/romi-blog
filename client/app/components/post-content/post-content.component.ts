@@ -30,11 +30,10 @@ interface CommentItem extends ResCommentData {
 }
 
 @Component({
-  selector: 'app-post-content',
-  standalone: true,
-  imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './post-content.component.html'
+    selector: 'app-post-content',
+    imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './post-content.component.html'
 })
 export class PostContentComponent implements OnInit, OnDestroy {
   @Input({ required: true }) public post!: ResPostSingleData

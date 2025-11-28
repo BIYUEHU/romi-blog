@@ -7,11 +7,10 @@ import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 
 @Component({
-  selector: 'app-music',
-  standalone: true,
-  imports: [LoadingComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './music.component.html'
+    selector: 'app-music',
+    imports: [LoadingComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './music.component.html'
 })
 export class MusicComponent implements OnInit, OnDestroy {
   public isLoading = true

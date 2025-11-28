@@ -14,10 +14,9 @@ interface ResFriendData {
 }
 
 @Component({
-  selector: 'app-links',
-  standalone: true,
-  imports: [FormsModule, PostContentComponent, CardComponent, NgOptimizedImage],
-  templateUrl: './links.component.html'
+    selector: 'app-links',
+    imports: [FormsModule, PostContentComponent, CardComponent, NgOptimizedImage],
+    templateUrl: './links.component.html'
 })
 export class LinksComponent {
   @Input({ required: true }) public post!: ResPostSingleData

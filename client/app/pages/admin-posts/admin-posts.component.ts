@@ -12,11 +12,10 @@ import { ApiService } from '../../services/api.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-admin-posts',
-  standalone: true,
+    selector: 'app-admin-posts',
     imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-posts.component.html'
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-posts.component.html'
 })
 export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostData> implements OnInit {
   public filterStatus = ''

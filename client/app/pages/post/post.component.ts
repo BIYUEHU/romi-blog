@@ -3,10 +3,9 @@ import { ResPostSingleData } from '../../../output'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
 
 @Component({
-  selector: 'app-post',
-  standalone: true,
-  imports: [PostContentComponent],
-  templateUrl: './post.component.html'
+    selector: 'app-post',
+    imports: [PostContentComponent],
+    templateUrl: './post.component.html'
 })
 export class PostComponent {
   @Input() public readonly post!: ResPostSingleData

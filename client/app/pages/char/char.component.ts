@@ -10,11 +10,10 @@ import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
 
 @Component({
-  selector: 'app-char',
-  standalone: true,
-  imports: [DatePipe, CardComponent, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './char.component.html'
+    selector: 'app-char',
+    imports: [DatePipe, CardComponent, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './char.component.html'
 })
 export class CharComponent implements OnInit, OnChanges, OnDestroy {
   private static readonly CAROUSEL_INTERVAL_MS = 7000

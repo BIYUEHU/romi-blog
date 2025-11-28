@@ -3,10 +3,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-admin-sidebar',
-  standalone: true,
-  imports: [RouterLink, RouterLinkActive],
-  templateUrl: './admin-sidebar.component.html'
+    selector: 'app-admin-sidebar',
+    imports: [RouterLink, RouterLinkActive],
+    templateUrl: './admin-sidebar.component.html'
 })
 export class AdminSidebarComponent {
   public menuItems = [

@@ -3,10 +3,9 @@ import { Component } from '@angular/core'
 import { RouterLink } from '@angular/router'
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [RouterLink, NgOptimizedImage],
-  templateUrl: './header.component.html'
+    selector: 'app-header',
+    imports: [RouterLink, NgOptimizedImage],
+    templateUrl: './header.component.html'
 })
 export class HeaderComponent {
   private lastSwitchMenu = 0

@@ -12,11 +12,10 @@ import { ApiService } from '../../services/api.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-admin-comments',
-  standalone: true,
-  imports: [DatePipe, FormsModule, RouterLink, WebComponentInputAccessorDirective, AdminBaseListComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-comments.component.html'
+    selector: 'app-admin-comments',
+    imports: [DatePipe, FormsModule, RouterLink, WebComponentInputAccessorDirective, AdminBaseListComponent],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-comments.component.html'
 })
 export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCommentData> {
   public constructor(private readonly apiService: ApiService) {

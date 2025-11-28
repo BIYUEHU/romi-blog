@@ -6,10 +6,9 @@ import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 
 @Component({
-  selector: 'app-footer',
-  standalone: true,
-  imports: [RouterLink],
-  templateUrl: './footer.component.html'
+    selector: 'app-footer',
+    imports: [RouterLink],
+    templateUrl: './footer.component.html'
 })
 export class FooterComponent implements OnInit {
   public currentTime = this.getTimeString()

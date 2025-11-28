@@ -4,11 +4,10 @@ import { ResPostData } from '../../models/api.model'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-archive',
-  standalone: true,
-  imports: [RouterLink],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './archive.component.html'
+    selector: 'app-archive',
+    imports: [RouterLink],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './archive.component.html'
 })
 export class ArchiveComponent implements OnInit {
   @Input() public readonly posts!: ResPostData[]

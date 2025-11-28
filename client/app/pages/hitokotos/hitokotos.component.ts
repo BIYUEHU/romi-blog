@@ -6,11 +6,10 @@ import { LayoutService } from '../../services/layout.service'
 import { KEYS, StoreService } from '../../services/store.service'
 
 @Component({
-  selector: 'app-hitokotos',
-  standalone: true,
-  imports: [RouterLink],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './hitokotos.component.html'
+    selector: 'app-hitokotos',
+    imports: [RouterLink],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './hitokotos.component.html'
 })
 export class HitokotosComponent implements OnInit {
   public static readonly typeColors = ['#4CAF50', '#FF9800', '#03A9F4', '#F44336']

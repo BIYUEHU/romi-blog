@@ -9,11 +9,10 @@ import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-admin-char-edit',
-  standalone: true,
-  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './admin-char-edit.component.html'
+    selector: 'app-admin-char-edit',
+    imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './admin-char-edit.component.html'
 })
 export class AdminCharEditComponent implements OnInit {
   public isEdit = false

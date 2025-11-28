@@ -6,10 +6,9 @@ import { AuthService } from '../../services/auth.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-admin-header',
-  standalone: true,
-  imports: [RouterLink, DatePipe, NgOptimizedImage],
-  templateUrl: './admin-header.component.html'
+    selector: 'app-admin-header',
+    imports: [RouterLink, DatePipe, NgOptimizedImage],
+    templateUrl: './admin-header.component.html'
 })
 export class AdminHeaderComponent {
   public user?: UserAuthData

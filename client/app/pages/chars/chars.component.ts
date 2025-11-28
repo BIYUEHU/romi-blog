@@ -7,11 +7,10 @@ import { ResCharacterData } from '../../models/api.model'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-chars',
-  standalone: true,
-  imports: [RouterLink, WebComponentInputAccessorDirective, FormsModule, NgOptimizedImage],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './chars.component.html'
+    selector: 'app-chars',
+    imports: [RouterLink, WebComponentInputAccessorDirective, FormsModule, NgOptimizedImage],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './chars.component.html'
 })
 export class CharsComponent implements OnInit {
   @Input() public chars!: ResCharacterData[]

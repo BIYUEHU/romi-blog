@@ -5,10 +5,9 @@ import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-  selector: 'app-posts',
-  standalone: true,
-  imports: [PostListComponent],
-  template: `<app-post-list  [posts]="posts" />`
+    selector: 'app-posts',
+    imports: [PostListComponent],
+    template: `<app-post-list  [posts]="posts" />`
 })
 export class PostsComponent implements OnInit {
   @Input() public posts!: ResPostData[]

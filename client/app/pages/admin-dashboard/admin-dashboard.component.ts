@@ -8,10 +8,9 @@ import { LayoutService } from '../../services/layout.service'
 import { ROMI_METADATA } from '../../shared/constants'
 
 @Component({
-  selector: 'app-admin-dashboard',
-  standalone: true,
-  imports: [DatePipe, RouterLink],
-  templateUrl: './admin-dashboard.component.html'
+    selector: 'app-admin-dashboard',
+    imports: [DatePipe, RouterLink],
+    templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
   public username = ''

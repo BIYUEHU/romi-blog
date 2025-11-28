@@ -5,10 +5,9 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-  selector: 'app-tag',
-  standalone: true,
-  imports: [PostListComponent],
-  template: `<app-post-list [posts]="posts" />`
+    selector: 'app-tag',
+    imports: [PostListComponent],
+    template: `<app-post-list [posts]="posts" />`
 })
 export class TagComponent implements OnInit {
   @Input() public readonly name!: string
