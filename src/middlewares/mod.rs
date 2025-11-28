@@ -10,7 +10,11 @@ use roga::*;
 use crate::{app::RomiState, constant::NODEJS_LOGGER_LABEL, utils::http::get_req_user_agent};
 
 fn setup_logger(logger: Logger, user_agent: Option<&str>) -> Logger {
-    if user_agent == Some("node") { logger.with_label(NODEJS_LOGGER_LABEL) } else { logger }
+    if user_agent.map(|str| str.contains("node")).unwrap_or(false) {
+        logger.with_label(NODEJS_LOGGER_LABEL)
+    } else {
+        logger
+    }
 }
 
 pub async fn req_logger_middleware(
@@ -47,7 +51,7 @@ pub async fn res_error_inspector_middleware(
         l_error!(logger, "Unknown: {}", err);
     }
 
-    l_record!(logger.with_label("Res"), "Returnning {} with status: {}", uri, res.status());
+    l_record!(logger.with_label("Res"), "Returning {} with status: {}", uri, res.status());
 
     res
 }

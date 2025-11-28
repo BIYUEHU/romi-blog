@@ -23,33 +23,14 @@
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-layout/admin-layout.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/footer/footer.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/footer/footer.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/app.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/header/header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/header/header.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/header/header.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/header/header.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/progress/progress.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/progress/progress.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/guards/auth.guard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/guards/auth.guard.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/interceptors/auth.interceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/auth.interceptor.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/interceptors/transferInterceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/transferInterceptor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-dashboard/admin-dashboard.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-dashboard/admin-dashboard.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/browser.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/browser.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/layout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/layout.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/store.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/store.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/utils/romi-component-factory.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/ui/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/src/components/Alert/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/components/Alert/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uno.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/uno.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/routes/public.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/routes/public.routes.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middlewares/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/middlewares/mod.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -365,6 +346,7 @@
       <workItem from="1764171106741" duration="2676000" />
       <workItem from="1764173805550" duration="2073000" />
       <workItem from="1764223997286" duration="8354000" />
+      <workItem from="1764319306736" duration="6539000" />
     </task>
     <servers />
   </component>

@@ -1,61 +1,22 @@
 import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http'
 import { inject } from '@angular/core'
-import { Router } from '@angular/router'
-import { catchError, EMPTY, throwError } from 'rxjs'
-import { match } from 'ts-pattern'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
-import { LayoutService } from '../services/layout.service'
-import { LoggerService } from '../services/logger.service'
 
-export const authInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  if (!inject(BrowserService).is) return next(request)
+export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
+  if (!inject(BrowserService).is) return next(req)
 
   const auth = inject(AuthService)
-  const notify = inject(LayoutService)
 
-  const skipError = request.headers.has('Skip-Error-Handler')
-  const skipToken = request.headers.has('Skip-Bring-Token')
+  const skipBringToken = req.headers.has('Skip-Bring-Token')
+  let headers = req.headers
+  if (skipBringToken) headers = headers.delete('Skip-Bring-Token')
 
-  let headers = request.headers
-  if (skipError) headers = headers.delete('Skip-Error-Handler')
-  if (skipToken) headers = headers.delete('Skip-Bring-Token')
+  const token = skipBringToken ? null : auth.getToken()
 
-  const token = skipToken ? null : auth.getToken()
-
-  const cloned = request.clone({
-    headers: token ? headers.set('Authorization', `Bearer ${token}`) : headers
-  })
-
-  return next(cloned).pipe(
-    catchError((err) => {
-      inject(LoggerService).label('HTTP').error(err)
-      const router = inject(Router)
-
-      if (token && err.status === 401) {
-        if (router.url.includes('/admin/')) {
-          notify.showMessage('登录已过期，请重新登录', 'error')
-          auth.logout()
-        }
-        return EMPTY
-      }
-
-      if (request.method.toUpperCase() === 'GET') {
-        match(err.status)
-          .with(404, () => router.navigate(['/404']))
-          .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))
-        return EMPTY
-      }
-
-      if (skipError) return throwError(() => err)
-
-      if (err.statusText?.trim()) {
-        notify.showMessage(`错误：${err.statusText} 状态码：${err.status}`, 'error')
-      } else {
-        notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error')
-      }
-
-      return EMPTY
+  return next(
+    req.clone({
+      headers: token ? headers.set('Authorization', `Bearer ${token}`) : headers
     })
   )
 }

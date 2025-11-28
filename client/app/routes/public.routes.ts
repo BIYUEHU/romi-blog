@@ -7,8 +7,6 @@ import { CharComponent } from '../pages/char/char.component'
 import { charResolver } from '../pages/char/char.resolver'
 import { CharsComponent } from '../pages/chars/chars.component'
 import { charsResolver } from '../pages/chars/chars.resolver'
-import { DynamicComponent } from '../pages/dynamic/dynamic.component'
-import { dynamicResolver } from '../pages/dynamic/dynamic.resolver'
 import { GalComponent } from '../pages/gal/gal.component'
 import { HitokotoComponent } from '../pages/hitokoto/hitokoto.component'
 import { hitokotoResolver } from '../pages/hitokoto/hitokoto.resolver'
@@ -151,13 +149,5 @@ export const publicRoutes: Routes = [
     resolve: {
       hitokoto: hitokotoResolver
     }
-  },
-  {
-    path: ':slug',
-    component: DynamicComponent,
-    resolve: {
-      dynamic: dynamicResolver
-    },
-    pathMatch: 'full'
   }
 ]

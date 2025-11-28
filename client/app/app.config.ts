@@ -1,6 +1,6 @@
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http'
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core'
-import { provideClientHydration } from '@angular/platform-browser'
+import { provideClientHydration, withNoHttpTransferCache } from '@angular/platform-browser'
 import { provideAnimations } from '@angular/platform-browser/animations'
 import { provideRouter, withComponentInputBinding } from '@angular/router'
 import { routes } from './app.routes'
@@ -13,6 +13,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, transferInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
-    provideClientHydration()
+    provideClientHydration(withNoHttpTransferCache())
   ]
 }
