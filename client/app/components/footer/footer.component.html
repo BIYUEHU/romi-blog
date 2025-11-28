@@ -6,7 +6,7 @@
       <p>感谢陪伴：{{ currentTime }}</p>
       @if (data) {
       <p>
-        <a [routerLink]="'/hitokoto/' + data.id">{{
+        <a [routerLink]="['/hitokoto/' , data.id]">{{
           data.msg
           }}</a>
       </p>

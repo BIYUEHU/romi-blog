@@ -31,12 +31,12 @@
     <section>
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold text-bg-100">近期博文</h2>
-        <r-button [routerLink]="['/post']" type="primary">查看更多</r-button>
+        <r-button [routerLink]="'/post'" type="primary">查看更多</r-button>
       </div>
 
       <div class="columns-1 md:columns-2 gap-x-6">
         @for (post of home!.posts; track post.id) {
-          <app-card [routerLink]="'/post/' + post.id"
+          <app-card [routerLink]="['/post/', post.id]"
                     class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
             @if (post.banner) {
               <div class="aspect-video overflow-hidden relative">
@@ -68,7 +68,7 @@
 
       <div class="columns-1 md:columns-2 gap-x-6">
         @for (item of home.news; track item.id) {
-          <app-card [routerLink]="'/news/' + item.id"
+          <app-card [routerLink]="['/news/' , item.id]"
                     class="hover:cursor-pointer break-inside-avoid mb-6 hover:shadow-md transition-all">
             <div class="bg-text-200 rounded-xl p-6">
               <div class="text-bg-100 break-words">{{ item.text.slice(0, 150) }}...</div>

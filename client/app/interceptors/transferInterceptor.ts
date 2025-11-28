@@ -6,7 +6,7 @@ import { BrowserService } from '../services/browser.service'
 export const transferInterceptor: HttpInterceptorFn = (req, next) => {
   const transfer = inject(TransferState)
   const browser = inject(BrowserService)
-  if (req.method !== 'GET' && req.headers.get('Authorization')) return next(req)
+  if (req.method !== 'GET') return next(req)
 
   // biome-ignore lint: *
   const KEY = makeStateKey<any>(

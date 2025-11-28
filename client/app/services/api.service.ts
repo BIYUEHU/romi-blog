@@ -28,6 +28,7 @@ import type {
   UserAuthData,
   Video
 } from '../models/api.model'
+import { HEADER_CONTEXT } from '../shared/constants'
 
 @Injectable({
   providedIn: 'root'
@@ -35,12 +36,8 @@ import type {
 export class ApiService {
   public constructor(private readonly http: HttpClient) {}
 
-  private getSkipErrorHandlerHeaders() {
-    return new HttpHeaders().set('Skip-Error-Handler', 'true')
-  }
-
-  private getSkipBringTokenHeaders() {
-    return new HttpHeaders().set('Skip-Bring-Token', 'true')
+  private genHeaders(attributes: HEADER_CONTEXT[]) {
+    return attributes.reduce((header, attribute) => header.set(attribute, ''), new HttpHeaders())
   }
 
   public getPosts() {
@@ -60,15 +57,11 @@ export class ApiService {
   }
 
   public likePost(id: number) {
-    return this.http.put<void>(`${environment.api_base_url}/post/like/${id}`, null, {
-      headers: this.getSkipErrorHandlerHeaders()
-    })
+    return this.http.put<void>(`${environment.api_base_url}/post/like/${id}`, null)
   }
 
   public viewPost(id: number) {
-    return this.http.put<void>(`${environment.api_base_url}/post/view/${id}`, null, {
-      headers: this.getSkipErrorHandlerHeaders()
-    })
+    return this.http.put<void>(`${environment.api_base_url}/post/view/${id}`, null)
   }
 
   public deletePost(id: number) {
@@ -96,7 +89,7 @@ export class ApiService {
           password
         },
         {
-          headers: this.getSkipErrorHandlerHeaders()
+          headers: this.genHeaders([HEADER_CONTEXT.SKIP_ERROR_HANDLING])
         }
       )
       .pipe(
@@ -207,7 +200,7 @@ export class ApiService {
         offset,
         subject_type: isAnime ? 2 : 4
       },
-      headers: this.getSkipBringTokenHeaders()
+      headers: this.genHeaders([HEADER_CONTEXT.SKIP_BRING_TOKEN])
     })
   }
 
@@ -220,15 +213,11 @@ export class ApiService {
   }
 
   public likeNews(id: number) {
-    return this.http.put<void>(`${environment.api_base_url}/news/like/${id}`, null, {
-      headers: this.getSkipErrorHandlerHeaders()
-    })
+    return this.http.put<void>(`${environment.api_base_url}/news/like/${id}`, null)
   }
 
   public viewNews(id: number) {
-    return this.http.put<void>(`${environment.api_base_url}/news/view/${id}`, null, {
-      headers: this.getSkipErrorHandlerHeaders()
-    })
+    return this.http.put<void>(`${environment.api_base_url}/news/view/${id}`, null)
   }
 
   public createNews(data: ReqNewsData) {

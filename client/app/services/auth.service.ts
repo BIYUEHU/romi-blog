@@ -9,8 +9,6 @@ import { KEYS, StoreService } from './store.service'
 export class AuthService {
   private user = signal<UserAuthData | null>(null)
   public user$ = this.user.asReadonly()
-  // private userSubject = new BehaviorSubject<UserAuthData | null>(null)
-  // public user$ = this.userSubject.asObservable()
 
   public constructor(
     private readonly router: Router,

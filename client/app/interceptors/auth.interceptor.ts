@@ -2,17 +2,16 @@ import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/h
 import { inject } from '@angular/core'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
+import { HEADER_CONTEXT } from '../shared/constants'
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   if (!inject(BrowserService).is) return next(req)
 
-  const auth = inject(AuthService)
-
-  const skipBringToken = req.headers.has('Skip-Bring-Token')
   let headers = req.headers
-  if (skipBringToken) headers = headers.delete('Skip-Bring-Token')
+  const SkipBringToken = req.headers.has(HEADER_CONTEXT.SKIP_BRING_TOKEN)
+  if (SkipBringToken) headers = headers.delete(HEADER_CONTEXT.SKIP_BRING_TOKEN)
 
-  const token = skipBringToken ? null : auth.getToken()
+  const token = SkipBringToken ? inject(AuthService).getToken() : null
 
   return next(
     req.clone({

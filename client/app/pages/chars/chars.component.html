@@ -6,7 +6,7 @@
   @if (filteredChars.length === 0) {
     <div class="text-center text-accent-100 py-8">未找到角色</div>
   } @else {
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
       @for (char of filteredChars; track char.id) {
         <a [routerLink]="['/char', char.id]"
            class="bg-text-200 rounded-xl overflow-hidden hover:shadow-sm transition-all hover:-translate-y-1"

@@ -60,7 +60,7 @@
         @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
             @if (post.prev) {
-              <a [routerLink]="'/post/' + post.prev.id"
+              <a [routerLink]="['/post/', post.prev.id]"
                  class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
                 <div class="flex items-center gap-2 text-gray-500 mb-2">
                   <span>上一篇</span>
@@ -74,7 +74,7 @@
             }
 
             @if (post.next) {
-              <a [routerLink]="'/post/' + post.next.id"
+              <a [routerLink]="['/post/', post.next.id]"
                  class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
                 <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
                   <span>下一篇</span>
@@ -116,7 +116,7 @@
                 } @else {
                   <div class="mb-8 p-6 bg-text-300 rounded-lg text-center">
                     <p class="text-accent-100 mb-4">登录后才能发表评论</p>
-                    <r-button [routerLink]="['/admin/login']" type="primary">
+                    <r-button [routerLink]="'/admin/login'" type="primary">
                       去登录
                     </r-button>
                   </div>
@@ -132,7 +132,8 @@
                   <div class="space-y-6 mb-6">
                     @for (comment of pagedComments; track comment.cid) {
                       <div class="flex gap-4">
-                        <img width="40" height="40" [ngSrc]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
+                        <img width="40" height="40"
+                             [ngSrc]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
                              alt="avatar"
                              class="rounded-full bg-text-200 flex-shrink-0 overflow-hidden"/>
                         <div class="flex-1">

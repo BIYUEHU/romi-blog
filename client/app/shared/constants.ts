@@ -7,6 +7,12 @@ export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
 export const ROMI_METADATA = { pkg, build: buildMeta }
 
+export enum HEADER_CONTEXT {
+  SKIP_BRING_TOKEN = 'Bring-Token',
+  SKIP_ERROR_HANDLING = 'Error-Handling',
+  ERROR_REDIRECT = 'Error-Redirect'
+}
+
 ;((): undefined => {
   if (typeof window === 'undefined') return
   const logger = new LoggerService()

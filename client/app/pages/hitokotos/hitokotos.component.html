@@ -4,7 +4,7 @@
     @for (hitokoto of hitokotos; track $index) {
     <div class="break-inside-avoid mb-4 bg-text-200 rounded-lg border p-4 transition-colors relative "
       [style]="'flex-shrink:0;width:100%;max-width:100%;flex:0 0 auto; border-left: 4px solid ' + getTypeColor(hitokoto.type)">
-      <p [routerLink]="'/hitokoto/' + hitokoto.id"
+      <p [routerLink]="['/hitokoto/' + hitokoto.id]"
         class="text-bg-200 mb-4 overflow-y-auto max-h-50 hover:text-primary-100 hover:cursor-pointer">{{
         hitokoto.msg
         }}
