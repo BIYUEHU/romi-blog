@@ -269,18 +269,29 @@ export class ApiService {
   }
 
   public getProjects() {
-    return this.cacheService.wrap('projects', RHour(12), () =>
-      this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`)
+    return this.cacheService.wrap(
+      'projects',
+      RHour(12),
+      () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
+      (data) => data.length > 0
     )
   }
 
   public getMusic() {
-    return this.cacheService.wrap('music', RHour(12), () =>
-      this.http.get<ResMusicData[]>(`${environment.api_base_url}/info/music`)
+    return this.cacheService.wrap(
+      'music',
+      RHour(12),
+      () => this.http.get<ResMusicData[]>(`${environment.api_base_url}/info/music`),
+      (data) => data.length > 0
     )
   }
 
   public getVideos() {
-    return this.cacheService.wrap('videos', RDay(7), () => this.http.get<Video[]>('/data/bilibili.json'))
+    return this.cacheService.wrap(
+      'videos',
+      RDay(7),
+      () => this.http.get<Video[]>('/data/bilibili.json'),
+      (data) => data.length > 0
+    )
   }
 }

@@ -1,7 +1,7 @@
 <header class="h-14 bg-text-100 border-b flex items-center justify-between px-6 sticky top-0">
   <div class="flex items-center gap-4">
     <button (click)="toggleSidebar()"
-      class="hover:cursor-pointer w-8 h-8 flex items-center justify-center htext-primary-300 hover:bg-primary-100 rounded-sm border-0">
+            class="hover:cursor-pointer w-8 h-8 flex items-center justify-center htext-primary-300 hover:bg-primary-100 rounded-sm border-0">
       <i class="i-mdi:menu text-xl"></i>
     </button>
 
@@ -12,27 +12,27 @@
 
   <div class="flex items-center gap-4">
     <a routerLink="/"
-      class="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-300 hover:bg-primary-100 rounded transition-colors">
+       class="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-300 hover:bg-primary-100 rounded transition-colors">
       <i class="i-mdi:web"></i>
       <span>前台</span>
     </a>
 
     <div class="relative group">
       <button
-        class="hover:cursor-pointer border-0 flex items-center gap-2 px-3 py-1.5 text-sm text-bg-300 hover:bg-primary-100  rounded border-1 border-bg-300">
-        <img alt="avatar" [ngSrc]="avatarUrl" width="24" height="24" class="rounded-full" />
+              class="hover:cursor-pointer border-0 flex items-center gap-2 px-3 py-1.5 text-sm text-bg-300 hover:bg-primary-100 rounded border-1 border-bg-300">
+        <img alt="avatar" [ngSrc]="avatarUrl" width="24" height="24" class="rounded-full"/>
         <span>{{ user?.username }}</span>
         <i class="i-mdi:chevron-down text-gray-500"></i>
       </button>
 
       <div
-        class="hidden top-8.6 group-hover:block absolute right-0 min-w-10 min-h-5 right-2 bg-text-100 border border-text-300 rounded-md shadow-lg">
-        <button class="hover:cursor-pointer border-0 w-full block px-4 py-2 text-sm text-bg-100 hover:bg-primary-100"
-          [routerLink]="'/admin/profile'">
+              class="hidden top-8.6 group-hover:block absolute right-0 min-w-15 min-h-5 right-2 bg-text-100 border border-text-300 rounded-md shadow-lg">
+        <button class="hover:cursor-pointer border-0 w-23 block px-4 py-2 text-sm text-bg-100 hover:bg-primary-100"
+                [routerLink]="'/admin/profile'">
           个人资料
         </button>
-        <button class="hover:cursor-pointer border-0 w-full block px-4 py-2 text-sm text-red-600 hover:bg-primary-300"
-          (click)="logout()">
+        <button class="hover:cursor-pointer border-0 w-23 block px-4 py-2 text-sm text-red-600 hover:bg-primary-300"
+                (click)="logout()">
           退出登录
         </button>
       </div>

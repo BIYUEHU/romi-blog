@@ -3,8 +3,9 @@
 <!-- - [ ] Support more markdown-it plugins -->
 
 - [ ] 前端实现加密文章解密
-- [ ] 文章页评论区的 “登录提示” 与 “评论框” 显示机制问题
-- [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language）
+
+[//]: # (- [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language）)
+
 - [ ] Blog content search
 - [x] Support private news
 - [ ] Settings and customization

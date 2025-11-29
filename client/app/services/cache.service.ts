@@ -73,7 +73,12 @@ export class CacheService {
 
   public constructor(private readonly storeService: StoreService) {}
 
-  public wrap<T = unknown>(key: string, longTtl: RTime, f: () => Observable<T>): Observable<T> {
+  public wrap<T = unknown>(
+    key: string,
+    longTtl: RTime,
+    f: () => Observable<T>,
+    cacheCondition: (data: T) => boolean
+  ): Observable<T> {
     return match(this.get<T>(key))
       .with(
         { _tag: 'Some', value: { timestamp: P.when((timestamp) => Date.now() < timestamp) } },
@@ -82,10 +87,20 @@ export class CacheService {
       .with(
         { _tag: 'Some', value: { timestamp: P.when((timestamp) => Date.now() < timestamp + pipe(longTtl, toNumber)) } },
         ({ value: { data } }) => {
-          f().pipe(tap((data) => this.set(key, data)))
+          f().pipe(
+            tap((data) => {
+              if (cacheCondition(data)) this.set(key, data)
+            })
+          )
           return of(data)
         }
       )
-      .otherwise(() => f().pipe(tap((data) => this.set(key, data))))
+      .otherwise(() =>
+        f().pipe(
+          tap((data) => {
+            if (cacheCondition(data)) this.set(key, data)
+          })
+        )
+      )
   }
 }

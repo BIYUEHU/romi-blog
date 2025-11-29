@@ -4,15 +4,17 @@ import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
+import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 import type { homeResolver } from './home.resolver'
 
 @Component({
-    selector: 'app-home',
-    imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './home.component.html'
+  selector: 'app-home',
+  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './home.component.html'
 })
 export class HomeComponent implements OnInit, OnDestroy {
   @Input() public readonly home!: typeof homeResolver extends ResolveFn<infer T> ? T : never
@@ -45,7 +47,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     avatarUrl: '/api/utils/qqavatar'
   }
 
-  public constructor(private readonly layoutService: LayoutService) {}
+  public constructor(
+    private readonly layoutService: LayoutService,
+    private readonly apiService: ApiService,
+    private readonly browserService: BrowserService
+  ) {}
 
   public ngOnInit() {
     this.layoutService.setTitle()
@@ -54,13 +60,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       subTitle: []
     })
 
-    // if (!this.browserService.is || !this.home.music.length) return
-    // this.aplayer = new APlayer({
-    //   container: document.getElementById('recent-music'),
-    //   theme: 'var(--primary-100)',
-    //   listMaxHeight: '320px',
-    //   audio: this.home.music
-    // })
+    this.browserService.on(() =>
+      this.apiService.getMusic().subscribe((data) => {
+        this.aplayer = new APlayer({
+          container: document.getElementById('recent-music'),
+          theme: 'var(--primary-100)',
+          listMaxHeight: '320px',
+          audio: data
+        })
+      })
+    )
   }
 
   public ngOnDestroy() {

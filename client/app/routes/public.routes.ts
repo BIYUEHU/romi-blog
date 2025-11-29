@@ -7,6 +7,7 @@ import { CharComponent } from '../pages/char/char.component'
 import { charResolver } from '../pages/char/char.resolver'
 import { CharsComponent } from '../pages/chars/chars.component'
 import { charsResolver } from '../pages/chars/chars.resolver'
+import { ForbiddenComponent } from '../pages/forbidden/forbidden.component'
 import { GalComponent } from '../pages/gal/gal.component'
 import { HitokotoComponent } from '../pages/hitokoto/hitokoto.component'
 import { hitokotoResolver } from '../pages/hitokoto/hitokoto.resolver'
@@ -25,6 +26,7 @@ import { PostsComponent } from '../pages/posts/posts.component'
 import { postsResolver } from '../pages/posts/posts.resolver'
 import { ProjectComponent } from '../pages/project/project.component'
 import { projectResolver } from '../pages/project/project.resolver'
+import { ServerErrorComponent } from '../pages/server-error/server-error.component'
 import { TagComponent } from '../pages/tag/tag.component'
 
 export const publicRoutes: Routes = [
@@ -127,8 +129,16 @@ export const publicRoutes: Routes = [
         }
       },
       {
+        path: '403',
+        component: ForbiddenComponent
+      },
+      {
         path: '404',
         component: NotFoundComponent
+      },
+      {
+        path: '500',
+        component: ServerErrorComponent
       }
     ]
   },

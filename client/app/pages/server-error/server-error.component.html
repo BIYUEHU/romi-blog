@@ -1,0 +1,20 @@
+<app-error-page [code]="505">
+  <div class="relative max-w-full w-60 h-60 mx-auto mb-8 rounded-md">
+    <img fill ngSrc="https://img0.huoshen80.top/i/2025/11/29/692b115e31f25.jpg" alt="505 character" class="w-full h-full object-contain animate-float"/>
+  </div>
+
+  <div class="space-y-4 mb-8">
+    <div content>
+      <h2 class="text-2xl text-red font-bold text-bg-200">
+        你他妈把网站玩炸了(╯▔皿▔)╯
+      </h2>
+    </div>
+  </div>
+
+  <div class="flex items-center justify-center gap-4">
+    <r-button (click)="notify()" type="error" size="lg">
+      告诉 AS
+    </r-button>
+  </div>
+
+</app-error-page>

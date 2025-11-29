@@ -1,0 +1,40 @@
+<div class="max-w-98% w-150 mx-auto text-center relative">
+  <h1 class="text-9xl font-bold text-primary-100 mb-4 animate-bounce-slow">
+    {{ code }}
+  </h1>
+  <ng-content></ng-content>
+</div>
+
+<style>
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes bounce-slow {
+
+        0%,
+        100% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(10px);
+        }
+    }
+
+    .animate-float {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-bounce-slow {
+        animation: bounce-slow 2s ease-in-out infinite;
+    }
+</style>

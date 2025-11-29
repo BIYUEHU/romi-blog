@@ -1,14 +1,15 @@
 import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { ErrorPageComponent } from '../../components/error-page/error-page.component'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
-    selector: 'app-not-found',
-    imports: [RouterLink, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './not-found.component.html'
+  selector: 'app-not-found',
+  imports: [ErrorPageComponent, RouterLink, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './not-found.component.html'
 })
 export class NotFoundComponent {
   public constructor(layoutService: LayoutService, browserService: BrowserService) {

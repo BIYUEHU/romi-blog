@@ -16,7 +16,7 @@ import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { LayoutService } from '../../services/layout.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
-import { formatDate, randomRTagType } from '../../utils'
+import randomRTagType, { formatDate } from '../../utils'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 interface TocItem {

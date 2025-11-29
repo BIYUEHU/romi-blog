@@ -3,11 +3,12 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnChanges, OnDestroy, OnInit,
 import { Router } from '@angular/router'
 import { interval, Subscription } from 'rxjs'
 import { CardComponent } from '../../components/card/card.component'
-import { ResCharacterData } from '../../models/api.model'
+import { ResCharacterData, ResMusicData } from '../../models/api.model'
+import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
-import { randomRTagType, renderCharacterBWH } from '../../utils'
+import randomRTagType, { renderCharacterBWH } from '../../utils'
 
 @Component({
   selector: 'app-char',
@@ -28,16 +29,11 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
 
   protected aplayer?: APlayer
 
-  // private musicList: ResMusicData[] = []
-  //
-  // private getMusic() {
-  //   if (this.data && !this.data.id) return undefined
-  //   if (!this.data || this.musicList.length === 0) return []
-  //   const music = this.musicList.find((music) =>
-  //     music.url.includes(`id=${(this.data as unknown as ResCharacterData).song_id}.mp3`)
-  //   )
-  //   return music ? [music] : undefined
-  // }
+  private getMusic(musicList: ResMusicData[]) {
+    if (musicList.length === 0) return []
+    const music = musicList.find((music) => music.url.includes(`id=${this.char.song_id}.mp3`))
+    return music ? [music] : null
+  }
 
   public get BWH() {
     return this.char ? renderCharacterBWH(this.char as unknown as ResCharacterData) : ''
@@ -68,22 +64,30 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
   public constructor(
     private readonly router: Router,
     private readonly layoutService: LayoutService,
+    private readonly apiService: ApiService,
     private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
-    // TODO: 获取音乐
-    // this.apiService.getMusic().subscribe((data) => {
-    //   this.musicList = data
-    //   if (!this.aplayer) return
-    //   const music = this.getMusic()
-    //   if (music === undefined) {
-    //     this.aplayer.destroy()
-    //     return
-    //   }
-    //   this.aplayer.list.add(music)
-    //   if (music.length > 0) this.aplayer.play()
-    // })
+    this.browserService.on(() => {
+      this.apiService.getMusic().subscribe((data) => {
+        const audio = this.getMusic(data)
+        if (!audio) {
+          this.aplayer?.destroy()
+          return
+        }
+        setTimeout(() => {
+          this.aplayer = new APlayer({
+            container: document.getElementById('aplayer'),
+            theme: 'var(--primary-100)',
+            lrcType: 1,
+            audio,
+            ...(this.char?.color ? { theme: `#${this.char.color}` } : {})
+          })
+          if (audio.length > 0) this.aplayer.play()
+        }, 0)
+      })
+    })
 
     this.layoutService.updateHeader({
       title: this.char.name,
@@ -93,19 +97,6 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
     this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
     this.setupCarousel()
-    // if (!this.browserService.is) return
-    // setTimeout(() => {
-    //   const music = this.getMusic()
-    //   if (music === undefined) return
-    //   this.aplayer = new APlayer({
-    //     container: document.getElementById('aplayer'),
-    //     theme: 'var(--primary-100)',
-    //     lrcType: 1,
-    //     audio: music,
-    //     ...(this.data?.color ? { theme: `#${this.data.color}` } : {})
-    //   })
-    //   if (music.length > 0) this.aplayer.play()
-    // }, 0)
   }
 
   public async shareCharacter() {

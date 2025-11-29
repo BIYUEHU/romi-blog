@@ -8,12 +8,17 @@ export function renderCharacterBWH({ bust, waist, hip }: ResCharacterData) {
   return `${bust ? `B${bust}` : ''}${waist ? `${bust ? '/' : ''}W${waist}` : ''}${hip ? `${bust || waist ? '/' : ''}H${hip}` : ''}`
 }
 
-export function randomRTagType() {
-  const types = ['primary', 'secondary', 'accent', 'success', 'info', 'warning', 'error']
-  return types[Math.floor(Math.random() * types.length)]
+function randomRTagType() {
+  return randomSelect(['primary', 'secondary', 'accent', 'success', 'info', 'warning', 'error'])
 }
+
+export default randomRTagType
 
 export function formatDate(date: Date) {
   const addZero = (num: number) => (num < 10 ? `0${num}` : num)
   return `${date.getFullYear()}-${addZero(date.getMonth() + 1)}-${addZero(date.getDate())}T${addZero(date.getHours())}:${addZero(date.getMinutes())}`
+}
+
+export function randomSelect<T>(arr: T[]) {
+  return arr[Math.floor(Math.random() * arr.length)]
 }
