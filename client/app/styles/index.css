@@ -136,11 +136,10 @@ a:hover {
     }
 
     blockquote {
-        padding: 0.25rem 1rem 0.25rem 0;
         margin: 1rem auto;
         width: 98%;
         border-left: 4px solid var(--bg-300);
-        padding-left: 16px;
+        padding: 0.25rem 1rem 0.25rem 16px;
         background-color: var(--text-300);
     }
 
@@ -170,7 +169,6 @@ a:hover {
     svg,
     video {
         border-radius: 8px;
-        max-width: 90%;
         margin: 1.2rem auto;
         max-height: 400px;
         display: block;

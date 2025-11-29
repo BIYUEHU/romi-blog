@@ -3,13 +3,13 @@ import { RouterLink } from '@angular/router'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 
 @Component({
-    selector: 'app-hitokotos',
-    imports: [RouterLink],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './hitokotos.component.html'
+  selector: 'app-hitokotos',
+  imports: [RouterLink],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './hitokotos.component.html'
 })
 export class HitokotosComponent implements OnInit {
   public static readonly typeColors = ['#4CAF50', '#FF9800', '#03A9F4', '#F44336']
@@ -51,14 +51,14 @@ export class HitokotosComponent implements OnInit {
   public likeHitokoto(id: number): void {
     if (this.isLiked(id)) return
     this.apiService.likeHitokoto(id).subscribe(() => {
-      this.storeService.setItem(KEYS.HITOKOTO_LIKED(id), true)
+      this.storeService.setItem(STORE_KEYS.hitokotoLiked(id), true)
       const hitokoto = this.hitokotos.find((h) => h.id === id)
       if (hitokoto) hitokoto.likes += 1
     })
   }
 
   public isLiked(id: number): boolean {
-    return !!this.storeService.getItem(KEYS.HITOKOTO_LIKED(id))
+    return !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(id))
   }
 
   public getTypeColor(type: number): string {

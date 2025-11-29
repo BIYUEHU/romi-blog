@@ -3,14 +3,14 @@ import { LayoutComponent } from '../../components/layout/layout.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
-    selector: 'app-hitokoto',
-    imports: [LayoutComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './hitokoto.component.html'
+  selector: 'app-hitokoto',
+  imports: [LayoutComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './hitokoto.component.html'
 })
 export class HitokotoComponent implements OnInit {
   @Input() public hitokoto!: ResHitokotoData
@@ -19,7 +19,7 @@ export class HitokotoComponent implements OnInit {
   public isLoading = false
 
   public get isLiked() {
-    return !!this.hitokoto && !!this.storeService.getItem(KEYS.HITOKOTO_LIKED(this.hitokoto.id))
+    return !!this.hitokoto && !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(this.hitokoto.id))
   }
 
   public constructor(
@@ -56,7 +56,7 @@ export class HitokotoComponent implements OnInit {
     }
 
     this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
-      this.storeService.setItem(KEYS.HITOKOTO_LIKED((this.hitokoto as ResHitokotoData).id), true)
+      this.storeService.setItem(STORE_KEYS.hitokotoLiked((this.hitokoto as ResHitokotoData).id), true)
       ;(this.hitokoto as ResHitokotoData).likes += 1
       this.layoutService.showMessage('点赞成功', 'success')
     })

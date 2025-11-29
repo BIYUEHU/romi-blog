@@ -11,9 +11,9 @@ import { transferInterceptor } from './interceptors/transferInterceptor'
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, errorInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, transferInterceptor, errorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimations(),
-    provideClientHydration()
+    provideClientHydration(withNoHttpTransferCache())
   ]
 }

@@ -9,14 +9,14 @@ import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
 
 @Component({
-    selector: 'app-admin-edit',
-    imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, DatePipe],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-edit.component.html'
+  selector: 'app-admin-edit',
+  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, DatePipe],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
   private readonly editorOptions: IOptions = {
@@ -110,18 +110,18 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
   private getDraftKey() {
     if (this.isEdit) {
-      return [KEYS.POST_DRAFT(this.getId()), KEYS.POST_DRAFT_TIME(this.getId())]
+      return [STORE_KEYS.postDraft(this.getId()), STORE_KEYS.postDraftTime(this.getId())]
     }
-    return KEYS.POST_DRAFT_NEW
+    return STORE_KEYS.POST_DRAFT_NEW
   }
 
   private getPostText() {
     const notify = () => this.layoutService.showMessage('文章内容来自自动保存草稿', 'info')
-    const keys = this.getDraftKey()
-    if (typeof keys === 'string') {
+    const STORE_KEYS = this.getDraftKey()
+    if (!Array.isArray(STORE_KEYS)) {
       try {
         const { text, password, title, hide, allow_comment, tags, categories, banner } = JSON.parse(
-          this.storeService.getItem(keys) ?? ''
+          this.storeService.getItem(STORE_KEYS) ?? ''
         )
         this.postForm = {
           ...this.postForm,
@@ -143,7 +143,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     }
 
     const update = this.postForm.modified * 1000
-    const [draftKey, draftTimeKey] = keys
+    const [draftKey, draftTimeKey] = STORE_KEYS
     const draft = this.storeService.getItem(draftKey)
     const draftTime = Number(this.storeService.getItem(draftTimeKey))
     if (draft && draftTime && !Number.isNaN(draftTime) && draftTime >= update) {
@@ -198,19 +198,19 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     })
 
     this.browserService.on(() => {
-      const keys = this.getDraftKey()
+      const STORE_KEYS = this.getDraftKey()
       this.draftTimerId = Number(
         setInterval(() => {
           const text = this.editor?.getValue()
           if (!text || text === this.postForm.text) return
 
           this.lastSaveDraftTime = Date.now()
-          if (typeof keys === 'string') {
-            this.storeService.setItem(keys, JSON.stringify({ ...this.postForm, text }))
-          } else {
-            const [draftKey, draftTimeKey] = keys
+          if (Array.isArray(STORE_KEYS)) {
+            const [draftKey, draftTimeKey] = STORE_KEYS
             this.storeService.setItem(draftKey, text)
             this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
+          } else {
+            this.storeService.setItem(STORE_KEYS, JSON.stringify({ ...this.postForm, text }))
           }
         }, 5 * 1000)
       )
@@ -291,7 +291,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
     request.subscribe(() => {
       if (!this.isEdit) {
-        this.storeService.removeItem(KEYS.POST_DRAFT_NEW)
+        this.storeService.removeItem(STORE_KEYS.POST_DRAFT_NEW)
       }
       this.layoutService.showMessage('文章保存成功', 'success')
       this.goBack()

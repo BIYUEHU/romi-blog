@@ -1,4 +1,4 @@
-<div class="max-w-98% w-4xl mx-auto flex-1">
+<div class=" mx-auto flex-1">
   @if (renderedContent) {
     <div class="flex gap-8">
       <div class="flex-1 w-full">
@@ -188,7 +188,7 @@
                   }
                 }
               } @else {
-                <app-loading/>
+                <app-skeleton-loader />
               }
             </div>
 
@@ -221,6 +221,6 @@
       }
     </div>
   } @else {
-    <app-loading/>
+    <app-skeleton-loader />
   }
 </div>

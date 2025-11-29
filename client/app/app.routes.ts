@@ -19,5 +19,9 @@ export const routes: Routes = [
       dynamic: dynamicResolver
     },
     pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: '/404'
   }
 ]

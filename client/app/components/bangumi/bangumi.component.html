@@ -1,6 +1,6 @@
-<div class="max-w-98% w-4xl mx-auto space-y-6">
+<div class="max-w-98% w-6xl mx-auto space-y-6">
   @if (isLoading && !items.length) {
-    <app-loading />
+    <app-skeleton-loader />
   } @else {
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     @for (item of items; track $index) {

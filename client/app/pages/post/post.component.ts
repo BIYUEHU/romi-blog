@@ -1,12 +1,23 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, OnInit } from '@angular/core'
 import { ResPostSingleData } from '../../../output'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
+import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
+import { ApiService } from '../../services/api.service'
 
 @Component({
-    selector: 'app-post',
-    imports: [PostContentComponent],
-    templateUrl: './post.component.html'
+  selector: 'app-post',
+  imports: [PostContentComponent, SkeletonLoaderComponent],
+  templateUrl: './post.component.html'
 })
-export class PostComponent {
-  @Input() public readonly post!: ResPostSingleData
+export class PostComponent implements OnInit {
+  @Input() public readonly id!: string
+  public post?: ResPostSingleData
+
+  public constructor(private readonly apiService: ApiService) {}
+
+  public ngOnInit() {
+    this.apiService.getPost(+this.id).subscribe((post) => {
+      this.post = post
+    })
+  }
 }

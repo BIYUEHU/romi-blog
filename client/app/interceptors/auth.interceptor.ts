@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   const SkipBringToken = req.headers.has(HEADER_CONTEXT.SKIP_BRING_TOKEN)
   if (SkipBringToken) headers = headers.delete(HEADER_CONTEXT.SKIP_BRING_TOKEN)
 
-  const token = SkipBringToken ? inject(AuthService).getToken() : null
+  const token = SkipBringToken ? null : inject(AuthService).getToken()
 
   return next(
     req.clone({

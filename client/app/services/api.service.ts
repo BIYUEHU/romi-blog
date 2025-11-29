@@ -29,12 +29,16 @@ import type {
   Video
 } from '../models/api.model'
 import { HEADER_CONTEXT } from '../shared/constants'
+import { CacheService, RDay, RHour } from './cache.service'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  public constructor(private readonly http: HttpClient) {}
+  public constructor(
+    private readonly http: HttpClient,
+    private readonly cacheService: CacheService
+  ) {}
 
   private genHeaders(attributes: HEADER_CONTEXT[]) {
     return attributes.reduce((header, attribute) => header.set(attribute, ''), new HttpHeaders())
@@ -45,7 +49,9 @@ export class ApiService {
   }
 
   public getPost(id: number) {
-    return this.http.get<ResPostSingleData>(`${environment.api_base_url}/post/${id}`)
+    return this.http.get<ResPostSingleData>(`${environment.api_base_url}/post/${id}`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public createPost(data: ReqPostData) {
@@ -69,7 +75,9 @@ export class ApiService {
   }
 
   public getMetas() {
-    return this.http.get<ResMetaData[]>(`${environment.api_base_url}/meta`)
+    return this.http.get<ResMetaData[]>(`${environment.api_base_url}/meta`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public createMeta(data: ReqMetaData) {
@@ -110,7 +118,9 @@ export class ApiService {
   }
 
   public getUsers() {
-    return this.http.get<ResUserData[]>(`${environment.api_base_url}/user`)
+    return this.http.get<ResUserData[]>(`${environment.api_base_url}/user`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public getUser(id: number) {
@@ -130,7 +140,9 @@ export class ApiService {
   }
 
   public getComments() {
-    return this.http.get<ResCommentData[]>(`${environment.api_base_url}/comment`)
+    return this.http.get<ResCommentData[]>(`${environment.api_base_url}/comment`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public getCommentsByPost(id: number) {
@@ -138,7 +150,13 @@ export class ApiService {
   }
 
   public sendComment(pid: number, text: string) {
-    return this.http.post<void>(`${environment.api_base_url}/comment`, { pid, text })
+    return this.http.post<void>(
+      `${environment.api_base_url}/comment`,
+      { pid, text },
+      {
+        headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+      }
+    )
   }
 
   public deleteComment(id: number) {
@@ -146,7 +164,9 @@ export class ApiService {
   }
 
   public getHitokoto(id?: number) {
-    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto${id ? `/${id}` : ''}`)
+    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto${id ? `/${id}` : ''}`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public getHitokotos(isPublic: boolean) {
@@ -174,11 +194,15 @@ export class ApiService {
   }
 
   public getCharacters() {
-    return this.http.get<ResCharacterData[]>(`${environment.api_base_url}/character`)
+    return this.http.get<ResCharacterData[]>(`${environment.api_base_url}/character`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public getCharacter(id: number) {
-    return this.http.get<ResCharacterData>(`${environment.api_base_url}/character/${id}`)
+    return this.http.get<ResCharacterData>(`${environment.api_base_url}/character/${id}`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public createCharacter(data: ReqCharacterData) {
@@ -205,11 +229,15 @@ export class ApiService {
   }
 
   public getNewses() {
-    return this.http.get<ResNewsData[]>(`${environment.api_base_url}/news`)
+    return this.http.get<ResNewsData[]>(`${environment.api_base_url}/news`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public getNews(id: number) {
-    return this.http.get<ResNewsData>(`${environment.api_base_url}/news/${id}`)
+    return this.http.get<ResNewsData>(`${environment.api_base_url}/news/${id}`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
   }
 
   public likeNews(id: number) {
@@ -241,14 +269,18 @@ export class ApiService {
   }
 
   public getProjects() {
-    return /* isDevMode() ? of([]) : */ this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`)
+    return this.cacheService.wrap('projects', RHour(12), () =>
+      this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`)
+    )
   }
 
   public getMusic() {
-    return this.http.get<ResMusicData[]>(`${environment.api_base_url}/info/music`)
+    return this.cacheService.wrap('music', RHour(12), () =>
+      this.http.get<ResMusicData[]>(`${environment.api_base_url}/info/music`)
+    )
   }
 
   public getVideos() {
-    return this.http.get<Video[]>('/data/bilibili.json')
+    return this.cacheService.wrap('videos', RDay(7), () => this.http.get<Video[]>('/data/bilibili.json'))
   }
 }

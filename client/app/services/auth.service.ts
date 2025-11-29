@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core'
 import { Router } from '@angular/router'
 import { UserAuthData } from '../models/api.model'
-import { KEYS, StoreService } from './store.service'
+import { STORE_KEYS, StoreService } from './store.service'
 
 @Injectable({
   providedIn: 'root'
@@ -18,24 +18,24 @@ export class AuthService {
   }
 
   private restoreSession() {
-    const stored = this.storeService.getItem(KEYS.ADMIN_AUTH)
+    const stored = this.storeService.getItem(STORE_KEYS.ADMIN_AUTH)
     if (!stored) return
     try {
       this.user.set(JSON.parse(stored))
     } catch {
-      this.storeService.removeItem(KEYS.ADMIN_AUTH)
+      this.storeService.removeItem(STORE_KEYS.ADMIN_AUTH)
     }
   }
 
   public setUser(userData: UserAuthData, remember = false) {
     this.user.set(userData)
-    this.storeService.setItem(KEYS.ADMIN_AUTH, JSON.stringify(userData), remember)
+    this.storeService.setItem(STORE_KEYS.ADMIN_AUTH, JSON.stringify(userData), remember)
   }
 
   public logout() {
     this.user.set(null)
-    this.storeService.removeItem(KEYS.ADMIN_AUTH, true)
-    this.storeService.removeItem(KEYS.ADMIN_AUTH, false)
+    this.storeService.removeItem(STORE_KEYS.ADMIN_AUTH, true)
+    this.storeService.removeItem(STORE_KEYS.ADMIN_AUTH, false)
     this.router.navigate(['/admin/login'])
   }
 

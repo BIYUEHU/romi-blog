@@ -1,19 +1,20 @@
-import { NgOptimizedImage } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
-import { NavigationEnd, NavigationStart, Router, RouterLink } from '@angular/router'
+import { NgOptimizedImage, ViewportScroller } from '@angular/common'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnDestroy, OnInit } from '@angular/core'
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
 import { ResMusicData } from '../../models/api.model'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { APlayer } from '../../shared/types'
 import { FooterComponent } from '../footer/footer.component'
 import { HeaderComponent } from '../header/header.component'
+import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 @Component({
-    selector: 'app-layout',
-    imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './layout.component.html'
+  selector: 'app-layout',
+  imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage, SkeletonLoaderComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './layout.component.html'
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   private static SCROLL_OFFSET_HEIGHT_PX = -88
@@ -32,6 +33,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
+    private readonly viewportScroller: ViewportScroller,
     private readonly storeService: StoreService,
     private readonly browserService: BrowserService,
     public readonly layoutService: LayoutService
@@ -43,30 +45,52 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
+  }
 
-    this.browserService.on(() => {
-      window.addEventListener('scroll', () => {
-        this.showBackTop = window.scrollY > 100
-      })
-      this.togglePlayer(true)
-    })
+  @HostListener('window:scroll')
+  public onScroll() {
+    this.showBackTop = window.scrollY > 100
+    this.togglePlayer(true)
   }
 
   private handleRouteEvent(event: object) {
+    // const isSame = currentUrl !== nextUrl
+
     if (event instanceof NavigationStart) {
+      const currentUrl = this.router.url.split('#')[0]
+      const nextUrl = event.url.split('#')[0]
+
+      // 如果是切换到不同页面，才执行重置逻辑
+      // if () {
       this.isLoading = true
+      this.viewportScroller.scrollToPosition([0, 0])
+      // }
     } else if (event instanceof NavigationEnd) {
       this.isLoading = false
+
+      this.layoutService.updateHeader({
+        ...this.layoutService.header$(),
+        imageUrl: LayoutService.DEFAULT_HEADER.imageUrl
+      })
+
       const { fragment } = this.router.parseUrl(this.router.url)
-      if (!fragment) return
-      const el = document.getElementById(fragment)
-      if (!el) return
-      setTimeout(() => {
-        window.scrollTo({
-          top: el.getBoundingClientRect().top + window.scrollY + LayoutComponent.SCROLL_OFFSET_HEIGHT_PX,
-          behavior: 'smooth'
-        })
-      }, 100)
+      if (fragment) {
+        setTimeout(() => {
+          const el = document.getElementById(fragment)
+          if (!el) return
+          const top = el.getBoundingClientRect().top + window.scrollY + LayoutComponent.SCROLL_OFFSET_HEIGHT_PX
+          window.scrollTo({
+            top: top,
+            behavior: 'smooth'
+          })
+        }, 100)
+      } else {
+        this.viewportScroller.scrollToPosition([0, 0])
+      }
+    }
+    // 3. 导航取消/错误：记得关掉 Loading
+    else if (event instanceof NavigationCancel || event instanceof NavigationError) {
+      this.isLoading = false
     }
   }
 
@@ -75,38 +99,41 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   public togglePlayer(isFirst: boolean) {
-    if (this.router.url === '/music' || (isFirst && this.storeService.getItem(KEYS.APLAYER_DISABLED) === 'true')) {
+    if (
+      this.router.url === '/music' ||
+      (isFirst && this.storeService.getItem(STORE_KEYS.APLAYER_DISABLED) === 'true')
+    ) {
       return
     }
 
     if (this.aplayer) {
-      this.storeService.setItem(KEYS.APLAYER_DISABLED, 'true')
+      this.storeService.setItem(STORE_KEYS.APLAYER_DISABLED, 'true')
       this.aplayer.destroy()
       this.aplayer = undefined
       return
     }
 
-    const aliveTime = Number(this.storeService.getItem(KEYS.APLAYER_ALIVE_TIME) ?? 0)
+    const aliveTime = Number(this.storeService.getItem(STORE_KEYS.APLAYER_ALIVE_TIME) ?? 0)
     if (!Number.isNaN(aliveTime) && Date.now() - aliveTime < 1010) return
 
-    this.storeService.setItem(KEYS.APLAYER_DISABLED, 'false')
-    this.aplayer = new APlayer({
-      container: document.getElementById('aplayer-global'),
-      autoplay: true,
-      fixed: true,
-      lrcType: 1,
-      order: 'random',
-      theme: 'var(--primary-100)',
-      audio: this.musicList
-    })
+    this.storeService.setItem(STORE_KEYS.APLAYER_DISABLED, 'false')
+    // this.aplayer = new APlayer({
+    //   container: document.getElementById('aplayer-global'),
+    //   autoplay: true,
+    //   fixed: true,
+    //   lrcType: 1,
+    //   order: 'random',
+    //   theme: 'var(--primary-100)',
+    //   audio: this.musicList
+    // })
 
-    if (!this.aplayerTimer) {
-      this.aplayerTimer = Number(
-        setInterval(() => {
-          if (this.aplayer) this.storeService.setItem(KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
-        }, 1000)
-      )
-    }
+    // if (!this.aplayerTimer) {
+    //   this.aplayerTimer = Number(
+    //     setInterval(() => {
+    //       if (this.aplayer) this.storeService.setItem(STORE_KEYS.APLAYER_ALIVE_TIME, Date.now().toString())
+    //     }, 1000)
+    //   )
+    // }
   }
 
   public ngOnDestroy() {

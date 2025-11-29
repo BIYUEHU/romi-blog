@@ -10,10 +10,10 @@ import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
 
 @Component({
-    selector: 'app-char',
-    imports: [DatePipe, CardComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './char.component.html'
+  selector: 'app-char',
+  imports: [DatePipe, CardComponent, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './char.component.html'
 })
 export class CharComponent implements OnInit, OnChanges, OnDestroy {
   private static readonly CAROUSEL_INTERVAL_MS = 7000
@@ -60,6 +60,7 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.char.images.length <= 1) return
     this.currentImageIndex = 0
+    console.log('set 0')
 
     this.carouselSubscription = interval(CharComponent.CAROUSEL_INTERVAL_MS).subscribe(() => this.nextImage())
   }
@@ -121,20 +122,18 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
     if (changes['char']) this.setupCarousel()
   }
 
-  public nextImage(event?: Event): void {
-    if (event) event.preventDefault()
-    if (this.char.images.length <= 1) return
-    this.setupCarousel()
-    const index = this.currentImageIndex + 1
-    console.log(index, this.currentImageIndex)
-    this.currentImageIndex = index === this.char.images.length ? 0 : index
-  }
-
   public prevImage(event?: Event): void {
     if (event) event.preventDefault()
     if (this.char.images.length <= 1) return
     const len = this.char.images.length
     this.currentImageIndex = (this.currentImageIndex - 1 + len) % len
+  }
+
+  public nextImage(event?: Event): void {
+    if (event) event.preventDefault()
+    if (this.char.images.length <= 1) return
+    const len = this.char.images.length
+    this.currentImageIndex = (this.currentImageIndex + 1 + len) % len
   }
 
   public ngOnDestroy(): void {

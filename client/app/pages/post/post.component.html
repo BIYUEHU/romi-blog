@@ -1,1 +1,5 @@
-<app-post-content [id]="post.id" [post]="post" [setTitle]="true" />
+@if (post) {
+  <app-post-content [id]="post.id" [post]="post" [setTitle]="true" />
+} @else {
+  <app-skeleton-loader />
+}

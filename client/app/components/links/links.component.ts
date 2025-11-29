@@ -14,19 +14,19 @@ interface ResFriendData {
 }
 
 @Component({
-    selector: 'app-links',
-    imports: [FormsModule, PostContentComponent, CardComponent, NgOptimizedImage],
-    templateUrl: './links.component.html'
+  selector: 'app-links',
+  imports: [FormsModule, PostContentComponent, CardComponent, NgOptimizedImage],
+  templateUrl: './links.component.html'
 })
 export class LinksComponent {
   @Input({ required: true }) public post!: ResPostSingleData
 
   public links: ResFriendData[] = [
     {
-      name: 'RomiBlog',
+      name: 'Romi Blog',
       link: 'https://hotaru.icu',
       avatar: '/favicon.ico',
-      description: 'ArimuraSena 的个人网站'
+      description: 'ArimuraSena 的个人网站，基于 Angular & Rust'
     },
     {
       name: 'Sena Language',
@@ -39,6 +39,12 @@ export class LinksComponent {
       link: 'https://himeno-sena.com',
       avatar: 'https://himeno-sena.com/favicon.ico',
       description: '姬野星奏的专属网站'
+    },
+    {
+      name: '火神80的小窝',
+      link: 'https://huoshen80.top/',
+      avatar: 'https://huoshen80.top/favicon.ico',
+      description: '一位热爱 Coding、MC、原神、galgame 的b站up主'
     },
     {
       name: 'KanaRhythm',
@@ -65,10 +71,10 @@ export class LinksComponent {
       description: '轻量级视觉小说游戏制作引擎'
     },
     {
-      name: 'KotoriDoc',
+      name: 'KotoriBot',
       link: 'https://kotori.js.org',
       avatar: 'https://kotori.js.org/favicon.svg',
-      description: 'TS 跨平台聊天机器人框架'
+      description: '基于 Node + TS 的跨平台聊天机器人框架'
     },
     {
       name: 'HULITOOL',

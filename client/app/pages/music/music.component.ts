@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
 import { LoadingComponent } from '../../components/loading/loading.component'
+import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
@@ -7,10 +8,10 @@ import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 
 @Component({
-    selector: 'app-music',
-    imports: [LoadingComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './music.component.html'
+  selector: 'app-music',
+  imports: [LoadingComponent, SkeletonLoaderComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './music.component.html'
 })
 export class MusicComponent implements OnInit, OnDestroy {
   public isLoading = true
@@ -39,15 +40,15 @@ export class MusicComponent implements OnInit, OnDestroy {
         this.isLoading = false
 
         setTimeout(() => {
-          this.aplayer = new APlayer({
-            container: document.getElementById('aplayer'),
-            theme: 'var(--primary-100)',
-            listMaxHeight: '70vh',
-            lrcType: 1,
-            audio: this.musicList ?? []
-          })
-
-          if (isEmpty && this.aplayer) this.aplayer.list.add(data)
+          // this.aplayer = new APlayer({
+          //   container: document.getElementById('aplayer'),
+          //   theme: 'var(--primary-100)',
+          //   listMaxHeight: '70vh',
+          //   lrcType: 1,
+          //   audio: this.musicList ?? []
+          // })
+          //
+          // if (isEmpty && this.aplayer) this.aplayer.list.add(data)
         }, 0)
       })
 

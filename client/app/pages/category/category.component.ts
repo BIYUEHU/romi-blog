@@ -6,15 +6,13 @@ import { LayoutService } from '../../services/layout.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-    selector: 'app-category',
-    imports: [PostListComponent],
-    template: `<app-post-list [posts]="posts" />`
+  selector: 'app-category',
+  imports: [PostListComponent],
+  template: `<app-post-list [posts]="posts" />`
 })
 export class CategoryComponent implements OnInit {
   @Input() public readonly name!: string
   @Input() public posts!: ResPostData[]
-
-  public categoryName = ''
 
   public constructor(
     private readonly router: Router,
@@ -31,7 +29,7 @@ export class CategoryComponent implements OnInit {
 
     this.layoutService.setTitle(`${this.name} 分类`)
     this.layoutService.updateHeader({
-      title: this.categoryName,
+      title: this.name,
       subTitle: [`共 ${this.posts?.length ?? 0} 篇文章`]
     })
   }

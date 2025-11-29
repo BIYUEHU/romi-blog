@@ -8,7 +8,7 @@ import { BrowserService } from './browser.service'
   providedIn: 'root'
 })
 export class LayoutService {
-  private static readonly DEFAULT_HEADER = {
+  public static readonly DEFAULT_HEADER = {
     title: 'Arimura Sena',
     subTitle: ['What is mind? No matter.', 'What is matter? Never mind.'],
     imageUrl: 'api/utils/background'

@@ -28,7 +28,7 @@
 - [x] Post view, like, share
 - [x] News view, like
 - [x] Better website title
-- [x] Unify all localStorage keys name
+- [x] Unify all localStorage STORE_KEYS name
 - [x] Music playlist cannot load to cache in first loading
 - [x] Music playlist cannot automatically create json file
 

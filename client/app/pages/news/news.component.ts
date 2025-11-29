@@ -1,17 +1,17 @@
-import {DatePipe, NgOptimizedImage} from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResNewsData } from '../../../output'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 
 @Component({
-    selector: 'app-news',
-    imports: [DatePipe, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './news.component.html'
+  selector: 'app-news',
+  imports: [DatePipe, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './news.component.html'
 })
 export class NewsComponent implements OnInit, OnDestroy {
   @Input() public news!: ResNewsData
@@ -37,25 +37,27 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   public viewNews() {
-    if (this.storeService.getItem(KEYS.NEWS_VIEWED(this.news.id))) return
-    this.viewedTimeoutId = Number(
-      setTimeout(
-        () =>
-          this.apiService
-            .viewNews(this.news.id)
-            .subscribe(() => this.storeService.setItem(KEYS.NEWS_VIEWED(this.news.id), true)),
-        5000
+    this.browserService.on(() => {
+      if (this.storeService.getItem(STORE_KEYS.newsViewed(this.news.id))) return
+      this.viewedTimeoutId = Number(
+        setTimeout(
+          () =>
+            this.apiService
+              .viewNews(this.news.id)
+              .subscribe(() => this.storeService.setItem(STORE_KEYS.newsViewed(this.news.id), true)),
+          5000
+        )
       )
-    )
+    })
   }
 
   public likeNews() {
-    if (this.storeService.getItem(KEYS.NEWS_LIKED(this.news.id))) {
+    if (this.storeService.getItem(STORE_KEYS.newsLiked(this.news.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likeNews(this.news.id).subscribe(() => {
-      this.storeService.setItem(KEYS.NEWS_LIKED(this.news.id), true)
+      this.storeService.setItem(STORE_KEYS.newsLiked(this.news.id), true)
       if (this.news) this.news.likes += 1
       this.updateHeader()
       this.layoutService.showMessage('点赞成功', 'success')

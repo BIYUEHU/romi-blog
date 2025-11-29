@@ -15,9 +15,9 @@ import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { LayoutService } from '../../services/layout.service'
-import { KEYS, StoreService } from '../../services/store.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate, randomRTagType } from '../../utils'
-import { LoadingComponent } from '../loading/loading.component'
+import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 interface TocItem {
   level: number
@@ -30,10 +30,17 @@ interface CommentItem extends ResCommentData {
 }
 
 @Component({
-    selector: 'app-post-content',
-    imports: [LoadingComponent, RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './post-content.component.html'
+  selector: 'app-post-content',
+  imports: [
+    RouterLink,
+    DatePipe,
+    FormsModule,
+    WebComponentInputAccessorDirective,
+    NgOptimizedImage,
+    SkeletonLoaderComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './post-content.component.html'
 })
 export class PostContentComponent implements OnInit, OnDestroy {
   @Input({ required: true }) public post!: ResPostSingleData
@@ -50,7 +57,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
   private highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>
   private destroy$ = new Subject<void>()
 
-  public renderedContent: SafeHtml = ''
+  public renderedContent?: SafeHtml
   public commentText = ''
   public toc: TocItem[] = []
   public comments: CommentItem[] | null = null
@@ -85,7 +92,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.mdParser = this.setupMdParser()
 
     this.layoutService.setTitle(this.post.title)
-    this.renderContent().then(() => this.browserService.on(() => this.viewPost()))
+    this.renderContent().then(() => this.viewPost())
 
     if (this.hideComments) {
       this.comments = []
@@ -112,25 +119,27 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public viewPost() {
-    if (this.storeService.getItem(KEYS.POST_VIEWED(this.post.id))) return
-    this.viewedTimeoutId = Number(
-      setTimeout(
-        () =>
-          this.apiService
-            .viewPost(this.post.id)
-            .subscribe(() => this.storeService.setItem(KEYS.POST_VIEWED(this.post.id), true)),
-        5000
+    this.browserService.on(() => {
+      if (this.storeService.getItem(STORE_KEYS.postViewed(this.post.id))) return
+      this.viewedTimeoutId = Number(
+        setTimeout(
+          () =>
+            this.apiService
+              .viewPost(this.post.id)
+              .subscribe(() => this.storeService.setItem(STORE_KEYS.postViewed(this.post.id), true)),
+          5000
+        )
       )
-    )
+    })
   }
 
   public likePost() {
-    if (this.storeService.getItem(KEYS.POST_LIKED(this.post.id))) {
+    if (this.storeService.getItem(STORE_KEYS.postLiked(this.post.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likePost(this.post.id).subscribe(() => {
-      this.storeService.setItem(KEYS.POST_LIKED(this.post.id), true)
+      this.storeService.setItem(STORE_KEYS.postLiked(this.post.id), true)
       if (this.post) this.post.likes += 1
       this.updateHeader()
       this.layoutService.showMessage('点赞成功', 'success')
@@ -224,10 +233,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   private generateToc(content: string): TocItem[] {
-    const headings = content.match(/#{1,6}.+/g) || []
-    return headings.map((heading) => ({
-      level: heading.match(/^#+/)?.[0].length || 0,
-      text: heading.replace(/^#+\s*/, '')
+    return [...content.matchAll(/^(#{1,6})\s+(.+)$/gm)].map((match) => ({
+      level: match[1].length,
+      text: match[2].trim()
     }))
   }
 

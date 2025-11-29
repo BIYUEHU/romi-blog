@@ -1,16 +1,16 @@
 import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
-import { LoadingComponent } from '../../components/loading/loading.component'
 import { BangumiData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { LayoutService } from '../../services/layout.service'
 import { CardComponent } from '../card/card.component'
+import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 @Component({
-    selector: 'app-bangumi',
-    imports: [LoadingComponent, CardComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './bangumi.component.html'
+  selector: 'app-bangumi',
+  imports: [CardComponent, NgOptimizedImage, SkeletonLoaderComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './bangumi.component.html'
 })
 export class BangumiComponent implements OnInit {
   @Input({ required: true }) public isAnime!: boolean

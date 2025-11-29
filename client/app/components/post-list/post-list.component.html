@@ -1,4 +1,4 @@
-<div class="w-5xl max-w-90% mx-auto flex-1">
+<div class="w-6xl max-w-90% mx-auto flex-1">
 
   <div class="columns-1 md:columns-2 gap-6">
     @for (post of displayedPosts; track post.id) {
@@ -56,12 +56,12 @@
       @for (item of getPageNumbers(); track $index) {
         @if (item === 'prev') {
           <r-button (click)="goToPage(currentPage - 1)" class="w-10 h-10 rounded-lg" [disabled]="currentPage === 1">
-            &lt;&lt;
+            ←
           </r-button>
         } @else if (item === 'next') {
           <r-button (click)="goToPage(currentPage + 1)" class="w-10 h-10 rounded-lg"
                     [disabled]="currentPage === totalPages">
-            >>
+            →
           </r-button>
         } @else if (item === '...') {
           <span class="px-2 text-accent-100">...</span>

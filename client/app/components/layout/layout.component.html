@@ -1,7 +1,11 @@
-<div [class]="'a-accent-color' + fullBackground ? 'h-screen' : 'min-h-screen'">
+<div class="a-accent-color flex flex-col w-full"
+     [class.h-screen]="fullBackground"
+     [class.min-h-screen]="!fullBackground"
+>
   <app-header/>
   <div class="flex-1 bg-text-100 w-full text-bg-100">
-    <div [class]="'bg-bg-100 max-h-60vh min-h-350px pt-14 overflow-hidden relative mb-6 ' + headerImageHeight ">
+    <div class="bg-bg-100 max-h-60vh min-h-350px pt-14 overflow-hidden relative mb-6 transition-shadow duration-500 shadow-xl"
+         [class]="headerImageHeight ">
       <div class="brightness-60 absolute left-0 top-0 w-full h-full">
         <img fill priority [ngSrc]="layoutService.header$().imageUrl"
              alt="Header Image" class="object-cover left-0 top-0"/>
@@ -21,16 +25,11 @@
       </div>
     </div>
     @if (!fullBackground) {
-      <div class="max-w-[1200px] mx-auto px-4 min-h-60vh">
+      <div class="max-w-[1200px] mx-auto px-4">
         @if (isLoading) {
-          <div class="skeleton-container">
-            <div class="skeleton-line w-60% h-8"></div>
-            <div class="skeleton-line w-80% h-6 mt-4"></div>
-            <div class="skeleton-line w-70% h-6 mt-2"></div>
-          </div>
-        } @else {
-          <ng-content select="[main]"></ng-content>
+          <app-skeleton-loader />
         }
+        <ng-content select="[main]"></ng-content>
       </div>
     }
   </div>

@@ -6,12 +6,12 @@
     </button>
 
     <div class="text-primary-100 text-sm hidden lg:block">
-      <span>{{ createDate | date: 'YYYY-MM-dd HH:mm:ss' }}</span>
+      <span>{{ createDate | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
     </div>
   </div>
 
   <div class="flex items-center gap-4">
-    <a href="/" target="_blank"
+    <a routerLink="/"
       class="flex items-center gap-2 px-3 py-1.5 text-sm text-primary-300 hover:bg-primary-100 rounded transition-colors">
       <i class="i-mdi:web"></i>
       <span>前台</span>

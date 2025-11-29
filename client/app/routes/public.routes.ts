@@ -21,7 +21,6 @@ import { NewsesComponent } from '../pages/newses/newses.component'
 import { newsesResolver } from '../pages/newses/newses.resolver'
 import { NotFoundComponent } from '../pages/not-found/not-found.component'
 import { PostComponent } from '../pages/post/post.component'
-import { postResolver } from '../pages/post/post.resolver'
 import { PostsComponent } from '../pages/posts/posts.component'
 import { postsResolver } from '../pages/posts/posts.resolver'
 import { ProjectComponent } from '../pages/project/project.component'
@@ -43,10 +42,7 @@ export const publicRoutes: Routes = [
     children: [
       {
         path: 'post/:id',
-        component: PostComponent,
-        resolve: {
-          post: postResolver
-        }
+        component: PostComponent
       },
       {
         path: 'post',

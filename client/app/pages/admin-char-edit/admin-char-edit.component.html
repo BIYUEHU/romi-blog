@@ -13,214 +13,221 @@
     </div>
 
     @if (isLoading) {
-    <div class="text-center py-8">
-      <r-loading label="加载中..." />
-    </div>
+      <div class="text-center py-8">
+        <r-loading label="加载中..."/>
+      </div>
     } @else {
-    <div class="space-y-6">
-      <div class="grid  grid-cols-1 lg:grid-cols-2 lg:gap-6">
-        <div>
-          <r-input label="名字" [(ngModel)]="charForm.name" required class="w-full" />
-        </div>
-        <div>
-          <r-input [(ngModel)]="charForm.romaji" label="罗马字" required class="w-full" />
-        </div>
-      </div>
-
-      <div>
-        <r-input [(ngModel)]="charForm.description" as="textarea" rows="3" label="描述" required class="w-full" />
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
-        <div>
-          <r-input [(ngModel)]="charForm.hitokoto" as="textarea" rows="3" label="一言" class="w-full" />
-        </div>
-
-        <div>
-          <r-input [(ngModel)]="charForm.comment" as="textarea" rows="5" label="评价" class="w-full" />
-        </div>
-
-        <div>
-          <label class="block text-sm text-bg-200 mb-2">别名</label>
-          <div class="relative grid grid-cols-5 gap-1">
-            <r-input [(ngModel)]="aliasInput" class="w-full col-span-4" />
-            <r-button type="primary" (click)="addAlias()">添加</r-button>
+      <div class="space-y-6">
+        <div class="grid  grid-cols-1 lg:grid-cols-2 lg:gap-6">
+          <div>
+            <r-input label="名字" [(ngModel)]="charForm.name" required class="w-full"/>
           </div>
-          <div class="flex flex-wrap gap-2 mt-2">
-            @for (alias of charForm.alias; track alias) {
-            <r-tag closeable (close)="removeAlias(alias)">
-              {{ alias }}
-            </r-tag>
-            }
+          <div>
+            <r-input [(ngModel)]="charForm.romaji" label="罗马字" required class="w-full"/>
           </div>
         </div>
 
         <div>
-          <label class="block text-sm text-bg-200 mb-2">萌点</label>
-          <div class="relative">
-            <r-input [(ngModel)]="tagInput" (input)="searchTags()" placeholder="输入以搜索或添加萌点" class="w-full" />
-            @if (tagInput && filteredTags.length > 0) {
-            <div class="absolute z-10 w-full mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
-              @for (tag of filteredTags; track tag) {
-              <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addTag(tag)">
-                {{ tag }}
-              </div>
+          <r-input [(ngModel)]="charForm.description" as="textarea" rows="3" label="描述" required class="w-full"/>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-6">
+          <div>
+            <r-input [(ngModel)]="charForm.hitokoto" as="textarea" rows="3" label="一言" class="w-full"/>
+          </div>
+
+          <div>
+            <r-input [(ngModel)]="charForm.comment" as="textarea" rows="5" label="评价" class="w-full"/>
+          </div>
+
+          <div>
+            <label class="block text-sm text-bg-200 mb-2">别名</label>
+            <div class="relative grid grid-cols-5 gap-1">
+              <r-input [(ngModel)]="aliasInput" class="w-full col-span-4"/>
+              <r-button type="primary" (click)="addAlias()">添加</r-button>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              @for (alias of charForm.alias; track alias) {
+                <r-tag closeable (close)="removeAlias(alias)">
+                  {{ alias }}
+                </r-tag>
               }
             </div>
-            }
           </div>
-          <div class="flex flex-wrap gap-2 mt-2">
-            @for (tag of charForm.tags; track tag) {
-            <r-tag closeable (close)="removeTag(tag)">
-              #{{ tag }}
-            </r-tag>
-            }
-          </div>
-        </div>
 
-        <div>
-          <label class="block text-sm text-bg-200 mb-2">图片</label>
-          <div class="relative grid grid-cols-5 gap-1">
-            <r-input [(ngModel)]="imagesInput" class="w-full col-span-4" />
-            <r-button type="primary" (click)="addImage()">添加</r-button>
-          </div>
-          <div class="flex flex-wrap gap-2 mt-2">
-            @for (image of charForm.images; track image) {
-            <r-tag closeable (close)="removeImage(image)">
-              <a [href]="image" target="_blank">
-                <img [alt]="image" fill [ngSrc]="image" class="max-w-28 rounded-lg" />
-              </a>
-            </r-tag>
-            }
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm text-bg-200 mb-2">链接</label>
-          <div class="relative grid grid-cols-5 gap-1">
-            <r-input [(ngModel)]="urlInput" class="w-full col-span-4" />
-            <r-button type="primary" (click)="addUrl()">添加</r-button>
-          </div>
-          <div class="flex flex-wrap gap-2 mt-2">
-            @for (url of charForm.url; track url) {
-            <r-tag closeable (close)="removeUrl(url)">
-              <a [href]="url" target="_blank">
-                {{url.slice(0, 30)}}
-              </a>
-            </r-tag>
-            }
-          </div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
-        <div>
-          <label class="block text-sm text-bg-200 mb-2">性别</label>
-          <select [(ngModel)]="charForm.gender"
-            class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
-            <option value="MALE">男</option>
-            <option value="FEMALE">女</option>
-            <option value="OTHER">其他</option>
-          </select>
-        </div>
-        <div>
-          <r-input label="年龄" type="number" [(ngModel)]="charForm.age" class="w-full" />
-        </div>
-        <div class="grid grid-cols-5">
-          <r-input label="生日" type="datetime-local" [(ngModel)]="charForm.birthday" class="w-full col-span-4" />
           <div>
-            <div class="text-text-100 mb-2">hide</div>
-            <r-button type="error" (click)="charForm.birthday = null">清除</r-button>
+            <label class="block text-sm text-bg-200 mb-2">萌点</label>
+            <div class="relative">
+              <r-input [(ngModel)]="tagInput" (input)="searchTags()" placeholder="输入以搜索或添加萌点" class="w-full"/>
+              @if (tagInput && filteredTags.length > 0) {
+                <div class="absolute z-10 w-full mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
+                  @for (tag of filteredTags; track tag) {
+                    <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="addTag(tag)">
+                      {{ tag }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              @for (tag of charForm.tags; track tag) {
+                <r-tag closeable (close)="removeTag(tag)">
+                  #{{ tag }}
+                </r-tag>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm text-bg-200 mb-2">图片</label>
+            <div class="relative grid grid-cols-5 gap-1">
+              <r-input [(ngModel)]="imagesInput" class="w-full col-span-4"/>
+              <r-button type="primary" (click)="addImage()">添加</r-button>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              @for (image of charForm.images; track image) {
+                <r-tag closeable (close)="removeImage(image)">
+                  <a [href]="image" target="_blank">
+                    <img [alt]="image" width="112" height="200" [ngSrc]="image" class="max-w-28 rounded-lg object-cover"/>
+                  </a>
+                </r-tag>
+              }
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm text-bg-200 mb-2">链接</label>
+            <div class="relative grid grid-cols-5 gap-1">
+              <r-input [(ngModel)]="urlInput" class="w-full col-span-4"/>
+              <r-button type="primary" (click)="addUrl()">添加</r-button>
+            </div>
+            <div class="flex flex-wrap gap-2 mt-2">
+              @for (url of charForm.url; track url) {
+                <r-tag closeable (close)="removeUrl(url)">
+                  <a [href]="url" target="_blank">
+                    {{ url.slice(0, 30) }}
+                  </a>
+                </r-tag>
+              }
+            </div>
           </div>
         </div>
-        <div>
-          <r-input label="声优" [(ngModel)]="charForm.voice" class="w-full" />
-        </div>
-        <div>
-          <r-input label="作品" [(ngModel)]="charForm.series" class="w-full" />
-        </div>
-        <div>
-          <label class="block text-sm text-bg-200 mb-2">系列类型</label>
-          <select [(ngModel)]="charForm.series_genre"
-            class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
-            <option value="GALGAME">GalGame</option>
-            <option value="NOVEL">轻小说</option>
-            <option value="ANIME">动画</option>
-            <option value="MANGA">漫画</option>
-            <option value="OTHER">其它</option>
-          </select>
-        </div>
-        <div>
-          <r-input label="身高" type="number" [(ngModel)]="charForm.height" class="w-full" />
-        </div>
-        <div>
-          <r-input label="体重" type="number" [(ngModel)]="charForm.weight" class="w-full" />
-        </div>
-        <div class="grid grid-cols-5 gap-1">
-          <div class="col-span-4">
-            <label class="block text-sm text-bg-200 mb-2">血型</label>
-            <select [(ngModel)]="charForm.blood_type"
-              class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="AB">AB</option>
-              <option value="O">O</option>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 lg:gap-6">
+          <div>
+            <label class="block text-sm text-bg-200 mb-2">性别</label>
+            <select [(ngModel)]="charForm.gender"
+                    class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+              <option value="MALE">男</option>
+              <option value="FEMALE">女</option>
+              <option value="OTHER">其他</option>
             </select>
           </div>
           <div>
-            <div class="text-text-100 mb-2">hide</div>
-            <r-button type="error" (click)="charForm.blood_type = null">清除</r-button>
+            <r-input label="年龄" type="number" [(ngModel)]="charForm.age" class="w-full"/>
           </div>
-        </div>
-        <div>
-          <r-input label="胸围" type="number" [(ngModel)]="charForm.bust" class="w-full" />
-        </div>
-        <div>
-          <r-input label="腰围" type="number" [(ngModel)]="charForm.waist" class="w-full" />
-        </div>
-        <div>
-          <r-input label="臀围" type="number" [(ngModel)]="charForm.hip" class="w-full" />
-        </div>
-        <div>
-          <r-input label="发色" [(ngModel)]="charForm.hair_color" class="w-full" />
-        </div>
-        <div>
-          <r-input label="瞳色" [(ngModel)]="charForm.eye_color" class="w-full" />
-        </div>
-        <div class="grid grid-cols-5 gap-1">
-          <r-input label="主色" type="color" [(ngModel)]="mainColor" class="w-full col-span-4" />
-          <div>
-            <div class="text-text-100 mb-2">hide</div>
-            <r-button type="error" (click)="charForm.color= null">清除</r-button>
-          </div>
-        </div>
-        <div>
-          <r-input label="搜索歌曲" [(ngModel)]="songInput" (input)="searchSongs()" class="w-full" />
-          <div class="z-10 mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
-            @for (song of filteredSongs; track song.url) {
-            <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="setSong(song)">
-              {{ song.name }} - {{ song.artist }}
+          <div class="grid grid-cols-5">
+            <r-input label="生日" type="datetime-local" [(ngModel)]="charForm.birthday" class="w-full col-span-4"/>
+            <div>
+              <div class="text-text-100 mb-2">hide</div>
+              <r-button type="error" (click)="charForm.birthday = null">清除</r-button>
             </div>
-            }
           </div>
-          <span class="block text-sm text-bg-200 mb-2">已选择：@if (charForm.song_id) { <a
-              [href]="'http://music.163.com/song/media/outer/url?id=' + charForm.song_id + '.mp3'" target="_blank">{{
-              songName }}</a><span (click)="clearSong()"
-              class="ml-2 p-0.5 text-xs bg-text-200 hover:bg-red-500 cursor-pointer"> X </span> } @else { 无 }
+          <div>
+            <r-input label="声优" [(ngModel)]="charForm.voice" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="作品" [(ngModel)]="charForm.series" class="w-full"/>
+          </div>
+          <div>
+            <label class="block text-sm text-bg-200 mb-2">系列类型</label>
+            <select [(ngModel)]="charForm.series_genre"
+                    class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+              <option value="GALGAME">GalGame</option>
+              <option value="NOVEL">轻小说</option>
+              <option value="ANIME">动画</option>
+              <option value="MANGA">漫画</option>
+              <option value="OTHER">其它</option>
+            </select>
+          </div>
+          <div>
+            <r-input label="身高" type="number" [(ngModel)]="charForm.height" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="体重" type="number" [(ngModel)]="charForm.weight" class="w-full"/>
+          </div>
+          <div class="grid grid-cols-5 gap-1">
+            <div class="col-span-4">
+              <label class="block text-sm text-bg-200 mb-2">血型</label>
+              <select [(ngModel)]="charForm.blood_type"
+                      class="w-full px-4 py-2 border border-text-300 rounded-lg focus:border-primary-100 focus:ring-1 focus:ring-primary-100 outline-none">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option>
+              </select>
+            </div>
+            <div>
+              <div class="text-text-100 mb-2">hide</div>
+              <r-button type="error" (click)="charForm.blood_type = null">清除</r-button>
+            </div>
+          </div>
+          <div>
+            <r-input label="胸围" type="number" [(ngModel)]="charForm.bust" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="腰围" type="number" [(ngModel)]="charForm.waist" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="臀围" type="number" [(ngModel)]="charForm.hip" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="发色" [(ngModel)]="charForm.hair_color" class="w-full"/>
+          </div>
+          <div>
+            <r-input label="瞳色" [(ngModel)]="charForm.eye_color" class="w-full"/>
+          </div>
+          <div class="grid grid-cols-5 gap-1">
+            <r-input label="主色" type="color" [(ngModel)]="mainColor" class="w-full col-span-4"/>
+            <div>
+              <div class="text-text-100 mb-2">hide</div>
+              <r-button type="error" (click)="charForm.color= null">清除</r-button>
+            </div>
+          </div>
+          <div>
+            <r-input label="搜索歌曲" [(ngModel)]="songInput" (input)="searchSongs()" class="w-full"/>
+            <div class="z-10 mt-1 bg-text-200 border border-text-200 rounded-lg shadow-lg">
+              @for (song of filteredSongs; track song.url) {
+                <div class="px-4 py-2 cursor-pointer hover:bg-text-200" (click)="setSong(song)">
+                  {{ song.name }} - {{ song.artist }}
+                </div>
+              }
+            </div>
+            <span class="block text-sm text-bg-200 mb-2">已选择：@if (charForm.song_id) {
+              <a
+                      [href]="'http://music.163.com/song/media/outer/url?id=' + charForm.song_id + '.mp3'"
+                      target="_blank">{{
+                      songName
+                }}</a><span (click)="clearSong()"
+                            class="ml-2 p-0.5 text-xs bg-text-200 hover:bg-red-500 cursor-pointer"> X </span>
+            } @else {
+              无
+            }
           </span>
-        </div>
-        <div>
-          <r-input label="排序" type="number" [(ngModel)]="charForm.order" class="w-full" placeholder="值越小排序越靠前" />
-        </div>
-        <div class="mt-8">
-          <r-checkbox [(ngModel)]="charForm.hide" type="primary">
-            隐藏角色
-          </r-checkbox>
-        </div>
-        <div>
+          </div>
+          <div>
+            <r-input label="排序" type="number" [(ngModel)]="charForm.order" class="w-full"
+                     placeholder="值越小排序越靠前"/>
+          </div>
+          <div class="mt-8">
+            <r-checkbox [(ngModel)]="charForm.hide" type="primary">
+              隐藏角色
+            </r-checkbox>
+          </div>
+          <div>
+          </div>
         </div>
       </div>
-    </div>
     }
   </div>
 </div>

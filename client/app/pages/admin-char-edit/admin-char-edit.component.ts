@@ -217,7 +217,7 @@ export class AdminCharEditComponent implements OnInit {
       return
     }
 
-    const numberKeys = ['age', 'height', 'weight', 'bust', 'waist', 'hip', 'order'] as const
+    const numberSTORE_KEYS = ['age', 'height', 'weight', 'bust', 'waist', 'hip', 'order'] as const
     const form = {
       ...this.charForm,
       birthday: this.charForm.birthday
@@ -226,7 +226,7 @@ export class AdminCharEditComponent implements OnInit {
           )
         : null
     }
-    for (const key of numberKeys) {
+    for (const key of numberSTORE_KEYS) {
       if (form[key] === null) continue
       form[key] = Number(form[key])
       if (form[key] === 0) form[key] = null
