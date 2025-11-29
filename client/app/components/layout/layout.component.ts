@@ -1,5 +1,5 @@
 import { NgOptimizedImage, ViewportScroller } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, inject, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
 import { ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -37,17 +37,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
     private readonly storeService: StoreService,
-    public readonly layoutService: LayoutService
+    public readonly layoutService: LayoutService,
+    browserService: BrowserService,
+    apiService: ApiService
   ) {
-    inject(BrowserService).on(() =>
-      inject(ApiService)
-        .getMusic()
-        .subscribe((data) => {
-          this.musicList = data
-          setTimeout(() => {
-            this.togglePlayer(true)
-          }, 1000)
-        })
+    browserService.on(() =>
+      apiService.getMusic().subscribe((data) => {
+        this.musicList = data
+        setTimeout(() => {
+          this.togglePlayer(true)
+        }, 1000)
+      })
     )
   }
 

@@ -21,29 +21,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/client/app/components/error-page/error-page.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/components/error-page/error-page.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/forbidden/forbidden.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/forbidden/forbidden.component.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/server-error/server-error.component.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/client/app/pages/server-error/server-error.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/TODO.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/not-found/not-found.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/routes/public.routes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/routes/public.routes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/api.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/api.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/cache.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/cache.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -350,7 +331,7 @@
       <workItem from="1764387170664" duration="6586000" />
       <workItem from="1764396076722" duration="8787000" />
       <workItem from="1764409152614" duration="6330000" />
-      <workItem from="1764425492393" duration="8155000" />
+      <workItem from="1764425492393" duration="10226000" />
     </task>
     <servers />
   </component>
