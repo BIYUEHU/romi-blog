@@ -49,6 +49,7 @@ export const publicRoutes: Routes = [
       {
         path: 'post',
         component: PostsComponent,
+        title: '文章列表',
         resolve: {
           posts: postsResolver
         }
@@ -56,19 +57,20 @@ export const publicRoutes: Routes = [
       {
         path: 'archive',
         component: ArchiveComponent,
+        title: '归档整理',
         resolve: {
-          posts: postsResolver
+          postsArchive: postsResolver
         }
       },
       {
-        path: 'tag/:name',
+        path: 'tag/:tag',
         component: TagComponent,
         resolve: {
           posts: postsResolver
         }
       },
       {
-        path: 'category/:name',
+        path: 'category/:category',
         component: CategoryComponent,
         resolve: {
           posts: postsResolver
@@ -77,24 +79,28 @@ export const publicRoutes: Routes = [
       {
         path: 'hitokotos',
         component: HitokotosComponent,
+        title: '语录墙',
         resolve: {
           hitokotos: hitokotosResolver
         }
       },
       {
         path: 'anime',
-        component: AnimeComponent
+        component: AnimeComponent,
+        title: '追番列表'
       },
       {
         path: 'gal',
-        component: GalComponent
+        component: GalComponent,
+        title: '视觉小说列表'
       },
       {
         path: 'news',
         component: NewsesComponent,
         resolve: {
           newses: newsesResolver
-        }
+        },
+        title: '近期动态'
       },
       {
         path: 'news/:id',
@@ -105,11 +111,13 @@ export const publicRoutes: Routes = [
       },
       {
         path: 'music',
-        component: MusicComponent
+        component: MusicComponent,
+        title: '歌单收藏'
       },
       {
         path: 'char',
         component: CharsComponent,
+        title: '角色收藏',
         resolve: {
           chars: charsResolver
         }
@@ -124,13 +132,15 @@ export const publicRoutes: Routes = [
       {
         path: 'project',
         component: ProjectComponent,
+        title: '开源项目',
         resolve: {
           projects: projectResolver
         }
       },
       {
         path: '403',
-        component: ForbiddenComponent
+        component: ForbiddenComponent,
+        title: '干坏事禁止！'
       },
       {
         path: '404',
@@ -138,7 +148,8 @@ export const publicRoutes: Routes = [
       },
       {
         path: '500',
-        component: ServerErrorComponent
+        component: ServerErrorComponent,
+        title: '唉哟我去，寄了'
       }
     ]
   },

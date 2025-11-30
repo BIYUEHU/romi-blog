@@ -31,7 +31,7 @@ export class BangumiComponent implements OnInit {
   public ngOnInit(): void {
     this.isLoading = true
 
-    // TODO: 像其它第三方API，后端进行缓存，这样这里也可以改用为 SSR resolver
+    // TODO: 像其它第三方API，后端进行缓存，这样这里也可以改用为 SSR resolver，同时到也可以并入到 title strategy 把 header 逻辑
     this.apiService.getBangumi(0, this.isAnime).subscribe((data) => {
       this.data = data
       this.isLoading = false
@@ -39,7 +39,10 @@ export class BangumiComponent implements OnInit {
       this.total = data.total
       this.offset = Math.min(50, data.total)
 
-      this.updateHeader()
+      this.layoutService.updateHeader({
+        title: this.isAnime ? '追番列表' : '视觉小说列表',
+        subTitle: [`共 ${this.total} 部${this.isAnime ? '番剧' : '视觉小说'}`]
+      })
     })
   }
 
@@ -52,16 +55,6 @@ export class BangumiComponent implements OnInit {
     this.apiService.getBangumi(this.offset, this.isAnime).subscribe((data) => {
       this.items = [...this.items, ...data.data]
       this.offset = Math.min(this.offset + 50, this.total)
-    })
-  }
-
-  private updateHeader(): void {
-    const title = this.isAnime ? '追番列表' : 'Gal 列表'
-    const typeName = this.isAnime ? '番剧' : 'Gal'
-
-    this.layoutService.updateHeader({
-      title,
-      subTitle: [`共 ${this.total} 部${typeName}`]
     })
   }
 }

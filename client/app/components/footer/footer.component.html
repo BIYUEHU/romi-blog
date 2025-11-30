@@ -25,6 +25,9 @@
         <a [routerLink]="item.link">{{ item.text }}</a>
         @if ($index !== footerItems.length - 1) { • } }
       </p>
+      @if (metadata ) {
+        <p class="text-gray">Build Time: {{ metadata.build.BUILD_TIME | date:'yyyy-MM-dd HH:mm:ss' }} Hash: {{ metadata.build.HASH }} Angular Version: {{ metadata.pkg.dependencies["@angular/core"].slice(1) }}</p>
+      }
     </div>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import {DatePipe, NgOptimizedImage} from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -12,15 +12,21 @@ import { ApiService } from '../../services/api.service'
 import { renderCharacterBWH } from '../../utils'
 
 @Component({
-    selector: 'app-admin-chars',
-    imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-chars.component.html'
+  selector: 'app-admin-chars',
+  imports: [
+    DatePipe,
+    RouterLink,
+    FormsModule,
+    WebComponentInputAccessorDirective,
+    AdminBaseListComponent,
+    NgOptimizedImage
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-chars.component.html'
 })
 export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResCharacterData> implements OnInit {
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.layoutService.setTitle('角色管理')
     this.emptyMessage = '暂无角色'
   }
 
@@ -40,7 +46,7 @@ export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResChara
     )
   }
 
-  protected deleteItem(id: number): void {
+  protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteCharacter(id).subscribe(() => {
         this.layoutService.showMessage('角色删除成功', 'secondary')
@@ -49,7 +55,7 @@ export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResChara
     }
   }
 
-  public ngOnInit(): void {
+  public ngOnInit() {
     this.loadItems()
   }
 

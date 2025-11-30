@@ -1,13 +1,14 @@
-import { Component } from '@angular/core'
+import { Component, Input, WritableSignal } from '@angular/core'
 import { RouterLink, RouterLinkActive } from '@angular/router'
-import { LayoutService } from '../../services/layout.service'
 
 @Component({
-    selector: 'app-admin-sidebar',
-    imports: [RouterLink, RouterLinkActive],
-    templateUrl: './admin-sidebar.component.html'
+  selector: 'app-admin-sidebar',
+  imports: [RouterLink, RouterLinkActive],
+  templateUrl: './admin-sidebar.component.html'
 })
 export class AdminSidebarComponent {
+  @Input({ required: true }) public isSidebarOpen!: WritableSignal<boolean>
+
   public menuItems = [
     {
       text: '控制台',
@@ -44,9 +45,7 @@ export class AdminSidebarComponent {
     }
   ]
 
-  public constructor(private readonly layoutService: LayoutService) {}
-
   public onMenuClick() {
-    if (window.innerWidth < 1024) this.layoutService.closeSidebar()
+    if (window.innerWidth < 1024) this.isSidebarOpen.set(false)
   }
 }

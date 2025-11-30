@@ -8,7 +8,7 @@ import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
-import randomRTagType, { renderCharacterBWH } from '../../utils'
+import { randomRTagType, renderCharacterBWH } from '../../utils'
 
 @Component({
   selector: 'app-char',
@@ -56,8 +56,6 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
 
     if (this.char.images.length <= 1) return
     this.currentImageIndex = 0
-    console.log('set 0')
-
     this.carouselSubscription = interval(CharComponent.CAROUSEL_INTERVAL_MS).subscribe(() => this.nextImage())
   }
 
@@ -89,11 +87,6 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
       })
     })
 
-    this.layoutService.updateHeader({
-      title: this.char.name,
-      subTitle: [this.char.romaji, this.char.description]
-    })
-    this.layoutService.setTitle(`${this.char.name} ${this.char.romaji}`)
     this.tags = this.char.tags.map((tag) => [tag, randomRTagType()])
 
     this.setupCarousel()

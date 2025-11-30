@@ -27,7 +27,34 @@
     @if (!fullBackground) {
       <div class="max-w-[1200px] mx-auto px-4">
         @if (isLoading) {
-          <app-skeleton-loader />
+          <app-skeleton-loader/>
+        }
+        @if (isError) {
+          <app-error-page>
+            <h1 class="text-4xl font-bold text-accent-100 mb-4">
+              未知的错误
+            </h1>
+
+            <div class="relative max-w-full w960 h-90 mx-auto mb-8 rounded-md">
+              <img fill ngSrc="https://img0.huoshen80.top/i/2025/11/29/692b11628b92b.png" alt="error"
+                   class="w-full h-full object-contain animate-float"/>
+            </div>
+
+            <div class="space-y-4 mb-8">
+              <div content>
+                <h2 class="text-2xl text-pink-3 font-bold text-bg-200">你好像把页面玩坏了...</h2>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-center gap-4">
+              <r-button (click)="notify()" type="error" size="lg">
+                告诉 AS
+              </r-button>
+              <r-button (click)="reload()" type="secondary" size="lg">
+                刷新下
+              </r-button>
+            </div>
+          </app-error-page>
         }
         <ng-content select="[main]"></ng-content>
       </div>

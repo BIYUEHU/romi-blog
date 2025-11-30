@@ -1,4 +1,4 @@
-import {DatePipe, NgOptimizedImage} from '@angular/common'
+import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
@@ -12,21 +12,27 @@ import { ApiService } from '../../services/api.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-    selector: 'app-admin-posts',
-    imports: [DatePipe, RouterLink, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-posts.component.html'
+  selector: 'app-admin-posts',
+  imports: [
+    DatePipe,
+    RouterLink,
+    FormsModule,
+    WebComponentInputAccessorDirective,
+    AdminBaseListComponent,
+    NgOptimizedImage
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-posts.component.html'
 })
 export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostData> implements OnInit {
   public filterStatus = ''
 
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.layoutService.setTitle('文章管理')
     this.emptyMessage = '暂无文章'
   }
 
-  protected loadItems(): void {
+  protected loadItems() {
     this.isLoading = true
     this.apiService.getPosts().subscribe((data) => {
       this.items = sortByCreatedTime(data)
@@ -34,11 +40,11 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
     })
   }
 
-  protected searchPredicate(post: ResPostData, query: string): boolean {
+  protected searchPredicate(post: ResPostData, query: string) {
     return post.title.toLowerCase().includes(query)
   }
 
-  protected deleteItem(id: number): void {
+  protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deletePost(id).subscribe(() => {
         this.layoutService.showMessage('文章删除成功', 'secondary')
@@ -47,7 +53,7 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
     }
   }
 
-  public ngOnInit(): void {
+  public ngOnInit() {
     this.loadItems()
   }
 }

@@ -12,10 +12,10 @@ import { AuthService } from '../../services/auth.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-    selector: 'app-admin-users',
-    imports: [DatePipe, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-users.component.html'
+  selector: 'app-admin-users',
+  imports: [DatePipe, FormsModule, WebComponentInputAccessorDirective, AdminBaseListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-users.component.html'
 })
 export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserData> implements OnInit {
   public editingUser: ResUserData | true | null = null
@@ -33,7 +33,6 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
     public readonly authService: AuthService
   ) {
     super()
-    this.layoutService.setTitle('用户管理')
     this.emptyMessage = '暂无用户'
   }
 
@@ -45,11 +44,11 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
     })
   }
 
-  protected searchPredicate(user: ResUserData, query: string): boolean {
+  protected searchPredicate(user: ResUserData, query: string) {
     return user.username.toLowerCase().includes(query) || user.email.toLowerCase().includes(query)
   }
 
-  protected deleteItem(id: number): void {
+  protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteUser(id).subscribe(() => {
         this.layoutService.showMessage('删除成功', 'secondary')
@@ -113,7 +112,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
     }
   }
 
-  public ngOnInit(): void {
+  public ngOnInit() {
     this.loadItems()
   }
 }

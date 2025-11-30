@@ -25,10 +25,10 @@ interface GroupedNews {
 }
 
 @Component({
-    selector: 'app-newses',
-    imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './newses.component.html'
+  selector: 'app-newses',
+  imports: [RouterLink, DatePipe, FormsModule, WebComponentInputAccessorDirective, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './newses.component.html'
 })
 export class NewsesComponent implements OnInit {
   private static readonly PAGE_SIZE = 15
@@ -54,11 +54,6 @@ export class NewsesComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.layoutService.setTitle('近期动态')
-    this.layoutService.updateHeader({
-      title: '近期动态',
-      subTitle: []
-    })
     this.newses = sortByCreatedTime(this.newses)
     this.refresh()
   }

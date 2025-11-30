@@ -6,7 +6,7 @@
     </button>
 
     <div class="text-primary-100 text-sm hidden lg:block">
-      <span>{{ createDate | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
+      <span>{{ createDate() | date: 'yyyy-MM-dd HH:mm:ss' }}</span>
     </div>
   </div>
 
@@ -21,17 +21,17 @@
       <button
               class="hover:cursor-pointer border-0 flex items-center gap-2 px-3 py-1.5 text-sm text-bg-300 hover:bg-primary-100 rounded border-1 border-bg-300">
         <img alt="avatar" [ngSrc]="avatarUrl" width="24" height="24" class="rounded-full"/>
-        <span>{{ user?.username }}</span>
+        <span>{{ authService.user$()?.username }}</span>
         <i class="i-mdi:chevron-down text-gray-500"></i>
       </button>
 
       <div
               class="hidden top-8.6 group-hover:block absolute right-0 min-w-15 min-h-5 right-2 bg-text-100 border border-text-300 rounded-md shadow-lg">
-        <button class="hover:cursor-pointer border-0 w-23 block px-4 py-2 text-sm text-bg-100 hover:bg-primary-100"
+        <button class="hover:cursor-pointer border-0 min-w-23 block px-4 py-2 text-sm text-bg-100 hover:bg-primary-100"
                 [routerLink]="'/admin/profile'">
           个人资料
         </button>
-        <button class="hover:cursor-pointer border-0 w-23 block px-4 py-2 text-sm text-red-600 hover:bg-primary-300"
+        <button class="hover:cursor-pointer border-0 min-w-23 block px-4 py-2 text-sm text-red-600 hover:bg-primary-300"
                 (click)="logout()">
           退出登录
         </button>

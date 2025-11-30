@@ -5,7 +5,7 @@ import { LoggerService } from '../services/logger.service'
 
 export const DEFAULT_TITLE = 'Romi Blog' // TODO
 
-export const ROMI_METADATA = { pkg, build: buildMeta }
+export const ROMI_METADATA = { pkg, build: buildMeta } // TODO: Receive metadata from backend by http request
 
 export enum HEADER_CONTEXT {
   SKIP_BRING_TOKEN = 'Bring-Token',

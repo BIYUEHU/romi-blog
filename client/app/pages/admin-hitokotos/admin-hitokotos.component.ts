@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import {
   AbstractAdminBaseListComponent,
@@ -10,17 +10,17 @@ import { ReqHitokotoData, ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 
 @Component({
-    selector: 'app-admin-hitokotos',
-    imports: [
-        FormsModule,
-        WebComponentInputAccessorDirective,
-        WebComponentSwitchAccessorDirective,
-        AdminBaseListComponent
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-hitokotos.component.html'
+  selector: 'app-admin-hitokotos',
+  imports: [
+    FormsModule,
+    WebComponentInputAccessorDirective,
+    WebComponentSwitchAccessorDirective,
+    AdminBaseListComponent
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-hitokotos.component.html'
 })
-export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResHitokotoData> {
+export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResHitokotoData> implements OnInit {
   public filterType = 0
   public editingHitokoto: ResHitokotoData | null = null
 
@@ -40,8 +40,6 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
 
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.loadItems()
-    this.layoutService.setTitle('一言管理')
   }
 
   protected loadItems(): void {
@@ -58,13 +56,17 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
     return filterType ? hitokoto.type === filterType && matchesSearch : matchesSearch
   }
 
-  protected deleteItem(id: number): void {
+  protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteHitokoto(id).subscribe(() => {
         this.layoutService.showMessage('一言删除成功', 'secondary')
         this.items = this.items.filter((h) => h.id !== id)
       })
     }
+  }
+
+  public ngOnInit() {
+    this.loadItems()
   }
 
   public createHitokoto() {

@@ -11,10 +11,10 @@ import { ApiService } from '../../services/api.service'
 import { formatDate, sortByCreatedTime } from '../../utils'
 
 @Component({
-    selector: 'app-admin-news',
-    imports: [DatePipe, FormsModule, AdminBaseListComponent, WebComponentInputAccessorDirective],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-news.component.html'
+  selector: 'app-admin-news',
+  imports: [DatePipe, FormsModule, AdminBaseListComponent, WebComponentInputAccessorDirective],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-news.component.html'
 })
 export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsData> implements OnInit {
   public editingNews: ResNewsData | true | null = null
@@ -28,7 +28,6 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.layoutService.setTitle('动态管理')
   }
 
   protected loadItems(): void {
@@ -39,11 +38,11 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
     })
   }
 
-  protected searchPredicate(news: ResNewsData, query: string): boolean {
+  protected searchPredicate(news: ResNewsData, query: string) {
     return news.text.toLowerCase().includes(query)
   }
 
-  protected deleteItem(id: number): void {
+  protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteNews(id).subscribe(() => {
         this.layoutService.showMessage('删除成功', 'secondary')
@@ -98,7 +97,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
     }
   }
 
-  public ngOnInit(): void {
+  public ngOnInit() {
     this.loadItems()
   }
 }

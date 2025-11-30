@@ -6,5 +6,5 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
   templateUrl: './error-page.component.html'
 })
 export class ErrorPageComponent {
-  @Input({ required: true }) public code!: number
+  @Input() public code?: number
 }

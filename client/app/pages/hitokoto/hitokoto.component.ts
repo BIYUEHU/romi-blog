@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -12,7 +12,7 @@ import { HitokotosComponent } from '../hitokotos/hitokotos.component'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './hitokoto.component.html'
 })
-export class HitokotoComponent implements OnInit {
+export class HitokotoComponent {
   @Input() public hitokoto!: ResHitokotoData
   @Input() public readonly id?: string
 
@@ -32,19 +32,11 @@ export class HitokotoComponent implements OnInit {
 
   public readonly getTypeName = HitokotosComponent.prototype.getTypeName
 
-  public ngOnInit() {
-    this.layoutService.setTitle(this.hitokoto.msg)
-    this.layoutService.updateHeader({
-      title: '蛍の一言ひとこと',
-      subTitle: []
-    })
-  }
-
   public nextHitokoto() {
     this.isLoading = true
     this.apiService.getHitokoto().subscribe((data) => {
       this.hitokoto = data
-      this.layoutService.setTitle(data.msg)
+      // this.layoutService.setTitle(data.msg)
       this.isLoading = false
     })
   }

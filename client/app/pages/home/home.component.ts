@@ -6,7 +6,6 @@ import { LayoutComponent } from '../../components/layout/layout.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
 import { APlayer } from '../../shared/types'
 import type { homeResolver } from './home.resolver'
 
@@ -48,18 +47,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   public constructor(
-    private readonly layoutService: LayoutService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
-    this.layoutService.setTitle()
-    this.layoutService.updateHeader({
-      title: '',
-      subTitle: []
-    })
-
     this.browserService.on(() =>
       this.apiService.getMusic().subscribe((data) => {
         this.aplayer = new APlayer({

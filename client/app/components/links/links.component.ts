@@ -2,7 +2,6 @@ import { NgOptimizedImage } from '@angular/common'
 import { Component, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ResPostSingleData } from '../../../output'
-import { LayoutService } from '../../services/layout.service'
 import { CardComponent } from '../card/card.component'
 import { PostContentComponent } from '../post-content/post-content.component'
 
@@ -89,8 +88,4 @@ export class LinksComponent {
       description: '超快超稳定的接口网站'
     }
   ]
-
-  public constructor(private readonly layoutService: LayoutService) {
-    this.layoutService.setTitle('友情链接')
-  }
 }

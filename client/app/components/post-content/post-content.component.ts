@@ -16,7 +16,7 @@ import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { LayoutService } from '../../services/layout.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
-import randomRTagType, { formatDate } from '../../utils'
+import { randomRTagType } from '../../utils'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 interface TocItem {
@@ -44,13 +44,12 @@ interface CommentItem extends ResCommentData {
 })
 export class PostContentComponent implements OnInit, OnDestroy {
   @Input({ required: true }) public post!: ResPostSingleData
-  @Input() public hideSubTitle = false
   @Input() public hideToc = false
   @Input() public hideComments = false
   @Input() public hideRelatedPosts = false
   @Input() public hideOptions = false
   @Input() public hideCopyright = false
-  @Input() public setTitle = false
+  // @Input() public setTitle = false
 
   private viewedTimeoutId?: number
   private mdParser?: MarkdownIt
@@ -91,8 +90,20 @@ export class PostContentComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.mdParser = this.setupMdParser()
 
-    this.layoutService.setTitle(this.post.title)
-    this.renderContent().then(() => this.viewPost())
+    this.renderContent().then(() =>
+      this.browserService.on(() => {
+        if (this.storeService.getItem(STORE_KEYS.postViewed(this.post.id))) return
+        this.viewedTimeoutId = Number(
+          setTimeout(
+            () =>
+              this.apiService
+                .viewPost(this.post.id)
+                .subscribe(() => this.storeService.setItem(STORE_KEYS.postViewed(this.post.id), true)),
+            5000
+          )
+        )
+      })
+    )
 
     if (this.hideComments) {
       this.comments = []
@@ -118,21 +129,6 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.layoutService.showMessage('还没有开通啦~', 'secondary')
   }
 
-  public viewPost() {
-    this.browserService.on(() => {
-      if (this.storeService.getItem(STORE_KEYS.postViewed(this.post.id))) return
-      this.viewedTimeoutId = Number(
-        setTimeout(
-          () =>
-            this.apiService
-              .viewPost(this.post.id)
-              .subscribe(() => this.storeService.setItem(STORE_KEYS.postViewed(this.post.id), true)),
-          5000
-        )
-      )
-    })
-  }
-
   public likePost() {
     if (this.storeService.getItem(STORE_KEYS.postLiked(this.post.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
@@ -141,7 +137,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.apiService.likePost(this.post.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.postLiked(this.post.id), true)
       if (this.post) this.post.likes += 1
-      this.updateHeader()
+      // this.updateHeader() TODO
       this.layoutService.showMessage('点赞成功', 'success')
     })
   }
@@ -254,23 +250,6 @@ export class PostContentComponent implements OnInit, OnDestroy {
     })
   }
 
-  private updateHeader() {
-    const { post } = this
-    if (!post) return
-    this.layoutService.updateHeader({
-      title: post.title,
-      subTitle: this.hideSubTitle
-        ? []
-        : [
-            `创建时间：${formatDate(new Date(post.created * 1000))} | 更新时间：${formatDate(
-              new Date(post.modified * 1000)
-            )}`,
-            `${post.views} 次阅读 ${post.allow_comment ? `•  ${post.comments} 条评论 ` : ''}•  ${post.likes} 人喜欢`
-          ],
-      ...(post.banner ? { imageUrl: post.banner } : {})
-    })
-  }
-
   private async renderContent() {
     if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter(this.post.languages)
 
@@ -283,6 +262,5 @@ export class PostContentComponent implements OnInit, OnDestroy {
     this.renderedContent = this.sanitizer.bypassSecurityTrustHtml(rawHtml)
 
     if (!this.hideToc) this.toc = this.generateToc(this.post.text)
-    this.updateHeader()
   }
 }

@@ -5,7 +5,6 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 
 @Component({
@@ -25,14 +24,9 @@ export class AdminLoginComponent {
   public constructor(
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly layoutService: LayoutService,
-    browserService: BrowserService
+    private readonly layoutService: LayoutService
   ) {
-    if (browserService.is && this.authService.isLoggedIn()) {
-      this.router.navigate(['/admin/dashboard']).then()
-    } else {
-      this.layoutService.setTitle('管理员登录')
-    }
+    if (this.authService.isLoggedIn()) this.router.navigate(['/admin/dashboard']).then()
   }
 
   public async handleSubmit() {

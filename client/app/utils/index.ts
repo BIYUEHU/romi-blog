@@ -8,11 +8,9 @@ export function renderCharacterBWH({ bust, waist, hip }: ResCharacterData) {
   return `${bust ? `B${bust}` : ''}${waist ? `${bust ? '/' : ''}W${waist}` : ''}${hip ? `${bust || waist ? '/' : ''}H${hip}` : ''}`
 }
 
-function randomRTagType() {
+export function randomRTagType() {
   return randomSelect(['primary', 'secondary', 'accent', 'success', 'info', 'warning', 'error'])
 }
-
-export default randomRTagType
 
 export function formatDate(date: Date) {
   const addZero = (num: number) => (num < 10 ? `0${num}` : num)

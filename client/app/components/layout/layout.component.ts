@@ -1,19 +1,28 @@
 import { NgOptimizedImage, ViewportScroller } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, inject, OnDestroy, OnInit } from '@angular/core'
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
 import { ResMusicData } from '../../models/api.model'
+import { ServerErrorComponent } from '../../pages/server-error/server-error.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { APlayer } from '../../shared/types'
+import { ErrorPageComponent } from '../error-page/error-page.component'
 import { FooterComponent } from '../footer/footer.component'
 import { HeaderComponent } from '../header/header.component'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 @Component({
   selector: 'app-layout',
-  imports: [HeaderComponent, FooterComponent, RouterLink, NgOptimizedImage, SkeletonLoaderComponent],
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    RouterLink,
+    NgOptimizedImage,
+    SkeletonLoaderComponent,
+    ErrorPageComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './layout.component.html'
 })
@@ -27,7 +36,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private musicList?: ResMusicData[]
 
   protected aplayer?: APlayer
-  protected aplayerTimer?: number
 
   public showBackTop = false
   public isLoading = false
@@ -37,17 +45,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
     private readonly storeService: StoreService,
-    public readonly layoutService: LayoutService,
-    browserService: BrowserService,
-    apiService: ApiService
+    public readonly layoutService: LayoutService
   ) {
-    browserService.on(() =>
-      apiService.getMusic().subscribe((data) => {
-        this.musicList = data
-        setTimeout(() => {
-          this.togglePlayer(true)
-        }, 1000)
-      })
+    inject(BrowserService).on(() =>
+      inject(ApiService)
+        .getMusic()
+        .subscribe((data) => {
+          this.musicList = data
+          setTimeout(() => {
+            this.togglePlayer(true)
+          }, 1000)
+        })
     )
   }
 
@@ -127,6 +135,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
       theme: 'var(--primary-100)',
       audio: this.musicList
     })
+  }
+
+  public notify() {
+    ServerErrorComponent.prototype.notify()
+  }
+
+  public reload() {
+    window.location.reload()
   }
 
   public ngOnDestroy() {

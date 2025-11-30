@@ -101,32 +101,36 @@ async fn fetch_all(
         posts
             .iter()
             .rev()
-            .filter(|data| is_admin || data.hide.ne(&1.to_string()))
-            .map(|data| {
-                let (tags, categories) =
-                    post_metas.get(&data.pid).cloned().unwrap_or((vec![], vec![]));
+            .filter_map(|data| {
+                if is_admin || data.hide.ne(&1.to_string()) {
+                    let (tags, categories) =
+                        post_metas.get(&data.pid).cloned().unwrap_or((vec![], vec![]));
 
-                let password = data.password.clone().filter(|p| !p.is_empty());
+                    let password = data.password.clone().filter(|p| !p.is_empty());
 
-                ResPostData {
-                    id: data.pid,
-                    title: data.title.clone(),
-                    summary: if password.is_none() || is_admin {
-                        summary_markdown(data.text.as_str(), 70)
-                    } else {
-                        "".into()
-                    },
-                    created: data.created,
-                    modified: data.modified,
-                    banner: data.banner.clone(),
-                    tags,
-                    categories,
-                    views: data.views,
-                    likes: data.likes,
-                    comments: data.comments,
-                    allow_comment: data.allow_comment.eq(&1.to_string()),
-                    password: password.map(|p| is_admin.then(|| p).unwrap_or("password".into())),
-                    hide: data.hide.eq(&1.to_string()),
+                    Some(ResPostData {
+                        id: data.pid,
+                        title: data.title.clone(),
+                        summary: if password.is_none() || is_admin {
+                            summary_markdown(data.text.as_str(), 70)
+                        } else {
+                            "".into()
+                        },
+                        created: data.created,
+                        modified: data.modified,
+                        banner: data.banner.clone(),
+                        tags,
+                        categories,
+                        views: data.views,
+                        likes: data.likes,
+                        comments: data.comments,
+                        allow_comment: data.allow_comment.eq(&1.to_string()),
+                        password: password
+                            .map(|p| is_admin.then(|| p).unwrap_or("password".into())),
+                        hide: data.hide.eq(&1.to_string()),
+                    })
+                } else {
+                    None
                 }
             })
             .collect(),

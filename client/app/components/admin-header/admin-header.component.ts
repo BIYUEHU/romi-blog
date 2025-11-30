@@ -1,37 +1,28 @@
 import { DatePipe, NgOptimizedImage } from '@angular/common'
-import { Component } from '@angular/core'
+import { Component, computed, Input, WritableSignal } from '@angular/core'
 import { RouterLink } from '@angular/router'
-import { UserAuthData } from '../../models/api.model'
 import { AuthService } from '../../services/auth.service'
-import { LayoutService } from '../../services/layout.service'
 
 @Component({
-    selector: 'app-admin-header',
-    imports: [RouterLink, DatePipe, NgOptimizedImage],
-    templateUrl: './admin-header.component.html'
+  selector: 'app-admin-header',
+  imports: [RouterLink, DatePipe, NgOptimizedImage],
+  templateUrl: './admin-header.component.html'
 })
 export class AdminHeaderComponent {
-  public user?: UserAuthData
+  @Input({ required: true }) public isSidebarOpen!: WritableSignal<boolean>
 
-  public createDate = new Date()
-
-  public isSidebarOpen$
+  public readonly createDate
 
   public readonly avatarUrl = '/api/utils/qqavatar' // TODO: github avatar
-
-  public constructor(
-    private readonly authService: AuthService,
-    private readonly layoutService: LayoutService
-  ) {
-    this.createDate = new Date((this.user?.created ?? 0) * 1000)
-    this.isSidebarOpen$ = this.layoutService.isSidebarOpen$
-  }
-
-  public toggleSidebar() {
-    this.layoutService.toggleSidebar()
+  public constructor(public readonly authService: AuthService) {
+    this.createDate = computed(() => new Date((this.authService.user$()?.created ?? 0) * 1000))
   }
 
   public logout() {
     this.authService.logout()
+  }
+
+  public toggleSidebar() {
+    this.isSidebarOpen.update((isOpen) => !isOpen)
   }
 }

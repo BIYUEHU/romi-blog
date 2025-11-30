@@ -3,23 +3,18 @@ import { FormsModule } from '@angular/forms'
 import { ResProjectData } from '../../../output'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
-import { LayoutService } from '../../services/layout.service'
 
 @Component({
-    selector: 'app-project',
-    imports: [FormsModule, WebComponentInputAccessorDirective, ProjectListComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './project.component.html'
+  selector: 'app-project',
+  imports: [FormsModule, WebComponentInputAccessorDirective, ProjectListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './project.component.html'
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent {
   @Input() public readonly projects!: ResProjectData[]
 
   public searchQuery = ''
   public selectedLanguage = ''
-
-  public constructor(private readonly layoutService: LayoutService) {
-    this.layoutService.setTitle('开源项目')
-  }
 
   public get filteredRepos() {
     let filtered = [...this.projects]
@@ -42,12 +37,5 @@ export class ProjectComponent implements OnInit {
 
   public get languages(): string[] {
     return Array.from(new Set(this.projects.map((repo) => repo.language).filter(Boolean) as string[])).sort()
-  }
-
-  public ngOnInit() {
-    this.layoutService.updateHeader({
-      title: '开源项目',
-      subTitle: ['这里是我的一些开源作品，大部分都是练手或者实用的小工具']
-    })
   }
 }

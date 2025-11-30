@@ -2,7 +2,7 @@
   <div main>
     @if (showContent) {
       @if (dynamic[0].routine) {
-        <app-post-content [hideOptions]="true" [hideSubTitle]="true" [hideRelatedPosts]="true" [hideCopyright]="true"
+        <app-post-content [hideOptions]="true" [hideRelatedPosts]="true" [hideCopyright]="true"
                           [title]="dynamic[0].title" [hideToc]="dynamic[0].hideToc"
                           [hideComments]="dynamic[0].hideComments" [post]="dynamic[1]"/>
       } @else if (dynamic[0].template === 'links') {

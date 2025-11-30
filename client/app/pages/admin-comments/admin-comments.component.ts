@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import {
@@ -12,16 +12,14 @@ import { ApiService } from '../../services/api.service'
 import { sortByCreatedTime } from '../../utils'
 
 @Component({
-    selector: 'app-admin-comments',
-    imports: [DatePipe, FormsModule, RouterLink, WebComponentInputAccessorDirective, AdminBaseListComponent],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './admin-comments.component.html'
+  selector: 'app-admin-comments',
+  imports: [DatePipe, FormsModule, RouterLink, WebComponentInputAccessorDirective, AdminBaseListComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './admin-comments.component.html'
 })
-export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCommentData> {
+export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCommentData> implements OnInit {
   public constructor(private readonly apiService: ApiService) {
     super()
-    this.layoutService.setTitle('评论管理')
-    this.loadItems()
   }
 
   protected loadItems() {
@@ -36,6 +34,10 @@ export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCo
     return item.text.toLowerCase().includes(query) || item.username.toLowerCase().includes(query)
   }
 
+  public ngOnInit() {
+    this.loadItems()
+  }
+
   public deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteComment(id).subscribe(() => {
@@ -45,7 +47,7 @@ export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCo
     }
   }
 
-  public formatText(text: string): string {
+  public formatText(text: string) {
     return text.length > 100 ? `${text.slice(0, 100)}...` : text
   }
 }

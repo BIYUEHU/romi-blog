@@ -1,16 +1,23 @@
+import { DatePipe } from '@angular/common'
 import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs'
 import { ResHitokotoData } from '../../../output'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
+import { STORE_KEYS, StoreService } from '../../services/store.service'
+import { ROMI_METADATA } from '../../shared/constants'
 
 @Component({
-    selector: 'app-footer',
-    imports: [RouterLink],
-    templateUrl: './footer.component.html'
+  selector: 'app-footer',
+  imports: [RouterLink, DatePipe],
+  templateUrl: './footer.component.html'
 })
 export class FooterComponent implements OnInit {
+  public get metadata() {
+    return this.storeService.getItem(STORE_KEYS.IS_DEBUG) === 'true' ? ROMI_METADATA : null
+  }
+
   public currentTime = this.getTimeString()
 
   public footerItems = [
@@ -23,6 +30,7 @@ export class FooterComponent implements OnInit {
 
   public constructor(
     private readonly apiService: ApiService,
+    private readonly storeService: StoreService,
     private readonly browserService: BrowserService
   ) {}
 

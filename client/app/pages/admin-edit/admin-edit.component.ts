@@ -7,7 +7,6 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { BrowserService } from '../../services/browser.service'
 import { LayoutService } from '../../services/layout.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
@@ -19,7 +18,7 @@ import { formatDate } from '../../utils'
   templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
-  private readonly editorOptions: IOptions = {
+  private static readonly EDOTPR_OPTIONS: IOptions = {
     height: '50rem',
     mode: 'ir',
     typewriterMode: true,
@@ -83,7 +82,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     if (!value)
       setTimeout(() => {
         this.editor = new Vditor('editor', {
-          ...this.editorOptions,
+          ...AdminEditComponent.EDOTPR_OPTIONS,
           after: () => {
             this.editor?.setValue(this.getPostText())
           }
@@ -170,11 +169,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly layoutService: LayoutService,
-    private readonly browserService: BrowserService,
     private readonly storeService: StoreService
-  ) {
-    this.layoutService.setTitle('文章编辑')
-  }
+  ) {}
 
   public ngOnInit() {
     const id = this.getId()
@@ -197,24 +193,22 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       this.allCategories = metas.filter(({ is_category }) => is_category).map(({ name }) => name)
     })
 
-    this.browserService.on(() => {
-      const STORE_KEYS = this.getDraftKey()
-      this.draftTimerId = Number(
-        setInterval(() => {
-          const text = this.editor?.getValue()
-          if (!text || text === this.postForm.text) return
+    const STORE_KEYS = this.getDraftKey()
+    this.draftTimerId = Number(
+      setInterval(() => {
+        const text = this.editor?.getValue()
+        if (!text || text === this.postForm.text) return
 
-          this.lastSaveDraftTime = Date.now()
-          if (Array.isArray(STORE_KEYS)) {
-            const [draftKey, draftTimeKey] = STORE_KEYS
-            this.storeService.setItem(draftKey, text)
-            this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
-          } else {
-            this.storeService.setItem(STORE_KEYS, JSON.stringify({ ...this.postForm, text }))
-          }
-        }, 5 * 1000)
-      )
-    })
+        this.lastSaveDraftTime = Date.now()
+        if (Array.isArray(STORE_KEYS)) {
+          const [draftKey, draftTimeKey] = STORE_KEYS
+          this.storeService.setItem(draftKey, text)
+          this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
+        } else {
+          this.storeService.setItem(STORE_KEYS, JSON.stringify({ ...this.postForm, text }))
+        }
+      }, 5 * 1000)
+    )
   }
 
   public ngOnDestroy() {
@@ -286,7 +280,6 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       created: Math.floor(new Date(this.postForm.created || Date.now()).getTime() / 1000),
       modified: Math.floor(Date.now() / 1000)
     }
-    console.log(form, this.postForm)
     const request = this.isEdit ? this.apiService.updatePost(this.getId(), form) : this.apiService.createPost(form)
 
     request.subscribe(() => {

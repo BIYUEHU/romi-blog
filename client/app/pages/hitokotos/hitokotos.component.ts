@@ -24,13 +24,8 @@ export class HitokotosComponent implements OnInit {
     private readonly storeService: StoreService
   ) {}
 
-  public ngOnInit(): void {
-    this.layoutService.setTitle('语录墙')
+  public ngOnInit() {
     this.hitokotos = this.shuffleArray(this.hitokotos)
-    this.layoutService.updateHeader({
-      title: '语录墙',
-      subTitle: [`共 ${this.hitokotos.length} 条语录`]
-    })
     this.loadMore()
   }
 
@@ -38,7 +33,7 @@ export class HitokotosComponent implements OnInit {
     return array.sort(() => Math.random() - 0.5)
   }
 
-  public loadMore(): void {
+  public loadMore() {
     if (!this.hitokotos) return
     if (this.hitokotos.length === 0) {
       this.layoutService.showMessage('没有更多了', 'warning')

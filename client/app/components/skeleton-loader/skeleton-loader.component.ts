@@ -6,5 +6,5 @@ import { Component, Input } from '@angular/core'
   templateUrl: './skeleton-loader.component.html'
 })
 export class SkeletonLoaderComponent {
-  @Input() type: string = 'text'
+  @Input() public type: string = 'text'
 }

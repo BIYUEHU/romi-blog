@@ -20,9 +20,7 @@ export class MusicComponent implements OnInit, OnDestroy {
     private readonly layoutService: LayoutService,
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
-  ) {
-    this.layoutService.setTitle('歌单收藏')
-  }
+  ) {}
 
   public ngOnInit() {
     this.browserService.on(() => {

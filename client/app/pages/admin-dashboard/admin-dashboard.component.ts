@@ -3,14 +3,12 @@ import { Component, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
 import { ROMI_METADATA } from '../../shared/constants'
 
 @Component({
-    selector: 'app-admin-dashboard',
-    imports: [DatePipe, RouterLink],
-    templateUrl: './admin-dashboard.component.html'
+  selector: 'app-admin-dashboard',
+  imports: [DatePipe, RouterLink],
+  templateUrl: './admin-dashboard.component.html'
 })
 export class AdminDashboardComponent implements OnInit {
   public username = ''
@@ -99,27 +97,19 @@ export class AdminDashboardComponent implements OnInit {
     this.recentPostsData = value.sort((a, b) => b.created - a.created).slice(0, 5)
   }
 
-  public constructor(
-    private readonly apiService: ApiService,
-    private readonly browserService: BrowserService,
-    private readonly layoutService: LayoutService
-  ) {
-    this.layoutService.setTitle('控制台')
-  }
+  public constructor(private readonly apiService: ApiService) {}
 
   public ngOnInit() {
-    this.browserService.on(() => {
-      setInterval(() => {
-        this.currentTime = new Date()
-      }, 1000)
+    setInterval(() => {
+      this.currentTime = new Date()
+    }, 1000)
 
-      this.apiService.getDashboard().subscribe((data) => {
-        this.dashboardData = data
-      })
+    this.apiService.getDashboard().subscribe((data) => {
+      this.dashboardData = data
+    })
 
-      this.apiService.getPosts().subscribe((data) => {
-        this.recentPosts = data
-      })
+    this.apiService.getPosts().subscribe((data) => {
+      this.recentPosts = data
     })
   }
 }

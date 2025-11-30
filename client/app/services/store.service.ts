@@ -11,7 +11,7 @@ export const STORE_KEYS = {
   APLAYER_ALIVE_TIME: isoStoreKey.wrap('aplayer-alive-time'),
   ADMIN_AUTH: isoStoreKey.wrap('admin-auth'),
   POST_DRAFT_NEW: isoStoreKey.wrap('post-draft-new'),
-
+  IS_DEBUG: isoStoreKey.wrap('is-dev-mode'),
   postLiked: (id: number) => isoStoreKey.wrap(`post-liked-${id}`),
   postViewed: (id: number) => isoStoreKey.wrap(`post-viewed-${id}`),
   postDraft: (id: number) => isoStoreKey.wrap(`post-draft-${id}`),
@@ -19,7 +19,6 @@ export const STORE_KEYS = {
   hitokotoLiked: (id: number) => isoStoreKey.wrap(`hitokoto-liked-${id}`),
   newsLiked: (id: number) => isoStoreKey.wrap(`news-liked-${id}`),
   newsViewed: (id: number) => isoStoreKey.wrap(`news-viewed-${id}`),
-
   cache: (key: string) => isoStoreKey.wrap(`cache-${key}`)
 } as const
 

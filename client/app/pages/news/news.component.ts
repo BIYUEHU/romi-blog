@@ -27,16 +27,6 @@ export class NewsComponent implements OnInit, OnDestroy {
   ) {}
 
   public ngOnInit() {
-    this.layoutService.setTitle(this.news.text)
-    this.updateHeader()
-    this.viewNews()
-  }
-
-  public ngOnDestroy() {
-    if (this.viewedTimeoutId) clearTimeout(this.viewedTimeoutId)
-  }
-
-  public viewNews() {
     this.browserService.on(() => {
       if (this.storeService.getItem(STORE_KEYS.newsViewed(this.news.id))) return
       this.viewedTimeoutId = Number(
@@ -51,6 +41,10 @@ export class NewsComponent implements OnInit, OnDestroy {
     })
   }
 
+  public ngOnDestroy() {
+    if (this.viewedTimeoutId) clearTimeout(this.viewedTimeoutId)
+  }
+
   public likeNews() {
     if (this.storeService.getItem(STORE_KEYS.newsLiked(this.news.id))) {
       this.layoutService.showMessage('已经点过赞了', 'warning')
@@ -59,7 +53,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     this.apiService.likeNews(this.news.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.newsLiked(this.news.id), true)
       if (this.news) this.news.likes += 1
-      this.updateHeader()
+      // this.updateHeader()  TODO
       this.layoutService.showMessage('点赞成功', 'success')
     })
   }
@@ -72,12 +66,5 @@ export class NewsComponent implements OnInit, OnDestroy {
     } catch (_) {
       this.layoutService.showMessage('链接复制失败', 'error')
     }
-  }
-
-  public updateHeader() {
-    this.layoutService.updateHeader({
-      title: '动态详情',
-      subTitle: [`${this.news.views} 次阅读 • ${this.news.comments} 条评论 • ${this.news.likes} 人喜欢`]
-    })
   }
 }
