@@ -2,17 +2,20 @@ name: Build
 
 on:
   push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
+    paths:
+      - '**.ts'
+      - '**.rs'
+      - 'Cargo.toml'
+      - './*.json'
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-latest, windows-latest]
-        arch: [x86_64, aarch64]
+        os: [ ubuntu-22.04, macos-latest, windows-latest ]
+        arch: [ x86_64, aarch64 ]
 
     steps:
       - name: Checkout code
@@ -74,7 +77,7 @@ jobs:
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install pnpm
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
@@ -85,13 +88,13 @@ jobs:
       - name: Build frontend
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         run: |
-          pnpm install --no-frozen-lockfile
+          pnpm install
           pnpm build
-          tar -czf dist.tar.gz dist
+      #          tar -czf dist.tar.gz dist
 
       - name: Upload artifact (Frontend)
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: romichan-client
-          path: dist.tar.gz
+          path: dist
