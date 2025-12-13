@@ -87,11 +87,9 @@ export class CacheService {
       .with(
         { _tag: 'Some', value: { timestamp: P.when((timestamp) => Date.now() < timestamp + pipe(longTtl, toNumber)) } },
         ({ value: { data } }) => {
-          f().pipe(
-            tap((data) => {
-              if (cacheCondition(data)) this.set(key, data)
-            })
-          )
+          f().subscribe((data) => {
+            if (cacheCondition(data)) this.set(key, data)
+          })
           return of(data)
         }
       )
