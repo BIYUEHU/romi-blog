@@ -3,7 +3,6 @@ import { ResPostSingleData } from '../../../output'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
 import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
 import { AppTitleStrategy } from '../../shared/title-strategy'
 import { formatDate } from '../../utils'
 
@@ -18,15 +17,14 @@ export class PostComponent implements OnInit {
 
   public constructor(
     private readonly apiService: ApiService,
-    private readonly appTitleStrategy: AppTitleStrategy,
-    private readonly layoutService: LayoutService
+    private readonly appTitleStrategy: AppTitleStrategy
   ) {}
 
   public ngOnInit() {
     this.apiService.getPost(+this.id).subscribe((post) => {
       this.post = post
       this.appTitleStrategy.setTitle(post.title)
-      this.layoutService.updateHeader({
+      this.appTitleStrategy.updateHeader({
         title: post.title,
         subTitle: [
           `创建时间：${formatDate(new Date(post.created * 1000))} | 更新时间：${formatDate(

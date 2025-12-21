@@ -41,7 +41,7 @@ export class AdminCommentsComponent extends AbstractAdminBaseListComponent<ResCo
   public deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteComment(id).subscribe(() => {
-        this.layoutService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', 'secondary')
         this.items = this.items.filter((item) => item.cid !== id)
       })
     }

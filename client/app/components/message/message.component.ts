@@ -1,6 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, effect } from '@angular/core'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-message',
@@ -23,9 +23,9 @@ export class MessageComponent {
     type: 'info' as 'error' | 'info' | 'success' | 'warning' | 'secondary' | 'primary'
   }
 
-  public constructor(layoutService: LayoutService) {
+  public constructor(notifyService: NotifyService) {
     effect(() => {
-      const message = layoutService.messageNotify$()
+      const message = notifyService.messageNotify$()
       if (!message) return
       this.message = message
       const timer = Number(

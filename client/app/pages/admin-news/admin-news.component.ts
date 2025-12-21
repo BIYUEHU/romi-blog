@@ -45,7 +45,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteNews(id).subscribe(() => {
-        this.layoutService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', 'secondary')
         this.items = this.items.filter((news) => news.id !== id)
       })
     }
@@ -68,7 +68,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
   public updateNews() {
     if (!this.editForm.text.trim()) {
-      this.layoutService.showMessage('请填写动态内容', 'warning')
+      this.notifyService.showMessage('请填写动态内容', 'warning')
       return
     }
 
@@ -84,13 +84,13 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
     if (this.editingNews && this.editingNews !== true) {
       this.apiService.updateNews(this.editingNews.id, data).subscribe(() => {
-        this.layoutService.showMessage('更新成功', 'success')
+        this.notifyService.showMessage('更新成功', 'success')
         this.loadItems()
         this.editingNews = null
       })
     } else {
       this.apiService.createNews(data).subscribe(() => {
-        this.layoutService.showMessage('创建成功', 'success')
+        this.notifyService.showMessage('创建成功', 'success')
         this.loadItems()
         this.editingNews = null
       })

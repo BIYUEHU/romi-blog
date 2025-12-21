@@ -25,6 +25,7 @@
 - [ ] Images bed and management system
 - [ ] Refactory music player
 - [ ] I18n
+- [ ] 更多的页面细化处理 meta 更好的 seo
 - [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [x] Post view, like, share
 - [x] News view, like

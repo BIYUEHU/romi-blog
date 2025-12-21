@@ -5,8 +5,8 @@ import { ResMusicData } from '../../models/api.model'
 import { ServerErrorComponent } from '../../pages/server-error/server-error.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
+import { AppTitleStrategy } from '../../shared/title-strategy'
 import { APlayer } from '../../shared/types'
 import { ErrorPageComponent } from '../error-page/error-page.component'
 import { FooterComponent } from '../footer/footer.component'
@@ -45,7 +45,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
     private readonly storeService: StoreService,
-    public readonly layoutService: LayoutService
+    public readonly appTitleStrategy: AppTitleStrategy
   ) {
     inject(BrowserService).on(() =>
       inject(ApiService)
@@ -81,10 +81,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
     } else if (event instanceof NavigationEnd) {
       this.isLoading = false
 
-      this.layoutService.updateHeader({
-        ...this.layoutService.header$(),
-        imageUrl: LayoutService.DEFAULT_HEADER.imageUrl
-      })
+      // this.appTitleStrategy.updateHeader({
+      //   ...this.appTitleStrategy.header$(),
+      //   imageUrl: AppTitleStrategy.DEFAULT_HEADER.imageUrl
+      // })
 
       const { fragment } = this.router.parseUrl(this.router.url)
       if (fragment) {

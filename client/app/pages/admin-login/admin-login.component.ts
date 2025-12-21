@@ -5,7 +5,7 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-login',
@@ -24,14 +24,14 @@ export class AdminLoginComponent {
   public constructor(
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly layoutService: LayoutService
+    private readonly notifyService: NotifyService
   ) {
     if (this.authService.isLoggedIn()) this.router.navigate(['/admin/dashboard']).then()
   }
 
   public async handleSubmit() {
     if (!this.username || !this.password) {
-      this.layoutService.showMessage('请输入用户名和密码', 'warning')
+      this.notifyService.showMessage('请输入用户名和密码', 'warning')
       return
     }
 
@@ -39,11 +39,11 @@ export class AdminLoginComponent {
     this.apiService.login(this.username, this.password).subscribe((data) => {
       this.isLoading = false
       if (data) {
-        this.layoutService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, 'success')
+        this.notifyService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, 'success')
         this.authService.setUser(data, this.rememberMe)
         this.router.navigate(['/admin/dashboard'])
       } else {
-        this.layoutService.showMessage('用户名或密码错误', 'error')
+        this.notifyService.showMessage('用户名或密码错误', 'error')
       }
     })
   }

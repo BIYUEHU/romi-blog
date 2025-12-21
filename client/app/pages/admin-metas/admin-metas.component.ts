@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResMetaData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-meta',
@@ -20,7 +20,7 @@ export class AdminMetasComponent implements OnInit {
 
   public constructor(
     private readonly apiService: ApiService,
-    private readonly layoutService: LayoutService
+    private readonly notifyService: NotifyService
   ) {}
 
   public ngOnInit() {
@@ -49,7 +49,7 @@ export class AdminMetasComponent implements OnInit {
 
   public createMeta() {
     if (!this.newMetaName.trim()) {
-      this.layoutService.showMessage('请输入名称', 'warning')
+      this.notifyService.showMessage('请输入名称', 'warning')
       return
     }
 
@@ -59,7 +59,7 @@ export class AdminMetasComponent implements OnInit {
     }
 
     this.apiService.createMeta(data).subscribe(() => {
-      this.layoutService.showMessage('创建成功', 'success')
+      this.notifyService.showMessage('创建成功', 'success')
       this.loadMetas()
       this.newMetaName = ''
     })
@@ -68,7 +68,7 @@ export class AdminMetasComponent implements OnInit {
   public deleteMeta(id: number, name: string) {
     if (confirm(`确定要删除"${name}"吗？`)) {
       this.apiService.deleteMeta(id).subscribe(() => {
-        this.layoutService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', 'secondary')
         this.metas = this.metas.filter((meta) => meta.mid !== id)
       })
     }

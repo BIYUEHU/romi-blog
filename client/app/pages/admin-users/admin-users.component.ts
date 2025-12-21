@@ -51,7 +51,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteUser(id).subscribe(() => {
-        this.layoutService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', 'secondary')
         this.items = this.items.filter((user) => user.uid !== id)
       })
     }
@@ -78,7 +78,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
       !this.editForm.email.trim() ||
       (!this.editForm.password.trim() && this.editingUser === true)
     ) {
-      this.layoutService.showMessage('请填写所有必填项', 'warning')
+      this.notifyService.showMessage('请填写所有必填项', 'warning')
       return
     }
 
@@ -90,7 +90,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           status: Number(this.editForm.status)
         })
         .subscribe(() => {
-          this.layoutService.showMessage('更新成功', 'success')
+          this.notifyService.showMessage('更新成功', 'success')
           if ((this.editingUser as ResUserData).uid === this.admin?.id) {
             this.authService.logout()
           }
@@ -105,7 +105,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           status: Number(this.editForm.status)
         })
         .subscribe(() => {
-          this.layoutService.showMessage('创建成功', 'success')
+          this.notifyService.showMessage('创建成功', 'success')
           this.loadItems()
           this.editingUser = null
         })

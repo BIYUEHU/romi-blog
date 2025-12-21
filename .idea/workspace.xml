@@ -21,8 +21,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.github/workflows/build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TODO.md" beforeDir="false" afterPath="$PROJECT_DIR$/TODO.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/admin-base-list/admin-base-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-base-list/admin-base-list.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/message/message.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/message/message.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/guards/debug.guard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/guards/debug.guard.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-char-edit/admin-char-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-char-edit/admin-char-edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-chars/admin-chars.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-chars/admin-chars.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-comments/admin-comments.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-comments/admin-comments.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-hitokotos/admin-hitokotos.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-hitokotos/admin-hitokotos.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-metas/admin-metas.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-metas/admin-metas.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-news/admin-news.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-news/admin-news.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-users/admin-users.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-users/admin-users.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/char/char.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokoto/hitokoto.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/music/music.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/news/news.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/highlighter.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/services/layout.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/notify.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/shared/title-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/title-strategy.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/entity/romi_news.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/romi_news.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/routes/news.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/news.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -334,11 +367,23 @@
       <workItem from="1764475586339" duration="15616000" />
       <workItem from="1765293828427" duration="4363000" />
       <workItem from="1765298253445" duration="16000" />
+      <workItem from="1765696044779" duration="600000" />
+      <workItem from="1765701313812" duration="1452000" />
+      <workItem from="1765702781128" duration="1795000" />
+      <workItem from="1766245009621" duration="315000" />
+      <workItem from="1766246378415" duration="40000" />
+      <workItem from="1766328715234" duration="4733000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="dependencySupport" implementationName="javascript:npm:unocss" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:vite" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:@angular/core" />
+    <option featureType="dependencySupport" implementationName="javascript:npm:karma" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

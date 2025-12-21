@@ -47,7 +47,7 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deletePost(id).subscribe(() => {
-        this.layoutService.showMessage('文章删除成功', 'secondary')
+        this.notifyService.showMessage('文章删除成功', 'secondary')
         this.items = this.items.filter((post) => post.id !== id)
       })
     }

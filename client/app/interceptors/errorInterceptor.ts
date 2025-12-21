@@ -6,15 +6,15 @@ import { catchError } from 'rxjs/operators'
 import { match } from 'ts-pattern'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
-import { LayoutService } from '../services/layout.service'
 import { LoggerService } from '../services/logger.service'
+import { NotifyService } from '../services/notify.service'
 import { HEADER_CONTEXT } from '../shared/constants'
 
 export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const browser = inject(BrowserService)
   const logger = inject(LoggerService)
   const auth = inject(AuthService)
-  const layout = inject(LayoutService)
+  const layout = inject(NotifyService)
   const router = inject(Router)
   let headers = req.headers
   const SkipErrorHandling = req.headers.has(HEADER_CONTEXT.SKIP_ERROR_HANDLING)

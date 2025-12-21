@@ -49,7 +49,7 @@ export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResChara
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteCharacter(id).subscribe(() => {
-        this.layoutService.showMessage('角色删除成功', 'secondary')
+        this.notifyService.showMessage('角色删除成功', 'secondary')
         this.items = this.items.filter((character) => character.id !== id)
       })
     }

@@ -2,8 +2,9 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
 import { LayoutComponent } from '../../components/layout/layout.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
+import { AppTitleStrategy } from '../../shared/title-strategy'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
@@ -23,7 +24,8 @@ export class HitokotoComponent {
   }
 
   public constructor(
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
+    private readonly appTitleStrategy: AppTitleStrategy,
     private readonly apiService: ApiService,
     private readonly storeService: StoreService
   ) {}
@@ -36,29 +38,29 @@ export class HitokotoComponent {
     this.isLoading = true
     this.apiService.getHitokoto().subscribe((data) => {
       this.hitokoto = data
-      // this.layoutService.setTitle(data.msg)
+      this.appTitleStrategy.setTitle(data.msg)
       this.isLoading = false
     })
   }
 
   public likeHitokoto() {
     if (this.isLiked) {
-      this.layoutService.showMessage('已经点过赞了', 'info')
+      this.notifyService.showMessage('已经点过赞了', 'info')
       return
     }
 
     this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.hitokotoLiked((this.hitokoto as ResHitokotoData).id), true)
       ;(this.hitokoto as ResHitokotoData).likes += 1
-      this.layoutService.showMessage('点赞成功', 'success')
+      this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
   public shareHitokoto() {
     if (!this.hitokoto) return
     navigator.clipboard.writeText(`${location.origin}/hitokoto/${this.hitokoto.id}`).then(
-      () => this.layoutService.showMessage('链接已复制', 'secondary'),
-      () => this.layoutService.showMessage('复制失败', 'error')
+      () => this.notifyService.showMessage('链接已复制', 'secondary'),
+      () => this.notifyService.showMessage('复制失败', 'error')
     )
   }
 }

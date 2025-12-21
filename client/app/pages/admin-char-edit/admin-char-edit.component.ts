@@ -6,7 +6,7 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqCharacterData, ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-char-edit',
@@ -84,7 +84,7 @@ export class AdminCharEditComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly layoutService: LayoutService
+    private readonly notifyService: NotifyService
   ) {}
 
   public ngOnInit() {
@@ -100,7 +100,7 @@ export class AdminCharEditComponent implements OnInit {
         this.allTags = Array.from(new Set(chars.flatMap(({ tags }) => tags)))
         const char = chars.find(({ id: charId }) => charId === id)
         if (!char) {
-          this.layoutService.showMessage('未找到该角色', 'error')
+          this.notifyService.showMessage('未找到该角色', 'error')
           return
         }
         this.charForm = {
@@ -182,7 +182,7 @@ export class AdminCharEditComponent implements OnInit {
     // Example url: https://www.xxx.com/xxxxx?id=123456789.mp3
     const id = Number(song.url.split('id=')[1].split('.')[0])
     if (Number.isNaN(id)) {
-      this.layoutService.showMessage(`歌曲链接格式不正确：${song.url}`, 'error')
+      this.notifyService.showMessage(`歌曲链接格式不正确：${song.url}`, 'error')
       return
     }
     this.charForm.song_id = id
@@ -211,7 +211,7 @@ export class AdminCharEditComponent implements OnInit {
       !this.charForm.description ||
       this.charForm.images.length === 0
     ) {
-      this.layoutService.showMessage('名字和罗马字和描述不能为空且至少要有一张图片', 'warning')
+      this.notifyService.showMessage('名字和罗马字和描述不能为空且至少要有一张图片', 'warning')
       return
     }
 
@@ -229,7 +229,7 @@ export class AdminCharEditComponent implements OnInit {
       form[key] = Number(form[key])
       if (form[key] === 0) form[key] = null
       if (Number.isNaN(form[key]) || (!!form[key] && (form[key] as number) < 0)) {
-        this.layoutService.showMessage(`"${key}" 必须为数字`, 'error')
+        this.notifyService.showMessage(`"${key}" 必须为数字`, 'error')
         return
       }
     }
@@ -239,7 +239,7 @@ export class AdminCharEditComponent implements OnInit {
       : this.apiService.createCharacter(form)
 
     request.subscribe(() => {
-      this.layoutService.showMessage('角色保存成功', 'success')
+      this.notifyService.showMessage('角色保存成功', 'success')
       this.goBack()
     })
   }

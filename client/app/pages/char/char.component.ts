@@ -6,7 +6,7 @@ import { CardComponent } from '../../components/card/card.component'
 import { ResCharacterData, ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { APlayer } from '../../shared/types'
 import { randomRTagType, renderCharacterBWH } from '../../utils'
 
@@ -61,7 +61,7 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService
   ) {}
@@ -96,9 +96,9 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
     const copyText = `${this.char.name} (${this.char.romaji}) - ${location.origin}${this.router.url}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.layoutService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
     } catch (_) {
-      this.layoutService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', 'error')
     }
   }
 

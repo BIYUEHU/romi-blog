@@ -14,7 +14,7 @@ import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { randomRTagType } from '../../utils'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
@@ -78,7 +78,7 @@ export class PostContentComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly storeService: StoreService,
     private readonly sanitizer: DomSanitizer,
@@ -126,19 +126,18 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public donate() {
-    this.layoutService.showMessage('还没有开通啦~', 'secondary')
+    this.notifyService.showMessage('还没有开通啦~', 'secondary')
   }
 
   public likePost() {
     if (this.storeService.getItem(STORE_KEYS.postLiked(this.post.id))) {
-      this.layoutService.showMessage('已经点过赞了', 'warning')
+      this.notifyService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likePost(this.post.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.postLiked(this.post.id), true)
-      if (this.post) this.post.likes += 1
-      // this.updateHeader() TODO
-      this.layoutService.showMessage('点赞成功', 'success')
+      this.post.likes += 1
+      this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
@@ -146,9 +145,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
     const copyText = `${this.post?.title} - ${this.extra?.url}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.layoutService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
     } catch (_) {
-      this.layoutService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', 'error')
     }
   }
 

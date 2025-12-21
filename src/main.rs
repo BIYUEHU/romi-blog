@@ -24,8 +24,7 @@ mod service;
 mod tools;
 mod utils;
 
-pub const FREE_HONG_KONG: &'static str =
-    "香港に栄光あれ\n光复香港，时代革命\nFree Hong Kong, revolution now";
+pub const LOVE_ARIMURAROMI_AND_HIMENOSENA: &'static str = "Love Arimura Romi And Himeno Sena";
 
 #[tokio::main]
 async fn main() {
@@ -102,7 +101,7 @@ async fn main() {
     let ssr = SSR::new(config.ssr_entry.clone(), config.port + 1, logger.clone());
 
     let app = build_app(RomiState {
-        secret: format!("{}FREE{}", FREE_HONG_KONG, Uuid::new_v4().to_string()),
+        secret: format!("{}FREE{}", LOVE_ARIMURAROMI_AND_HIMENOSENA, Uuid::new_v4().to_string()),
         logger: logger.clone(),
         conn,
         ssr: ssr.clone(),

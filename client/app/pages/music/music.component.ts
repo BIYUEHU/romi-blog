@@ -2,7 +2,8 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/c
 import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
+import { AppTitleStrategy } from '../../shared/title-strategy'
 import { APlayer } from '../../shared/types'
 
 @Component({
@@ -17,7 +18,7 @@ export class MusicComponent implements OnInit, OnDestroy {
   protected aplayer?: APlayer
 
   public constructor(
-    private readonly layoutService: LayoutService,
+    private readonly appTitleStrategy: AppTitleStrategy,
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
   ) {}
@@ -37,7 +38,7 @@ export class MusicComponent implements OnInit, OnDestroy {
           })
         }, 0)
 
-        this.layoutService.updateHeader({
+        this.appTitleStrategy.updateHeader({
           title: '歌单收藏',
           subTitle: [`共 ${data.length} 首歌曲`, '内容从网易云歌单中同步']
         })

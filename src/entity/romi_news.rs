@@ -11,7 +11,7 @@ pub struct Model {
     pub modified: u32,
     #[sea_orm(column_type = "Text")]
     pub text: String,
-    pub hide: String,
+    pub private: String,
     pub views: i32,
     pub likes: i32,
     pub comments: i32,

@@ -7,7 +7,7 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
 
@@ -115,7 +115,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   }
 
   private getPostText() {
-    const notify = () => this.layoutService.showMessage('文章内容来自自动保存草稿', 'info')
+    const notify = () => this.notifyService.showMessage('文章内容来自自动保存草稿', 'info')
     const STORE_KEYS = this.getDraftKey()
     if (!Array.isArray(STORE_KEYS)) {
       try {
@@ -168,7 +168,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly route: ActivatedRoute,
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly storeService: StoreService
   ) {}
 
@@ -271,7 +271,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public savePost() {
     this.postForm.text = this.editor?.getValue() ?? ''
     if (!this.postForm.title || !this.postForm.text) {
-      this.layoutService.showMessage('标题和内容不能为空', 'warning')
+      this.notifyService.showMessage('标题和内容不能为空', 'warning')
       return
     }
 
@@ -286,7 +286,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
       if (!this.isEdit) {
         this.storeService.removeItem(STORE_KEYS.POST_DRAFT_NEW)
       }
-      this.layoutService.showMessage('文章保存成功', 'success')
+      this.notifyService.showMessage('文章保存成功', 'success')
       this.goBack()
     })
   }

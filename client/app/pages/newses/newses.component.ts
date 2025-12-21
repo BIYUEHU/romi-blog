@@ -7,7 +7,7 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { sortByCreatedTime } from '../../utils'
 
 interface TocItem {
@@ -43,7 +43,7 @@ export class NewsesComponent implements OnInit {
   public currentPage = 1
 
   public constructor(
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     authService: AuthService
   ) {
@@ -60,7 +60,7 @@ export class NewsesComponent implements OnInit {
 
   public async sendNews() {
     if (!this.newText.trim()) {
-      this.layoutService.showMessage('请输入内容', 'warning')
+      this.notifyService.showMessage('请输入内容', 'warning')
       return
     }
 
@@ -73,7 +73,7 @@ export class NewsesComponent implements OnInit {
         imgs: []
       })
       .subscribe(() => {
-        this.layoutService.showMessage('发送成功', 'success')
+        this.notifyService.showMessage('发送成功', 'success')
         this.newText = ''
         this.reloadNews()
       })
@@ -151,7 +151,7 @@ export class NewsesComponent implements OnInit {
       (this.currentPage + 1) * NewsesComponent.PAGE_SIZE
     )
     if (nextItems.length === 0) {
-      this.layoutService.showMessage('没有更多了', 'info')
+      this.notifyService.showMessage('没有更多了', 'info')
       return
     }
     this.displayedNews = [...this.displayedNews, ...nextItems]

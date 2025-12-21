@@ -2,7 +2,8 @@ import { NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { BangumiData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
+import { AppTitleStrategy } from '../../shared/title-strategy'
 import { CardComponent } from '../card/card.component'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
@@ -24,8 +25,9 @@ export class BangumiComponent implements OnInit {
   public data?: BangumiData
 
   public constructor(
-    private readonly layoutService: LayoutService,
-    private readonly apiService: ApiService
+    private readonly appTitleStrategy: AppTitleStrategy,
+    private readonly apiService: ApiService,
+    private readonly notifyService: NotifyService
   ) {}
 
   public ngOnInit(): void {
@@ -39,7 +41,7 @@ export class BangumiComponent implements OnInit {
       this.total = data.total
       this.offset = Math.min(50, data.total)
 
-      this.layoutService.updateHeader({
+      this.appTitleStrategy.updateHeader({
         title: this.isAnime ? '追番列表' : '视觉小说列表',
         subTitle: [`共 ${this.total} 部${this.isAnime ? '番剧' : '视觉小说'}`]
       })
@@ -48,7 +50,7 @@ export class BangumiComponent implements OnInit {
 
   public loadMore(): void {
     if (this.offset >= this.total) {
-      this.layoutService.showMessage('没有更多了', 'info')
+      this.notifyService.showMessage('没有更多了', 'info')
       return
     }
 

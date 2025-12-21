@@ -42,7 +42,7 @@ async fn fetch(
             l_warn!(logger, "News {} not found", id);
             ApiError::not_found("News not found")
         })?;
-    let private = news.hide.eq(&1.to_string());
+    let private = news.private.eq(&1.to_string());
     if private && access.level != AccessLevel::Admin {
         l_warn!(logger, "News {} is private", id);
         return Err(ApiError::not_found("News not found"));
@@ -75,7 +75,7 @@ async fn fetch_all(
             .context("Failed to fetch news list")?
             .into_iter()
             .filter_map(|news| {
-                let private = news.hide.eq(&1.to_string());
+                let private = news.private.eq(&1.to_string());
                 if private && access.level != AccessLevel::Admin {
                     None
                 } else {
@@ -115,7 +115,7 @@ async fn create(
         created: ActiveValue::set(news.created),
         modified: ActiveValue::set(news.modified),
         text: ActiveValue::set(news.text.clone()),
-        hide: ActiveValue::set(news.private.then(|| 1).unwrap_or(0).to_string()),
+        private: ActiveValue::set(news.private.then(|| 1).unwrap_or(0).to_string()),
         views: ActiveValue::set(0),
         likes: ActiveValue::set(0),
         comments: ActiveValue::set(0),
@@ -151,7 +151,8 @@ async fn update(
             active_model.created = ActiveValue::set(news.created);
             active_model.modified = ActiveValue::set(news.modified);
             active_model.text = ActiveValue::set(news.text.clone());
-            active_model.hide = ActiveValue::set(news.private.then(|| 1).unwrap_or(0).to_string());
+            active_model.private =
+                ActiveValue::set(news.private.then(|| 1).unwrap_or(0).to_string());
             active_model.imgs = ActiveValue::set(Some(news.imgs.join(",")));
 
             active_model

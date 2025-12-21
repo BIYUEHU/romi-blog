@@ -2,7 +2,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 
 @Component({
@@ -19,7 +19,7 @@ export class HitokotosComponent implements OnInit {
   @Input() public hitokotos: ResHitokotoData[] = []
 
   public constructor(
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly storeService: StoreService
   ) {}
@@ -36,7 +36,7 @@ export class HitokotosComponent implements OnInit {
   public loadMore() {
     if (!this.hitokotos) return
     if (this.hitokotos.length === 0) {
-      this.layoutService.showMessage('没有更多了', 'warning')
+      this.notifyService.showMessage('没有更多了', 'warning')
       return
     }
     this.hitokotos = [...this.hitokotos, ...this.hitokotos.slice(0, 20)]

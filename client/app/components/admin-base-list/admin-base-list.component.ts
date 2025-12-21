@@ -1,5 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, inject, Output } from '@angular/core'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-base-list',
@@ -16,7 +16,7 @@ export class AdminBaseListComponent {
 }
 
 export abstract class AbstractAdminBaseListComponent<T> {
-  protected layoutService = inject(LayoutService)
+  protected readonly notifyService = inject(NotifyService)
 
   public items: T[] = []
   public isLoading = true

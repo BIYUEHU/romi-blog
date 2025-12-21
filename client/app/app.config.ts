@@ -14,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     // provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, transferInterceptor, errorInterceptor])),
     provideRouter(routes, withComponentInputBinding()),
-    { provide: TitleStrategy, useClass: AppTitleStrategy },
+    { provide: TitleStrategy, useExisting: AppTitleStrategy },
     provideAnimations(),
     provideClientHydration(withNoHttpTransferCache())
   ]

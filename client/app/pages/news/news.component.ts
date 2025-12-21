@@ -4,7 +4,7 @@ import { Router } from '@angular/router'
 import { ResNewsData } from '../../../output'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { LayoutService } from '../../services/layout.service'
+import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 
 @Component({
@@ -20,7 +20,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
   public constructor(
     private readonly router: Router,
-    private readonly layoutService: LayoutService,
+    private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly browserService: BrowserService,
     private readonly storeService: StoreService
@@ -47,14 +47,14 @@ export class NewsComponent implements OnInit, OnDestroy {
 
   public likeNews() {
     if (this.storeService.getItem(STORE_KEYS.newsLiked(this.news.id))) {
-      this.layoutService.showMessage('已经点过赞了', 'warning')
+      this.notifyService.showMessage('已经点过赞了', 'warning')
       return
     }
     this.apiService.likeNews(this.news.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.newsLiked(this.news.id), true)
       if (this.news) this.news.likes += 1
       // this.updateHeader()  TODO
-      this.layoutService.showMessage('点赞成功', 'success')
+      this.notifyService.showMessage('点赞成功', 'success')
     })
   }
 
@@ -62,9 +62,9 @@ export class NewsComponent implements OnInit, OnDestroy {
     const copyText = `${this.news.text.slice(0, 25)}${this.news && this.news.text.length > 25 ? '...' : ''} - ${this.browserService.on(() => `${location.origin}${this.router.url.split('#')[0]}`) ?? ''}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.layoutService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
     } catch (_) {
-      this.layoutService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', 'error')
     }
   }
 }
