@@ -6,6 +6,7 @@ import { environment } from '../../environments/environment'
 import type {
   AuthUser,
   BangumiData,
+  LanguageColors,
   LoginResponse,
   ReqCharacterData,
   ReqHitokotoData,
@@ -50,6 +51,12 @@ export class ApiService {
 
   public getPost(id: number) {
     return this.http.get<ResPostSingleData>(`${environment.api_base_url}/post/${id}`, {
+      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
+    })
+  }
+
+  public getPostByStrId(str_id: string) {
+    return this.http.get<ResPostSingleData>(`${environment.api_base_url}/post/str_id/${str_id}`, {
       headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
     })
   }
@@ -274,6 +281,15 @@ export class ApiService {
       RHour(12),
       () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
       (data) => data.length > 0
+    )
+  }
+
+  public getLanguageColors() {
+    return this.cacheService.wrap(
+      'language-colors',
+      RDay(31),
+      () => this.http.get<LanguageColors>('https://raw.githubusercontent.com/ozh/github-colors/master/colors.json'),
+      () => true
     )
   }
 

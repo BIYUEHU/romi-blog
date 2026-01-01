@@ -32,6 +32,7 @@ pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/", get(fetch_all))
         .route("/", post(create))
+        .route("/str_id/{str_id}", get(fetch_by_str_id))
         .route("/{id}", get(fetch))
         .route("/{id}", put(update))
         .route("/like/{id}", put(like))
@@ -110,6 +111,7 @@ async fn fetch_all(
 
                     Some(ResPostData {
                         id: data.pid,
+                        str_id: data.str_id.clone(),
                         title: data.title.clone(),
                         summary: if password.is_none() || is_admin {
                             summary_markdown(data.text.as_str(), 70)
@@ -171,6 +173,7 @@ async fn fetch(
 
             api_ok(ResPostSingleData {
                 id: model.pid.clone(),
+                str_id: model.str_id.clone(),
                 title: model.title.clone(),
                 created: model.created,
                 modified: model.modified,
@@ -195,12 +198,99 @@ async fn fetch(
                 likes: model.likes,
                 comments: model.comments,
                 banner: model.banner.clone(),
-                prev: prev_post.map(|m| ResPostSingleDataRelatedPost { id: m.pid, title: m.title }),
-                next: next_post.map(|m| ResPostSingleDataRelatedPost { id: m.pid, title: m.title }),
+                prev: prev_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    str_id: m.str_id,
+                    title: m.title,
+                }),
+                next: next_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    str_id: m.str_id,
+                    title: m.title,
+                }),
             })
         }
         None => {
             l_warn!(logger, "Post {} not found", id);
+            Err(ApiError::not_found("Post not found"))
+        }
+    }
+}
+
+async fn fetch_by_str_id(
+    Path(str_id): Path<String>,
+    State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+    access: Access,
+) -> ApiResult<ResPostSingleData> {
+    match romi_posts::Entity::find()
+        .filter(romi_posts::Column::StrId.eq(Some(str_id.clone())))
+        .one(conn)
+        .await
+        .with_context(|| format!("Failed to fetch post {}", str_id))?
+    {
+        Some(model) => {
+            let (tags, categories) = get_post_metas(model.pid, conn)
+                .await
+                .with_context(|| format!("Failed to fetch metas of post {}", str_id))?;
+            let password = model.password.clone().filter(|p| !p.is_empty());
+
+            let prev_post = romi_posts::Entity::find()
+                .filter(romi_posts::Column::Hide.ne(1))
+                .filter(romi_posts::Column::Pid.lt(model.pid))
+                .order_by_desc(romi_posts::Column::Pid)
+                .one(conn)
+                .await
+                .with_context(|| format!("Failed to fetch prev post for {}", model.pid))?;
+
+            let next_post = romi_posts::Entity::find()
+                .filter(romi_posts::Column::Hide.ne(1))
+                .filter(romi_posts::Column::Pid.gt(model.pid))
+                .order_by_asc(romi_posts::Column::Pid)
+                .one(conn)
+                .await
+                .with_context(|| format!("Failed to fetch next post for {}", model.pid))?;
+
+            api_ok(ResPostSingleData {
+                id: model.pid.clone(),
+                str_id: model.str_id.clone(),
+                title: model.title.clone(),
+                created: model.created,
+                modified: model.modified,
+                text: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                    model.text.clone()
+                } else {
+                    "This post is password protected.".into()
+                },
+                languages: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                    collect_markdown_languages(model.text.clone().as_str())
+                } else {
+                    vec![]
+                },
+                password: password.map(|p| {
+                    access.level.eq(&AccessLevel::Admin).then(|| p).unwrap_or("password".into())
+                }),
+                hide: model.hide.eq(&1.to_string()),
+                allow_comment: model.allow_comment.eq(&1.to_string()),
+                tags,
+                categories,
+                views: model.views,
+                likes: model.likes,
+                comments: model.comments,
+                banner: model.banner.clone(),
+                prev: prev_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    str_id: m.str_id,
+                    title: m.title,
+                }),
+                next: next_post.map(|m| ResPostSingleDataRelatedPost {
+                    id: m.pid,
+                    str_id: m.str_id,
+                    title: m.title,
+                }),
+            })
+        }
+        None => {
+            l_warn!(logger, "Post {} not found", str_id);
             Err(ApiError::not_found("Post not found"))
         }
     }
@@ -263,6 +353,7 @@ async fn create(
 
     let post_model = romi_posts::ActiveModel {
         pid: ActiveValue::not_set(),
+        str_id: ActiveValue::set(post.str_id.clone()),
         title: ActiveValue::set(post.title.clone()),
         text: ActiveValue::set(post.text.clone()),
         password: ActiveValue::set(post.password.clone().filter(|p| !p.is_empty())),
@@ -334,6 +425,7 @@ async fn update(
         Some(model) => {
             let mut active_model = model.into_active_model();
             active_model.title = ActiveValue::set(post.title.clone());
+            active_model.str_id = ActiveValue::set(post.str_id.clone());
             active_model.text = ActiveValue::set(post.text.clone());
             if let Some(password) = post.password.clone() {
                 active_model.password =

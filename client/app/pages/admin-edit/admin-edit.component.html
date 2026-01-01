@@ -19,11 +19,13 @@
     } @else {
     <div class="space-y-6">
       <div class="grid  grid-cols-1 lg:grid-cols-3 lg:gap-6">
-        <div class="col-span-2">
+        <div class="col-span-1">
           <r-input label="文章标题" [(ngModel)]="postForm.title" required class="w-full" />
         </div>
         <div>
-
+          <r-input [(ngModel)]="postForm.str_id" label="语义化地址" class="w-full" />
+        </div>
+        <div>
           <r-input [(ngModel)]="postForm.banner" label="文章封面" class="w-full" />
         </div>
       </div>

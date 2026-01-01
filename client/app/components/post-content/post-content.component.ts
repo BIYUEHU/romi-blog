@@ -2,7 +2,7 @@ import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
-import { Router, RouterLink } from '@angular/router'
+import { RouterLink } from '@angular/router'
 import markdownIt from 'markdown-it'
 import MarkdownIt from 'markdown-it'
 import { Subject } from 'rxjs'
@@ -74,10 +74,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
     return this.comments.slice(start, start + this.pageSize)
   }
 
-  public extra?: { url: string; tags: [string, string][] }
+  public extra?: { url: string; url2: string | null; tags: [string, string][] }
 
   public constructor(
-    private readonly router: Router,
     private readonly notifyService: NotifyService,
     private readonly apiService: ApiService,
     private readonly storeService: StoreService,
@@ -253,7 +252,8 @@ export class PostContentComponent implements OnInit, OnDestroy {
     if (!this.highlighter) this.highlighter = await this.highlighterService.getHighlighter(this.post.languages)
 
     this.extra = {
-      url: this.browserService.on(() => `${location.origin}${this.router.url.split('#')[0]}`) ?? '',
+      url: this.browserService.on(() => `${location.origin}/post/${this.post.id}`) ?? '',
+      url2: this.post.str_id ? this.browserService.on(() => `${location.origin}/post/${this.post.str_id}`) : null,
       tags: this.post.tags.map((tag) => [tag, randomRTagType()])
     }
 

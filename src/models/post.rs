@@ -4,6 +4,7 @@ use ts_rs::TS;
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqPostData {
+    pub str_id: Option<String>,
     pub title: String,
     pub text: String,
     pub password: Option<String>,
@@ -26,6 +27,7 @@ pub struct ReqDecryptPostData {
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostData {
     pub id: u32,
+    pub str_id: Option<String>,
     pub title: String,
     pub created: u32,
     pub modified: u32,
@@ -45,6 +47,7 @@ pub struct ResPostData {
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleDataRelatedPost {
     pub id: u32,
+    pub str_id: Option<String>,
     pub title: String,
 }
 
@@ -52,6 +55,7 @@ pub struct ResPostSingleDataRelatedPost {
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleData {
     pub id: u32,
+    pub str_id: Option<String>,
     pub title: String,
     pub created: u32,
     pub modified: u32,

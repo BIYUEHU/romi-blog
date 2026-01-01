@@ -16,7 +16,7 @@ export class ArchiveComponent implements OnInit {
     {
       date: string
       title: string
-      id: number
+      id: number | string
     }[]
   ][] = []
 
@@ -32,7 +32,7 @@ export class ArchiveComponent implements OnInit {
       acc[index][1].push({
         date: `${((result) => (result > 10 ? result : `0${result}`))(date.getMonth() + 1)}-${((result) => (result > 10 ? result : `0${result}`))(date.getDate())}`,
         title: post.title,
-        id: post.id
+        id: post.str_id ? post.str_id : post.id
       })
       return acc
     }, this.archive)

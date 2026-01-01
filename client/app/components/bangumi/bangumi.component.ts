@@ -33,7 +33,6 @@ export class BangumiComponent implements OnInit {
   public ngOnInit(): void {
     this.isLoading = true
 
-    // TODO: 像其它第三方API，后端进行缓存，这样这里也可以改用为 SSR resolver，同时到也可以并入到 title strategy 把 header 逻辑
     this.apiService.getBangumi(0, this.isAnime).subscribe((data) => {
       this.data = data
       this.isLoading = false

@@ -44,7 +44,7 @@
                   </div>
                 }
                 <div>
-                  <a [routerLink]="['/post/', post.id]" target="_blank" class="text-sm font-medium text-bg-200 truncate"
+                  <a [routerLink]="['/post/', post.str_id ? post.str_id : post.id]" target="_blank" class="text-sm font-medium text-bg-200 truncate"
                      [title]="post.title">
                     {{ post.title.slice(0, 20) }}
                   </a>

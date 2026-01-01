@@ -93,6 +93,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public postForm: Omit<ReqPostData, 'created'> & { created: string } = {
     title: '',
     text: '',
+    str_id: null,
     password: null,
     hide: false,
     allow_comment: true,
@@ -119,13 +120,14 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const STORE_KEYS = this.getDraftKey()
     if (!Array.isArray(STORE_KEYS)) {
       try {
-        const { text, password, title, hide, allow_comment, tags, categories, banner } = JSON.parse(
+        const { text, password, title, str_id, hide, allow_comment, tags, categories, banner } = JSON.parse(
           this.storeService.getItem(STORE_KEYS) ?? ''
         )
         this.postForm = {
           ...this.postForm,
           password: password || null,
           title,
+          str_id,
           hide: !!hide,
           allow_comment: !!allow_comment,
           tags,

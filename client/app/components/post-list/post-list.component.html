@@ -4,7 +4,7 @@
     @for (post of displayedPosts; track post.id) {
       <app-card
               class="group rounded-xl overflow-hidden hover:shadow-lg transition-all hover:cursor-pointer break-inside-avoid mb-6"
-              [routerLink]="['/post', post.id]">
+              [routerLink]="['/post', post.str_id ? post.str_id : post.id]">
         @if (post.banner) {
           <div class="aspect-video overflow-hidden relative">
             <img fill [ngSrc]="post.banner" [alt]="post.title"

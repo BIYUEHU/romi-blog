@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
+import { pipe } from 'fp-ts/function'
 import { ResPostSingleData } from '../../../output'
 import { PostContentComponent } from '../../components/post-content/post-content.component'
 import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
@@ -21,7 +22,9 @@ export class PostComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
-    this.apiService.getPost(+this.id).subscribe((post) => {
+    pipe(+this.id, (id) =>
+      Number.isNaN(id) ? this.apiService.getPostByStrId(this.id) : this.apiService.getPost(id)
+    ).subscribe((post) => {
       this.post = post
       this.appTitleStrategy.setTitle(post.title)
       this.appTitleStrategy.updateHeader({

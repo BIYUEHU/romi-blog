@@ -33,27 +33,66 @@ pub struct ResDashboardData {
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
-struct ResProjectDataLicense {
+pub struct ResProjectDataLicense {
     pub name: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResProjectData {
-    id: u64,
-    name: String,
-    description: Option<String>,
-    html_url: String,
-    homepage: Option<String>,
-    language: Option<String>,
-    stargazers_count: u64,
-    forks_count: u64,
-    topics: Vec<String>,
-    created_at: String,
-    updated_at: String,
-    license: Option<ResProjectDataLicense>,
-    archived: bool,
-    visibility: String,
+    pub id: u64,
+    pub name: String,
+    pub description: Option<String>,
+    pub html_url: String,
+    pub homepage: Option<String>,
+    pub language: Option<String>,
+    pub stargazers_count: u64,
+    pub forks_count: u64,
+    pub topics: Vec<String>,
+    pub created_at: String,
+    pub updated_at: String,
+    pub license: Option<ResProjectDataLicense>,
+    pub archived: bool,
+    pub visibility: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResBangumiData {
+    // origin_id: u64,
+    pub name: String,
+    pub tags: Vec<String>,
+    pub image: String,
+    pub summary: String,
+    pub eps: Option<u64>,
+    pub date: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+pub struct OriginBangumiData {
+    pub data: Vec<OriginBangumiDataItem>,
+    pub total: u64,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+pub struct OriginBangumiDataItem {
+    pub subject_id: u64,
+    pub tags: Vec<String>,
+    pub subject: OriginBangumiSubject,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+pub struct OriginBangumiSubject {
+    pub name: String,
+    pub images: OriginBangumiSubjectImages,
+    pub short_summary: String,
+    pub eps: Option<u64>,
+    pub date: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize, TS)]
+pub struct OriginBangumiSubjectImages {
+    pub medium: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, TS)]

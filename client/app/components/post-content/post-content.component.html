@@ -16,8 +16,13 @@
         @if (!hideCopyright) {
           <div
                   class="text-size-lg line-height-loose mx-auto p-2 border-4 border-solid border-text-100 border-l-primary-100 bg-text-300">
-            <strong> 本文链接：</strong><a [href]="extra?.url"
-                                          class="text-bg-300 underline">{{ extra?.url }}</a><br/>
+            <strong> 本文链接：</strong><a [href]="extra?.url2 ? extra?.url2 : extra?.url"
+                                          class="text-bg-300 underline">{{ extra?.url2 ? extra?.url2 : extra?.url }}</a><br/>
+            @if (extra?.url2) {
+              <strong> 原始链接：</strong><a [href]="extra?.url"
+                                            class="text-bg-300 underline">{{ extra?.url }}</a>
+              <br/>
+            }
             <strong> 版权声明：</strong><span>本文由作者原创，禁止任何形式转载。</span>
           </div>
         }
@@ -60,7 +65,7 @@
         @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
             @if (post.prev) {
-              <a [routerLink]="['/post/', post.prev.id]"
+              <a [routerLink]="['/post/', post.prev.str_id ? post.prev.str_id : post.prev.id]"
                  class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
                 <div class="flex items-center gap-2 text-gray-500 mb-2">
                   <span>上一篇</span>
@@ -74,7 +79,7 @@
             }
 
             @if (post.next) {
-              <a [routerLink]="['/post/', post.next.id]"
+              <a [routerLink]="['/post/', post.next.str_id ? post.next.str_id : post.next.id]"
                  class="group p-4 bg-text-300 hover:bg-text-200 rounded-lg transition-colors">
                 <div class="flex items-center gap-2 text-gray-500 mb-2 justify-end">
                   <span>下一篇</span>
@@ -188,7 +193,7 @@
                   }
                 }
               } @else {
-                <app-skeleton-loader />
+                <app-skeleton-loader/>
               }
             </div>
 
@@ -221,6 +226,6 @@
       }
     </div>
   } @else {
-    <app-skeleton-loader />
+    <app-skeleton-loader/>
   }
 </div>

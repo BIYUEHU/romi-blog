@@ -2,11 +2,6 @@ import { AuthUser } from '../../output'
 
 export * from '../../output'
 
-// export interface Author {
-//   username: string
-//   avatar: string
-// }
-
 export type UserAuthData = AuthUser & { token: string }
 
 export interface BangumiData {
@@ -37,4 +32,10 @@ export interface Video {
   aid: number
   bvid: string
   length: string
+}
+
+export interface LanguageColors {
+  [key: string]: {
+    color: string
+  }
 }

@@ -36,7 +36,7 @@
 
       <div class="columns-1 md:columns-2 gap-x-6">
         @for (post of home!.posts; track post.id) {
-          <app-card [routerLink]="['/post/', post.id]"
+          <app-card [routerLink]="['/post/', post.str_id ? post.str_id : post.id]"
                     class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
             @if (post.banner) {
               <div class="aspect-video overflow-hidden relative">

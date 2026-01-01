@@ -5,10 +5,10 @@ import { ResPostData } from '../../models/api.model'
 import { CardComponent } from '../card/card.component'
 
 @Component({
-    selector: 'app-post-list',
-    imports: [DatePipe, RouterLink, CardComponent, NgOptimizedImage],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA],
-    templateUrl: './post-list.component.html'
+  selector: 'app-post-list',
+  imports: [DatePipe, RouterLink, CardComponent, NgOptimizedImage],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  templateUrl: './post-list.component.html'
 })
 export class PostListComponent implements OnInit {
   @Input({ required: true }) posts!: ResPostData[]
