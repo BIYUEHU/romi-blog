@@ -40,7 +40,7 @@ a:hover {
     background-color: var(--text-200);
     font-family: sans-serif;
     line-height: 1.8;
-    font-weight: 300;
+    /*font-weight: 300;*/
     /*font-size: 1.05rem;*/
     margin-inline: auto;
     word-wrap: break-word;
@@ -48,17 +48,17 @@ a:hover {
     border-width: 1px;
     border-color: var(--text-200);
 
-    font-size h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-weight: 400;
-        /* margin-top: 24px; */
-        /* margin-bottom: 1rem; */
-        /* line-height: 1.3; */
-    }
+    /*font-size h1,*/
+    /*h2,*/
+    /*h3,*/
+    /*h4,*/
+    /*h5,*/
+    /*h6 {*/
+    /*    font-weight: 400;*/
+    /*     margin-top: 24px; */
+    /*     margin-bottom: 1rem; */
+    /*     line-height: 1.3; */
+    /*}*/
 
     /*h1 {*/
     /*    font-size: 1.8rem;*/
@@ -141,7 +141,7 @@ a:hover {
 
     blockquote {
         margin: 1rem auto;
-        width: 98%;
+        /*width: 98%;*/
         border-left: 4px solid var(--bg-300);
         padding: 0.25rem 1rem 0.25rem 16px;
         background-color: var(--text-300);
@@ -154,7 +154,7 @@ a:hover {
         padding: 0.5em;
         overflow-x: auto;
         /* white-space: pre-wrap; */
-        width: 98%;
+        /*width: 100%;*/
         margin: 1rem auto;
     }
 

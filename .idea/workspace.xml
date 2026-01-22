@@ -22,10 +22,10 @@
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/services/api.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/api.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/styles/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/styles/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -348,7 +348,7 @@
       <workItem from="1767278945799" duration="4108000" />
       <workItem from="1767283089581" duration="441000" />
       <workItem from="1768990335388" duration="763000" />
-      <workItem from="1769077561317" duration="1444000" />
+      <workItem from="1769077561317" duration="2904000" />
     </task>
     <servers />
   </component>
@@ -360,6 +360,17 @@
     <option featureType="dependencySupport" implementationName="javascript:npm:vite" />
     <option featureType="dependencySupport" implementationName="javascript:npm:@angular/core" />
     <option featureType="dependencySupport" implementationName="javascript:npm:karma" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -109,9 +109,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   private draftTimerId?: number
 
   private getDraftKey() {
-    if (this.isEdit) {
-      return [STORE_KEYS.postDraft(this.getId()), STORE_KEYS.postDraftTime(this.getId())]
-    }
+    if (this.isEdit) return [STORE_KEYS.postDraft(this.getId()), STORE_KEYS.postDraftTime(this.getId())]
     return STORE_KEYS.POST_DRAFT_NEW
   }
 
@@ -120,7 +118,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const STORE_KEYS = this.getDraftKey()
     if (!Array.isArray(STORE_KEYS)) {
       try {
-        const { text, password, title, str_id, hide, allow_comment, tags, categories, banner } = JSON.parse(
+        const { text, password, title, str_id, hide, allow_comment, tags, categories, banner, created } = JSON.parse(
           this.storeService.getItem(STORE_KEYS) ?? ''
         )
         this.postForm = {
@@ -132,6 +130,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
           allow_comment: !!allow_comment,
           tags,
           categories,
+          created,
           banner: banner || null
         }
         notify()
