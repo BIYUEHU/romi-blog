@@ -22,29 +22,10 @@
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-list/post-list.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/project-list/project-list.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/models/api.model.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/models/api.model.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-posts/admin-posts.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/archive/archive.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/archive/archive.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/dynamic/dynamic.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/dynamic/dynamic.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/home/home.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/home/home.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/post/post.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/interceptors/errorInterceptor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-login/admin-login.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/services/api.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/services/api.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/constant.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/constant.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/entity/romi_posts.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/entity/romi_posts.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/info.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/info.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/post.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/styles/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/styles/index.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -365,7 +346,9 @@
       <workItem from="1766563534885" duration="1113000" />
       <workItem from="1767247729079" duration="3616000" />
       <workItem from="1767278945799" duration="4108000" />
-      <workItem from="1767283089581" duration="96000" />
+      <workItem from="1767283089581" duration="441000" />
+      <workItem from="1768990335388" duration="763000" />
+      <workItem from="1769077561317" duration="1444000" />
     </task>
     <servers />
   </component>

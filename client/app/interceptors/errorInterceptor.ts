@@ -26,24 +26,38 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
     catchError((err) => {
       logger.label('HTTP').error(err)
 
-      if (ErrorRedirect) {
+      if (
+        ErrorRedirect &&
         match(err.status)
-          .with(403, () => router.navigate(['/403']))
-          .with(404, () => router.navigate(['/404']))
-          .with(500, () => router.navigate(['/500']))
-          .otherwise(() => layout.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))
+          .with(403, () => {
+            router.navigate(['/403'])
+            return true
+          })
+          .with(404, () => {
+            router.navigate(['/404'])
+            return true
+          })
+          .with(500, () => {
+            router.navigate(['/500'])
+            return true
+          })
+          .otherwise(() => false)
+      ) {
         return EMPTY
       }
 
       if (browser.is && err.status === 401) {
-        if (router.url.includes('/admin/')) {
+        if (router.url.startsWith('/admin/') && router.url !== '/admin/login') {
           layout.showMessage('登录已过期，请重新登录', 'error')
           auth.logout()
+          return EMPTY
         }
-        return EMPTY
       }
 
       if (SkipErrorHandling) return throwError(() => err)
+
+      layout.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error')
+      return EMPTY
 
       // if (r.method.toUpperCase() === 'GET') {
       //     match(err.status)
@@ -51,8 +65,6 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
       //         .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))
       //     return EMPTY
       // }
-
-      return EMPTY
     })
   )
 }

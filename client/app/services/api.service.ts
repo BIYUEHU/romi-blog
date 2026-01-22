@@ -109,14 +109,10 @@ export class ApiService {
       )
       .pipe(
         map((res) => {
-          try {
-            return {
-              ...jwtDecode<AuthUser>(res.token),
-              token: res.token
-            } as UserAuthData
-          } catch {
-            return null
-          }
+          return {
+            ...jwtDecode<AuthUser>(res.token),
+            token: res.token
+          } as UserAuthData
         }),
         catchError(() => {
           return of(null)

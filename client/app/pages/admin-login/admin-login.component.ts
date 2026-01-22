@@ -36,14 +36,17 @@ export class AdminLoginComponent {
     }
 
     this.isLoading = true
-    this.apiService.login(this.username, this.password).subscribe((data) => {
-      this.isLoading = false
-      if (data) {
-        this.notifyService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, 'success')
-        this.authService.setUser(data, this.rememberMe)
-        this.router.navigate(['/admin/dashboard'])
-      } else {
-        this.notifyService.showMessage('用户名或密码错误', 'error')
+    this.apiService.login(this.username, this.password).subscribe({
+      error: (data) => console.log('error', data),
+      next: (data) => {
+        this.isLoading = false
+        if (data) {
+          this.notifyService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, 'success')
+          this.authService.setUser(data, this.rememberMe)
+          this.router.navigate(['/admin/dashboard'])
+        } else {
+          this.notifyService.showMessage('用户名或密码错误', 'error')
+        }
       }
     })
   }
