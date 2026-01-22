@@ -24,7 +24,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     typewriterMode: true,
     theme: 'classic',
     toolbar: [
-      'emoji',
+      // 'emoji',
       'headings',
       'bold',
       'italic',

@@ -144,18 +144,33 @@ a:hover {
         /*width: 98%;*/
         border-left: 4px solid var(--bg-300);
         padding: 0.25rem 1rem 0.25rem 16px;
+        filter: brightness(0.96);
         background-color: var(--text-300);
     }
 
+    code {
+        background-color: var(--text-300) !important;
+        filter: brightness(0.95);
+        padding: 0.1rem 0.3rem;
+        border-radius: 5px;
+    }
+
     pre {
-        border-radius: 8px;
+        border-radius: 6px;
         border: 1px solid var(--bg-300);
-        background-color: var(--text-200) !important;
+        background-color: var(--text-300) !important;
         padding: 0.5em;
         overflow-x: auto;
+        filter: brightness(0.99);
         /* white-space: pre-wrap; */
         /*width: 100%;*/
         margin: 1rem auto;
+    }
+
+    pre > code {
+        filter: none;
+        border-radius: 0;
+        padding: 0;
     }
 
     a {
