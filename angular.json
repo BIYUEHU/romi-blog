@@ -28,8 +28,7 @@
             ],
             "styles": [
               "client/app/styles/index.css",
-              "ui/styles.css",
-              "node_modules/vditor/src/assets/less/index.less"
+              "ui/styles.css"
             ],
             "scripts": [
               "ui/dist/romi-ui.umd.cjs"

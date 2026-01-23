@@ -1,12 +1,24 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
+import {
+  AfterViewInit,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import Vditor from 'vditor'
+import { Crepe } from '@milkdown/crepe'
+import { nord } from '@milkdown/theme-nord'
+import '@milkdown/crepe/theme/common/style.css'
+import '@milkdown/crepe/theme/frame.css'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
+import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
@@ -18,77 +30,17 @@ import { formatDate } from '../../utils'
   templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
-  private static readonly EDOTPR_OPTIONS: IOptions = {
-    height: '50rem',
-    mode: 'ir',
-    typewriterMode: true,
-    theme: 'classic',
-    toolbar: [
-      // 'emoji',
-      'headings',
-      'bold',
-      'italic',
-      'strike',
-      'link',
-      '|',
-      'list',
-      'ordered-list',
-      'check',
-      'outdent',
-      'indent',
-      '|',
-      'quote',
-      'line',
-      'code',
-      'inline-code',
-      'insert-before',
-      'insert-after',
-      '|',
-      'upload',
-      'record',
-      'table',
-      '|',
-      'undo',
-      'redo',
-      'fullscreen',
-      'edit-mode'
-    ],
-    toolbarConfig: {
-      pin: true
-    },
-    counter: {
-      enable: true
-    },
-    cache: {
-      enable: false
-    }
-  }
-
   public isEdit = false
-  private isLoadingData = false
 
-  private editor?: Vditor
+  @ViewChild('editorRef') public editorRef!: ElementRef
+
+  private editor?: Crepe
 
   private getId() {
     return Number(this.route.snapshot.paramMap.get('id'))
   }
 
-  public get isLoading() {
-    return this.isLoadingData
-  }
-
-  private set isLoading(value: boolean) {
-    this.isLoadingData = value
-    if (!value)
-      setTimeout(() => {
-        this.editor = new Vditor('editor', {
-          ...AdminEditComponent.EDOTPR_OPTIONS,
-          after: () => {
-            this.editor?.setValue(this.getPostText())
-          }
-        })
-      }, 0)
-  }
+  public isLoading = true
 
   public postForm: Omit<ReqPostData, 'created'> & { created: string } = {
     title: '',
@@ -113,7 +65,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     return STORE_KEYS.POST_DRAFT_NEW
   }
 
-  private getPostText() {
+  private getPostText(): string {
     const notify = () => this.notifyService.showMessage('文章内容来自自动保存草稿', 'info')
     const STORE_KEYS = this.getDraftKey()
     if (!Array.isArray(STORE_KEYS)) {
@@ -170,23 +122,42 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly notifyService: NotifyService,
-    private readonly storeService: StoreService
+    private readonly storeService: StoreService,
+    private readonly loggerService: LoggerService
   ) {}
 
   public ngOnInit() {
     const id = this.getId()
     if (id && !Number.isNaN(id)) {
       this.isEdit = true
-      this.isLoading = true
       this.apiService.getPost(id).subscribe((post) => {
         this.postForm = {
           ...post,
           created: formatDate(new Date(post.created * 1000))
         }
         this.isLoading = false
+        setTimeout(() => {
+          this.editor = new Crepe({
+            root: document.getElementById('md-editor'),
+            defaultValue: this.getPostText(),
+            features: {
+              // Disable specific features
+              [Crepe.Feature.Latex]: false
+              // [Crepe.Feature.Table]: false
+            },
+            featureConfigs: {
+              // Configure feature behavior
+              [Crepe.Feature.LinkTooltip]: {
+                inputPlaceholder: 'Enter URL...'
+              }
+            }
+          })
+          this.editor.create().catch((err) => {
+            this.loggerService.error('Fail to create editor:', err)
+            this.notifyService.showMessage(`创建编辑器失败：${err instanceof Error ? err.message : String(err)}`)
+          })
+        }, 0)
       })
-    } else {
-      this.isLoading = false
     }
 
     this.apiService.getMetas().subscribe((metas) => {
@@ -197,7 +168,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const STORE_KEYS = this.getDraftKey()
     this.draftTimerId = Number(
       setInterval(() => {
-        const text = this.editor?.getValue()
+        const text = this.editor?.getMarkdown?.() ?? ''
         if (!text || text === this.postForm.text) return
 
         this.lastSaveDraftTime = Date.now()
@@ -270,9 +241,15 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   }
 
   public savePost() {
-    this.postForm.text = this.editor?.getValue() ?? ''
+    this.postForm.text = /* this.editor?.getValue() ?? */ ''
     if (!this.postForm.title || !this.postForm.text) {
       this.notifyService.showMessage('标题和内容不能为空', 'warning')
+      return
+    }
+
+    // biome-ignore lint: *
+    if (this.postForm.str_id && !/^[a-zA-Z][\x00-\x7F]*$/.test(this.postForm.str_id)) {
+      this.notifyService.showMessage('语义化地址不符合要求：仅 ASCII 字符且开头非数字', 'error')
       return
     }
 

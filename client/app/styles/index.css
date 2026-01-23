@@ -21,6 +21,13 @@
     sans-serif;
 }
 
+#md-editor {
+    height: 50rem;
+    overflow: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 ::selection {
     background-color: var(--accent-300);
 }
@@ -171,6 +178,7 @@ a:hover {
         filter: none;
         border-radius: 0;
         padding: 0;
+        font-size: 14px;
     }
 
     a {

@@ -85,6 +85,7 @@ export class NewsesComponent implements OnInit {
       .pipe(map((data) => sortByCreatedTime(data)))
       .subscribe((data) => {
         this.newses = data
+        this.refresh()
       })
   }
 

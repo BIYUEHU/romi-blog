@@ -83,7 +83,7 @@ export class AppTitleStrategy extends TitleStrategy {
         [Full('/newses'), () => this.newsesPage(title ?? '', route.data['newses'])],
         [Full('/chars'), () => this.charsPage(title ?? '', route.data['chars'])],
         [Full('/project'), () => this.projectPage(title ?? '')],
-        [Full('/news/'), () => this.newsPage(route.data['news'])],
+        [Starts('/news/'), () => this.newsPage(route.data['news'])],
         [Full('/404'), () => this.notFoundPage()],
         [Starts('/tag/'), () => this.tagPage(route.paramMap.get('tag') ?? '', route.data['posts'])],
         [Starts('/category/'), () => this.categoryPage(route.paramMap.get('category') ?? '', route.data['posts'])],

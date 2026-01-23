@@ -41,6 +41,14 @@ pub fn routes() -> Router<RomiState> {
         .route("/decrypt/{id}", post(decrypt))
 }
 
+fn valid_str_id(str: String) -> Option<String> {
+    if str.is_empty() || !str.is_ascii() || !str.chars().next().unwrap().is_ascii_alphabetic() {
+        None
+    } else {
+        Some(str)
+    }
+}
+
 async fn get_post_metas(
     id: u32,
     conn: &DatabaseConnection,
@@ -351,9 +359,20 @@ async fn create(
 ) -> ApiResult {
     let txn = conn.begin().await.context("Failed to begin transaction")?;
 
+    let str_id = if let Some(str_id) = post.str_id {
+        if let Some(str_id) = valid_str_id(str_id) {
+            Some(str_id)
+        } else {
+            l_warn!(logger, "Invalid str_id");
+            return Err(ApiError::bad_request("Invalid str_id"));
+        }
+    } else {
+        None
+    };
+
     let post_model = romi_posts::ActiveModel {
         pid: ActiveValue::not_set(),
-        str_id: ActiveValue::set(post.str_id.clone()),
+        str_id: ActiveValue::set(str_id),
         title: ActiveValue::set(post.title.clone()),
         text: ActiveValue::set(post.text.clone()),
         password: ActiveValue::set(post.password.clone().filter(|p| !p.is_empty())),
