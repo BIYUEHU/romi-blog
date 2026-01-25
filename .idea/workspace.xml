@@ -22,18 +22,12 @@
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/angular.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/shared/title-strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/title-strategy.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/styles/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/styles/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui/src/components/Input/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui/src/components/Input/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,7 +354,8 @@
       <workItem from="1769089884450" duration="449000" />
       <workItem from="1769090345734" duration="622000" />
       <workItem from="1769092689830" duration="833000" />
-      <workItem from="1769180956959" duration="4924000" />
+      <workItem from="1769180956959" duration="5259000" />
+      <workItem from="1769352854738" duration="5412000" />
     </task>
     <servers />
   </component>

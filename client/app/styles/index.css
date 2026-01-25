@@ -21,7 +21,7 @@
     sans-serif;
 }
 
-#md-editor {
+.md-editor {
     height: 50rem;
     overflow: auto;
     border: 1px solid #ccc;

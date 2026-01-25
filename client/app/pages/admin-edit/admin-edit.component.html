@@ -100,7 +100,10 @@
 
         <div>
           <label class="block text-sm text-bg-200 mb-2">文章内容</label>
-          <div id="md-editor"></div>
+<!--          <div></div>-->
+<!--          <div class="md-editor" id="md-view"></div>-->
+<!--          <div class="md-editor" id="md-source"></div>-->
+          <app-markdown-editor [(ngModel)]="postForm.text"></app-markdown-editor>
           <span class="text-xs text-gray mt-2">上次保存时间: @if (lastSaveDraftTime) {
             {{ lastSaveDraftTime | date :'yyyy-MM-dd HH:mm:ss' }}
           } @else {

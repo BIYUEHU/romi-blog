@@ -1,19 +1,10 @@
 import { DatePipe } from '@angular/common'
-import {
-  AfterViewInit,
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnDestroy, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { Crepe } from '@milkdown/crepe'
-import { nord } from '@milkdown/theme-nord'
 import '@milkdown/crepe/theme/common/style.css'
 import '@milkdown/crepe/theme/frame.css'
+import { MarkdownEditorComponent } from '../../components/markdown-editor/markdown-editor.component'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqPostData } from '../../models/api.model'
@@ -25,16 +16,18 @@ import { formatDate } from '../../utils'
 
 @Component({
   selector: 'app-admin-edit',
-  imports: [FormsModule, WebComponentCheckboxAccessorDirective, WebComponentInputAccessorDirective, DatePipe],
+  imports: [
+    FormsModule,
+    WebComponentCheckboxAccessorDirective,
+    WebComponentInputAccessorDirective,
+    DatePipe,
+    MarkdownEditorComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit, OnDestroy {
   public isEdit = false
-
-  @ViewChild('editorRef') public editorRef!: ElementRef
-
-  private editor?: Crepe
 
   private getId() {
     return Number(this.route.snapshot.paramMap.get('id'))
@@ -136,27 +129,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
           created: formatDate(new Date(post.created * 1000))
         }
         this.isLoading = false
-        setTimeout(() => {
-          this.editor = new Crepe({
-            root: document.getElementById('md-editor'),
-            defaultValue: this.getPostText(),
-            features: {
-              // Disable specific features
-              [Crepe.Feature.Latex]: false
-              // [Crepe.Feature.Table]: false
-            },
-            featureConfigs: {
-              // Configure feature behavior
-              [Crepe.Feature.LinkTooltip]: {
-                inputPlaceholder: 'Enter URL...'
-              }
-            }
-          })
-          this.editor.create().catch((err) => {
-            this.loggerService.error('Fail to create editor:', err)
-            this.notifyService.showMessage(`创建编辑器失败：${err instanceof Error ? err.message : String(err)}`)
-          })
-        }, 0)
+        this.postForm.text = this.getPostText()
       })
     }
 
@@ -168,7 +141,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const STORE_KEYS = this.getDraftKey()
     this.draftTimerId = Number(
       setInterval(() => {
-        const text = this.editor?.getMarkdown?.() ?? ''
+        const text = /*this.editor?.getMarkdown?.() ??*/ ''
         if (!text || text === this.postForm.text) return
 
         this.lastSaveDraftTime = Date.now()
@@ -185,7 +158,6 @@ export class AdminEditComponent implements OnInit, OnDestroy {
 
   public ngOnDestroy() {
     if (this.draftTimerId) clearInterval(this.draftTimerId)
-    this.editor?.destroy()
   }
 
   public searchTags() {
