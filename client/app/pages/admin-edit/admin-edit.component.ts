@@ -9,7 +9,6 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type { ReqPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { formatDate } from '../../utils'
@@ -52,6 +51,8 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   public lastSaveDraftTime?: number
 
   private draftTimerId?: number
+
+  private originText = ''
 
   private getDraftKey() {
     if (this.isEdit) return [STORE_KEYS.postDraft(this.getId()), STORE_KEYS.postDraftTime(this.getId())]
@@ -115,8 +116,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly notifyService: NotifyService,
-    private readonly storeService: StoreService,
-    private readonly loggerService: LoggerService
+    private readonly storeService: StoreService
   ) {}
 
   public ngOnInit() {
@@ -129,6 +129,7 @@ export class AdminEditComponent implements OnInit, OnDestroy {
           created: formatDate(new Date(post.created * 1000))
         }
         this.isLoading = false
+        this.originText = this.postForm.text
         this.postForm.text = this.getPostText()
       })
     }
@@ -141,16 +142,15 @@ export class AdminEditComponent implements OnInit, OnDestroy {
     const STORE_KEYS = this.getDraftKey()
     this.draftTimerId = Number(
       setInterval(() => {
-        const text = /*this.editor?.getMarkdown?.() ??*/ ''
-        if (!text || text === this.postForm.text) return
+        if (this.originText === this.postForm.text) return
 
         this.lastSaveDraftTime = Date.now()
         if (Array.isArray(STORE_KEYS)) {
           const [draftKey, draftTimeKey] = STORE_KEYS
-          this.storeService.setItem(draftKey, text)
+          this.storeService.setItem(draftKey, this.postForm.text)
           this.storeService.setItem(draftTimeKey, String(this.lastSaveDraftTime))
         } else {
-          this.storeService.setItem(STORE_KEYS, JSON.stringify({ ...this.postForm, text }))
+          this.storeService.setItem(STORE_KEYS, JSON.stringify(this.postForm))
         }
       }, 5 * 1000)
     )
@@ -213,7 +213,6 @@ export class AdminEditComponent implements OnInit, OnDestroy {
   }
 
   public savePost() {
-    this.postForm.text = /* this.editor?.getValue() ?? */ ''
     if (!this.postForm.title || !this.postForm.text) {
       this.notifyService.showMessage('标题和内容不能为空', 'warning')
       return

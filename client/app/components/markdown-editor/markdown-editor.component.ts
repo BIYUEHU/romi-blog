@@ -1,15 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  forwardRef,
-  input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core'
+import { AfterViewInit, Component, ElementRef, forwardRef, OnDestroy, signal, ViewChild } from '@angular/core'
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
 import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
@@ -27,16 +16,34 @@ import {
   highlightActiveLineGutter,
   highlightSpecialChars,
   keymap,
+  lineNumbers,
   rectangularSelection
 } from '@codemirror/view'
 import { defaultValueCtx, Editor, rootCtx } from '@milkdown/kit/core'
 import { listener, listenerCtx } from '@milkdown/kit/plugin/listener'
 import { commonmark } from '@milkdown/kit/preset/commonmark'
-import { nord } from '@milkdown/theme-nord'
+import { replaceAll } from '@milkdown/kit/utils'
+import { iso, Newtype } from 'newtype-ts'
+import { match } from 'ts-pattern'
 import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 
+interface EditorMode
+  extends Newtype<
+    { readonly EditorMode: unique symbol },
+    { readonly _tag: 'Both' } | { readonly _tag: 'Source' } | { readonly _tag: 'Preview' }
+  > {}
+
+const isoEditorMode = iso<EditorMode>()
+
+const EditorMode = {
+  Both: isoEditorMode.wrap({ _tag: 'Both' }),
+  Source: isoEditorMode.wrap({ _tag: 'Source' }),
+  Preview: isoEditorMode.wrap({ _tag: 'Preview' })
+}
+
 const basicSetup: Extension = [
+  lineNumbers(),
   highlightActiveLineGutter(),
   highlightSpecialChars(),
   history(),
@@ -64,40 +71,7 @@ const basicSetup: Extension = [
 @Component({
   selector: 'app-markdown-editor',
   standalone: true,
-  template: `
-      <div class="container">
-        <!-- 左侧：纯净 CodeMirror 源码区 -->
-        <div #codemirrorContainer class="codemirror-editor"></div>
-
-        <!-- 右侧：Milkdown Crepe 所见即所得区 -->
-        <div #crepeContainer class="crepe-editor"></div>
-      </div>
-
-      <div style="padding: 16px; background: #f8f9fa;">
-        <button (click)="toggleMode()">切换模式（当前：{{ currentMode === 'crepe' ? 'Crepe 编辑' : '源码编辑' }}）</button>
-      </div>
-    `,
-  styles: [
-    `
-            .container {
-                display: flex;
-                height: 600px; /* 可自行调整或用 vh */
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                overflow: hidden;
-            }
-
-            .codemirror-editor,
-            .crepe-editor {
-                flex: 1;
-                overflow: auto;
-            }
-
-            .codemirror-editor {
-                border-right: 1px solid #ddd;
-            }
-        `
-  ],
+  templateUrl: './markdown-editor.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -112,13 +86,15 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
 
   private onChange: (value: string) => void = () => {}
   private onTouched: () => void = () => {}
-  private editor!: Editor
-  private cm!: EditorView
-  private isUpdatingFromCm = false
-  private isUpdatingFromCrepe = false
-  private lastSyncedContent: string = ''
+  private editor?: Editor
+  private cm?: EditorView
+  private pendingValue: string | null = null
+  private isInternalUpdate = false
+  private cmHasFocus = false
+  private pendingCmSync: string | null = null
 
-  public currentMode: 'crepe' | 'codemirror' = 'crepe'
+  public currentMode = signal<EditorMode>(EditorMode.Both)
+  public isFullscreen = signal(false)
 
   public constructor(
     private readonly loggerService: LoggerService,
@@ -126,45 +102,45 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   ) {}
 
   public async ngAfterViewInit() {
-    await this.initEditor()
     this.initCodemirror()
+    await this.initEditor()
+    if (this.pendingValue !== null) {
+      this.applyContent(this.pendingValue)
+      this.pendingValue = null
+    }
   }
 
-  private async initEditor() {
+  private async initEditorWithValue(initialValue: string = '') {
     try {
       this.editor = await Editor.make()
         .config((ctx) => {
           ctx.set(rootCtx, this.editorContainer.nativeElement)
+          ctx.set(defaultValueCtx, initialValue)
         })
-        // .use(nord) // 主题（可换成其他主题）
         .use(commonmark)
         .use(listener)
         .create()
+
       this.editor.action((ctx) => {
         const listener = ctx.get(listenerCtx)
         listener.markdownUpdated((_, markdown) => {
-          if (this.isUpdatingFromCm) return
-          if (markdown === this.lastSyncedContent) return
+          if (this.isInternalUpdate) return
 
-          this.isUpdatingFromCrepe = true
-          try {
-            const currentCm = this.cm.state.doc.toString()
-            if (currentCm !== markdown) {
-              this.cm.dispatch({
-                changes: { from: 0, to: this.cm.state.doc.length, insert: markdown }
-              })
-            }
-            this.onChange(markdown)
-            this.onTouched()
-          } finally {
-            this.isUpdatingFromCrepe = false
-          }
+          this.isInternalUpdate = true
+          this.syncToCm(markdown)
+          this.onChange(markdown)
+          this.onTouched()
+          this.isInternalUpdate = false
         })
       })
     } catch (err) {
-      this.loggerService.error('Fail to create editor:', err)
-      this.notifyService.showMessage(`创建编辑器失败：${err instanceof Error ? err.message : String(err)}`)
+      this.loggerService.error('Failed to create editor:', err)
+      this.notifyService.showMessage(`创建编辑器失败: ${err instanceof Error ? err.message : String(err)}`)
     }
+  }
+
+  private async initEditor() {
+    await this.initEditorWithValue(this.pendingValue ?? '')
   }
 
   private initCodemirror() {
@@ -172,40 +148,154 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
       doc: '',
       extensions: [
         basicSetup,
-        markdown()
-        // 这里可以继续关闭你讨厌的智能行为，例如：
-        // indent(), bracketMatching(), closeBrackets(), autocompletion() 等
-        // 如果要完全纯净，可以只用 basicSetup + markdown()，其他全不加
+        markdown(),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged && !this.isInternalUpdate) {
+            const newMd = update.state.doc.toString()
+            this.isInternalUpdate = true
+            this.syncToCrepe(newMd)
+            this.onChange(newMd)
+            this.onTouched()
+            this.isInternalUpdate = false
+          }
+        }),
+        // 监听焦点变化
+        EditorView.focusChangeEffect.of((_, focusing) => {
+          this.cmHasFocus = focusing
+          // 失去焦点时,如果有待同步的内容就同步过去
+          if (!focusing && this.pendingCmSync !== null) {
+            const pending = this.pendingCmSync
+            this.pendingCmSync = null
+            this.applySyncToCm(pending)
+          }
+          return null
+        })
       ],
       parent: this.codemirrorContainer.nativeElement
     })
+  }
 
-    this.cm.dispatch = (_) => {
-      if (this.isUpdatingFromCrepe) return
+  private syncToCm(markdown: string) {
+    if (!this.cm) return
 
-      this.isUpdatingFromCm = true
-      try {
-        const newMd = this.cm.state.doc.toString()
-        if (newMd === this.lastSyncedContent) return
-        this.setContent(newMd)
-        this.onChange(newMd)
-        this.onTouched()
-      } finally {
-        this.isUpdatingFromCm = false
+    // 如果 CM 正在编辑中,就不要打断它!缓存起来等失去焦点时再同步
+    if (this.cmHasFocus) {
+      this.pendingCmSync = markdown
+      return
+    }
+
+    this.applySyncToCm(markdown)
+  }
+
+  private applySyncToCm(markdown: string) {
+    if (!this.cm) return
+    const current = this.cm.state.doc.toString()
+    if (current === markdown) return
+
+    // 保存当前光标位置
+    const { selection } = this.cm.state
+    const cursorPos = selection.main.head
+
+    // 简单的 diff:找到第一个和最后一个不同的字符位置
+    let start = 0
+    let endCurrent = current.length
+    let endNew = markdown.length
+
+    // 从前往后找第一个不同的位置
+    while (start < endCurrent && start < endNew && current[start] === markdown[start]) {
+      start++
+    }
+
+    // 从后往前找第一个不同的位置
+    while (endCurrent > start && endNew > start && current[endCurrent - 1] === markdown[endNew - 1]) {
+      endCurrent--
+      endNew--
+    }
+
+    // 只更新变化的部分
+    if (start < endCurrent || start < endNew) {
+      const changes = {
+        from: start,
+        to: endCurrent,
+        insert: markdown.slice(start, endNew)
       }
+
+      // 计算新的光标位置
+      let newCursorPos = cursorPos
+      if (cursorPos >= endCurrent) {
+        // 光标在变化区域之后,需要调整偏移
+        newCursorPos = cursorPos + (endNew - endCurrent)
+      } else if (cursorPos > start) {
+        // 光标在变化区域内,放到变化结束位置
+        newCursorPos = endNew
+      }
+      // 否则光标在变化区域之前,位置不变
+
+      this.cm.dispatch({
+        changes,
+        selection: { anchor: Math.min(newCursorPos, markdown.length) }
+      })
     }
   }
 
-  public toggleMode() {
-    this.currentMode = this.currentMode === 'crepe' ? 'codemirror' : 'crepe'
-    // 可以加动画或隐藏/显示逻辑，这里简化处理
-    // 如果想完全隐藏一个，可以用 *ngIf 或 CSS display: none
+  private syncToCrepe(markdown: string) {
+    if (!this.editor) return
+    this.editor.action(replaceAll(markdown))
+  }
+
+  private applyContent(md: string) {
+    this.isInternalUpdate = true
+
+    if (this.cm) {
+      this.cm.dispatch({
+        changes: { from: 0, to: this.cm.state.doc.length, insert: md }
+      })
+    }
+
+    if (this.editor) {
+      this.editor.action(replaceAll(md))
+    }
+
+    this.isInternalUpdate = false
+  }
+
+  public cycleMode() {
+    const modes: Array<EditorMode> = [EditorMode.Both, EditorMode.Source, EditorMode.Preview]
+    const currentIndex = modes.indexOf(this.currentMode())
+    const nextIndex = (currentIndex + 1) % modes.length
+    this.currentMode.set(modes[nextIndex])
+  }
+
+  // public getModeText(): string {
+  //   match(isoEditorMode.unwrap(this.currentMode())).with(
+  //     { _tag: 'both' }, () => ""
+  //   )
+  //   const mode = this.currentMode()
+  //   switch (mode) {
+  //     case 'both':
+  //       return '双栏'
+  //     case 'codemirror':
+  //       return '源码'
+  //     case 'milkdown':
+  //       return '所见即所得'
+  //   }
+  // }
+
+  public toggleFullscreen() {
+    this.isFullscreen.update((v) => !v)
   }
 
   public writeValue(value: string): void {
-    if (value !== undefined && value !== this.getContent()) {
-      this.setContent(value)
+    if (value === undefined || value === null) {
+      value = ''
     }
+
+    if (!this.cm || !this.editor) {
+      this.pendingValue = value
+      return
+    }
+
+    this.applyContent(value)
   }
 
   public registerOnChange(fn: (value: string) => void): void {
@@ -216,20 +306,8 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     this.onTouched = fn
   }
 
-  public getContent(): string {
-    return this.cm?.state.doc.toString() ?? ''
-  }
-
-  public setContent(md: string) {
-    if (!this.cm || !this.editor) return
-    this.isUpdatingFromCm = true
-    this.cm.dispatch({ changes: { from: 0, to: this.cm.state.doc.length, insert: md } })
-    this.editor.action((ctx) => ctx.set(defaultValueCtx, md))
-    this.isUpdatingFromCm = false
-  }
-
   public ngOnDestroy() {
-    this.editor?.destroy().then()
+    this.editor?.destroy()
     this.cm?.destroy()
   }
 }

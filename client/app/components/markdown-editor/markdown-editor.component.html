@@ -1,1 +1,23 @@
-<p>markdown-editor works!</p>
+<div class="markdown-editor-wrapper" [class.fullscreen]="isFullscreen()">
+  <div class="flex gap-2 px-3 py-2 bg-gray-50 border-b border-solid border-gray-300">
+    <button (click)="cycleMode()"
+            class="px-3 py-1.5 text-sm bg-white border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-gray-100 hover:border-gray-400">
+      模式: {{ getModeText() }}
+    </button>
+    <button (click)="toggleFullscreen()"
+            class="px-3 py-1.5 text-sm bg-white border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-gray-100 hover:border-gray-400">
+      {{ isFullscreen() ? '退出全屏' : '全屏编辑' }}
+    </button>
+  </div>
+
+  <div class="flex flex-1 overflow-hidden min-h-600px "
+       [class.min-h-0]="isFullscreen()">
+    <div #codemirrorContainer
+         class="flex-1 overflow-auto border-r border-solid border-gray-300"
+         [class.hidden]="currentMode() === 'milkdown'"
+         [class.border-r-0]="currentMode() === 'codemirror'"></div>
+    <div #crepeContainer
+         class="flex-1 overflow-auto"
+         [class.hidden]="currentMode() === 'codemirror'"></div>
+  </div>
+</div>
