@@ -17,6 +17,7 @@ import { HighlighterService } from '../../services/highlighter.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { randomRTagType } from '../../utils'
+import { MessageBoxType } from '../message/message.component'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 interface TocItem {
@@ -125,18 +126,18 @@ export class PostContentComponent implements OnInit, OnDestroy {
   }
 
   public donate() {
-    this.notifyService.showMessage('还没有开通啦~', 'secondary')
+    this.notifyService.showMessage('还没有开通啦~', MessageBoxType.Secondary)
   }
 
   public likePost() {
     if (this.storeService.getItem(STORE_KEYS.postLiked(this.post.id))) {
-      this.notifyService.showMessage('已经点过赞了', 'warning')
+      this.notifyService.showMessage('已经点过赞了', MessageBoxType.Warning)
       return
     }
     this.apiService.likePost(this.post.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.postLiked(this.post.id), true)
       this.post.likes += 1
-      this.notifyService.showMessage('点赞成功', 'success')
+      this.notifyService.showMessage('点赞成功', MessageBoxType.Success)
     })
   }
 
@@ -144,9 +145,9 @@ export class PostContentComponent implements OnInit, OnDestroy {
     const copyText = `${this.post?.title} - ${this.extra?.url}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', MessageBoxType.Success)
     } catch (_) {
-      this.notifyService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', MessageBoxType.Error)
     }
   }
 

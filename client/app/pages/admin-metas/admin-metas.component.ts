@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResMetaData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -49,7 +50,7 @@ export class AdminMetasComponent implements OnInit {
 
   public createMeta() {
     if (!this.newMetaName.trim()) {
-      this.notifyService.showMessage('请输入名称', 'warning')
+      this.notifyService.showMessage('请输入名称', MessageBoxType.Warning)
       return
     }
 
@@ -59,7 +60,7 @@ export class AdminMetasComponent implements OnInit {
     }
 
     this.apiService.createMeta(data).subscribe(() => {
-      this.notifyService.showMessage('创建成功', 'success')
+      this.notifyService.showMessage('创建成功', MessageBoxType.Success)
       this.loadMetas()
       this.newMetaName = ''
     })
@@ -68,7 +69,7 @@ export class AdminMetasComponent implements OnInit {
   public deleteMeta(id: number, name: string) {
     if (confirm(`确定要删除"${name}"吗？`)) {
       this.apiService.deleteMeta(id).subscribe(() => {
-        this.notifyService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', MessageBoxType.Secondary)
         this.metas = this.metas.filter((meta) => meta.mid !== id)
       })
     }

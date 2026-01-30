@@ -6,6 +6,7 @@ import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResCharacterData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -49,7 +50,7 @@ export class AdminCharsComponent extends AbstractAdminBaseListComponent<ResChara
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteCharacter(id).subscribe(() => {
-        this.notifyService.showMessage('角色删除成功', 'secondary')
+        this.notifyService.showMessage('角色删除成功', MessageBoxType.Secondary)
         this.items = this.items.filter((character) => character.id !== id)
       })
     }

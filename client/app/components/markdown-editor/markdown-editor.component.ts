@@ -93,7 +93,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   private cmHasFocus = false
   private pendingCmSync: string | null = null
 
-  public currentMode = signal<EditorMode>(EditorMode.Both)
+  public readonly currentMode = signal<EditorMode>(EditorMode.Preview)
   public isFullscreen = signal(false)
 
   public constructor(
@@ -104,10 +104,9 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   public async ngAfterViewInit() {
     this.initCodemirror()
     await this.initEditor()
-    if (this.pendingValue !== null) {
-      this.applyContent(this.pendingValue)
-      this.pendingValue = null
-    }
+    if (this.pendingValue === null) return
+    this.applyContent(this.pendingValue)
+    this.pendingValue = null
   }
 
   private async initEditorWithValue(initialValue: string = '') {
@@ -159,10 +158,8 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
             this.isInternalUpdate = false
           }
         }),
-        // 监听焦点变化
         EditorView.focusChangeEffect.of((_, focusing) => {
           this.cmHasFocus = focusing
-          // 失去焦点时,如果有待同步的内容就同步过去
           if (!focusing && this.pendingCmSync !== null) {
             const pending = this.pendingCmSync
             this.pendingCmSync = null
@@ -178,13 +175,8 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   private syncToCm(markdown: string) {
     if (!this.cm) return
 
-    // 如果 CM 正在编辑中,就不要打断它!缓存起来等失去焦点时再同步
-    if (this.cmHasFocus) {
-      this.pendingCmSync = markdown
-      return
-    }
-
-    this.applySyncToCm(markdown)
+    if (!this.cmHasFocus) this.applySyncToCm(markdown)
+    this.pendingCmSync = markdown
   }
 
   private applySyncToCm(markdown: string) {
@@ -192,48 +184,29 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     const current = this.cm.state.doc.toString()
     if (current === markdown) return
 
-    // 保存当前光标位置
     const { selection } = this.cm.state
     const cursorPos = selection.main.head
 
-    // 简单的 diff:找到第一个和最后一个不同的字符位置
     let start = 0
     let endCurrent = current.length
     let endNew = markdown.length
 
-    // 从前往后找第一个不同的位置
-    while (start < endCurrent && start < endNew && current[start] === markdown[start]) {
-      start++
-    }
+    while (start < endCurrent && start < endNew && current[start] === markdown[start]) start++
 
-    // 从后往前找第一个不同的位置
     while (endCurrent > start && endNew > start && current[endCurrent - 1] === markdown[endNew - 1]) {
       endCurrent--
       endNew--
     }
 
-    // 只更新变化的部分
     if (start < endCurrent || start < endNew) {
-      const changes = {
-        from: start,
-        to: endCurrent,
-        insert: markdown.slice(start, endNew)
-      }
-
-      // 计算新的光标位置
-      let newCursorPos = cursorPos
-      if (cursorPos >= endCurrent) {
-        // 光标在变化区域之后,需要调整偏移
-        newCursorPos = cursorPos + (endNew - endCurrent)
-      } else if (cursorPos > start) {
-        // 光标在变化区域内,放到变化结束位置
-        newCursorPos = endNew
-      }
-      // 否则光标在变化区域之前,位置不变
-
       this.cm.dispatch({
-        changes,
-        selection: { anchor: Math.min(newCursorPos, markdown.length) }
+        changes: { from: start, to: endCurrent, insert: markdown.slice(start, endNew) },
+        selection: {
+          anchor: Math.min(
+            cursorPos >= endCurrent ? cursorPos + (endNew - endCurrent) : cursorPos > start ? endNew : cursorPos,
+            markdown.length
+          )
+        }
       })
     }
   }
@@ -245,17 +218,8 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
 
   private applyContent(md: string) {
     this.isInternalUpdate = true
-
-    if (this.cm) {
-      this.cm.dispatch({
-        changes: { from: 0, to: this.cm.state.doc.length, insert: md }
-      })
-    }
-
-    if (this.editor) {
-      this.editor.action(replaceAll(md))
-    }
-
+    if (this.cm) this.cm.dispatch({ changes: { from: 0, to: this.cm.state.doc.length, insert: md } })
+    if (this.editor) this.editor.action(replaceAll(md))
     this.isInternalUpdate = false
   }
 
@@ -266,20 +230,13 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     this.currentMode.set(modes[nextIndex])
   }
 
-  // public getModeText(): string {
-  //   match(isoEditorMode.unwrap(this.currentMode())).with(
-  //     { _tag: 'both' }, () => ""
-  //   )
-  //   const mode = this.currentMode()
-  //   switch (mode) {
-  //     case 'both':
-  //       return '双栏'
-  //     case 'codemirror':
-  //       return '源码'
-  //     case 'milkdown':
-  //       return '所见即所得'
-  //   }
-  // }
+  public getModeText(): string {
+    return match(isoEditorMode.unwrap(this.currentMode()))
+      .with({ _tag: 'Both' }, () => '双栏')
+      .with({ _tag: 'Source' }, () => '源码')
+      .with({ _tag: 'Preview' }, () => '预览')
+      .exhaustive()
+  }
 
   public toggleFullscreen() {
     this.isFullscreen.update((v) => !v)
@@ -310,4 +267,6 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     this.editor?.destroy()
     this.cm?.destroy()
   }
+
+  protected readonly EditorMode = EditorMode
 }

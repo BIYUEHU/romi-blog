@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnChanges, OnDestroy, OnInit,
 import { Router } from '@angular/router'
 import { interval, Subscription } from 'rxjs'
 import { CardComponent } from '../../components/card/card.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { ResCharacterData, ResMusicData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
@@ -96,9 +97,9 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
     const copyText = `${this.char.name} (${this.char.romaji}) - ${location.origin}${this.router.url}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', MessageBoxType.Success)
     } catch (_) {
-      this.notifyService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', MessageBoxType.Error)
     }
   }
 

@@ -6,6 +6,7 @@ import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -47,7 +48,7 @@ export class AdminPostsComponent extends AbstractAdminBaseListComponent<ResPostD
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deletePost(id).subscribe(() => {
-        this.notifyService.showMessage('文章删除成功', 'secondary')
+        this.notifyService.showMessage('文章删除成功', MessageBoxType.Secondary)
         this.items = this.items.filter((post) => post.id !== id)
       })
     }

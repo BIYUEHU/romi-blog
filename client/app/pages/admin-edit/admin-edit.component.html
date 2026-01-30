@@ -100,7 +100,12 @@
 
         <div>
           <label class="block text-sm text-bg-200 mb-2">文章内容</label>
-          <app-markdown-editor [(ngModel)]="postForm.text"></app-markdown-editor>
+          @if (isEdit) {
+            <div class="mb-2">
+              <r-button (click)="freshPost()">刷新内容</r-button>
+            </div>
+          }
+          <app-markdown-editor class="h-200 overflow-auto" [(ngModel)]="postForm.text" (ngModelChange)="onMdEditorChange()"></app-markdown-editor>
           <span class="text-xs text-gray mt-2">上次保存时间: @if (lastSaveDraftTime) {
             {{ lastSaveDraftTime | date :'yyyy-MM-dd HH:mm:ss' }}
           } @else {

@@ -4,6 +4,7 @@ import { Router } from '@angular/router'
 import { EMPTY, throwError } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 import { match } from 'ts-pattern'
+import { MessageBoxType } from '../components/message/message.component'
 import { AuthService } from '../services/auth.service'
 import { BrowserService } from '../services/browser.service'
 import { LoggerService } from '../services/logger.service'
@@ -48,7 +49,7 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
 
       if (browser.is && err.status === 401) {
         if (router.url.startsWith('/admin/') && router.url !== '/admin/login') {
-          layout.showMessage('登录已过期，请重新登录', 'error')
+          layout.showMessage('登录已过期，请重新登录', MessageBoxType.Error)
           auth.logout()
           return EMPTY
         }
@@ -56,13 +57,13 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
 
       if (SkipErrorHandling) return throwError(() => err)
 
-      layout.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error')
+      layout.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, MessageBoxType.Error)
       return EMPTY
 
       // if (r.method.toUpperCase() === 'GET') {
       //     match(err.status)
       //         .with(404, () => router.navigate(['/404']))
-      //         .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, 'error'))
+      //         .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, MessageBoxType.Error))
       //     return EMPTY
       // }
     })

@@ -2,6 +2,7 @@ import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResNewsData } from '../../../output'
+import { MessageBoxType } from '../../components/message/message.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
@@ -47,14 +48,14 @@ export class NewsComponent implements OnInit, OnDestroy {
 
   public likeNews() {
     if (this.storeService.getItem(STORE_KEYS.newsLiked(this.news.id))) {
-      this.notifyService.showMessage('已经点过赞了', 'warning')
+      this.notifyService.showMessage('已经点过赞了', MessageBoxType.Warning)
       return
     }
     this.apiService.likeNews(this.news.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.newsLiked(this.news.id), true)
       if (this.news) this.news.likes += 1
       // this.updateHeader()  TODO
-      this.notifyService.showMessage('点赞成功', 'success')
+      this.notifyService.showMessage('点赞成功', MessageBoxType.Success)
     })
   }
 
@@ -62,9 +63,9 @@ export class NewsComponent implements OnInit, OnDestroy {
     const copyText = `${this.news.text.slice(0, 25)}${this.news && this.news.text.length > 25 ? '...' : ''} - ${this.browserService.on(() => `${location.origin}${this.router.url.split('#')[0]}`) ?? ''}`
     try {
       await navigator.clipboard.writeText(copyText)
-      this.notifyService.showMessage('链接已复制到剪贴板', 'success')
+      this.notifyService.showMessage('链接已复制到剪贴板', MessageBoxType.Success)
     } catch (_) {
-      this.notifyService.showMessage('链接复制失败', 'error')
+      this.notifyService.showMessage('链接复制失败', MessageBoxType.Error)
     }
   }
 }

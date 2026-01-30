@@ -5,6 +5,7 @@ import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ReqNewsData, ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -45,7 +46,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteNews(id).subscribe(() => {
-        this.notifyService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', MessageBoxType.Secondary)
         this.items = this.items.filter((news) => news.id !== id)
       })
     }
@@ -68,7 +69,7 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
   public updateNews() {
     if (!this.editForm.text.trim()) {
-      this.notifyService.showMessage('请填写动态内容', 'warning')
+      this.notifyService.showMessage('请填写动态内容', MessageBoxType.Warning)
       return
     }
 
@@ -84,13 +85,13 @@ export class AdminNewsComponent extends AbstractAdminBaseListComponent<ResNewsDa
 
     if (this.editingNews && this.editingNews !== true) {
       this.apiService.updateNews(this.editingNews.id, data).subscribe(() => {
-        this.notifyService.showMessage('更新成功', 'success')
+        this.notifyService.showMessage('更新成功', MessageBoxType.Success)
         this.loadItems()
         this.editingNews = null
       })
     } else {
       this.apiService.createNews(data).subscribe(() => {
-        this.notifyService.showMessage('创建成功', 'success')
+        this.notifyService.showMessage('创建成功', MessageBoxType.Success)
         this.loadItems()
         this.editingNews = null
       })

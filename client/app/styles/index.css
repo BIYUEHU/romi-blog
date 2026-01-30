@@ -21,11 +21,23 @@
     sans-serif;
 }
 
-.md-editor {
-    height: 50rem;
-    overflow: auto;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.md-editor-wrapper {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    background: white;
+}
+
+.md-editor-wrapper.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    border-radius: 0;
 }
 
 ::selection {

@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
@@ -31,7 +32,7 @@ export class AdminLoginComponent {
 
   public async handleSubmit() {
     if (!this.username || !this.password) {
-      this.notifyService.showMessage('请输入用户名和密码', 'warning')
+      this.notifyService.showMessage('请输入用户名和密码', MessageBoxType.Warning)
       return
     }
 
@@ -41,11 +42,11 @@ export class AdminLoginComponent {
       next: (data) => {
         this.isLoading = false
         if (data) {
-          this.notifyService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, 'success')
+          this.notifyService.showMessage(`欢迎回来，了不起的 ${data.username} 先生`, MessageBoxType.Success)
           this.authService.setUser(data, this.rememberMe)
           this.router.navigate(['/admin/dashboard'])
         } else {
-          this.notifyService.showMessage('用户名或密码错误', 'error')
+          this.notifyService.showMessage('用户名或密码错误', MessageBoxType.Error)
         }
       }
     })

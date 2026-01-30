@@ -272,12 +272,13 @@ export class ApiService {
   }
 
   public getProjects() {
-    return this.cacheService.wrap(
-      'projects',
-      RHour(12),
-      () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
-      (data) => data.length > 0
-    )
+    return of([])
+    // return this.cacheService.wrap(
+    //   'projects',
+    //   RHour(12),
+    //   () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
+    //   (data) => data.length > 0
+    // )
   }
 
   public getLanguageColors() {

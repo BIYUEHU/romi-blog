@@ -5,6 +5,7 @@ import {
   AbstractAdminBaseListComponent,
   AdminBaseListComponent
 } from '../../components/admin-base-list/admin-base-list.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ReqUserData, ResUserData, UserAuthData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -51,7 +52,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
   protected deleteItem(id: number) {
     if (this.confirmDelete()) {
       this.apiService.deleteUser(id).subscribe(() => {
-        this.notifyService.showMessage('删除成功', 'secondary')
+        this.notifyService.showMessage('删除成功', MessageBoxType.Secondary)
         this.items = this.items.filter((user) => user.uid !== id)
       })
     }
@@ -78,7 +79,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
       !this.editForm.email.trim() ||
       (!this.editForm.password.trim() && this.editingUser === true)
     ) {
-      this.notifyService.showMessage('请填写所有必填项', 'warning')
+      this.notifyService.showMessage('请填写所有必填项', MessageBoxType.Warning)
       return
     }
 
@@ -90,7 +91,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           status: Number(this.editForm.status)
         })
         .subscribe(() => {
-          this.notifyService.showMessage('更新成功', 'success')
+          this.notifyService.showMessage('更新成功', MessageBoxType.Success)
           if ((this.editingUser as ResUserData).uid === this.admin?.id) {
             this.authService.logout()
           }
@@ -105,7 +106,7 @@ export class AdminUsersComponent extends AbstractAdminBaseListComponent<ResUserD
           status: Number(this.editForm.status)
         })
         .subscribe(() => {
-          this.notifyService.showMessage('创建成功', 'success')
+          this.notifyService.showMessage('创建成功', MessageBoxType.Success)
           this.loadItems()
           this.editingUser = null
         })

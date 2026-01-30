@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
 import { LayoutComponent } from '../../components/layout/layout.component'
+import { MessageBoxType } from '../../components/message/message.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
@@ -45,22 +46,22 @@ export class HitokotoComponent {
 
   public likeHitokoto() {
     if (this.isLiked) {
-      this.notifyService.showMessage('已经点过赞了', 'info')
+      this.notifyService.showMessage('已经点过赞了')
       return
     }
 
     this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.hitokotoLiked((this.hitokoto as ResHitokotoData).id), true)
       ;(this.hitokoto as ResHitokotoData).likes += 1
-      this.notifyService.showMessage('点赞成功', 'success')
+      this.notifyService.showMessage('点赞成功', MessageBoxType.Success)
     })
   }
 
   public shareHitokoto() {
     if (!this.hitokoto) return
     navigator.clipboard.writeText(`${location.origin}/hitokoto/${this.hitokoto.id}`).then(
-      () => this.notifyService.showMessage('链接已复制', 'secondary'),
-      () => this.notifyService.showMessage('复制失败', 'error')
+      () => this.notifyService.showMessage('链接已复制', MessageBoxType.Secondary),
+      () => this.notifyService.showMessage('复制失败', MessageBoxType.Error)
     )
   }
 }

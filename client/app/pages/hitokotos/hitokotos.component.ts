@@ -1,5 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
 import { RouterLink } from '@angular/router'
+import { MessageBoxType } from '../../components/message/message.component'
 import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
@@ -36,7 +37,7 @@ export class HitokotosComponent implements OnInit {
   public loadMore() {
     if (!this.hitokotos) return
     if (this.hitokotos.length === 0) {
-      this.notifyService.showMessage('没有更多了', 'warning')
+      this.notifyService.showMessage('没有更多了', MessageBoxType.Warning)
       return
     }
     this.hitokotos = [...this.hitokotos, ...this.hitokotos.slice(0, 20)]

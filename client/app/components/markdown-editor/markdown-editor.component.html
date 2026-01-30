@@ -1,4 +1,4 @@
-<div class="markdown-editor-wrapper" [class.fullscreen]="isFullscreen()">
+<div class="md-editor-wrapper" [class.fullscreen]="isFullscreen()" [class.h-200]="!isFullscreen()" ]>
   <div class="flex gap-2 px-3 py-2 bg-gray-50 border-b border-solid border-gray-300">
     <button (click)="cycleMode()"
             class="px-3 py-1.5 text-sm bg-white border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-gray-100 hover:border-gray-400">
@@ -14,10 +14,10 @@
        [class.min-h-0]="isFullscreen()">
     <div #codemirrorContainer
          class="flex-1 overflow-auto border-r border-solid border-gray-300"
-         [class.hidden]="currentMode() === 'milkdown'"
-         [class.border-r-0]="currentMode() === 'codemirror'"></div>
+         [class.hidden]="currentMode() === EditorMode.Preview"
+         [class.border-r-0]="currentMode() === EditorMode.Source"></div>
     <div #crepeContainer
          class="flex-1 overflow-auto"
-         [class.hidden]="currentMode() === 'codemirror'"></div>
+         [class.hidden]="currentMode() === EditorMode.Source"></div>
   </div>
 </div>

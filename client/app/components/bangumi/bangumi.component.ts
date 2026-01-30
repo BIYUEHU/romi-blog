@@ -49,7 +49,7 @@ export class BangumiComponent implements OnInit {
 
   public loadMore(): void {
     if (this.offset >= this.total) {
-      this.notifyService.showMessage('没有更多了', 'info')
+      this.notifyService.showMessage('没有更多了')
       return
     }
 

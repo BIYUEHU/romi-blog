@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, effect, Input, OnInit } from '@angul
 import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
 import { map } from 'rxjs/operators'
+import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
@@ -60,7 +61,7 @@ export class NewsesComponent implements OnInit {
 
   public async sendNews() {
     if (!this.newText.trim()) {
-      this.notifyService.showMessage('请输入内容', 'warning')
+      this.notifyService.showMessage('请输入内容', MessageBoxType.Warning)
       return
     }
 
@@ -73,7 +74,7 @@ export class NewsesComponent implements OnInit {
         imgs: []
       })
       .subscribe(() => {
-        this.notifyService.showMessage('发送成功', 'success')
+        this.notifyService.showMessage('发送成功', MessageBoxType.Success)
         this.newText = ''
         this.reloadNews()
       })
@@ -152,7 +153,7 @@ export class NewsesComponent implements OnInit {
       (this.currentPage + 1) * NewsesComponent.PAGE_SIZE
     )
     if (nextItems.length === 0) {
-      this.notifyService.showMessage('没有更多了', 'info')
+      this.notifyService.showMessage('没有更多了')
       return
     }
     this.displayedNews = [...this.displayedNews, ...nextItems]

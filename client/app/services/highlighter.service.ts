@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
 import { BundledLanguage, BundledTheme, bundledLanguages, createHighlighter, HighlighterGeneric } from 'shiki'
+import { MessageBoxType } from '../components/message/message.component'
 import { NotifyService } from './notify.service'
 
 @Injectable({ providedIn: 'root' })
@@ -49,7 +50,7 @@ export class HighlighterService {
       const msg = missed.join(', ')
       this.notifyService.showMessage(
         `${msg.length > 25 ? `${msg.substring(0, 22)}...` : msg} 语言高亮不支持`,
-        'warning'
+        MessageBoxType.Warning
       )
     }
 
