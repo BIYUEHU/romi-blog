@@ -75,8 +75,6 @@ async fn fetch_all(
     State(RomiState { ref conn, .. }): State<RomiState>,
     access: Access,
 ) -> ApiResult<Vec<ResPostData>> {
-    let is_admin = access.level.eq(&AccessLevel::Admin);
-
     let posts = romi_posts::Entity::find().all(conn).await.context("Failed to fetch posts")?;
     let post_ids: Vec<u32> = posts.iter().map(|p| p.pid).collect();
     let all_relationships = romi_relationships::Entity::find()
@@ -111,7 +109,7 @@ async fn fetch_all(
             .iter()
             .rev()
             .filter_map(|data| {
-                if is_admin || data.hide.ne(&1.to_string()) {
+                if data.hide.ne(&1.to_string()) {
                     let (tags, categories) =
                         post_metas.get(&data.pid).cloned().unwrap_or((vec![], vec![]));
 
@@ -121,7 +119,7 @@ async fn fetch_all(
                         id: data.pid,
                         str_id: data.str_id.clone(),
                         title: data.title.clone(),
-                        summary: if password.is_none() || is_admin {
+                        summary: if password.is_none() {
                             summary_markdown(data.text.as_str(), 70)
                         } else {
                             "".into()
@@ -135,8 +133,13 @@ async fn fetch_all(
                         likes: data.likes,
                         comments: data.comments,
                         allow_comment: data.allow_comment.eq(&1.to_string()),
-                        password: password
-                            .map(|p| is_admin.then(|| p).unwrap_or("password".into())),
+                        password: password.map(|p| {
+                            access
+                                .level
+                                .eq(&AccessLevel::Admin)
+                                .then(|| p)
+                                .unwrap_or("password".into())
+                        }),
                         hide: data.hide.eq(&1.to_string()),
                     })
                 } else {
@@ -185,12 +188,8 @@ async fn fetch(
                 title: model.title.clone(),
                 created: model.created,
                 modified: model.modified,
-                text: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
-                    model.text.clone()
-                } else {
-                    "This post is password protected.".into()
-                },
-                languages: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
+                text: if password.is_none() { model.text.clone() } else { "".into() },
+                languages: if password.is_none() {
                     collect_markdown_languages(model.text.clone().as_str())
                 } else {
                     vec![]
@@ -264,16 +263,8 @@ async fn fetch_by_str_id(
                 title: model.title.clone(),
                 created: model.created,
                 modified: model.modified,
-                text: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
-                    model.text.clone()
-                } else {
-                    "This post is password protected.".into()
-                },
-                languages: if password.is_none() || access.level.eq(&AccessLevel::Admin) {
-                    collect_markdown_languages(model.text.clone().as_str())
-                } else {
-                    vec![]
-                },
+                text: if password.is_none() { model.text.clone() } else { "".into() },
+                languages: collect_markdown_languages(model.text.clone().as_str()),
                 password: password.map(|p| {
                     access.level.eq(&AccessLevel::Admin).then(|| p).unwrap_or("password".into())
                 }),

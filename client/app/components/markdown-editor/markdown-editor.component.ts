@@ -23,6 +23,8 @@ import { defaultValueCtx, Editor, rootCtx } from '@milkdown/kit/core'
 import { listener, listenerCtx } from '@milkdown/kit/plugin/listener'
 import { commonmark } from '@milkdown/kit/preset/commonmark'
 import { replaceAll } from '@milkdown/kit/utils'
+import '@milkdown/crepe/theme/common/style.css'
+import '@milkdown/crepe/theme/nord.css'
 import { iso, Newtype } from 'newtype-ts'
 import { match } from 'ts-pattern'
 import { LoggerService } from '../../services/logger.service'
@@ -104,7 +106,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   public async ngAfterViewInit() {
     this.initCodemirror()
     await this.initEditor()
-    if (this.pendingValue === null) return
+    if (!this.pendingValue) return
     this.applyContent(this.pendingValue)
     this.pendingValue = null
   }

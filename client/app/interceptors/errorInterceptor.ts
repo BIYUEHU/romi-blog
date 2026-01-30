@@ -48,7 +48,7 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
       }
 
       if (browser.is && err.status === 401) {
-        if (router.url.startsWith('/admin/') && router.url !== '/admin/login') {
+        if (/*router.url.startsWith('/admin/') && */ router.url !== '/admin/login') {
           layout.showMessage('登录已过期，请重新登录', MessageBoxType.Error)
           auth.logout()
           return EMPTY

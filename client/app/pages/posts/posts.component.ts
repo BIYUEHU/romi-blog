@@ -13,7 +13,7 @@ export class PostsComponent implements OnInit {
 
   public ngOnInit() {
     this.posts = sortByCreatedTime(this.posts).map((post) =>
-      post.password === 'password' ? { ...post, summary: '文章已加密' } : post
+      post.password ? { ...post, summary: '文章已加密' } : post
     )
   }
 }
