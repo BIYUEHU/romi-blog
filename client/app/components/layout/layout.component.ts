@@ -121,7 +121,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     if (this.aplayer) {
       this.storeService.setItem(STORE_KEYS.APLAYER_DISABLED, 'true')
       this.aplayer.destroy()
-      this.aplayer = undefined
+      this.aplayer = void 0
       return
     }
 

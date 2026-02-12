@@ -1,12 +1,10 @@
-import { DatePipe, NgOptimizedImage } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
-import { RouterLink } from '@angular/router'
 import { ResPostData } from '../../models/api.model'
-import { CardComponent } from '../card/card.component'
+import { PostCardComponent } from '../post-card/post-card.component'
 
 @Component({
   selector: 'app-post-list',
-  imports: [DatePipe, RouterLink, CardComponent, NgOptimizedImage],
+  imports: [PostCardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-list.component.html'
 })

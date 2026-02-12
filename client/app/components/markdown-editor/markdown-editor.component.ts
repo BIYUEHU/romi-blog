@@ -1,10 +1,10 @@
-import { AfterViewInit, Component, ElementRef, forwardRef, OnDestroy, signal, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, forwardRef, Input, OnDestroy, signal, ViewChild } from '@angular/core'
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
 import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { markdown } from '@codemirror/lang-markdown'
 import { bracketMatching, defaultHighlightStyle, indentOnInput, syntaxHighlighting } from '@codemirror/language'
-import { lintKeymap } from '@codemirror/lint'
+import { Diagnostic, linter, lintKeymap } from '@codemirror/lint'
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search'
 import type { Extension } from '@codemirror/state'
 import { EditorState } from '@codemirror/state'
@@ -23,12 +23,17 @@ import { defaultValueCtx, Editor, rootCtx } from '@milkdown/kit/core'
 import { listener, listenerCtx } from '@milkdown/kit/plugin/listener'
 import { commonmark } from '@milkdown/kit/preset/commonmark'
 import { replaceAll } from '@milkdown/kit/utils'
-import '@milkdown/crepe/theme/common/style.css'
-import '@milkdown/crepe/theme/nord.css'
 import { iso, Newtype } from 'newtype-ts'
+import { pangu } from 'pangu/browser'
 import { match } from 'ts-pattern'
 import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
+import { DEFAULT_LINT_CONFIG } from '../../shared/constants'
+import '@milkdown/crepe/theme/common/style.css'
+import '@milkdown/crepe/theme/nord.css'
+import { applyFixes, LintError } from 'markdownlint'
+import { lint } from 'markdownlint/sync'
+import { showErr } from '../../shared/utils'
 
 interface EditorMode
   extends Newtype<
@@ -43,6 +48,99 @@ const EditorMode = {
   Source: isoEditorMode.wrap({ _tag: 'Source' }),
   Preview: isoEditorMode.wrap({ _tag: 'Preview' })
 }
+
+const lintTheme = EditorView.baseTheme({
+  '.cm-diagnostic': {
+    padding: '3px 6px 3px 8px',
+    marginLeft: '-1px',
+    display: 'block',
+    whiteSpace: 'pre-wrap'
+  },
+  '.cm-diagnostic-error': { borderLeft: '5px solid #d11' },
+  '.cm-diagnostic-warning': { borderLeft: '5px solid #f80' },
+  '.cm-diagnostic-info': { borderLeft: '5px solid #999' },
+  '.cm-diagnosticAction': {
+    font: 'inherit',
+    border: 'none',
+    padding: '2px 4px',
+    backgroundColor: '#444',
+    color: 'white',
+    borderRadius: '3px',
+    marginLeft: '8px',
+    cursor: 'pointer'
+  },
+  '.cm-diagnosticSource': {
+    fontSize: '70%',
+    opacity: 0.7
+  },
+  '.cm-lintRange': {
+    backgroundPosition: 'left bottom',
+    backgroundRepeat: 'repeat-x',
+    paddingBottom: '0.7px'
+  },
+  '.cm-lintRange-error': {
+    backgroundImage:
+      "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='3'><path d='m0 3 l2 -2 l1 0 l2 2 l1 0' stroke='%23d11' fill='none' stroke-width='.7'/></svg>\")"
+  },
+  '.cm-lintRange-warning': {
+    backgroundImage:
+      "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='3'><path d='m0 3 l2 -2 l1 0 l2 2 l1 0' stroke='%23f80' fill='none' stroke-width='.7'/></svg>\")"
+  },
+  '.cm-lintRange-info': {
+    backgroundImage:
+      "url(\"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='6' height='3'><path d='m0 3 l2 -2 l1 0 l2 2 l1 0' stroke='%23999' fill='none' stroke-width='.7'/></svg>\")"
+  },
+  '.cm-lintRange-active': { backgroundColor: '#fec' },
+  '.cm-tooltip-lint': {
+    padding: 0,
+    margin: 0
+  },
+  '.cm-lintPoint': {
+    position: 'relative',
+    '&:after': {
+      content: '""',
+      position: 'absolute',
+      bottom: 0,
+      left: '-2px',
+      borderLeft: '3px solid transparent',
+      borderRight: '3px solid transparent',
+      borderBottom: '4px solid #d11'
+    }
+  },
+  '.cm-lintPoint-warning:after': { borderBottomColor: '#f80' },
+  '.cm-lintPoint-info:after': { borderBottomColor: '#999' },
+  '.cm-panel.cm-panel-lint': {
+    position: 'relative',
+    '& ul': {
+      maxHeight: '100px',
+      overflowY: 'auto',
+      '& [aria-selected]': {
+        backgroundColor: '#ddd',
+        '& u': { textDecoration: 'underline' }
+      },
+      '&:focus [aria-selected]': {
+        background_fallback: '#bdf',
+        backgroundColor: 'Highlight',
+        color_fallback: 'white',
+        color: 'HighlightText'
+      },
+      '& u': { textDecoration: 'none' },
+      padding: 0,
+      margin: 0
+    },
+    '& [name=close]': {
+      position: 'absolute',
+      top: '0',
+      right: '2px',
+      background: 'inherit',
+      border: 'none',
+      font: 'inherit',
+      padding: 0,
+      margin: 0,
+      cursor: 'pointer'
+    }
+  }
+})
 
 const basicSetup: Extension = [
   lineNumbers(),
@@ -60,6 +158,7 @@ const basicSetup: Extension = [
   crosshairCursor(),
   highlightActiveLine(),
   highlightSelectionMatches(),
+  lintTheme,
   keymap.of([
     ...closeBracketsKeymap,
     ...defaultKeymap,
@@ -86,6 +185,8 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   @ViewChild('codemirrorContainer') public readonly codemirrorContainer!: ElementRef<HTMLDivElement>
   @ViewChild('crepeContainer') public readonly editorContainer!: ElementRef<HTMLDivElement>
 
+  @Input() public lintConfig = DEFAULT_LINT_CONFIG
+
   private onChange: (value: string) => void = () => {}
   private onTouched: () => void = () => {}
   private editor?: Editor
@@ -96,7 +197,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   private pendingCmSync: string | null = null
 
   public readonly currentMode = signal<EditorMode>(EditorMode.Preview)
-  public isFullscreen = signal(false)
+  public readonly isFullscreen = signal(false)
 
   public constructor(
     private readonly loggerService: LoggerService,
@@ -109,6 +210,32 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     if (!this.pendingValue) return
     this.applyContent(this.pendingValue)
     this.pendingValue = null
+  }
+
+  public lint(handler: (errors: LintError[]) => void) {
+    for (const errors of Object.values(
+      lint({ strings: { content: this.cm?.state.doc.toString() ?? '' }, config: { default: true, ...this.lintConfig } })
+    )) {
+      handler(errors)
+    }
+  }
+
+  private createLinter() {
+    return linter(async (view) => {
+      const diagnostics: Diagnostic[] = []
+      this.lint((errors) => {
+        for (const error of errors) {
+          const line = view.state.doc.line(error.lineNumber)
+          diagnostics.push({
+            from: line.from,
+            to: line.to,
+            severity: error.severity,
+            message: `${error.ruleNames.join('/')}: ${error.ruleDescription}`
+          })
+        }
+      })
+      return diagnostics
+    })
   }
 
   private async initEditorWithValue(initialValue: string = '') {
@@ -136,7 +263,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
       })
     } catch (err) {
       this.loggerService.error('Failed to create editor:', err)
-      this.notifyService.showMessage(`创建编辑器失败: ${err instanceof Error ? err.message : String(err)}`)
+      this.notifyService.showMessage(`创建编辑器失败: ${showErr(err)}`)
     }
   }
 
@@ -150,6 +277,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
       extensions: [
         basicSetup,
         markdown(),
+        this.createLinter(),
         EditorView.updateListener.of((update) => {
           if (update.docChanged && !this.isInternalUpdate) {
             const newMd = update.state.doc.toString()
@@ -226,7 +354,7 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
   }
 
   public cycleMode() {
-    const modes: Array<EditorMode> = [EditorMode.Both, EditorMode.Source, EditorMode.Preview]
+    const modes: Array<EditorMode> = [EditorMode.Preview, EditorMode.Source, EditorMode.Both]
     const currentIndex = modes.indexOf(this.currentMode())
     const nextIndex = (currentIndex + 1) % modes.length
     this.currentMode.set(modes[nextIndex])
@@ -244,8 +372,23 @@ export class MarkdownEditorComponent implements AfterViewInit, OnDestroy, Contro
     this.isFullscreen.update((v) => !v)
   }
 
+  public fixAll() {
+    if (!this.cm) return
+    const content = this.cm.state.doc.toString()
+    this.lint((errors) => {
+      this.writeValue(applyFixes(content, errors))
+      this.notifyService.showMessage('修复完成')
+    })
+  }
+
+  public pangu() {
+    if (!this.cm) return
+    this.writeValue(pangu.spacingText(this.cm.state.doc.toString()))
+    this.notifyService.showMessage('盘古完成')
+  }
+
   public writeValue(value: string): void {
-    if (value === undefined || value === null) {
+    if (value === void 0 || value === null) {
       value = ''
     }
 

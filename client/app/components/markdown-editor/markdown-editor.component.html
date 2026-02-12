@@ -1,13 +1,15 @@
 <div class="md-editor-wrapper" [class.fullscreen]="isFullscreen()" [class.h-200]="!isFullscreen()" ]>
-  <div class="flex gap-2 px-3 py-2 bg-gray-50 border-b border-solid border-gray-300">
+  <div class="flex gap-2 px-3 py-2 bg-text-200 border-b border-solid border-text-300">
     <button (click)="cycleMode()"
-            class="px-3 py-1.5 text-sm bg-white border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-gray-100 hover:border-gray-400">
+            class="px-3 py-1.5 text-sm bg-white-100 border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-white-100 hover:border-gray-400">
       模式: {{ getModeText() }}
     </button>
     <button (click)="toggleFullscreen()"
-            class="px-3 py-1.5 text-sm bg-white border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-gray-100 hover:border-gray-400">
+            class="px-3 py-1.5 text-sm bg-white-100 border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-white-100 hover:border-gray-400">
       {{ isFullscreen() ? '退出全屏' : '全屏编辑' }}
     </button>
+    <button (click)="fixAll()" class="px-3 py-1.5 text-sm bg-white-100 border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-white-100 hover:border-gray-400">修复所有</button>
+    <button (click)="pangu()" class="px-3 py-1.5 text-sm bg-white-100 border border-solid border-gray-300 rounded cursor-pointer transition-all hover:bg-white-100 hover:border-gray-400">盘古一下</button>
   </div>
 
   <div class="flex flex-1 overflow-hidden min-h-600px "

@@ -16,7 +16,7 @@ import { BrowserService } from '../../services/browser.service'
 import { HighlighterService } from '../../services/highlighter.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
-import { randomRTagType } from '../../utils'
+import { randomRTagType } from '../../shared/utils'
 import { MessageBoxType } from '../message/message.component'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
