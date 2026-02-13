@@ -36,26 +36,7 @@
 
       <div class="columns-1 md:columns-2 gap-x-6">
         @for (post of home!.posts; track post.id) {
-          <app-card [routerLink]="['/post/', post.str_id ? post.str_id : post.id]"
-                    class="break-inside-avoid mb-6 hover:cursor-pointer overflow-hidden hover:shadow-sm transition-all">
-            @if (post.banner) {
-              <div class="aspect-video overflow-hidden relative">
-                <img fill [ngSrc]="post.banner"
-                     class="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                     [alt]="post.title"/>
-              </div>
-            }
-            <div class="p-6">
-              <h3 class="text-xl font-bold text-bg-100 group-hover:text-primary-100 transition-colors">
-                {{ post.title }}
-              </h3>
-              <p class="text-accent-100 mt-2 line-clamp-2">{{ post.summary }}</p>
-              <div class="flex items-center gap-4 mt-4 text-sm text-accent-100">
-                <span>{{ post.created * 1000 | date:'yyyy-MM-dd' }}</span>
-                <span>{{ post.views }} 次阅读</span>
-              </div>
-            </div>
-          </app-card>
+          <app-post-card [post]="post"/>
         }
       </div>
     </section>

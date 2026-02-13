@@ -1,24 +1,30 @@
 use std::{env, process::Command};
 
 use anyhow::Context;
-use axum::{Router, extract::State, routing::get};
+use axum::{
+    Json, Router,
+    extract::State,
+    routing::{get, put},
+};
 use fetcher::playlist::SongInfo;
-use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
+use roga::{l_error, l_info};
+use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter, sea_query::Expr};
 use sysinfo::System;
 use tokio::try_join;
 
 use crate::{
     app::RomiState,
+    constant::SETTINGS_FIELDS,
     entity::{
-        romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
-        romi_seimgs, romi_users,
+        romi_comments, romi_fields, romi_hitokotos, romi_metas, romi_news, romi_news_comments,
+        romi_posts, romi_seimgs, romi_users,
     },
     guards::admin::AdminUser,
     models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData},
     service::music::{MusicCache, get_music_cache},
     utils::{
-        api::{ApiResult, api_ok},
-        cache::{get_projects_cache, get_settings_cache},
+        api::{ApiError, ApiResult, api_ok},
+        cache::{get_projects_cache, get_settings_cache, update_settings_cache},
     },
 };
 
@@ -26,6 +32,7 @@ pub fn routes() -> Router<RomiState> {
     Router::new()
         .route("/dashboard", get(fetch_dashboard))
         .route("/settings", get(fetch_settings))
+        .route("/settings", put(update_settings))
         .route("/projects", get(fetch_projects))
         .route("/music", get(fetch_music))
 }
@@ -85,6 +92,50 @@ async fn fetch_settings(
     State(RomiState { ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResSettingsData> {
     api_ok(get_settings_cache(conn).await.context("Failed to fetch site settings")?)
+}
+
+async fn update_settings(
+    AdminUser(admin_user): AdminUser,
+    State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
+    Json(settings): Json<ResSettingsData>,
+) -> ApiResult {
+    let model = romi_fields::Entity::find()
+        .filter(romi_fields::Column::Key.eq(SETTINGS_FIELDS))
+        .one(conn)
+        .await
+        .context("Failed to fetch settings")?;
+
+    if let Some(model) = model {
+        romi_fields::Entity::update_many()
+            .col_expr(
+                romi_fields::Column::Value,
+                Expr::value(
+                    serde_json::to_string(&settings).context("Failed to serialize settings")?,
+                ),
+            )
+            .filter(romi_fields::Column::Fid.eq(model.fid))
+            .exec(conn)
+            .await
+            .context("Failed to update settings")?;
+        update_settings_cache(settings.clone()).await;
+        l_info!(logger, "Updated settings by admin {} ({})", admin_user.id, admin_user.username);
+        api_ok(())
+    } else {
+        l_error!(
+            logger,
+            "A error when updating settings by admin {} ({})",
+            admin_user.id,
+            admin_user.username
+        );
+        Err(ApiError::internal("Fields table has no settings data"))
+    }
+
+    // let record = romi_fields::Entity::update()
+    //     .filter(romi_fields::Column::Key.eq(SETTINGS_FIELDS))
+    //     .one(conn)
+    //     .await
+    //     .context("Failed to fetch settings")?
+    //     .ok_or_else(|| anyhow!("Settings not found"))?;
 }
 
 async fn fetch_projects() -> ApiResult<Vec<ResProjectData>> {

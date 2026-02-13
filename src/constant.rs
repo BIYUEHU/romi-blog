@@ -27,3 +27,5 @@ pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const HASH: &str = env!("GIT_HASH");
 
 pub const BUILD_TIME: &str = env!("BUILD_TIME");
+
+pub const SETTINGS_FIELDS: &'static str = "settings";

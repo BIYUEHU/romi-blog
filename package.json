@@ -2,7 +2,7 @@
   "name": "romichan",
   "description": "A blog system built with Angular and Rust",
   "version": "1.0.0",
-  "license": "BAN-ZHINESE-USING",
+  "license": "GPL-3.0-or-later",
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
     "ng": "ng",
@@ -90,7 +90,10 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "markdownlint": "^0.40.0",
+    "markdownlint-rule-helpers": "^0.30.0",
     "p-limit": "^6.2.0",
+    "pangu": "^7.2.0",
     "typescript": "~5.9.3",
     "unocss": "^0.64.1"
   }

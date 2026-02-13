@@ -37,7 +37,7 @@ export class HighlighterService {
 
     const highlighter = await this.highlighterPromise
 
-    const unloads = langs.filter((l) => !this.loadedLangs.has(l))
+    const unloads = langs.filter((l) => !this.loadedLangs.has(l)).map((l) => l.toLowerCase())
     const validated = unloads.filter((l) => HighlighterService.SUPPORTS_LANGUAGES.includes(l))
     const missed = unloads.filter((l) => !HighlighterService.SUPPORTS_LANGUAGES.includes(l))
 

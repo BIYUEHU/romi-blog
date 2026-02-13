@@ -10,7 +10,7 @@ import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResCharacterData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { renderCharacterBWH } from '../../utils'
+import { renderCharacterBWH } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-chars',

@@ -60,7 +60,7 @@ export default class RDynamicTags extends LitElement {
     return html`
       <div class="flex flex-wrap items-center">
         ${
-          this.renderTag !== undefined
+          this.renderTag !== void 0
             ? this.modelValue.map(
                 (tag, index) => html`
               <div class="mr-2">

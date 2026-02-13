@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { tap } from 'rxjs'
@@ -12,7 +12,7 @@ import { ApiService } from '../../services/api.service'
 import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
-import { formatDate } from '../../utils'
+import { formatDate, showErr } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-edit',
@@ -27,6 +27,8 @@ import { formatDate } from '../../utils'
   templateUrl: './admin-edit.component.html'
 })
 export class AdminEditComponent implements OnInit {
+  @ViewChild(MarkdownEditorComponent) public readonly editor!: MarkdownEditorComponent
+
   public isEdit = false
 
   private get id() {
@@ -101,7 +103,7 @@ export class AdminEditComponent implements OnInit {
         this.lastSaveDraftTime = Date.now()
       } catch (e) {
         this.loggerService.error('Failed to restore from draft:', e)
-        this.notifyService.showMessage(`获取保存草稿失败：${e instanceof Error ? e.message : String(e)}`)
+        this.notifyService.showMessage(`获取保存草稿失败：${showErr(e)}`)
       }
       return
     }
@@ -218,7 +220,7 @@ export class AdminEditComponent implements OnInit {
     this.postForm.categories = this.postForm.categories.filter((c) => c !== category)
   }
 
-  public savePost() {
+  public async savePost() {
     if (!this.postForm.title || !this.postForm.text) {
       this.notifyService.showMessage('标题和内容不能为空', MessageBoxType.Warning)
       return
@@ -230,12 +232,16 @@ export class AdminEditComponent implements OnInit {
       return
     }
 
+    const lintErrorsNumber = await new Promise<number>((resolve) =>
+      this.editor.lint((lintErrors) => resolve(lintErrors.length))
+    )
+    if (lintErrorsNumber > 0 && !confirm(`当前文章有 ${lintErrorsNumber} 个错误或警告，是否仍要保存？`)) return
+
     const form = {
       ...this.postForm,
       created: Math.floor(new Date(this.postForm.created || Date.now()).getTime() / 1000),
       modified: Math.floor(Date.now() / 1000)
     }
-    console.log(form, this.postForm.created)
     ;(this.isEdit ? this.apiService.updatePost(this.id, form) : this.apiService.createPost(form)).subscribe(() => {
       if (!this.isEdit) {
         this.storeService.removeItem(STORE_KEYS.POST_DRAFT_NEW)

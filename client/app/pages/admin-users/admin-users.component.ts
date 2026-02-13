@@ -10,7 +10,7 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import { ReqUserData, ResUserData, UserAuthData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
-import { sortByCreatedTime } from '../../utils'
+import { sortByCreatedTime } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-users',

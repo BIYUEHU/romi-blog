@@ -10,7 +10,7 @@ import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { sortByCreatedTime } from '../../utils'
+import { sortByCreatedTime } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-posts',

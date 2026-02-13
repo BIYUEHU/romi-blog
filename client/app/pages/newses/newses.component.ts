@@ -9,7 +9,7 @@ import { ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
 import { NotifyService } from '../../services/notify.service'
-import { sortByCreatedTime } from '../../utils'
+import { sortByCreatedTime } from '../../shared/utils'
 
 interface TocItem {
   year: number
@@ -55,7 +55,6 @@ export class NewsesComponent implements OnInit {
   }
 
   public ngOnInit() {
-    this.newses = sortByCreatedTime(this.newses)
     this.refresh()
   }
 

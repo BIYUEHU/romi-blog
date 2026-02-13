@@ -1,6 +1,6 @@
 import { Directive, ElementRef, forwardRef } from '@angular/core'
 import { NG_VALUE_ACCESSOR } from '@angular/forms'
-import { WebComponentDirectiveFactory } from '../utils/web-component-directive-factory'
+import { WebComponentDirectiveFactory } from '../shared/web-component-directive-factory'
 
 @Directive({
   selector: 'r-switch',

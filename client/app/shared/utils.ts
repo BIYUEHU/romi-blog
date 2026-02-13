@@ -20,3 +20,7 @@ export function formatDate(date: Date) {
 export function randomSelect<T>(arr: T[]) {
   return arr[Math.floor(Math.random() * arr.length)]
 }
+
+export function showErr(e: unknown) {
+  return e instanceof Error ? e.message : String(e)
+}

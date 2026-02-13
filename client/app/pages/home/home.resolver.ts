@@ -3,7 +3,7 @@ import { ResolveFn } from '@angular/router'
 import { forkJoin, map } from 'rxjs'
 import { ResNewsData, ResPostData, ResProjectData, Video } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { sortByCreatedTime } from '../../utils'
+import { sortByCreatedTime } from '../../shared/utils'
 
 type HomeData = {
   posts: ResPostData[]

@@ -9,7 +9,7 @@ import { MessageBoxType } from '../../components/message/message.component'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ReqNewsData, ResNewsData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { formatDate, sortByCreatedTime } from '../../utils'
+import { formatDate, sortByCreatedTime } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-news',

@@ -5,7 +5,7 @@
     "play": 69,
     "pic": "https://pic1.imgdb.cn/item/6849482958cb8da5c844c20f.jpg",
     "subtitle": "",
-    "description": "Q：不是原生吗，怎么还有第三方程序？\nA：视频中的程序只是外置的一个 BDS 启动外壳，并不像 Levilamina 这类第三方 BDS 服务端对 BDS 程序本身进行了修改，做的仅仅是 IO 读取和写入。\n\nQ：原理是什么？\nA：很简单，BDS 中有 HTTP 请求权限，剩下的自然就懂了，事实上能做的绝非只有文件读写，操作数据库等大部分功能都可以，因为完全借助的是外部程序（这点类似于 OneBot 协议），唯一痛点可能是 WebSocket 等长轮询通信实现起来不是很理想。后端本想用 Rocket（因为",
+    "description": "Q：不是原生吗，怎么还有第三方程序？\nA：视频中的程序只是外置的一个 BDS 启动外壳，并不像 Levilamina 这类第三方 BDS 服务端对 BDS 程序本身进行了修改，做的仅仅是 IO 读取和写入。\n\nQ：原理是什么？\nA：很简单，BDS 中有 HTTP 请求权限，剩下的自然就懂了，事实上能做的绝非只有文件读写，操作数据库等大部分功能都可以，因为完全借助的是外部程序（这点类似于 OneBot 协议），唯一痛点可能是 WebSocket 等长轮询通信实现起来不是很理想。后端本想用 Axum（因为",
     "copyright": "1",
     "title": "安慕希国际版Addon实现文件本地读写",
     "review": 0,

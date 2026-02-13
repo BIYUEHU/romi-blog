@@ -3,6 +3,7 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@an
 import { ResolveFn, RouterLink } from '@angular/router'
 import { CardComponent } from '../../components/card/card.component'
 import { LayoutComponent } from '../../components/layout/layout.component'
+import { PostCardComponent } from '../../components/post-card/post-card.component'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'
 import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
@@ -11,7 +12,15 @@ import type { homeResolver } from './home.resolver'
 
 @Component({
   selector: 'app-home',
-  imports: [DatePipe, RouterLink, ProjectListComponent, CardComponent, LayoutComponent, NgOptimizedImage],
+  imports: [
+    DatePipe,
+    RouterLink,
+    ProjectListComponent,
+    CardComponent,
+    LayoutComponent,
+    NgOptimizedImage,
+    PostCardComponent
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html'
 })
@@ -24,7 +33,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     title: 'Arimura Sena',
     subTitle: [
       '👋 Hi there, this is my personal website and blog',
-      "🔧 It's frontend built with Angular and Lit, backend built with Rocket and SeaORM",
+      "🔧 It's frontend built with Angular and Lit, backend built with Axum and SeaORM",
       '🧩 The best like character is Himeno Sena (姬野星奏) and Arimura Romi (有村ロミ)',
       "🌱 I'm currently learning Idris2 and Type Theory"
     ],

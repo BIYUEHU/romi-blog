@@ -24,7 +24,7 @@ export default class RModal extends LitElement {
   // 移除 modal 容器
   private removeModalContainer() {
     this.modalContainer?.remove()
-    this.modalContainer = undefined
+    this.modalContainer = void 0
   }
 
   private close() {

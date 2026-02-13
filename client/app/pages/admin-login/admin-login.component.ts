@@ -6,7 +6,9 @@ import { WebComponentCheckboxAccessorDirective } from '../../directives/web-comp
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
 import { AuthService } from '../../services/auth.service'
+import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
+import { showErr } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-login',
@@ -25,6 +27,7 @@ export class AdminLoginComponent {
   public constructor(
     private readonly router: Router,
     private readonly apiService: ApiService,
+    private readonly loggerService: LoggerService,
     private readonly notifyService: NotifyService
   ) {
     if (this.authService.isLoggedIn()) this.router.navigate(['/admin/dashboard']).then()
@@ -38,7 +41,10 @@ export class AdminLoginComponent {
 
     this.isLoading = true
     this.apiService.login(this.username, this.password).subscribe({
-      error: (data) => console.log('error', data),
+      error: (data) => {
+        this.loggerService.error('Login error', data)
+        this.notifyService.showMessage(`登录失败，意外的错误：${showErr(data)}`, MessageBoxType.Error)
+      },
       next: (data) => {
         this.isLoading = false
         if (data) {

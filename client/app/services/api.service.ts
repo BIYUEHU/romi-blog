@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { Injectable } from '@angular/core'
+import { Injectable, signal } from '@angular/core'
 import { jwtDecode } from 'jwt-decode'
-import { catchError, map, of } from 'rxjs'
+import { catchError, map, of, tap } from 'rxjs'
 import { environment } from '../../environments/environment'
 import type {
   AuthUser,
@@ -41,8 +41,19 @@ export class ApiService {
     private readonly cacheService: CacheService
   ) {}
 
+  private readonly _settings = signal<ResSettingsData>({} as ResSettingsData)
+
   private genHeaders(attributes: HEADER_CONTEXT[]) {
     return attributes.reduce((header, attribute) => header.set(attribute, ''), new HttpHeaders())
+  }
+
+  public readonly settings = this._settings.asReadonly()
+
+  public loadSettings() {
+    return this.getSettings().pipe(
+      tap((settings) => this._settings.set(settings)),
+      map(() => null)
+    )
   }
 
   public getPosts() {
@@ -267,18 +278,21 @@ export class ApiService {
     return this.http.get<ResSettingsData>(`${environment.api_base_url}/info/settings`)
   }
 
+  public updateSettings() {
+    return this.http.put<ResSettingsData>(`${environment.api_base_url}/info/settings`, {})
+  }
+
   public getDashboard() {
     return this.http.get<ResDashboardData>(`${environment.api_base_url}/info/dashboard`)
   }
 
   public getProjects() {
-    return of([])
-    // return this.cacheService.wrap(
-    //   'projects',
-    //   RHour(12),
-    //   () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
-    //   (data) => data.length > 0
-    // )
+    return this.cacheService.wrap(
+      'projects',
+      RHour(12),
+      () => this.http.get<ResProjectData[]>(`${environment.api_base_url}/info/projects`),
+      (data) => data.length > 0
+    )
   }
 
   public getLanguageColors() {

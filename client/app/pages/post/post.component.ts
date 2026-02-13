@@ -5,7 +5,7 @@ import { PostContentComponent } from '../../components/post-content/post-content
 import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
 import { ApiService } from '../../services/api.service'
 import { AppTitleStrategy } from '../../shared/title-strategy'
-import { formatDate } from '../../utils'
+import { formatDate } from '../../shared/utils'
 
 @Component({
   selector: 'app-post',

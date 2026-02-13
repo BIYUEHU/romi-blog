@@ -5,7 +5,10 @@ use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 use tokio::sync::RwLock;
 
 use crate::{
-    constant::{GITHUB_USER, HTTP_CLIENT_AGENT, PROJECTS_CACHE_TIMEOUT, SETTINGS_CACHE_TIMEOUT},
+    constant::{
+        GITHUB_USER, HTTP_CLIENT_AGENT, PROJECTS_CACHE_TIMEOUT, SETTINGS_CACHE_TIMEOUT,
+        SETTINGS_FIELDS,
+    },
     entity::romi_fields,
     models::info::{ResProjectData, ResSettingsData},
 };
@@ -67,7 +70,7 @@ pub async fn get_settings_cache(db: &DatabaseConnection) -> Result<ResSettingsDa
     SETTINGS_CACHE
         .get_or_update(|| async {
             let record = romi_fields::Entity::find()
-                .filter(romi_fields::Column::Key.eq("settings"))
+                .filter(romi_fields::Column::Key.eq(SETTINGS_FIELDS))
                 .one(db)
                 .await
                 .context("Failed to fetch settings")?
@@ -78,6 +81,10 @@ pub async fn get_settings_cache(db: &DatabaseConnection) -> Result<ResSettingsDa
             Ok(parsed)
         })
         .await
+}
+
+pub async fn update_settings_cache(data: ResSettingsData) {
+    SETTINGS_CACHE.update(data).await;
 }
 
 define_cache!(PROJECTS_CACHE, Vec<ResProjectData>, PROJECTS_CACHE_TIMEOUT);

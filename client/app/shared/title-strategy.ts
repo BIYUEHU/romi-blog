@@ -6,8 +6,8 @@ import { iso, Newtype } from 'newtype-ts'
 import { match } from 'ts-pattern'
 import { ResCharacterData, ResHitokotoData, ResNewsData, ResPostData } from '../models/api.model'
 import { dynamicResolver } from '../pages/dynamic/dynamic.resolver'
+import { ApiService } from '../services/api.service'
 import { BrowserService } from '../services/browser.service'
-import { DEFAULT_TITLE } from './constants'
 
 export interface UrlPattern
   extends Newtype<
@@ -50,8 +50,9 @@ export class AppTitleStrategy extends TitleStrategy {
 
   public constructor(
     private readonly title: Title,
-    // private readonly meta: Meta,
-    private readonly browserService: BrowserService
+    // private readonly meta: Meta, // TODO: base on backend api to set descr,keywords,meta...
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
   ) {
     super()
   }
@@ -71,7 +72,8 @@ export class AppTitleStrategy extends TitleStrategy {
   }
 
   public setTitle(title?: string) {
-    this.title.setTitle(title?.trim() ? `${title.slice(0, 30)} - ${DEFAULT_TITLE}` : DEFAULT_TITLE)
+    const { site_title } = this.apiService.settings()
+    this.title.setTitle(title?.trim() ? `${title.slice(0, 30)} - ${site_title}` : site_title)
   }
 
   public override updateTitle(snapshot: RouterStateSnapshot) {

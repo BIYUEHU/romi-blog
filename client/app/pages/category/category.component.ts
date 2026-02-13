@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
-import { sortByCreatedTime } from '../../utils'
 
 @Component({
   selector: 'app-category',
@@ -16,7 +15,7 @@ export class CategoryComponent implements OnInit {
   public constructor(private readonly router: Router) {}
 
   public ngOnInit() {
-    this.posts = sortByCreatedTime(this.posts).filter((post) => post.categories.includes(this.category))
+    this.posts = this.posts.filter((post) => post.categories.includes(this.category))
     if (this.posts.length === 0) this.router.navigate(['/404'])
   }
 }

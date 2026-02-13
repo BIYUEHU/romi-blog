@@ -57,7 +57,7 @@ export default class RDropdown extends LitElement {
     if (option.disabled) return
 
     this.show = false
-    this.timeout = undefined
+    this.timeout = void 0
     this.dispatchEvent(
       new CustomEvent('select', {
         detail: option,

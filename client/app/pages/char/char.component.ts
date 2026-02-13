@@ -9,7 +9,7 @@ import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
 import { NotifyService } from '../../services/notify.service'
 import { APlayer } from '../../shared/types'
-import { randomRTagType, renderCharacterBWH } from '../../utils'
+import { randomRTagType, renderCharacterBWH } from '../../shared/utils'
 
 @Component({
   selector: 'app-char',
