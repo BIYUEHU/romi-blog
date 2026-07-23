@@ -74,23 +74,15 @@ jobs:
           name: windows-latest-romichan-server-aarch64
           path: target/release/romichan.exe
 
-      - name: Set up Node.js
+      - name: Set up Bun
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install pnpm
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
-        uses: pnpm/action-setup@v2
-        with:
-          version: 9
+        uses: oven-sh/setup-bun@v2
 
       - name: Build frontend
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         run: |
-          pnpm install
-          pnpm build
+          bun install
+          bun run build
       #          tar -czf dist.tar.gz dist
 
       - name: Upload artifact (Frontend)

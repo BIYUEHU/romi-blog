@@ -21,34 +21,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02489307-c035-4c67-9461-f0c26aeaa784" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/src/tools/time.rs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-header/admin-header.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/admin-sidebar/admin-sidebar.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/admin-sidebar/admin-sidebar.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/bangumi/bangumi.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/footer/footer.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/footer/footer.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/header/header.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/header/header.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/layout/layout.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/components/post-content/post-content.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-edit/admin-edit.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-hitokotos2/admin-hitokotos.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-hitokotos2/admin-hitokotos.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/admin-hitokotos2/admin-hitokotos.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/admin-hitokotos2/admin-hitokotos.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/archive/archive.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/archive/archive.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/chars/chars.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/chars/chars.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/hitokotos/hitokotos.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/news/news.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/news/news.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/pages/newses/newses.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/pages/newses/newses.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/shared/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/shared/utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/styles/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/styles/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/music_cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/music_cache.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/hitokoto.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/hitokoto.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/comment.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/comment.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/hitokoto.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/hitokoto.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/post.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/post.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tools/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/tools/mod.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,60 +116,62 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor&quot;: &quot;Run&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;HTTP 请求.request | Create User.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get All Meta.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get Single Meta.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get background.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get backgrounds.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get characters.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Get qqavatar.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | Test2.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP 请求.request | User Login.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1&quot;: &quot;true&quot;,
-    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;js.last.introduce.type&quot;: &quot;LET&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;G:/Repos/romichan/client/app/pages/admin-settings&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;pnpm&quot;,
-    &quot;npm.Angular CLI Server.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/mod.rs&quot;: &quot;true&quot;,
-    &quot;org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/romi_hitokotos2.rs&quot;: &quot;true&quot;,
-    &quot;org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/romi_settings.rs&quot;: &quot;true&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;Settings.Biome&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;G:\\Repos\\romichan\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Cargo.Test tools::markdown::tests::test_collect_markdown_languages.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "HTTP 请求.request | Create User.executor": "Run",
+    "HTTP 请求.request | Get All Meta.executor": "Run",
+    "HTTP 请求.request | Get Single Meta.executor": "Run",
+    "HTTP 请求.request | Get background.executor": "Run",
+    "HTTP 请求.request | Get backgrounds.executor": "Run",
+    "HTTP 请求.request | Get characters.executor": "Run",
+    "HTTP 请求.request | Get qqavatar.executor": "Run",
+    "HTTP 请求.request | Test2.executor": "Run",
+    "HTTP 请求.request | User Login.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultAutoModeForALLUsers.v1": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "js.last.introduce.type": "LET",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "E:/Repos/romichan",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "bun",
+    "npm.Angular CLI Server.executor": "Run",
+    "npm.dev.executor": "Run",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/mod.rs": "true",
+    "org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/romi_hitokotos2.rs": "true",
+    "org.rust.disableDetachedFileInspectionG:/Repos/romichan/src/entity/romi_settings.rs": "true",
+    "org.rust.first.attach.projects": "true",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "E:\\Repos\\romichan\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件&quot;: [
-      &quot;JSON&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/新建临时文件": [
+      "JSON"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="G:\Repos\romichan\client\app\pages\admin-settings" />
@@ -316,7 +293,7 @@
     </recent_temporary>
   </component>
   <component name="RustProjectSettings">
-    <option name="toolchainHomeDirectory" value="D:/Languages/rust/.cargo/bin" />
+    <option name="toolchainHomeDirectory" value="D:/Languages/Rust/bin" />
   </component>
   <component name="RustfmtProjectSettings">
     <option name="channel" value="nightly" />
@@ -405,6 +382,9 @@
       <workItem from="1777603608853" duration="999000" />
       <workItem from="1777618860792" duration="967000" />
       <workItem from="1777619845912" duration="20306000" />
+      <workItem from="1777699349067" duration="388000" />
+      <workItem from="1784054219879" duration="82000" />
+      <workItem from="1784799975117" duration="328000" />
     </task>
     <servers />
   </component>
