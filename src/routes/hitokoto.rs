@@ -16,7 +16,6 @@ use crate::{
     entity::{romi_hitokotos, romi_hitokotos2},
     guards::admin::AdminUser,
     models::hitokoto::{ReqHitokoto2Data, ReqHitokotoData, ResHitokoto2Data, ResHitokotoData},
-    tools::time::get_timestamp,
     utils::api::{ApiError, ApiResult, api_ok},
 };
 

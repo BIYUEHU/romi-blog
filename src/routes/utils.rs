@@ -15,7 +15,7 @@ use crate::{
     app::{RomiConfig, RomiState},
     constant::DATA_DIR,
     entity::romi_views,
-    models::utils::{QueryAgentData, ResViewData},
+    models::utils::{QueryAgentData, QueryViewBadgeData, ResViewData},
     utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -31,6 +31,7 @@ pub fn routes() -> Router<RomiState> {
         .route("/view/{slug}", get(get_views))
         .route("/view/{slug}", post(post_views))
         .route("/view/i/{slug}", get(post_views))
+        .route("/view/badge/{slug}", get(view_badge))
         .route("/agent", get(agent))
 }
 
@@ -145,4 +146,49 @@ async fn post_views(
         }
     }
     api_ok(())
+}
+
+async fn view_badge(
+    Path(slug): Path<String>,
+    Query(params): Query<QueryViewBadgeData>,
+    State(RomiState { ref conn, .. }): State<RomiState>,
+) -> impl IntoResponse {
+    let label = params.label.unwrap_or_else(|| "views".to_string());
+    let left_color = params.left_color.unwrap_or_else(|| "#555".to_string());
+    let right_color = params.right_color.unwrap_or_else(|| "#4c1".to_string());
+    let count = romi_views::Entity::find_by_id(slug.clone())
+        .one(conn)
+        .await
+        .ok()
+        .flatten()
+        .map(|model| model.count)
+        .unwrap_or(0)
+        .to_string();
+    let left_width = label.len() as u32 * 7 + 20;
+    let right_width = count.len() as u32 * 7 + 20;
+    let width = left_width + right_width;
+
+    (
+        [("Content-Type", "image/svg+xml; charset=utf-8")],
+        format!(
+            r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="20" role="img" aria-label="{label}: {count}">
+<linearGradient id="a" x2="0" y2="100%">
+<stop offset="0" stop-opacity=".1"/>
+<stop offset="1" stop-opacity=".1"/>
+</linearGradient>
+<clipPath id="b"><rect width="{width}" height="20" rx="3" fill="#fff"/></clipPath>
+<g clip-path="url(#b)">
+<rect width="{left_width}" height="20" fill="{left_color}"/>
+<rect x="{left_width}" width="{right_width}" height="20" fill="{right_color}"/>
+<rect width="{width}" height="20" fill="url(#a)"/>
+</g>
+<g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+<text x="{left_center}" y="15">{label}</text>
+<text x="{right_center}" y="15">{count}</text>
+</g>
+</svg>"##,
+            left_center = left_width / 2,
+            right_center = left_width + right_width / 2
+        ),
+    )
 }

@@ -13,7 +13,8 @@
     "watch": "ng build --watch --configuration development",
     "unocss:dev": "unocss --watch",
     "test": "ng test",
-    "serve": "node dist/server/server.mjs"
+    "serve": "node dist/server/server.mjs",
+    "ag": "bun agent/bin"
   },
   "browser": {
     "node:fs": false,

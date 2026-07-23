@@ -30,6 +30,9 @@
         "useConsistentArrowReturn": "warn",
         "noUselessElse": "warn",
         "useShorthandAssign": "warn"
+      },
+      "complexity": {
+        "noImportantStyles": "off"
       }
     }
   },
