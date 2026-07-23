@@ -5,73 +5,72 @@
           isMenuOpen
             ? '/assets/hamburger_open.svg'
             : '/assets/hamburger_close.svg'
-        "/>
+        " />
     </div>
 
     <a [routerLink]="'/'"
-       class="text-7 absolute font-bold space-inline-xs text-brand left-1/2 -translate-x-1/2 lg:left-0 lg:-translate-x-1 hover:text-accent">
+      class="text-7 absolute font-bold space-inline-xs text-brand left-1/2 -translate-x-1/2 lg:left-0 lg:-translate-x-1 hover:text-accent">
       {{ apiService.settings().siteName }}
     </a>
 
     <nav class="hidden lg:flex items-center gap-6">
       @for (item of navItems; track $index) {
-        @if (item.children) {
-          <div class="relative group">
-            <span class="text-brand hover:text-accent cursor-pointer py-4">
-              {{ item.text }}
-              <!-- 修复：UnoCSS图标类名用连字符，不用冒号 -->
-              <i class="i-mdi-chevron-down ml-1 text-xs"></i>
-            </span>
-            <div class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
-              @for (child of item.children; track child.text) {
-                <a [routerLink]="child.link"
-                   class="block px-4 py-2 text-brand hover:text-accent hover:bg-black/40">
-                  {{ child.text }}
-                </a>
-              }
-            </div>
-          </div>
-        } @else {
-          <a [routerLink]="item.link" class="text-brand hover:text-accent">
-            {{ item.text }}
+      @if (item.children) {
+      <div class="relative group">
+        <span class="text-brand hover:text-accent cursor-pointer py-4">
+          {{ item.text }}
+          <i class="i-mdi-chevron-down ml-1 text-xs"></i>
+        </span>
+        <div
+          class="absolute top-full left-0 hidden group-hover:block bg-black/50 backdrop-blur-10 rounded-md min-w-16 py-2">
+          @for (child of item.children; track child.text) {
+          <a [routerLink]="child.link" class="block px-4 py-2 text-brand hover:text-accent hover:bg-black/40">
+            {{ child.text }}
           </a>
-        }
+          }
+        </div>
+      </div>
+      } @else {
+      <a [routerLink]="item.link" class="text-brand hover:text-accent">
+        {{ item.text }}
+      </a>
+      }
       }
     </nav>
   </div>
 
   @if (isMenuOpen) {
-    <div class="fixed w-screen h-screen mt-0 bg-black/70 z--14" (click)="toggleMenu()">
-      <div class="w-full h-full overflow-y-auto">
-        <div class="grid grid-cols-2 gap-4 p-3">
-          @for (item of navItems; track $index) {
-            @if (!item.children) {
-              <a [routerLink]="item.link"
-                 class="block text-center outline-0 border-none text-brand hover:text-accent py-3 px-4 text-lg"
-                 (click)="toggleMenu()">
-                {{ item.text }}
-              </a>
-            }
-          }
-        </div>
-
+  <div class="fixed w-screen h-screen mt-0 bg-black/70 z--14" (click)="toggleMenu()">
+    <div class="w-full h-full overflow-y-auto">
+      <div class="grid grid-cols-2 gap-4 p-3">
         @for (item of navItems; track $index) {
-          @if (item.children) {
-            <div class="mb-4 px-3">
-              <h3 class="text-brand text-lg mb-2 text-center">{{ item.text }}</h3>
-              <div class="grid grid-cols-2 gap-4">
-                @for (child of item.children; track child.text) {
-                  <a [routerLink]="child.link"
-                     class="block text-center outline-0 border-none text-brand hover:text-accent py-3 px-4 text-lg"
-                     (click)="toggleMenu()">
-                    {{ child.text }}
-                  </a>
-                }
-              </div>
-            </div>
-          }
+        @if (!item.children) {
+        <a [routerLink]="item.link"
+          class="block text-center outline-0 border-none text-brand hover:text-accent py-3 px-4 text-lg"
+          (click)="toggleMenu()">
+          {{ item.text }}
+        </a>
+        }
         }
       </div>
+
+      @for (item of navItems; track $index) {
+      @if (item.children) {
+      <div class="mb-4 px-3">
+        <h3 class="text-brand text-lg mb-2 text-center">{{ item.text }}</h3>
+        <div class="grid grid-cols-2 gap-4">
+          @for (child of item.children; track child.text) {
+          <a [routerLink]="child.link"
+            class="block text-center outline-0 border-none text-brand hover:text-accent py-3 px-4 text-lg"
+            (click)="toggleMenu()">
+            {{ child.text }}
+          </a>
+          }
+        </div>
+      </div>
+      }
+      }
     </div>
+  </div>
   }
 </div>

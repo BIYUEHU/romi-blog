@@ -23,6 +23,7 @@ export class DynamicComponent implements OnChanges {
   ) {}
 
   public ngOnChanges(changes: SimpleChanges): void {
+    // biome-ignore lint/complexity/useLiteralKeys: *
     if (!changes['dynamic'] || changes['dynamic'].currentValue === changes['dynamic'].previousValue) return
     this.showContent = false
     this.cdr.detectChanges()

@@ -1,118 +1,119 @@
 <app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
-                     (pageChange)="goToPage($event)">
+  (pageChange)="goToPage($event)">
   <div search-area class="space-y-4">
     <div class="flex flex-wrap items-center gap-4">
       <div class="flex-1">
-        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索一言内容或来源..." class="w-full"/>
+        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索一言内容或来源..." class="w-full" />
       </div>
 
       <select [(ngModel)]="filterType"
-              class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
+        class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
         <option [value]="0">所有类型</option>
         @for (type of types; track type[0]) {
-          <option [value]="type[0]">{{ type[1] }}</option>
+        <option [value]="type[0]">{{ type[1] }}</option>
         }
       </select>
     </div>
 
     @if (!editingHitokoto) {
-      <div class="border-t border-border-base pt-4 space-y-4">
-        <div class="bg-bg-elevated border-accent text-text-sub rounded-sm border border-solid border-r-1 p-1 w-99% m-auto break-words font-bold text-2xl">
-          @for (char of (newHitokoto.msg || "这是一段文字").split(''); track $index) {
-            @if (char === ' ') {
-              <span class="bg-red-300 text-transparent">·</span>
-            } @else {
-              <span>{{ char }}</span>
-            }
-          }
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="内容"/>
-          <r-input type="text" [(ngModel)]="newHitokoto.msgOrigin" placeholder="原文"/>
-          <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源"/>
-          <r-input type="text" [(ngModel)]="newHitokoto.fromWho" placeholder="来者"/>
-        </div>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <select [(ngModel)]="newHitokoto.type"
-                    class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
-              @for (type of types; track type[0]) {
-                <option [value]="type[0]">{{ type[1] }}</option>
-              }
-            </select>
-            {{ newHitokoto.public ? '公开' : '私密' }}
-            <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
-          </div>
-          <r-button (click)="createHitokoto()" type="primary">
-            添加一言
-          </r-button>
-        </div>
+    <div class="border-t border-border-base pt-4 space-y-4">
+      <div
+        class="bg-bg-elevated border-accent text-text-sub rounded-sm border border-solid border-r-1 p-1 w-99% m-auto break-words font-bold text-2xl">
+        @for (char of (newHitokoto.msg || "这是一段文字").split(''); track $index) {
+        @if (char === ' ') {
+        <span class="bg-red-300 text-transparent">·</span>
+        } @else {
+        <span>{{ char }}</span>
+        }
+        }
       </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="内容" />
+        <r-input type="text" [(ngModel)]="newHitokoto.msgOrigin" placeholder="原文" />
+        <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源" />
+        <r-input type="text" [(ngModel)]="newHitokoto.fromWho" placeholder="来者" />
+      </div>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <select [(ngModel)]="newHitokoto.type"
+            class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
+            @for (type of types; track type[0]) {
+            <option [value]="type[0]">{{ type[1] }}</option>
+            }
+          </select>
+          {{ newHitokoto.public ? '公开' : '私密' }}
+          <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
+        </div>
+        <r-button (click)="createHitokoto()" type="primary">
+          添加一言
+        </r-button>
+      </div>
+    </div>
     }
   </div>
 
   <div list-content class="divide-y divide-border-base">
     @for (hitokoto of pagedItems; track hitokoto.uuid) {
-      <div class="p-6 hover:bg-bg-subtle">
-        @if (editingHitokoto?.uuid === hitokoto.uuid) {
-          <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="内容"/>
-              <r-input type="text" [(ngModel)]="newHitokoto.msgOrigin" placeholder="原文"/>
-              <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源"/>
-              <r-input type="text" [(ngModel)]="newHitokoto.fromWho" placeholder="来者"/>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <select [(ngModel)]="newHitokoto.type"
-                        class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
-                  @for (type of types; track type[0]) {
-                    <option [value]="type[0]">{{ type[0] }}</option>
-                  }
-                </select>
-                <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
-              </div>
-              <div class="flex items-center gap-2">
-                <r-button (click)="cancelEdit()">
-                  取消
-                </r-button>
-                <r-button (click)="updateHitokoto()" type="primary">
-                  保存
-                </r-button>
-              </div>
-            </div>
-          </div>
-        } @else {
-          <div class="flex items-start justify-between gap-4">
-            <div class="flex-1 space-y-2">
-              <p class="text-text-base">{{ hitokoto.msg }}</p>
-              @if (hitokoto.msgOrigin) {
-                <p class="text-text-base">{{ hitokoto.msgOrigin }}</p>
+    <div class="p-6 hover:bg-bg-subtle">
+      @if (editingHitokoto?.uuid === hitokoto.uuid) {
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <r-input type="text" [(ngModel)]="newHitokoto.msg" placeholder="内容" />
+          <r-input type="text" [(ngModel)]="newHitokoto.msgOrigin" placeholder="原文" />
+          <r-input type="text" [(ngModel)]="newHitokoto.from" placeholder="来源" />
+          <r-input type="text" [(ngModel)]="newHitokoto.fromWho" placeholder="来者" />
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <select [(ngModel)]="newHitokoto.type"
+              class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
+              @for (type of types; track type[0]) {
+              <option [value]="type[0]">{{ type[0] }}</option>
               }
-              <div class="flex items-center gap-4 text-sm">
-                <span class="text-accent">{{ hitokoto.fromWho }}</span>
-                @if (hitokoto.from) {
-                  <span class="text-text-sub">{{ hitokoto.from }}</span>
-                }
-                @if (hitokoto.public) {
-                  <span class="px-2 py-0.5 text-xs rounded-full bg-brand text-text-on-brand">公开</span>
-                }
-                <span>
-                  <r-tag size="sm" [type]="['secondary','info', 'success', 'warning'][hitokoto.type - 1]">
-                    {{ types[hitokoto.type - 1]?.[1] ?? "未知" }}
-                   </r-tag>
-                  </span>
-                <r-tag size="sm" type="error">{{ hitokoto.likes }}</r-tag>
-              </div>
-              <p class="text-text-sub">{{ Number(hitokoto.created) | date :'yyyy-MM-dd HH:mm:ss' }}</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <r-button (click)="startEdit(hitokoto)" type="primary">编辑</r-button>
-              <r-button (click)="deleteItem(hitokoto.uuid)" type="error">删除</r-button>
-            </div>
+            </select>
+            <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
           </div>
-        }
+          <div class="flex items-center gap-2">
+            <r-button (click)="cancelEdit()">
+              取消
+            </r-button>
+            <r-button (click)="updateHitokoto()" type="primary">
+              保存
+            </r-button>
+          </div>
+        </div>
       </div>
+      } @else {
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 space-y-2">
+          <p class="text-text-base">{{ hitokoto.msg }}</p>
+          @if (hitokoto.msgOrigin) {
+          <p class="text-text-base">{{ hitokoto.msgOrigin }}</p>
+          }
+          <div class="flex items-center gap-4 text-sm">
+            <span class="text-accent">{{ hitokoto.fromWho }}</span>
+            @if (hitokoto.from) {
+            <span class="text-text-sub">{{ hitokoto.from }}</span>
+            }
+            @if (hitokoto.public) {
+            <span class="px-2 py-0.5 text-xs rounded-full bg-brand text-text-on-brand">公开</span>
+            }
+            <span>
+              <r-tag size="sm" [type]="['secondary','info', 'success', 'warning'][hitokoto.type - 1]">
+                {{ types[hitokoto.type - 1]?.[1] ?? "未知" }}
+              </r-tag>
+            </span>
+            <r-tag size="sm" type="error">{{ hitokoto.likes }}</r-tag>
+          </div>
+          <p class="text-text-sub">{{ Number(hitokoto.created) | date :'yyyy-MM-dd HH:mm:ss' }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <r-button (click)="startEdit(hitokoto)" type="primary">编辑</r-button>
+          <r-button (click)="deleteItem(hitokoto.uuid)" type="error">删除</r-button>
+        </div>
+      </div>
+      }
+    </div>
     }
   </div>
 </app-admin-base-list>

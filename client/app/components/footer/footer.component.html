@@ -1,17 +1,17 @@
 <div class="bg-cover bg-no-repeat relative text-center bg-brand-border text-text-sub pt-5 py-5 w-full font-300 m-auto">
   <div
-          class="max-w-80% w-6xl flex justify-between flex-wrap md:flex-nowrap m-auto children:max-w-full children:w-5xl children:mx-0 children:pt-1 children:pb-4 children:children:mt-2 ">
+    class="max-w-80% w-6xl flex justify-between flex-wrap md:flex-nowrap m-auto children:max-w-full children:w-5xl children:mx-0 children:pt-1 children:pb-4 children:children:mt-2 ">
     <div class="text-left">
       <p>© 2019 - {{ copyrightYear }} Romi Nest</p>
       <p>感谢陪伴：{{ currentTime }}</p>
       @if (data) {
-        <p>
-          <a [routerLink]="['/hitokoto/' , data.id]" class="text-brand hover:text-brand-hover">{{
-                  data.msg
-            }}</a>
-        </p>
+      <p>
+        <a [routerLink]="['/hitokoto/' , data.id]" class="text-brand hover:text-brand-hover">{{
+          data.msg
+          }}</a>
+      </p>
       } @else {
-        <p><a class="text-brand hover:text-brand-hover">无论幸福还是不幸，首先都要活着才行</a></p>
+      <p><a class="text-brand hover:text-brand-hover">无论幸福还是不幸，首先都要活着才行</a></p>
       }
     </div>
     <div class="text-right">
@@ -22,16 +22,16 @@
       </p>
       <p>
         @for (item of footerItems; track $index) {
-          <a [routerLink]="item.link" class="text-brand hover:text-brand-hover">{{ item.text }}</a>
-          @if ($index !== footerItems.length - 1) {
-            •
-          }
+        <a [routerLink]="item.link" class="text-brand hover:text-brand-hover">{{ item.text }}</a>
+        @if ($index !== footerItems.length - 1) {
+        •
+        }
         }
       </p>
       @if (metadata) {
-        <p class="text-text-muted">Build Time: {{ metadata.build.BUILD_TIME | date:'yyyy-MM-dd HH:mm:ss' }}
-          Hash: {{ metadata.build.HASH }} Angular
-          Version: {{ metadata.pkg.dependencies["@angular/core"].slice(1) }}</p>
+      <p class="text-text-muted">Build Time: {{ metadata.build.BUILD_TIME | date:'yyyy-MM-dd HH:mm:ss' }}
+        Hash: {{ metadata.build.HASH }} Angular
+        Version: {{ metadata.pkg.dependencies["@angular/core"].slice(1) }}</p>
       }
     </div>
   </div>

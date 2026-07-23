@@ -1,58 +1,57 @@
 <app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
-                     (pageChange)="goToPage($event)">
+  (pageChange)="goToPage($event)">
   <div search-area class="flex flex-wrap items-center gap-4">
     <div class="flex-1">
-      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索评论内容或用户名..." class="w-full"/>
+      <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索评论内容或用户名..." class="w-full" />
     </div>
   </div>
 
   <div list-content class="divide-y divide-border-base">
     @for (comment of pagedItems; track comment.cid) {
-      <div class="p-6 hover:bg-bg-subtle">
-        <div class="flex items-start justify-between gap-4">
-          <div class="flex-1 space-y-2" [routerLink]="['/post', comment.pid]">
-            <p class="text-text-base w-50 lg:w-150 break-words"
-               [title]="comment.text">{{ formatText(comment.text) }}</p>
+    <div class="p-6 hover:bg-bg-subtle">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 space-y-2" [routerLink]="['/post', comment.pid]">
+          <p class="text-text-base w-50 lg:w-150 break-words" [title]="comment.text">{{ formatText(comment.text) }}</p>
 
-            <div class="flex items-center gap-4 text-sm">
-              <div class="flex items-center gap-2 text-accent">
-                @if (comment.userUrl) {
-                  <a [href]="comment.userUrl" target="_blank" class="text-brand hover:text-brand-hover">
-                    {{ comment.username }}
-                  </a>
-                } @else {
-                  <span>{{ comment.username }}</span>
-                }
-              </div>
-
-              <div class="text-text-sub">
-                {{ comment.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
-              </div>
-
-              @if (comment.status === CommentStatus.toNumber(CommentStatus.Resolved)) {
-                <r-tag size="sm" type="success">已通过</r-tag>
-              } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Pending)) {
-                <r-tag size="sm" type="warning">待处理</r-tag>
-              } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Spam)) {
-                <r-tag size="sm" type="info">垃圾</r-tag>
+          <div class="flex items-center gap-4 text-sm">
+            <div class="flex items-center gap-2 text-accent">
+              @if (comment.userUrl) {
+              <a [href]="comment.userUrl" target="_blank" class="text-brand hover:text-brand-hover">
+                {{ comment.username }}
+              </a>
+              } @else {
+              <span>{{ comment.username }}</span>
               }
             </div>
-          </div>
 
-          <div>
-            @if (comment.status !== CommentStatus.toNumber(CommentStatus.Resolved)) {
-              <r-button type="success" (click)="remarkItem(comment.cid, CommentStatus.Resolved)">通过</r-button>
+            <div class="text-text-sub">
+              {{ comment.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+            </div>
+
+            @if (comment.status === CommentStatus.toNumber(CommentStatus.Resolved)) {
+            <r-tag size="sm" type="success">已通过</r-tag>
+            } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Pending)) {
+            <r-tag size="sm" type="warning">待处理</r-tag>
+            } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Spam)) {
+            <r-tag size="sm" type="info">垃圾</r-tag>
             }
-            @if (comment.status !== CommentStatus.toNumber(CommentStatus.Pending)) {
-              <r-button type="warning" (click)="remarkItem(comment.cid, CommentStatus.Pending)">悬置</r-button>
-            }
-            @if (comment.status !== CommentStatus.toNumber(CommentStatus.Spam)) {
-              <r-button type="info" (click)="remarkItem(comment.cid, CommentStatus.Spam)">垃圾</r-button>
-            }
-            <r-button (click)="deleteItem(comment.cid)" type="error">删除</r-button>
           </div>
         </div>
+
+        <div>
+          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Resolved)) {
+          <r-button type="success" (click)="remarkItem(comment.cid, CommentStatus.Resolved)">通过</r-button>
+          }
+          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Pending)) {
+          <r-button type="warning" (click)="remarkItem(comment.cid, CommentStatus.Pending)">悬置</r-button>
+          }
+          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Spam)) {
+          <r-button type="info" (click)="remarkItem(comment.cid, CommentStatus.Spam)">垃圾</r-button>
+          }
+          <r-button (click)="deleteItem(comment.cid)" type="error">删除</r-button>
+        </div>
       </div>
+    </div>
     }
   </div>
 </app-admin-base-list>

@@ -2,11 +2,11 @@
   <div class="bg-bg-surface rounded-lg border border-border-base p-4">
     <div class="flex flex-wrap items-center gap-1">
       <div class="flex flex-1 min-w-40">
-        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索标签或分类..." class="w-full"/>
+        <r-input type="text" [(ngModel)]="searchQuery" placeholder="搜索标签或分类..." class="w-full" />
       </div>
 
       <div class="flex flex-wrap gap-1 lg:gap-2 items-center">
-        <r-input type="text" [(ngModel)]="newMetaName" placeholder="新建标签/分类名称" class="min-w-40 lg:w-48"/>
+        <r-input type="text" [(ngModel)]="newMetaName" placeholder="新建标签/分类名称" class="min-w-40 lg:w-48" />
         <div>
           <r-button (click)="isAddingCategory = false; createMeta()" type="primary" class="transition-colors">
             添加标签
@@ -26,27 +26,27 @@
     </div>
 
     @if (isLoading) {
-      <div class="p-8 text-center">
-        <r-loading label="加载中..."/>
-      </div>
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
     } @else if (categories.length === 0) {
-      <div class="p-8 text-center text-text-muted">
-        暂无分类
-      </div>
+    <div class="p-8 text-center text-text-muted">
+      暂无分类
+    </div>
     } @else {
-      <div class="divide-y divide-border-base">
-        @for (category of categories; track category.mid) {
-          <div class="px-6 py-4 flex items-center justify-between hover:bg-bg-subtle">
-            <div>
-              <h3 class="text-text-base font-medium">{{ category.name }}</h3>
-              <p class="text-sm text-text-sub">{{ category.count }} 篇文章</p>
-            </div>
-            <r-button (click)="deleteMeta(category.mid, category.name)" type="error" class="transition-colors">
-              删除
-            </r-button>
-          </div>
-        }
+    <div class="divide-y divide-border-base">
+      @for (category of categories; track category.mid) {
+      <div class="px-6 py-4 flex items-center justify-between hover:bg-bg-subtle">
+        <div>
+          <h3 class="text-text-base font-medium">{{ category.name }}</h3>
+          <p class="text-sm text-text-sub">{{ category.count }} 篇文章</p>
+        </div>
+        <r-button (click)="deleteMeta(category.mid, category.name)" type="error" class="transition-colors">
+          删除
+        </r-button>
       </div>
+      }
+    </div>
     }
   </div>
 
@@ -57,25 +57,25 @@
     </div>
 
     @if (isLoading) {
-      <div class="p-8 text-center">
-        <r-loading label="加载中..."/>
-      </div>
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
     } @else if (tags.length === 0) {
-      <div class="p-8 text-center text-text-muted">
-        暂无标签
-      </div>
+    <div class="p-8 text-center text-text-muted">
+      暂无标签
+    </div>
     } @else {
-      <div class="p-6 flex flex-wrap gap-4">
-        @for (tag of tags; track tag.mid) {
-          <div class="flex items-center gap-2 px-4 py-2 bg-bg-elevated rounded-full">
-            <span class="text-text-base">{{ tag.name }}</span>
-            <span class="text-sm text-text-sub">({{ tag.count }})</span>
-            <button (click)="deleteMeta(tag.mid, tag.name)"
-                    class="i-mdi:close text-red-500 hover:text-red-600 hover:cursor-pointer focus:outline-none">
-            </button>
-          </div>
-        }
+    <div class="p-6 flex flex-wrap gap-4">
+      @for (tag of tags; track tag.mid) {
+      <div class="flex items-center gap-2 px-4 py-2 bg-bg-elevated rounded-full">
+        <span class="text-text-base">{{ tag.name }}</span>
+        <span class="text-sm text-text-sub">({{ tag.count }})</span>
+        <button (click)="deleteMeta(tag.mid, tag.name)"
+          class="i-mdi:close text-red-500 hover:text-red-600 hover:cursor-pointer focus:outline-none">
+        </button>
       </div>
+      }
+    </div>
     }
   </div>
 </div>

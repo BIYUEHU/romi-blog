@@ -10,20 +10,20 @@
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     @for (card of statCards; track card.title) {
-      <app-card [routerLink]="card.link">
-        <div class="flex items-center gap-4">
-          <div [class]="[
+    <app-card [routerLink]="card.link">
+      <div class="flex items-center gap-4">
+        <div [class]="[
             'w-12 h-12 rounded-lg flex items-center justify-center',
             card.color
           ]">
-            <i [class]="[card.icon, 'text-2xl text-text-on-brand']"></i>
-          </div>
-          <div>
-            <div class="text-sm text-accent">{{ card.title }}</div>
-            <div class="text-2xl font-bold text-text-base">{{ card.value }}</div>
-          </div>
+          <i [class]="[card.icon, 'text-2xl text-text-on-brand']"></i>
         </div>
-      </app-card>
+        <div>
+          <div class="text-sm text-accent">{{ card.title }}</div>
+          <div class="text-2xl font-bold text-text-base">{{ card.value }}</div>
+        </div>
+      </div>
+    </app-card>
     }
   </div>
 
@@ -37,18 +37,18 @@
       </div>
       <div class="divide-y divide-border-base">
         @for (post of recentPosts; track post.id) {
-          <div class="px-6 py-4 flex items-center justify-between">
-            <div class="flex-1 max-w-75%">
-              <h4 class="text-text-base font-medium truncate">{{ post.title }}</h4>
-              <div class="text-sm text-accent mt-1">
-                {{ post.created * 1000 | date: 'yyyy-MM-dd HH:mm' }}
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-sm text-accent">{{ post.views }} 阅读</span>
-              <span class="text-sm text-accent">{{ post.comments }} 评论</span>
+        <div class="px-6 py-4 flex items-center justify-between">
+          <div class="flex-1 max-w-75%">
+            <h4 class="text-text-base font-medium truncate">{{ post.title }}</h4>
+            <div class="text-sm text-accent mt-1">
+              {{ post.created * 1000 | date: 'yyyy-MM-dd HH:mm' }}
             </div>
           </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-accent">{{ post.views }} 阅读</span>
+            <span class="text-sm text-accent">{{ post.comments }} 评论</span>
+          </div>
+        </div>
         }
       </div>
     </app-card>
@@ -59,10 +59,10 @@
       </div>
       <div class="px-6 py-4 space-y-4">
         @for (info of systemInfo; track info.label) {
-          <div class="flex justify-between">
-            <span class="text-accent">{{ info.label }}</span>
-            <span class="text-text-base">{{ info.value }}</span>
-          </div>
+        <div class="flex justify-between">
+          <span class="text-accent">{{ info.label }}</span>
+          <span class="text-text-base">{{ info.value }}</span>
+        </div>
         }
       </div>
     </app-card>

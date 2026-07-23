@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { ResProjectData } from '../../../output'
 import { ProjectListComponent } from '../../components/project-list/project-list.component'

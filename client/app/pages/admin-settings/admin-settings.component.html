@@ -9,187 +9,166 @@
     </div>
 
     @if (isLoading) {
-      <div class="text-center py-8">
-        <r-loading label="加载中..."/>
-      </div>
+    <div class="text-center py-8">
+      <r-loading label="加载中..." />
+    </div>
     } @else {
-      <div class="space-y-6">
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <h3 class="text-lg font-medium text-text-base mb-4">站点设置</h3>
+        <r-input label="站点标题" [(ngModel)]="settingsForm.siteTitle" class="w-full" />
+        <r-input label="站点名称" [(ngModel)]="settingsForm.siteName" class="w-full" />
+        <r-input label="站点描述" [(ngModel)]="settingsForm.siteDescription" class="w-full" />
+        <div>
+          <r-input label="站点关键词" [(ngModel)]="settingsForm.siteKeywords" class="w-full" />
+        </div>
+        <r-input label="Favicon 地址" [(ngModel)]="settingsForm.siteFavicon" class="w-full" />
+        <r-input label="Logo 地址" [(ngModel)]="settingsForm.siteLogo" class="w-full" />
+      </div>
+
+      <div class="border-t border-border-base pt-6">
+        <h3 class="text-lg font-medium text-text-base mb-4">页面设置</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <h3 class="text-lg font-medium text-text-base mb-4">站点设置</h3>
-          <r-input label="站点标题" [(ngModel)]="settingsForm.siteTitle" class="w-full"/>
-          <r-input label="站点名称" [(ngModel)]="settingsForm.siteName" class="w-full"/>
-          <r-input label="站点描述" [(ngModel)]="settingsForm.siteDescription" class="w-full"/>
-          <div>
-            <r-input
-                    label="站点关键词"
-                    [(ngModel)]="settingsForm.siteKeywords"
-                    class="w-full"
-            />
-          </div>
-          <r-input label="Favicon 地址" [(ngModel)]="settingsForm.siteFavicon" class="w-full"/>
-          <r-input label="Logo 地址" [(ngModel)]="settingsForm.siteLogo" class="w-full"/>
-        </div>
-
-        <div class="border-t border-border-base pt-6">
-          <h3 class="text-lg font-medium text-text-base mb-4">页面设置</h3>
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <r-input label="头部背景" [(ngModel)]="settingsForm.headerBackground" class="w-full"/>
-            <r-input label="首页头像" [(ngModel)]="settingsForm.homeAvatar" class="w-full"/>
-            <r-input label="首页标题" [(ngModel)]="settingsForm.homeTitle" class="w-full"/>
-            <r-input label="首页副标题（一行一个）" as="textarea" rows="3" [(ngModel)]="settingsForm.homeSubtitle" class="w-full"/>
-          </div>
-        </div>
-
-        <div class="border-t border-border-base pt-6">
-          <h3 class="text-lg font-medium text-text-base mb-4">首页链接</h3>
-          <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <r-input label="图标类" [(ngModel)]="homeLinkForm[0]" placeholder="例如 mdi:github"/>
-              <r-input label="文字" [(ngModel)]="homeLinkForm[1]" placeholder="GitHub"/>
-              <r-input label="链接" [(ngModel)]="homeLinkForm[2]" placeholder="https://..."/>
-            </div>
-            <div class="flex gap-2">
-              <r-button type="primary" (click)="saveHomeLink()">
-                {{ editingHomeLinkIndex !== null ? '更新' : '添加' }}
-              </r-button>
-              @if (editingHomeLinkIndex !== null) {
-                <r-button (click)="cancelEditHomeLink()">取消</r-button>
-              }
-            </div>
-          </div>
-          <div class="flex flex-wrap gap-3">
-            @for (link of settingsForm.homeLinks; track $index) {
-              <div class="flex items-center gap-2 px-3 py-1.5 bg-bg-elevated rounded-full">
-                <iconify-icon [attr.icon]="link[0]" class="text-brand"></iconify-icon>
-                <a [href]="link[2]" target="_blank" class="text-brand hover:text-brand-hover">{{ link[1] }}</a>
-                <button
-                        type="button"
-                        (click)="startEditHomeLink($index)"
-                        class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"
-                ></button>
-                <button
-                        type="button"
-                        (click)="removeHomeLink($index)"
-                        class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"
-                ></button>
-              </div>
-            }
-          </div>
-        </div>
-
-        <div class="border-t border-border-base pt-6">
-          <h3 class="text-lg font-medium text-text-base mb-4">独立页面</h3>
-          <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <r-input label="标识名" [(ngModel)]="independentPageForm.name" placeholder="例如 about"/>
-              <r-input label="页面标题" [(ngModel)]="independentPageForm.title" placeholder="关于我们"/>
-              <r-input label="文章ID" type="number" [(ngModel)]="independentPageForm.id" placeholder="必填"/>
-            </div>
-            <div class="flex flex-wrap items-center gap-4">
-              <r-checkbox [(ngModel)]="independentPageForm.routine" type="primary">常规</r-checkbox>
-              @if (independentPageForm.routine) {
-                <r-checkbox [(ngModel)]="independentPageForm.hideToc" type="primary">隐藏目录</r-checkbox>
-                <r-checkbox [(ngModel)]="independentPageForm.hideComments" type="primary">隐藏评论</r-checkbox>
-              } @else {
-                <label class="block text-sm font-medium text-text-base mb-1">模板</label>
-                <select [(ngModel)]="independentPageForm.template"
-                        class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
-                  @for (template of templateList; track template[0]) {
-                    <option [value]="template[0]">{{ template[1] }}</option>
-                  }
-                </select>
-              }
-            </div>
-            <div class="flex gap-2">
-              <r-button type="primary" (click)="saveIndependentPage()">
-                {{ editingIndependentPageId !== null ? '更新' : '添加' }}
-              </r-button>
-              @if (editingIndependentPageId !== null) {
-                <r-button (click)="cancelEditIndependentPage()">取消</r-button>
-              }
-            </div>
-          </div>
-          <div class="space-y-2">
-            @for (page of settingsForm.independentPages; track page.id) {
-              <div class="flex items-center justify-between p-3 border border-border-base rounded-lg hover:bg-bg-subtle">
-                <div>
-                  <div class="font-medium text-text-base">{{ page.title }}</div>
-                  <div class="text-sm text-text-sub">标识: {{ page.name }} | 文章ID: {{ page.id }}</div>
-                  <div class="flex gap-3 mt-1 text-xs text-accent">
-                    @if (page.routine) {
-                      <span>隐藏目录: {{ page.hideToc ? '是' : '否' }}</span>
-                      <span>隐藏评论: {{ page.hideComments ? '是' : '否' }}</span>
-                    } @else {
-                      <span>模板: {{ page.template }}</span>
-                    }
-                  </div>
-                </div>
-                <div class="flex gap-2">
-                  <button
-                          type="button"
-                          (click)="startEditIndependentPage(page)"
-                          class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"
-                  ></button>
-                  <button
-                          type="button"
-                          (click)="removeIndependentPage(page.id)"
-                          class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"
-                  ></button>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-
-        <div class="border-t border-border-base pt-6">
-          <h3 class="text-lg font-medium text-text-base mb-4">友链</h3>
-          <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              <r-input label="名称" [(ngModel)]="friendLinkForm.name" placeholder="站点名称"/>
-              <r-input label="链接" [(ngModel)]="friendLinkForm.link" placeholder="https://..."/>
-              <r-input label="头像地址" [(ngModel)]="friendLinkForm.avatar" placeholder="https://..."/>
-              <r-input label="描述" [(ngModel)]="friendLinkForm.description" placeholder="这是一个网站"/>
-            </div>
-            <div class="flex gap-2">
-              <r-button type="primary" (click)="saveFriendLink()">
-                {{ editingFriendLinkIndex !== null ? '更新' : '添加' }}
-              </r-button>
-              @if (editingFriendLinkIndex !== null) {
-                <r-button (click)="cancelEditFriendLink()">取消</r-button>
-              }
-            </div>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            @for (item of settingsForm.links; track $index) {
-              <div class="flex grid-cols-1 md:grid-cols-2 items-center gap-3 p-3 border border-border-base rounded-lg hover:bg-bg-subtle w-full">
-                @if (item.avatar) {
-                  <img alt="item" [src]="item.avatar" class="w-10 h-10 rounded-full object-cover"/>
-                }
-                <div class="flex-1">
-                  <a [href]="item.link" target="_blank" class="font-medium text-brand hover:text-brand-hover">
-                    {{ item.name }}
-                  </a>
-                  @if (item.description) {
-                    <p class="text-sm text-text-sub">{{ item.description }}</p>
-                  }
-                </div>
-                <div class="flex gap-1">
-                  <button
-                          type="button"
-                          (click)="startEditFriendLink($index)"
-                          class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"
-                  ></button>
-                  <button
-                          type="button"
-                          (click)="removeFriendLink($index)"
-                          class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"
-                  ></button>
-                </div>
-              </div>
-            }
-          </div>
+          <r-input label="头部背景" [(ngModel)]="settingsForm.headerBackground" class="w-full" />
+          <r-input label="首页头像" [(ngModel)]="settingsForm.homeAvatar" class="w-full" />
+          <r-input label="首页标题" [(ngModel)]="settingsForm.homeTitle" class="w-full" />
+          <r-input label="首页副标题（一行一个）" as="textarea" rows="3" [(ngModel)]="settingsForm.homeSubtitle" class="w-full" />
         </div>
       </div>
+
+      <div class="border-t border-border-base pt-6">
+        <h3 class="text-lg font-medium text-text-base mb-4">首页链接</h3>
+        <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <r-input label="图标类" [(ngModel)]="homeLinkForm[0]" placeholder="例如 mdi:github" />
+            <r-input label="文字" [(ngModel)]="homeLinkForm[1]" placeholder="GitHub" />
+            <r-input label="链接" [(ngModel)]="homeLinkForm[2]" placeholder="https://..." />
+          </div>
+          <div class="flex gap-2">
+            <r-button type="primary" (click)="saveHomeLink()">
+              {{ editingHomeLinkIndex !== null ? '更新' : '添加' }}
+            </r-button>
+            @if (editingHomeLinkIndex !== null) {
+            <r-button (click)="cancelEditHomeLink()">取消</r-button>
+            }
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          @for (link of settingsForm.homeLinks; track $index) {
+          <div class="flex items-center gap-2 px-3 py-1.5 bg-bg-elevated rounded-full">
+            <iconify-icon [attr.icon]="link[0]" class="text-brand"></iconify-icon>
+            <a [href]="link[2]" target="_blank" class="text-brand hover:text-brand-hover">{{ link[1] }}</a>
+            <button type="button" (click)="startEditHomeLink($index)"
+              class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"></button>
+            <button type="button" (click)="removeHomeLink($index)"
+              class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"></button>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="border-t border-border-base pt-6">
+        <h3 class="text-lg font-medium text-text-base mb-4">独立页面</h3>
+        <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <r-input label="标识名" [(ngModel)]="independentPageForm.name" placeholder="例如 about" />
+            <r-input label="页面标题" [(ngModel)]="independentPageForm.title" placeholder="关于我们" />
+            <r-input label="文章ID" type="number" [(ngModel)]="independentPageForm.id" placeholder="必填" />
+          </div>
+          <div class="flex flex-wrap items-center gap-4">
+            <r-checkbox [(ngModel)]="independentPageForm.routine" type="primary">常规</r-checkbox>
+            @if (independentPageForm.routine) {
+            <r-checkbox [(ngModel)]="independentPageForm.hideToc" type="primary">隐藏目录</r-checkbox>
+            <r-checkbox [(ngModel)]="independentPageForm.hideComments" type="primary">隐藏评论</r-checkbox>
+            } @else {
+            <label class="block text-sm font-medium text-text-base mb-1">模板</label>
+            <select [(ngModel)]="independentPageForm.template"
+              class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
+              @for (template of templateList; track template[0]) {
+              <option [value]="template[0]">{{ template[1] }}</option>
+              }
+            </select>
+            }
+          </div>
+          <div class="flex gap-2">
+            <r-button type="primary" (click)="saveIndependentPage()">
+              {{ editingIndependentPageId !== null ? '更新' : '添加' }}
+            </r-button>
+            @if (editingIndependentPageId !== null) {
+            <r-button (click)="cancelEditIndependentPage()">取消</r-button>
+            }
+          </div>
+        </div>
+        <div class="space-y-2">
+          @for (page of settingsForm.independentPages; track page.id) {
+          <div class="flex items-center justify-between p-3 border border-border-base rounded-lg hover:bg-bg-subtle">
+            <div>
+              <div class="font-medium text-text-base">{{ page.title }}</div>
+              <div class="text-sm text-text-sub">标识: {{ page.name }} | 文章ID: {{ page.id }}</div>
+              <div class="flex gap-3 mt-1 text-xs text-accent">
+                @if (page.routine) {
+                <span>隐藏目录: {{ page.hideToc ? '是' : '否' }}</span>
+                <span>隐藏评论: {{ page.hideComments ? '是' : '否' }}</span>
+                } @else {
+                <span>模板: {{ page.template }}</span>
+                }
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" (click)="startEditIndependentPage(page)"
+                class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"></button>
+              <button type="button" (click)="removeIndependentPage(page.id)"
+                class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"></button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+
+      <div class="border-t border-border-base pt-6">
+        <h3 class="text-lg font-medium text-text-base mb-4">友链</h3>
+        <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            <r-input label="名称" [(ngModel)]="friendLinkForm.name" placeholder="站点名称" />
+            <r-input label="链接" [(ngModel)]="friendLinkForm.link" placeholder="https://..." />
+            <r-input label="头像地址" [(ngModel)]="friendLinkForm.avatar" placeholder="https://..." />
+            <r-input label="描述" [(ngModel)]="friendLinkForm.description" placeholder="这是一个网站" />
+          </div>
+          <div class="flex gap-2">
+            <r-button type="primary" (click)="saveFriendLink()">
+              {{ editingFriendLinkIndex !== null ? '更新' : '添加' }}
+            </r-button>
+            @if (editingFriendLinkIndex !== null) {
+            <r-button (click)="cancelEditFriendLink()">取消</r-button>
+            }
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (item of settingsForm.links; track $index) {
+          <div
+            class="flex grid-cols-1 md:grid-cols-2 items-center gap-3 p-3 border border-border-base rounded-lg hover:bg-bg-subtle w-full">
+            @if (item.avatar) {
+            <img alt="item" [src]="item.avatar" class="w-10 h-10 rounded-full object-cover" />
+            }
+            <div class="flex-1">
+              <a [href]="item.link" target="_blank" class="font-medium text-brand hover:text-brand-hover">
+                {{ item.name }}
+              </a>
+              @if (item.description) {
+              <p class="text-sm text-text-sub">{{ item.description }}</p>
+              }
+            </div>
+            <div class="flex gap-1">
+              <button type="button" (click)="startEditFriendLink($index)"
+                class="i-mdi:pencil text-text-muted hover:text-brand cursor-pointer"></button>
+              <button type="button" (click)="removeFriendLink($index)"
+                class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"></button>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
     }
   </div>
 </div>

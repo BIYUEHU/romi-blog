@@ -5,32 +5,32 @@
 
   <div class="bg-bg-surface rounded-lg border border-border-base overflow-y-hidden">
     @if (isLoading) {
-      <div class="p-8 text-center">
-        <r-loading label="加载中..."/>
-      </div>
+    <div class="p-8 text-center">
+      <r-loading label="加载中..." />
+    </div>
     } @else if (items.length === 0) {
-      <div class="p-8 text-center text-text-muted">
-        暂无数据
-      </div>
+    <div class="p-8 text-center text-text-muted">
+      暂无数据
+    </div>
     } @else {
-      <ng-content select="[list-content]"></ng-content>
+    <ng-content select="[list-content]"></ng-content>
 
-      @if (pages.length > 1) {
-        <div class="px-6 py-4 flex items-center justify-between border-t border-border-base">
-          <div class="text-sm text-text-sub m-2">
-            共 {{ items.length }} 条数据
-          </div>
-          <div class="flex items-center gap-1 flex-wrap">
-            @for (page of pages; track page) {
-              @if (currentPage === page) {
-                <r-button type="primary">{{ page }}</r-button>
-              } @else {
-                <r-button (click)="pageChange.emit(page)">{{ page }}</r-button>
-              }
-            }
-          </div>
-        </div>
-      }
+    @if (pages.length > 1) {
+    <div class="px-6 py-4 flex items-center justify-between border-t border-border-base">
+      <div class="text-sm text-text-sub m-2">
+        共 {{ items.length }} 条数据
+      </div>
+      <div class="flex items-center gap-1 flex-wrap">
+        @for (page of pages; track page) {
+        @if (currentPage === page) {
+        <r-button type="primary">{{ page }}</r-button>
+        } @else {
+        <r-button (click)="pageChange.emit(page)">{{ page }}</r-button>
+        }
+        }
+      </div>
+    </div>
+    }
     }
   </div>
 </div>

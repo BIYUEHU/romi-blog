@@ -1,25 +1,24 @@
-<div class="flex flex-col w-full"
-     [class.h-screen]="fullBackground"
-     [class.min-h-screen]="!fullBackground"
->
-  <app-header/>
+<div class="flex flex-col w-full" [class.h-screen]="fullBackground" [class.min-h-screen]="!fullBackground">
+  <app-header />
   <div class="flex-1 bg-bg-page w-full text-text-base">
-    <div class="bg-bg-surface max-h-60vh min-h-350px pt-14 overflow-hidden relative transition-shadow duration-500 shadow-xl"
-         [class]="headerImageHeight" [class.mb-6]="!fullBackground">
+    <div
+      class="bg-bg-surface max-h-60vh min-h-350px pt-14 overflow-hidden relative transition-shadow duration-500 shadow-xl"
+      [class]="headerImageHeight" [class.mb-6]="!fullBackground">
       <div class="brightness-60 absolute left-0 top-0 w-full h-full">
         @if (appTitleStrategy.header$().imageUrl.trim()) {
-          <img fill priority [ngSrc]="appTitleStrategy.header$().imageUrl"
-               alt="Header Image" class="object-cover left-0 top-0"/>
+        <img fill priority [ngSrc]="appTitleStrategy.header$().imageUrl" alt="Header Image"
+          class="object-cover left-0 top-0" />
         }
       </div>
       <div class="absolute left-0 top-3vh w-full h-full flex items-center justify-center">
         <div class="max-w-85% text-center text-text-base">
-          <h1 class="text-brand text-6 sm:text-7 md:text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
+          <h1
+            class="text-brand text-6 sm:text-7 md:text-8 font-bold font-sans font-350 break-words m-0 mb-4 line-height-relaxed">
             {{ appTitleStrategy.header$().title }}
           </h1>
           <div class="text-4 md:text-5 text-text-sub">
             @for (item of appTitleStrategy.header$().subTitle; track $index) {
-              <div class="text-brand font-sans">{{ item }}</div>
+            <div class="text-brand font-sans">{{ item }}</div>
             }
           </div>
           <ng-content select="[background]"></ng-content>
@@ -27,60 +26,60 @@
       </div>
     </div>
     @if (!fullBackground) {
-      <div class="max-w-[1200px] mx-auto px-4">
-        @if (isLoading) {
-          <app-skeleton-loader/>
-        }
-        @if (isError) {
-          <app-error-page>
-            <h1 class="text-4xl font-bold text-text-base mb-4">
-              未知的错误
-            </h1>
+    <div class="max-w-[1200px] mx-auto px-4">
+      @if (isLoading) {
+      <app-skeleton-loader />
+      }
+      @if (isError) {
+      <app-error-page>
+        <h1 class="text-4xl font-bold text-text-base mb-4">
+          未知的错误
+        </h1>
 
-            <div class="relative max-w-full w960 h-90 mx-auto mb-8 rounded-md">
-              <img fill ngSrc="https://img0.huoshen80.top/i/2025/11/29/692b11628b92b.png" alt="error"
-                   class="w-full h-full object-contain animate-float"/>
-            </div>
+        <div class="relative max-w-full w960 h-90 mx-auto mb-8 rounded-md">
+          <img fill ngSrc="https://img0.huoshen80.top/i/2025/11/29/692b11628b92b.png" alt="error"
+            class="w-full h-full object-contain animate-float" />
+        </div>
 
-            <div class="space-y-4 mb-8">
-              <div content>
-                <h2 class="text-2xl text-accent font-bold">你好像把页面玩坏了...</h2>
-              </div>
-            </div>
+        <div class="space-y-4 mb-8">
+          <div content>
+            <h2 class="text-2xl text-accent font-bold">你好像把页面玩坏了...</h2>
+          </div>
+        </div>
 
-            <div class="flex items-center justify-center gap-4">
-              <r-button (click)="notify()" type="error" size="lg">
-                告诉 AS
-              </r-button>
-              <r-button (click)="reload()" type="secondary" size="lg">
-                刷新下
-              </r-button>
-            </div>
-          </app-error-page>
-        }
-        <ng-content select="[main]"></ng-content>
-      </div>
+        <div class="flex items-center justify-center gap-4">
+          <r-button (click)="notify()" type="error" size="lg">
+            告诉 AS
+          </r-button>
+          <r-button (click)="reload()" type="secondary" size="lg">
+            刷新下
+          </r-button>
+        </div>
+      </app-error-page>
+      }
+      <ng-content select="[main]"></ng-content>
+    </div>
     }
   </div>
   @if (!disabledFooter) {
-    <app-footer/>
+  <app-footer />
   }
   @if (!fullBackground) {
-    @if (showBackTop) {
-      <button type="button" (click)="scrollToTop()"
-              class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
-        <i class="i-mdi-arrow-up-thick text-xl"></i>
-      </button>
-    }
-    <button type="button" [routerLink]="'/admin'"
-            class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
-      <i class="i-mdi-settings-outline text-xl"></i>
-    </button>
-    <div id="aplayer-global"></div>
+  @if (showBackTop) {
+  <button type="button" (click)="scrollToTop()"
+    class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    <i class="i-mdi-arrow-up-thick text-xl"></i>
+  </button>
+  }
+  <button type="button" [routerLink]="'/admin'"
+    class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    <i class="i-mdi-settings-outline text-xl"></i>
+  </button>
+  <div id="aplayer-global"></div>
 
-    <button type="button" (click)="togglePlayer(false)"
-            class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
-      <i class="i-mdi-music-note-outline text-xl"></i>
-    </button>
+  <button type="button" (click)="togglePlayer(false)"
+    class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    <i class="i-mdi-music-note-outline text-xl"></i>
+  </button>
   }
 </div>

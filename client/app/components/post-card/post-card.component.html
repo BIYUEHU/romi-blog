@@ -1,11 +1,9 @@
-<app-card
-        class="group break-inside-avoid mb-6"
-        [routerLink]="['/post', post.strId ? post.strId : post.id]">
+<app-card class="group break-inside-avoid mb-6" [routerLink]="['/post', post.strId ? post.strId : post.id]">
   @if (post.banner) {
-    <div class="aspect-video overflow-hidden relative bg-bg-elevated">
-      <img fill [ngSrc]="post.banner" [alt]="post.title"
-           class="object-cover group-hover:scale-105 transition-transform duration-300"/>
-    </div>
+  <div class="aspect-video overflow-hidden relative bg-bg-elevated">
+    <img fill [ngSrc]="post.banner" [alt]="post.title"
+      class="object-cover group-hover:scale-105 transition-transform duration-300" />
+  </div>
   }
 
   <div class="p-6">
@@ -17,28 +15,28 @@
     </div>
 
     <div class="flex items-center gap-4 text-sm text-accent">
-          <span class="flex items-center gap-1">
-            <i class="i-mdi-clock-outline"></i>
-            {{ post.created * 1000 | date:'yyyy-MM-dd' }}
-          </span>
       <span class="flex items-center gap-1">
-            <i class="i-mdi-eye-outline"></i>
+        <i class="i-mdi-clock-outline"></i>
+        {{ post.created * 1000 | date:'yyyy-MM-dd' }}
+      </span>
+      <span class="flex items-center gap-1">
+        <i class="i-mdi-eye-outline"></i>
         {{ post.views }}
-          </span>
+      </span>
       @if (post.allowComment) {
-        <span class="flex items-center gap-1">
-            <i class="i-mdi-comment-text-multiple-outline"></i>
-          {{ post.comments }}
-          </span>
+      <span class="flex items-center gap-1">
+        <i class="i-mdi-comment-text-multiple-outline"></i>
+        {{ post.comments }}
+      </span>
       }
     </div>
 
     @if (post.tags.length > 0) {
-      <div class="flex flex-wrap gap-2 mt-4">
-        @for (tag of post.tags; track tag) {
-          <r-tag size="sm" type="accent">{{ tag }}</r-tag>
-        }
-      </div>
+    <div class="flex flex-wrap gap-2 mt-4">
+      @for (tag of post.tags; track tag) {
+      <r-tag size="sm" type="accent">{{ tag }}</r-tag>
+      }
+    </div>
     }
   </div>
 </app-card>

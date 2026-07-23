@@ -7,26 +7,26 @@
 
   <nav class="py-4 overflow-y-auto">
     @for (item of menuItems; track $index) {
-      <div class="mb-2">
-        @if (item.children) {
-          <div class="px-4 py-2 text-sm text-text-on-brand/80">{{ item.text }}</div>
-          <div class="space-y-1">
-            @for (child of item.children; track $index) {
-              <a [routerLink]="child.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"
-                 class="flex items-center gap-3 px-6 py-2 text-text-on-brand/90 hover:bg-brand-hover/10 transition-colors">
-                <i [class]="[child.icon, 'text-xl']"></i>
-                <span>{{ child.text }}</span>
-              </a>
-            }
-          </div>
-        } @else {
-          <a [routerLink]="item.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"
-             class="flex items-center gap-3 px-6 py-2 text-text-on-brand/90 hover:bg-brand-hover/10 transition-colors">
-            <i [class]="[item.icon, 'text-xl']"></i>
-            <span>{{ item.text }}</span>
-          </a>
+    <div class="mb-2">
+      @if (item.children) {
+      <div class="px-4 py-2 text-sm text-text-on-brand/80">{{ item.text }}</div>
+      <div class="space-y-1">
+        @for (child of item.children; track $index) {
+        <a [routerLink]="child.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"
+          class="flex items-center gap-3 px-6 py-2 text-text-on-brand/90 hover:bg-brand-hover/10 transition-colors">
+          <i [class]="[child.icon, 'text-xl']"></i>
+          <span>{{ child.text }}</span>
+        </a>
         }
       </div>
+      } @else {
+      <a [routerLink]="item.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"
+        class="flex items-center gap-3 px-6 py-2 text-text-on-brand/90 hover:bg-brand-hover/10 transition-colors">
+        <i [class]="[item.icon, 'text-xl']"></i>
+        <span>{{ item.text }}</span>
+      </a>
+      }
+    </div>
     }
   </nav>
 </aside>

@@ -1,18 +1,24 @@
-<div class="select-none min-h-screen w-full bg-gradient-to-br from-[var(--brand-50)] via-brand to-[var(--brand-200)] flex items-center justify-center p-4 relative overflow-hidden">
+<div
+  class="select-none min-h-screen w-full bg-gradient-to-br from-[var(--brand-50)] via-brand to-[var(--brand-200)] flex items-center justify-center p-4 relative overflow-hidden">
 
   <div class="fixed inset-0 -z-10">
-    <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+    <div
+      class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]">
+    </div>
 
     <div class="absolute top-20 left-10 w-72 h-72 bg-[var(--brand-200)]/20 rounded-full blur-3xl animate-float"></div>
     <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-delayed"></div>
 
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-brand/20 to-transparent"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-brand/20 to-transparent">
+    </div>
   </div>
 
   <div class="w-full max-w-md relative">
 
     <div class="text-center mb-8 space-y-2">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent mb-4 shadow-lg">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent mb-4 shadow-lg">
         <span class="text-3xl">🌸</span>
       </div>
       <h1 class="text-4xl font-bold bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
@@ -28,34 +34,35 @@
 
         <div class="space-y-5">
           <div class="group">
-            <r-input
-                    label="账号" [(ngModel)]="username" id="username" required placeholder="请输入账号"
-                    class="w-full transition-all duration-300">
+            <r-input label="账号" [(ngModel)]="username" id="username" required placeholder="请输入账号"
+              class="w-full transition-all duration-300">
             </r-input>
           </div>
 
           <div class="group">
             <r-input label="密码" [(ngModel)]="password" id="password" placeholder="请输入密码" required type="password"
-                     class="w-full transition-all duration-300">
+              class="w-full transition-all duration-300">
             </r-input>
           </div>
 
           <div class="flex items-center justify-between pt-2">
             <r-checkbox name="rememberMe" type="primary" [(ngModel)]="rememberMe"
-                        class="transition-transform hover:scale-105">
+              class="transition-transform hover:scale-105">
               记住我
             </r-checkbox>
             <span (click)="forgotPassword()"
-                  class="text-sm text-brand hover:text-accent transition-all duration-300 hover:underline underline-offset-4">
-            忘记密码?
-          </span>
+              class="text-sm text-brand hover:text-accent transition-all duration-300 hover:underline underline-offset-4">
+              忘记密码?
+            </span>
           </div>
 
           <div class="pt-2">
             <r-button (click)="handleSubmit()" type="primary" size="lg" class="w-full relative overflow-hidden"
-                      [disabled]="isLoading">
+              [disabled]="isLoading">
               <span class="relative z-10">{{ isLoading ? '登录中...' : '登录' }}</span>
-              <div class="absolute inset-0 bg-gradient-to-r from-accent to-brand opacity-0 transition-opacity duration-300"></div>
+              <div
+                class="absolute inset-0 bg-gradient-to-r from-accent to-brand opacity-0 transition-opacity duration-300">
+              </div>
             </r-button>
           </div>
         </div>
@@ -80,34 +87,40 @@
   </div>
 </div>
 <style>
-    @keyframes float {
-        0%, 100% {
-            transform: translateY(0px) scale(1);
-        }
-        50% {
-            transform: translateY(-20px) scale(1.05);
-        }
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px) scale(1);
     }
 
-    @keyframes float-delayed {
-        0%, 100% {
-            transform: translateY(0px) translateX(0px) scale(1);
-        }
-        50% {
-            transform: translateY(20px) translateX(-10px) scale(1.1);
-        }
+    50% {
+      transform: translateY(-20px) scale(1.05);
+    }
+  }
+
+  @keyframes float-delayed {
+
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) scale(1);
     }
 
-    .animate-float {
-        animation: float 8s ease-in-out infinite;
+    50% {
+      transform: translateY(20px) translateX(-10px) scale(1.1);
     }
+  }
 
-    .animate-float-delayed {
-        animation: float-delayed 10s ease-in-out infinite;
-        animation-delay: 1s;
-    }
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
 
-    .bg-gradient-radial {
-        background: radial-gradient(circle, #fff 0%, #fafafa 100%);
-    }
+  .animate-float-delayed {
+    animation: float-delayed 10s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, #fff 0%, #fafafa 100%);
+  }
 </style>

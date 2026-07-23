@@ -5,13 +5,13 @@
         <div class="text-accent">
           发布于 {{ news.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
           @if (news.modified !== news.created) {
-            <span class="ml-2">
+          <span class="ml-2">
             (编辑于 {{ news.modified * 1000 | date:'yyyy-MM-dd HH:mm' }})
           </span>
           }
         </div>
         @if (news.private) {
-          <r-tag type="error">私密</r-tag>
+        <r-tag type="error">私密</r-tag>
         }
       </div>
 
@@ -27,13 +27,13 @@
       </div>
 
       @if (news.imgs.length > 0) {
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-          @for (img of news.imgs; track $index) {
-            <a [href]="img" target="_blank" class="relative block hover:opacity-90 transition-opacity">
-              <img alt="news image" [ngSrc]="img" fill class="w-full rounded-lg"/>
-            </a>
-          }
-        </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+        @for (img of news.imgs; track $index) {
+        <a [href]="img" target="_blank" class="relative block hover:opacity-90 transition-opacity">
+          <img alt="news image" [ngSrc]="img" fill class="w-full rounded-lg" />
+        </a>
+        }
+      </div>
       }
     </div>
   </div>

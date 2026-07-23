@@ -10,7 +10,7 @@ import { BrowserService } from '../../services/browser.service'
 export class ProgressComponent implements OnInit, AfterViewInit {
   public constructor(
     private readonly router: Router,
-    private browserService: BrowserService
+    private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
