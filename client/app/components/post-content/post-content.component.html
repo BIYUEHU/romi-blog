@@ -20,10 +20,11 @@
       }
 
       @if (!hideCopyright) {
-      <div class="text-size-lg line-height-loose mx-auto p-2 border-4 border-solid border-border-strong bg-bg-elevated">
-        <strong>本文链接：</strong><a [href]="extra?.url2 ? extra.url2 : extra?.url" class="text-brand underline">{{
-          extra?.url2 ? extra.url2 : extra?.url }}</a><br />
-        @if (extra?.url2) {
+      <div
+        class="text-size-lg line-height-loose mx-auto p-2 border-2 border-rounded-2 border-solid border-border-strong bg-bg-elevated">
+        <strong>本文链接：</strong><a [href]="extra?.url2 ? extra!.url2 : extra?.url" class="text-brand underline">{{
+          extra?.url2 ? extra!.url2 : extra?.url }}</a><br />
+        @if (extra && extra.url2) {
         <strong>原始链接：</strong><a [href]="extra.url" class="text-brand underline">{{ extra.url }}</a>
         <br />
         }
@@ -208,12 +209,17 @@
 
     @if (!hideToc && toc.length > 0) {
     <div class="hidden 2xl:block w-60 flex-shrink-0">
-      <div class="sticky top-12% p-4 bg-bg-elevated rounded-lg border border-border-base">
-        <h3 class="text-lg font-medium text-text-base mb-4">目录</h3>
-        <nav class="space-y-2 max-h-70vh">
+      <div class="sticky top-12% p-4 bg-bg-elevated rounded-xl border border-border-base shadow-sm">
+        <h3 class="text-sm font-semibold text-text-base uppercase tracking-wider mb-3 px-1">
+          目录
+        </h3>
+        <nav class="space-y-1 max-h-70vh overflow-y-auto pr-1 text-sm scrollbar-thumb-border-base"
+          style="scrollbar-width: thin;">
           @for (item of toc; track $index) {
-          <a [routerLink]="[]" [fragment]="item.text" class="block text-text-sub hover:text-brand transition-colors"
-            [style.padding-left]="(item.level - 1) * 12 + 'px'">
+          <a [routerLink]="[]" [fragment]="item.text"
+            class="block py-1.5 px-2 rounded-md text-text-sub hover:text-brand hover:bg-bg-base/50 transition-all duration-200 truncate"
+            [class.pl-2]="item.level === 1" [class.pl-5]="item.level === 2" [class.pl-8]="item.level === 3"
+            [class.pl-11]="item.level >= 4" [title]="item.text">
             {{ item.text }}
           </a>
           }
