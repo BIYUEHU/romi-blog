@@ -3,6 +3,7 @@ import { LayoutWrapperComponent } from '../components/layout-wrapper/layout-wrap
 import { AnimeComponent } from '../pages/anime/anime.component'
 import { ArchiveComponent } from '../pages/archive/archive.component'
 import { CategoryComponent } from '../pages/category/category.component'
+import { categoryResolver } from '../pages/category/category.resolver'
 import { CharComponent } from '../pages/char/char.component'
 import { charResolver } from '../pages/char/char.resolver'
 import { CharsComponent } from '../pages/chars/chars.component'
@@ -28,6 +29,7 @@ import { ProjectComponent } from '../pages/project/project.component'
 import { projectResolver } from '../pages/project/project.resolver'
 import { ServerErrorComponent } from '../pages/server-error/server-error.component'
 import { TagComponent } from '../pages/tag/tag.component'
+import { tagResolver } from '../pages/tag/tag.resolver'
 
 export const publicRoutes: Routes = [
   {
@@ -66,14 +68,14 @@ export const publicRoutes: Routes = [
         path: 'tag/:tag',
         component: TagComponent,
         resolve: {
-          posts: postsResolver
+          posts: tagResolver
         }
       },
       {
         path: 'category/:category',
         component: CategoryComponent,
         resolve: {
-          posts: postsResolver
+          posts: categoryResolver
         }
       },
       {

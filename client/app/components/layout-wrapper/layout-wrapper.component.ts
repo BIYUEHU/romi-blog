@@ -3,8 +3,8 @@ import { RouterOutlet } from '@angular/router'
 import { LayoutComponent } from '../layout/layout.component'
 
 @Component({
-    selector: 'app-layout-wrapper',
-    imports: [LayoutComponent, RouterOutlet],
-    templateUrl: './layout-wrapper.component.html'
+  selector: 'app-layout-wrapper',
+  imports: [LayoutComponent, RouterOutlet],
+  templateUrl: './layout-wrapper.component.html'
 })
 export class LayoutWrapperComponent {}

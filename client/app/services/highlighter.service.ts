@@ -23,7 +23,7 @@ export class HighlighterService {
   ]
 
   private highlighterPromise: Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> | null = null
-  private loadedLangs = new Set<string>()
+  private readonly loadedLangs = new Set<string>()
 
   public constructor(private readonly notifyService: NotifyService) {}
 

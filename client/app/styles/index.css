@@ -138,14 +138,13 @@ a:hover {
   word-break: break-word;
   overflow-wrap: break-word;
   text-align: justify;
-  text-justify: inter-ideograph;
+  word-wrap: break-word;
   hyphens: auto;
   background-color: var(--bg-surface);
   /*font-family: sans-serif;*/
   line-height: 1.75;
   /*font-weight: 400;*/
   margin-inline: auto;
-  word-wrap: break-word;
   scrollbar-color: var(--border-strong) var(--bg-elevated);
   border-width: 1px;
   border-color: var(--border);

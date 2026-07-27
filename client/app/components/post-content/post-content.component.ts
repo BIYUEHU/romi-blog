@@ -244,11 +244,9 @@ class PostContentComponent implements OnInit, OnDestroy {
       }
     }).use(katex)
     const defaultHeadRender =
-      // biome-ignore lint: *
       mdParser.renderer.rules['heading_open'] ||
       ((tokens, idx, options, _, self) => self.renderToken(tokens, idx, options))
 
-    // biome-ignore lint: *
     mdParser.renderer.rules['heading_open'] = (tokens, idx, options, env, self) => {
       const token = tokens[idx]
       const next = tokens[idx + 1]

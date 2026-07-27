@@ -14,6 +14,7 @@
     "unocss:dev": "unocss --watch",
     "test": "ng test",
     "serve": "node dist/server/server.mjs",
+    "fix": "biome check --write",
     "ag": "bun agent/bin"
   },
   "browser": {

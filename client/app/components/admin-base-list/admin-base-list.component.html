@@ -1,9 +1,9 @@
 <div class="space-y-6">
-  <div class="bg-bg-surface rounded-lg border border-border-base p-4">
+  <div class="bg-bg-surface rounded-lg border border-solid border-border-strong p-4">
     <ng-content select="[search-area]"></ng-content>
   </div>
 
-  <div class="bg-bg-elevated rounded-lg border border-border-base p-1 overflow-y-hidden">
+  <div class="bg-bg-elevated rounded-lg border border-solid border-border-strong p-1 overflow-y-hidden">
     @if (isLoading) {
     <div class="p-8 text-center">
       <r-loading label="加载中..." />
@@ -18,7 +18,7 @@
     </div>
 
     @if (pages.length > 1) {
-    <div class="px-6 py-4 flex items-center justify-between border-t border-border-base">
+    <div class="px-6 py-4 flex items-center justify-between">
       <div class="text-sm text-text-sub m-2">
         共 {{ items.length }} 条数据
       </div>

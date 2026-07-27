@@ -1,27 +1,27 @@
 <div class="mx-auto flex-1">
   @if (renderedContent) {
   <div class="flex gap-8">
-    <div class="flex-1 w-full">
+    <div class="flex-1 w-full pt-2">
       <ng-content select="[post-brefore]"></ng-content>
-      <div class="max-w-full w-230 post-body mt-2 p-5 rounded-xl bg-bg-surface border border-border-base"
+      <div class="max-w-full w-230 post-body mb-4 p-5 rounded-xl bg-bg-surface border border-border-base"
         [innerHTML]="renderedContent"></div>
       <ng-content select="[post-after]"></ng-content>
 
       @if (password) {
-      <div class="text-center mt-2">
+      <div class="text-center mb-2">
         <r-button type="primary" (click)="decryptPost()" size="large">解密文章</r-button>
       </div>
       }
 
       @if (!hideComments || !hideCopyright || !hideOptions || !hideRelatedPosts) {
-      <div class="w-35% mx-auto my-8">
+      <div class="w-35% mx-auto my-6">
         <r-divider thickness="1"></r-divider>
       </div>
       }
 
       @if (!hideCopyright) {
       <div
-        class="text-size-lg line-height-loose mx-auto p-2 border-2 border-rounded-2 border-solid border-border-strong bg-bg-elevated">
+        class="text-size-lg line-height-loose mx-auto p-2 border-2 border-rounded-2 border-solid border-border-strong bg-bg-elevated mb-4">
         <strong>本文链接：</strong><a [href]="extra?.url2 ? extra!.url2 : extra?.url" class="text-brand underline">{{
           extra?.url2 ? extra!.url2 : extra?.url }}</a><br />
         @if (extra && extra.url2) {
@@ -53,7 +53,7 @@
       </div>
       }
 
-      <div class="mx-auto flex gap-4 mt-6">
+      <div class="mx-auto flex gap-4 my-5">
         <r-button size="lg" type="error" (click)="likePost()">
           点个赞
         </r-button>
@@ -67,7 +67,7 @@
       }
 
       @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-7">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         @if (post.prev) {
         <a [routerLink]="['/post/', post.prev.strId ? post.prev.strId : post.prev.id]"
           class="group p-4 bg-bg-elevated hover:bg-bg-subtle rounded-lg transition-colors border border-border-base">
@@ -98,7 +98,7 @@
 
       @if (!hideComments) {
       @if (post.allowComment) {
-      <div class="mt-8 mb-6 p-3 rounded-lg">
+      <div class="my-6 p-3 rounded-lg">
         <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-text-base">评论区</h3>
 
         @if (browserService.is) {

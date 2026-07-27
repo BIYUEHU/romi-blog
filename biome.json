@@ -6,11 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": [
-      "**",
-      "!!**/dist",
-      "!!**/*.html"
-    ]
+    "includes": ["**", "!!**/dist", "!!**/*.html"]
   },
   "formatter": {
     "enabled": true,
@@ -32,7 +28,8 @@
         "useShorthandAssign": "warn"
       },
       "complexity": {
-        "noImportantStyles": "off"
+        "noImportantStyles": "off",
+        "useLiteralKeys": "off"
       }
     }
   },

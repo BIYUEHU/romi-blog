@@ -1,6 +1,6 @@
-<aside class="w-57 h-full bg-brand text-text-on-brand">
-  <div class="h-14 flex items-center px-6 border-b border-border-base">
-    <a [routerLink]="'/admin'" class="text-xl font-bold text-text-on-brand hover:text-brand-hover transition-colors">
+<aside class="w-57 h-full bg-brand text-text-on-brand border-r border-border-strong">
+  <div class="h-14 flex items-center px-6 border-b border-border-strong">
+    <a [routerLink]="'/admin'" class="text-xl font-bold text-text-on-brand hover:text-text-on-brand/80 transition-colors">
       Romi Admin
     </a>
   </div>
@@ -9,7 +9,7 @@
     @for (item of menuItems; track $index) {
     <div class="mb-2">
       @if (item.children) {
-      <div class="px-4 py-2 text-sm text-text-on-brand/80">{{ item.text }}</div>
+      <div class="px-4 py-2 text-sm text-text-on-brand/60">{{ item.text }}</div>
       <div class="space-y-1">
         @for (child of item.children; track $index) {
         <a [routerLink]="child.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"

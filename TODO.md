@@ -31,6 +31,8 @@
 - [x] Unify all localStorage STORE_KEYS name
 - [x] Music playlist cannot load to cache in first loading
 - [x] Music playlist cannot automatically create json file
+- [ ] Use `uv` to run python scripts
+- [ ] More strict checking and linting in cicd, use lefthook when pre-commit
 
 ## Details
 

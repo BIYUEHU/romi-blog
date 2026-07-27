@@ -1,15 +1,6 @@
-import { Injectable, signal } from '@angular/core'
-import { Title } from '@angular/platform-browser'
-import { RouterStateSnapshot, TitleStrategy } from '@angular/router'
-import { pipe } from 'fp-ts/function'
-import { filterMap, none, Option, some } from 'fp-ts/Option'
 import { iso, Newtype } from 'newtype-ts'
-import { Observable, of } from 'rxjs'
-import { match, P } from 'ts-pattern'
+import { match } from 'ts-pattern'
 import { ResMusicData } from '../models/api.model'
-import { ApiService } from '../services/api.service'
-import { BrowserService } from '../services/browser.service'
-import { STORE_KEYS, StoreService } from '../services/store.service'
 
 export type APlayer = {
   destroy(): void

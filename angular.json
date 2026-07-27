@@ -16,9 +16,7 @@
             "outputPath": "dist",
             "index": "client/index.html",
             "browser": "client/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -26,24 +24,19 @@
                 "input": "client/public"
               }
             ],
-            "styles": [
-              "client/app/styles/index.css",
-              "ui/styles.css"
-            ],
-            "scripts": [
-              "ui/dist/romi-ui.umd.cjs"
-            ],
+            "styles": ["client/app/styles/index.css", "ui/styles.css"],
+            "scripts": ["ui/dist/romi-ui.umd.cjs"],
             "server": "client/main.server.ts",
             "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
             },
-         "loader": {
+            "loader": {
               ".woff": "file",
               ".woff2": "file",
               ".ttf": "file",
               ".eot": "file"
-         }
+            }
           },
           "configurations": {
             "production": {
@@ -96,10 +89,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {

@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, Input } from '@angular/core'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 
@@ -8,14 +7,7 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
   imports: [PostListComponent],
   template: `<app-post-list [posts]="posts" />`
 })
-export class TagComponent implements OnInit {
+export class TagComponent {
   @Input() public readonly tag!: string
   @Input() public posts!: ResPostData[]
-
-  public constructor(private readonly router: Router) {}
-
-  public ngOnInit() {
-    this.posts = this.posts.filter((post) => post.tags.includes(this.tag))
-    if (this.posts.length === 0) this.router.navigate(['/404'])
-  }
 }
