@@ -1,7 +1,7 @@
 import '../styles.css'
 import '../../client/app/styles/index.css'
 import '../src/'
-import { LitElement, css, html } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 @customElement('my-element')

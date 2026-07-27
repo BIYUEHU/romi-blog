@@ -40,9 +40,9 @@
     }
   </div>
 
-  <div list-content class="divide-y divide-border-base">
+  <div list-content>
     @for (hitokoto of pagedItems; track hitokoto.id) {
-    <div class="p-6 hover:bg-bg-subtle">
+    <div class="border-b border-border-strong p-6 transition-colors hover:bg-brand-subtle even:bg-bg-page hover:even:bg-brand-subtle">
       @if (editingHitokoto?.id === hitokoto.id) {
       <div class="space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,12 +91,8 @@
           </div>
         </div>
         <div class="flex items-center gap-2">
-          <r-button (click)="startEdit(hitokoto)" type="primary">
-            编辑
-          </r-button>
-          <r-button (click)="deleteItem(hitokoto.id)" type="error">
-            删除
-          </r-button>
+          <r-button (click)="startEdit(hitokoto)" type="primary">编辑</r-button>
+          <r-button (click)="deleteItem(hitokoto.id)" type="error">删除</r-button>
         </div>
       </div>
       }

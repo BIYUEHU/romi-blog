@@ -3,7 +3,7 @@
     <ng-content select="[search-area]"></ng-content>
   </div>
 
-  <div class="bg-bg-surface rounded-lg border border-border-base overflow-y-hidden">
+  <div class="bg-bg-elevated rounded-lg border border-border-base p-1 overflow-y-hidden">
     @if (isLoading) {
     <div class="p-8 text-center">
       <r-loading label="加载中..." />
@@ -13,7 +13,9 @@
       暂无数据
     </div>
     } @else {
-    <ng-content select="[list-content]"></ng-content>
+    <div class="overflow-hidden rounded-md bg-bg-surface">
+      <ng-content select="[list-content]"></ng-content>
+    </div>
 
     @if (pages.length > 1) {
     <div class="px-6 py-4 flex items-center justify-between border-t border-border-base">

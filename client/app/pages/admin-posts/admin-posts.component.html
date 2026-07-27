@@ -17,25 +17,34 @@
     </r-button>
   </div>
 
-  <div list-content>
-    <table class="min-w-full divide-y divide-border-base overflow-x-auto">
+  <div list-content class="overflow-x-auto">
+    <table class="min-w-full rounded-lg border-separate border-spacing-0 border border-border-strong">
       <thead class="bg-bg-elevated">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">标题</th>
           <th
-            class="hidden 2xl:table-cell px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            标题
+          </th>
+          <th
+            class="hidden bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0 2xl:table-cell">
             摘要
           </th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">评论</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">可见性</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">密码</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-text-base uppercase tracking-wider">操作</th>
+          <th class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider">
+            评论</th>
+          <th class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider">
+            可见性</th>
+          <th class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider">
+            密码</th>
+          <th
+            class="border-b-2 border-border-strong bg-bg-elevated px-6 py-3 text-right text-xs font-medium text-text-sub uppercase tracking-wider">
+            操作</th>
         </tr>
       </thead>
-      <tbody class="bg-bg-surface divide-y divide-border-base">
+      <tbody
+        class="bg-bg-surface [&_td]:border-b-2 [&_td]:border-r-2 [&_td]:border-border-strong [&_td:last-child]:border-r-0 [&_tr:last-child_td]:border-b-0">
         @for (post of pagedItems; track post.id) {
-        <tr class="hover:bg-bg-subtle">
-          <td class="px-6 py-4">
+        <tr class="bg-bg-surface even:bg-bg-page transition-colors hover:bg-brand-subtle hover:even:bg-brand-subtle">
+          <td class="px-6 py-4 align-top">
             <div class="flex items-center">
               @if (post.banner) {
               <div class="relative">
@@ -43,9 +52,10 @@
                   alt="Post banner" />
               </div>
               }
-              <div>
+              <div class="min-w-0">
                 <a [routerLink]="['/post/', post.strId ? post.strId : post.id]" target="_blank"
-                  class="text-sm font-medium text-text-base truncate" [title]="post.title">
+                  class="block max-w-64 truncate text-sm font-medium text-text-base transition-colors hover:text-brand"
+                  [title]="post.title">
                   {{ post.title.slice(0, 20) }}
                 </a>
                 <div class="text-sm text-text-sub">
@@ -54,7 +64,7 @@
               </div>
             </div>
           </td>
-          <td class="hidden 2xl:table-cell px-6 py-4">
+          <td class="hidden px-6 py-4 2xl:table-cell">
             <p class="text-sm text-text-sub line-clamp-2 break-words">
               {{ post.summary }}
             </p>
@@ -76,8 +86,8 @@
               {{ post.password ? '加密' : '公开' }}
             </r-tag>
           </td>
-          <td class="px-6 py-4 text-sm">
-            <div class="flex items-center gap-2">
+          <td class="px-6 py-4 text-right text-sm">
+            <div class="flex justify-end gap-2">
               <r-button [routerLink]="['/admin/edit', post.id]" type="primary">
                 编辑
               </r-button>

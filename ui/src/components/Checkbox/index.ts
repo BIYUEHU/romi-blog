@@ -1,6 +1,6 @@
-import { LitElement, html, css } from 'lit'
+import { css, html, LitElement } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import type { Types, Sizes } from '../../preset'
+import type { Sizes, Types } from '../../preset'
 import { getUniqueID } from '../../utils'
 
 @customElement('r-checkbox')

@@ -25,11 +25,11 @@ export {
   RDropdown,
   RDynamicTags,
   RInput,
+  RKeleton,
   RLoading,
   RModal,
   RRadio,
   RSelect,
-  RKeleton,
   RSwitch,
   RTag
 }

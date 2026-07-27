@@ -1,25 +1,26 @@
 <div class="space-y-6">
-  <app-card class="bg-bg-surface">
-    <h2 class="text-xl font-bold text-text-base mb-2">
+  <app-card class="border border-border bg-bg-surface">
+    <h2 class="mb-2 text-xl font-bold text-text-base">
       👋 Welcome back, {{ username }}
     </h2>
-    <p class="text-accent">
+    <p class="text-sm text-text-sub">
       当前系统时间：{{ currentTime | date: 'yyyy-MM-dd HH:mm:ss' }}
     </p>
   </app-card>
 
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     @for (card of statCards; track card.title) {
-    <app-card [routerLink]="card.link">
+    <app-card [routerLink]="card.link"
+      class="border border-border transition-colors hover:border-brand-border hover:bg-brand-subtle">
       <div class="flex items-center gap-4">
         <div [class]="[
-            'w-12 h-12 rounded-lg flex items-center justify-center',
+            'w-12 h-12 rounded-xl flex items-center justify-center shadow-sm',
             card.color
           ]">
           <i [class]="[card.icon, 'text-2xl text-text-on-brand']"></i>
         </div>
         <div>
-          <div class="text-sm text-accent">{{ card.title }}</div>
+          <div class="text-xs uppercase tracking-wide text-text-sub">{{ card.title }}</div>
           <div class="text-2xl font-bold text-text-base">{{ card.value }}</div>
         </div>
       </div>
@@ -28,40 +29,42 @@
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <app-card class="bg-bg-surface overflow-hidden">
-      <div class="px-6 py-4 border-b border-border-base flex justify-between items-center">
+    <app-card class="overflow-hidden border border-border bg-bg-surface">
+      <div class="flex items-center justify-between border-b border-border px-6 py-4">
         <h3 class="font-bold text-text-base">最近文章</h3>
         <a [routerLink]="'/admin/posts'" class="text-sm text-brand hover:text-brand-hover">
           查看全部
         </a>
       </div>
-      <div class="divide-y divide-border-base">
+      <div class="divide-y divide-border">
         @for (post of recentPosts; track post.id) {
-        <div class="px-6 py-4 flex items-center justify-between">
+        <div
+          class="mx-3 my-2 flex items-center justify-between rounded-lg border border-border bg-bg-page px-4 py-4 transition-colors hover:bg-brand-subtle">
           <div class="flex-1 max-w-75%">
             <h4 class="text-text-base font-medium truncate">{{ post.title }}</h4>
-            <div class="text-sm text-accent mt-1">
+            <div class="mt-1 text-xs text-text-sub">
               {{ post.created * 1000 | date: 'yyyy-MM-dd HH:mm' }}
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-sm text-accent">{{ post.views }} 阅读</span>
-            <span class="text-sm text-accent">{{ post.comments }} 评论</span>
+            <span class="rounded bg-bg-elevated px-2 py-0.5 text-xs text-text-sub">{{ post.views }} 阅读</span>
+            <span class="rounded bg-bg-elevated px-2 py-0.5 text-xs text-text-sub">{{ post.comments }} 评论</span>
           </div>
         </div>
         }
       </div>
     </app-card>
 
-    <app-card class="overflow-hidden h-full">
-      <div class="px-6 py-4 border-b border-border-base">
+    <app-card class="h-full overflow-hidden border border-border">
+      <div class="border-b border-border px-6 py-4">
         <h3 class="font-bold text-text-base">系统信息</h3>
       </div>
-      <div class="px-6 py-4 space-y-4">
+      <div class="space-y-2 p-4">
         @for (info of systemInfo; track info.label) {
-        <div class="flex justify-between">
-          <span class="text-accent">{{ info.label }}</span>
-          <span class="text-text-base">{{ info.value }}</span>
+        <div
+          class="flex items-center justify-between rounded-lg border border-border bg-bg-page px-4 py-3 transition-colors hover:bg-brand-subtle">
+          <span class="text-sm text-text-sub">{{ info.label }}</span>
+          <span class="max-w-60% truncate text-right font-medium text-text-base">{{ info.value }}</span>
         </div>
         }
       </div>

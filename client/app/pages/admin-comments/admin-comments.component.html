@@ -6,28 +6,46 @@
     </div>
   </div>
 
-  <div list-content class="divide-y divide-border-base">
-    @for (comment of pagedItems; track comment.cid) {
-    <div class="p-6 hover:bg-bg-subtle">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex-1 space-y-2" [routerLink]="['/post', comment.pid]">
-          <p class="text-text-base w-50 lg:w-150 break-words" [title]="comment.text">{{ formatText(comment.text) }}</p>
-
-          <div class="flex items-center gap-4 text-sm">
-            <div class="flex items-center gap-2 text-accent">
-              @if (comment.userUrl) {
-              <a [href]="comment.userUrl" target="_blank" class="text-brand hover:text-brand-hover">
-                {{ comment.username }}
-              </a>
-              } @else {
-              <span>{{ comment.username }}</span>
-              }
-            </div>
-
-            <div class="text-text-sub">
-              {{ comment.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
-            </div>
-
+  <div list-content class="overflow-x-auto">
+    <table class="min-w-full rounded-lg border-separate border-spacing-0 border border-border-strong">
+      <thead class="bg-bg-elevated">
+        <tr>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            评论内容</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            用户</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            状态</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            时间</th>
+          <th
+            class="border-b-2 border-border-strong bg-bg-elevated px-6 py-3 text-right text-xs font-medium text-text-sub uppercase tracking-wider">
+            操作</th>
+        </tr>
+      </thead>
+      <tbody
+        class="bg-bg-surface [&_td]:border-b-2 [&_td]:border-r-2 [&_td]:border-border-strong [&_td:last-child]:border-r-0 [&_tr:last-child_td]:border-b-0">
+        @for (comment of pagedItems; track comment.cid) {
+        <tr class="bg-bg-surface even:bg-bg-page transition-colors hover:bg-brand-subtle hover:even:bg-brand-subtle">
+          <td class="px-6 py-4 max-w-xs">
+            <a [routerLink]="['/post', comment.pid]" class="text-text-base hover:text-brand line-clamp-2 break-words">
+              {{ formatText(comment.text) }}
+            </a>
+          </td>
+          <td class="px-6 py-4">
+            @if (comment.userUrl) {
+            <a [href]="comment.userUrl" target="_blank" class="text-brand hover:text-brand-hover">
+              {{ comment.username }}
+            </a>
+            } @else {
+            <span class="text-text-base">{{ comment.username }}</span>
+            }
+          </td>
+          <td class="px-6 py-4">
             @if (comment.status === CommentStatus.toNumber(CommentStatus.Resolved)) {
             <r-tag size="sm" type="success">已通过</r-tag>
             } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Pending)) {
@@ -35,23 +53,27 @@
             } @else if (comment.status === CommentStatus.toNumber(CommentStatus.Spam)) {
             <r-tag size="sm" type="info">垃圾</r-tag>
             }
-          </div>
-        </div>
-
-        <div>
-          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Resolved)) {
-          <r-button type="success" (click)="remarkItem(comment.cid, CommentStatus.Resolved)">通过</r-button>
-          }
-          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Pending)) {
-          <r-button type="warning" (click)="remarkItem(comment.cid, CommentStatus.Pending)">悬置</r-button>
-          }
-          @if (comment.status !== CommentStatus.toNumber(CommentStatus.Spam)) {
-          <r-button type="info" (click)="remarkItem(comment.cid, CommentStatus.Spam)">垃圾</r-button>
-          }
-          <r-button (click)="deleteItem(comment.cid)" type="error">删除</r-button>
-        </div>
-      </div>
-    </div>
-    }
+          </td>
+          <td class="px-6 py-4 text-sm text-text-sub">
+            {{ comment.created * 1000 | date:'yyyy-MM-dd HH:mm' }}
+          </td>
+          <td class="px-6 py-4 text-sm whitespace-nowrap">
+            <div class="flex justify-end gap-2">
+              @if (comment.status !== CommentStatus.toNumber(CommentStatus.Resolved)) {
+              <r-button type="success" (click)="remarkItem(comment.cid, CommentStatus.Resolved)">通过</r-button>
+              }
+              @if (comment.status !== CommentStatus.toNumber(CommentStatus.Pending)) {
+              <r-button type="warning" (click)="remarkItem(comment.cid, CommentStatus.Pending)">悬置</r-button>
+              }
+              @if (comment.status !== CommentStatus.toNumber(CommentStatus.Spam)) {
+              <r-button type="info" (click)="remarkItem(comment.cid, CommentStatus.Spam)">垃圾</r-button>
+              }
+              <r-button (click)="deleteItem(comment.cid)" type="error">删除</r-button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
   </div>
 </app-admin-base-list>

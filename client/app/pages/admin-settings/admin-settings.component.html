@@ -1,5 +1,5 @@
 <div class="space-y-6">
-  <div class="bg-bg-surface rounded-lg border border-border-base p-6">
+  <div class="bg-bg-surface rounded-lg border border-solid border border-border-strong p-6">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl text-text-base">系统设置</h2>
       <div class="flex gap-2">
@@ -14,20 +14,22 @@
     </div>
     } @else {
     <div class="space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <h3 class="text-lg font-medium text-text-base mb-4">站点设置</h3>
-        <r-input label="站点标题" [(ngModel)]="settingsForm.siteTitle" class="w-full" />
-        <r-input label="站点名称" [(ngModel)]="settingsForm.siteName" class="w-full" />
-        <r-input label="站点描述" [(ngModel)]="settingsForm.siteDescription" class="w-full" />
-        <div>
-          <r-input label="站点关键词" [(ngModel)]="settingsForm.siteKeywords" class="w-full" />
+      <div>
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">站点设置</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <r-input label="站点标题" [(ngModel)]="settingsForm.siteTitle" class="w-full" />
+          <r-input label="站点名称" [(ngModel)]="settingsForm.siteName" class="w-full" />
+          <r-input label="站点描述" [(ngModel)]="settingsForm.siteDescription" class="w-full" />
+          <div>
+            <r-input label="站点关键词" [(ngModel)]="settingsForm.siteKeywords" class="w-full" />
+          </div>
+          <r-input label="Favicon 地址" [(ngModel)]="settingsForm.siteFavicon" class="w-full" />
+          <r-input label="Logo 地址" [(ngModel)]="settingsForm.siteLogo" class="w-full" />
         </div>
-        <r-input label="Favicon 地址" [(ngModel)]="settingsForm.siteFavicon" class="w-full" />
-        <r-input label="Logo 地址" [(ngModel)]="settingsForm.siteLogo" class="w-full" />
       </div>
 
-      <div class="border-t border-border-base pt-6">
-        <h3 class="text-lg font-medium text-text-base mb-4">页面设置</h3>
+      <div class="pt-6">
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">页面设置</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <r-input label="头部背景" [(ngModel)]="settingsForm.headerBackground" class="w-full" />
           <r-input label="首页头像" [(ngModel)]="settingsForm.homeAvatar" class="w-full" />
@@ -36,8 +38,8 @@
         </div>
       </div>
 
-      <div class="border-t border-border-base pt-6">
-        <h3 class="text-lg font-medium text-text-base mb-4">首页链接</h3>
+      <div class="pt-6">
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">首页链接</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <r-input label="图标类" [(ngModel)]="homeLinkForm[0]" placeholder="例如 mdi:github" />
@@ -55,7 +57,8 @@
         </div>
         <div class="flex flex-wrap gap-3">
           @for (link of settingsForm.homeLinks; track $index) {
-          <div class="flex items-center gap-2 px-3 py-1.5 bg-bg-elevated rounded-full">
+          <div
+            class="flex items-center gap-2 px-3 py-1.5 bg-bg-elevated border-border-strong border border-solid rounded-full">
             <iconify-icon [attr.icon]="link[0]" class="text-brand"></iconify-icon>
             <a [href]="link[2]" target="_blank" class="text-brand hover:text-brand-hover">{{ link[1] }}</a>
             <button type="button" (click)="startEditHomeLink($index)"
@@ -67,8 +70,8 @@
         </div>
       </div>
 
-      <div class="border-t border-border-base pt-6">
-        <h3 class="text-lg font-medium text-text-base mb-4">独立页面</h3>
+      <div class="pt-6">
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">独立页面</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <r-input label="标识名" [(ngModel)]="independentPageForm.name" placeholder="例如 about" />
@@ -101,7 +104,8 @@
         </div>
         <div class="space-y-2">
           @for (page of settingsForm.independentPages; track page.id) {
-          <div class="flex items-center justify-between p-3 border border-border-base rounded-lg hover:bg-bg-subtle">
+          <div
+            class="flex items-center justify-between p-3 border border-solid border-border-strong rounded-lg transition-colors even:bg-bg-page hover:bg-brand-subtle">
             <div>
               <div class="font-medium text-text-base">{{ page.title }}</div>
               <div class="text-sm text-text-sub">标识: {{ page.name }} | 文章ID: {{ page.id }}</div>
@@ -125,8 +129,8 @@
         </div>
       </div>
 
-      <div class="border-t border-border-base pt-6">
-        <h3 class="text-lg font-medium text-text-base mb-4">友链</h3>
+      <div class="pt-6">
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">友链</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <r-input label="名称" [(ngModel)]="friendLinkForm.name" placeholder="站点名称" />
@@ -146,7 +150,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           @for (item of settingsForm.links; track $index) {
           <div
-            class="flex grid-cols-1 md:grid-cols-2 items-center gap-3 p-3 border border-border-base rounded-lg hover:bg-bg-subtle w-full">
+            class="flex grid-cols-1 md:grid-cols-2 items-center gap-3 p-3 border border-solid border-border-strong rounded-lg transition-colors even:bg-bg-page hover:bg-brand-subtle w-full">
             @if (item.avatar) {
             <img alt="item" [src]="item.avatar" class="w-10 h-10 rounded-full object-cover" />
             }

@@ -9,20 +9,31 @@
     </r-button>
   </div>
 
-  <div list-content>
-    <table class="min-w-full divide-y divide-border-base">
+  <div list-content class="overflow-x-auto">
+    <table class="min-w-full rounded-lg border-separate border-spacing-0 border border-border-strong">
       <thead class="bg-bg-elevated">
         <tr>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">动态内容</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">权限状态</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">创建时间</th>
-          <th class="px-6 py-3 text-left text-xs font-medium text-text-base uppercase tracking-wider">修改时间</th>
-          <th class="px-6 py-3 text-right text-xs font-medium text-text-base uppercase tracking-wider">操作</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            动态内容</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            权限状态</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            创建时间</th>
+          <th
+            class="bg-bg-elevated px-6 py-3 text-left text-xs font-medium text-text-sub uppercase tracking-wider last:border-r-0">
+            修改时间</th>
+          <th
+            class="border-b-2 border-border-strong bg-bg-elevated px-6 py-3 text-right text-xs font-medium text-text-sub uppercase tracking-wider">
+            操作</th>
         </tr>
       </thead>
-      <tbody class="bg-bg-surface divide-y divide-border-base">
+      <tbody
+        class="bg-bg-surface [&_td]:border-b-2 [&_td]:border-r-2 [&_td]:border-border-strong [&_td:last-child]:border-r-0 [&_tr:last-child_td]:border-b-0">
         @for (news of pagedItems; track news.id) {
-        <tr class="hover:bg-bg-subtle">
+        <tr class="bg-bg-surface even:bg-bg-page transition-colors hover:bg-brand-subtle hover:even:bg-brand-subtle">
           <td class="px-6 py-4 text-text-base">{{ news.text.slice(0, 30) }}</td>
           <td class="px-6 py-4">
             <r-tag [type]="news.private ? 'error' : 'success'">
@@ -35,8 +46,8 @@
           <td class="px-6 py-4 text-sm text-text-sub">
             {{ news.modified * 1000 | date:'yyyy-MM-dd HH:mm' }}
           </td>
-          <td class="px-6 py-4 text-right">
-            <div class="flex items-center justify-end gap-2">
+          <td class="px-6 py-4 text-sm">
+            <div class="flex justify-end gap-2">
               <r-button (click)="startEdit(news)" type="primary">
                 编辑
               </r-button>

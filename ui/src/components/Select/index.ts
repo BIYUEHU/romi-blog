@@ -102,7 +102,7 @@ export default class RSelect extends LitElement {
 
   private emitUpdate(value: string | number | null) {
     this.dispatchEvent(
-      new CustomEvent('@update:modelValue="${(e: CustomEvent) => console.log(e.detail)}', {
+      new CustomEvent(`@update:modelValue="\${(e: CustomEvent) => console.log(e.detail)}`, {
         detail: { value },
         bubbles: true,
         composed: true
