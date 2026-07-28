@@ -86,7 +86,7 @@ jobs:
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         run: |
           bun install
-          bun biome ci
+          bun run fix && git diff --exit-code
           bun run build
       #          tar -czf dist.tar.gz dist
 
