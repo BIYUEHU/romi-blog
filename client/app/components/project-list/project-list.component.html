@@ -1,69 +1,68 @@
-<div class="columns-1 lg:columns-2 gap-x-6">
+<div class="columns-1 lg:columns-2 gap-x-6 mb-6">
   @for (repo of repos; track repo.id) {
-    <app-card
-            class="group overflow-hidden mb-6">
-      <div (click)="windowOpen(repo.html_url)" class="p-1">
-        <div class="flex items-start justify-between gap-4 mb-4">
-          <div>
+  <app-card class="group overflow-hidden mb-6">
+    <div (click)="windowOpen(repo.html_url)" class="p-1">
+      <div class="flex items-start justify-between gap-4 mb-4">
+        <div>
           <span class="text-xl font-bold group-hover:text-brand">
             {{ repo.name }}
           </span>
-            @if (repo.archived) {
-              <r-tag type="error" class="ml-2">已归档</r-tag>
-            }
-          </div>
+          @if (repo.archived) {
+          <r-tag type="error" class="ml-2">已归档</r-tag>
+          }
+        </div>
 
-          @if (repo.language) {
-            <div class="flex items-center gap-2">
-          <span class="w-3 h-3 rounded-full" [style.background-color]="colors ? colors[repo.language!].color : defaultColor">
+        @if (repo.language) {
+        <div class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full"
+            [style.background-color]="colors ? colors[repo.language!].color : defaultColor">
           </span>
-              <span class="text-text-sub">{{ repo.language }}</span>
-            </div>
-          }
+          <span class="text-text-sub">{{ repo.language }}</span>
         </div>
-
-        @if (repo.description) {
-          <p class="text-text-base mb-4 line-clamp-2">{{ repo.description }}</p>
         }
-
-        @if (repo.topics.length > 0) {
-          <div class="flex flex-wrap gap-2 mb-4">
-            @for (topic of repo.topics; track topic) {
-              <r-tag type="primary"><span class="text-text-sub">{{ topic }}</span></r-tag>
-            }
-          </div>
-        }
-
-        <div class="flex items-center gap-6 text-sm text-accent">
-          <div class="flex items-center gap-1">
-            <i class="i-mdi-star"></i>
-            <span>{{ repo.stargazers_count }}</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <i class="i-mdi-source-fork"></i>
-            <span>{{ repo.forks_count }}</span>
-          </div>
-          @if (repo.license) {
-            <div class="flex items-center gap-1">
-              <i class="i-mdi-creative-commons"></i>
-              <span>{{ repo.license.name }}</span>
-            </div>
-          }
-          <div>
-            更新于 {{ repo.updated_at | date:'yyyy-MM-dd' }}
-          </div>
-        </div>
       </div>
 
-      @if (repo.homepage) {
-        <div class="mt-4 px-4 pb-4">
-          <a [href]="repo.homepage" target="_blank"
-             class="text-accent hover:underline text-sm flex items-center gap-1">
-            <i class="i-mdi-link"></i>
-            演示链接
-          </a>
-        </div>
+      @if (repo.description) {
+      <p class="text-text-base mb-4 line-clamp-2">{{ repo.description }}</p>
       }
-    </app-card>
+
+      @if (repo.topics.length > 0) {
+      <div class="flex flex-wrap gap-2 mb-4">
+        @for (topic of repo.topics; track topic) {
+        <r-tag type="primary"><span class="text-text-sub">{{ topic }}</span></r-tag>
+        }
+      </div>
+      }
+
+      <div class="flex items-center gap-6 text-sm text-accent">
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-star"></i>
+          <span>{{ repo.stargazers_count }}</span>
+        </div>
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-source-fork"></i>
+          <span>{{ repo.forks_count }}</span>
+        </div>
+        @if (repo.license) {
+        <div class="flex items-center gap-1">
+          <i class="i-mdi-creative-commons"></i>
+          <span>{{ repo.license.name }}</span>
+        </div>
+        }
+        <div>
+          更新于 {{ repo.updated_at | date:'yyyy-MM-dd' }}
+        </div>
+      </div>
+    </div>
+
+    @if (repo.homepage) {
+    <div class="mt-4 px-4 pb-4">
+      <a [href]="repo.homepage" target="_blank" class="text-accent hover:underline text-sm flex items-center gap-1">
+        <i class="i-mdi-link"></i>
+        演示链接
+      </a>
+    </div>
+    }
+  </app-card>
   }
 </div>

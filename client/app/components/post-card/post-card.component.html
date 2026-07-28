@@ -1,10 +1,14 @@
 <app-card class="group break-inside-avoid mb-6" [routerLink]="['/post', post.strId ? post.strId : post.id]">
-  @if (post.banner) {
   <div class="aspect-video overflow-hidden relative bg-bg-elevated">
+    @if (post.banner) {
     <img fill [ngSrc]="post.banner" [alt]="post.title"
       class="object-cover group-hover:scale-105 transition-transform duration-300" />
+    } @else {
+    <div class="w-full h-full flex items-center justify-center text-text-muted text-sm bg-bg-subtle">
+      <i class="i-mdi:image-outline text-4xl"></i>
+    </div>
+    }
   </div>
-  }
 
   <div class="p-6">
     <div class="mb-4">

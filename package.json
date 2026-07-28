@@ -5,6 +5,7 @@
   "license": "GPL-3.0-or-later",
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
+    "init": "bunx lefthook install",
     "ng": "ng",
     "start": "uv run python scripts/prebuild.py && ng serve --host 0.0.0.0",
     "dev": "uv run python scripts/dev.py",
@@ -16,7 +17,8 @@
     "serve": "node dist/server/server.mjs",
     "fix": "biome check --write",
     "ag": "bun agent/bin"
-  },  "browser": {
+  },
+  "browser": {
     "node:fs": false,
     "node:path": false
   },

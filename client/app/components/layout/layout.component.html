@@ -27,9 +27,6 @@
     </div>
     @if (!fullBackground) {
     <div class="max-w-[1200px] mx-auto px-4">
-      @if (isLoading) {
-      <app-skeleton-loader />
-      }
       @if (isError) {
       <app-error-page>
         <h1 class="text-4xl font-bold text-text-base mb-4">
@@ -56,8 +53,11 @@
           </r-button>
         </div>
       </app-error-page>
-      }
+      } @else if (isLoading) {
+      <app-skeleton-loader />
+      } @else {
       <ng-content select="[main]"></ng-content>
+      }
     </div>
     }
   </div>
