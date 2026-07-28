@@ -1,5 +1,6 @@
 address = "0.0.0.0"
 port = 8000
+site_url = "https://i.arimuraromi.com"
 database_url = ""
 ssr_entry = "dist/server/server.mjs"
 log_level = "debug"

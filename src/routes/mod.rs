@@ -7,5 +7,6 @@ pub mod meta;
 pub mod news;
 pub mod post;
 pub mod seimg;
+pub mod sitemap;
 pub mod user;
 pub mod utils;

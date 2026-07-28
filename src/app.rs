@@ -14,6 +14,7 @@ use crate::{
 pub struct RomiConfig {
     pub address: String,
     pub port: u16,
+    pub site_url: String,
     pub database_url: String,
     pub ssr_entry: String,
     pub log_level: String,
@@ -43,6 +44,7 @@ pub fn build_app(state: RomiState) -> Router {
         .nest("/utils", routes::utils::routes());
 
     let app = Router::new()
+        .merge(routes::sitemap::routes())
         .nest("/api", api)
         .layer(get_cors())
         .layer(middleware::from_fn_with_state(state.clone(), req_logger_middleware))

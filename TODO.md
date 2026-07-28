@@ -1,10 +1,7 @@
 # Todo
 
 <!-- - [ ] Support more markdown-it plugins -->
-
-
-[//]: # (- [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language）)
-
+<!-- - [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language） -->
 - [ ] Blog content search
 - [x] Support private news
 - [x] Settings and customization
@@ -12,7 +9,7 @@
 - [ ] RSS feed
 - [ ] sitemap
 - [ ] Safety system
-- [ ] Romi UI better building
+<!-- - [ ] Romi UI better building -->
 - [ ] Characters birthdays reminder
 - [ ] File transporter logger
 - [x] filter requests from Node.Js
@@ -35,7 +32,3 @@
 - [x] More strict checking and linting in cicd, use lefthook when pre-commit
 
 ## Details
-
-- About like status and view status of post and news: unrelated with user account, related with browser localStorage
-- Post `hide` field: only hide from home page, not from search result.
-- News `hide` field: private content, only show to admin
