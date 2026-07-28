@@ -6,18 +6,17 @@
   "author": "Romi <me@hotaru.icu>",
   "scripts": {
     "ng": "ng",
-    "start": "python scripts/prebuild.py && ng serve --host 0.0.0.0",
-    "dev": "python scripts/dev.py",
+    "start": "uv run python scripts/prebuild.py && ng serve --host 0.0.0.0",
+    "dev": "uv run python scripts/dev.py",
     "ui": "cd ui && bun dev",
-    "build": "cargo test export_bindings && python scripts/prebuild.py && cd ui && bun run build && ng build",
+    "build": "cargo test export_bindings && uv run python scripts/prebuild.py && cd ui && bun run build && ng build",
     "watch": "ng build --watch --configuration development",
     "unocss:dev": "unocss --watch",
     "test": "ng test",
     "serve": "node dist/server/server.mjs",
     "fix": "biome check --write",
     "ag": "bun agent/bin"
-  },
-  "browser": {
+  },  "browser": {
     "node:fs": false,
     "node:path": false
   },

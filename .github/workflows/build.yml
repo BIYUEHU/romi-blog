@@ -78,10 +78,15 @@ jobs:
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         uses: oven-sh/setup-bun@v2
 
+      - name: Set up uv
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        uses: astral-sh/setup-uv@v5
+
       - name: Build frontend
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
         run: |
           bun install
+          bun biome ci
           bun run build
       #          tar -czf dist.tar.gz dist
 
