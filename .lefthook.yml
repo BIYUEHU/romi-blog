@@ -1,6 +1,0 @@
-pre-commit:
-  commands:
-    biome:
-      run: bun biome check --write --staged
-      stage_fixed: true
-      glob: "*.{js,ts,json,jsonc,html,css}"

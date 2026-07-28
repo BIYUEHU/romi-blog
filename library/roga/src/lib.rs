@@ -4,74 +4,74 @@ pub mod transport;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum LoggerLevel {
-    Fatal = 0,
-    Error = 1,
-    Warn = 2,
-    Info = 3,
-    Record = 4,
-    Debug = 5,
-    Trace = 6,
-    Silent = 7,
+  Fatal = 0,
+  Error = 1,
+  Warn = 2,
+  Info = 3,
+  Record = 4,
+  Debug = 5,
+  Trace = 6,
+  Silent = 7,
 }
 
 #[derive(Clone)]
 pub struct LogData {
-    pub level: LoggerLevel,
-    pub time: i64,
-    pub pid: u32,
-    pub label: Vec<String>,
-    pub msg: String,
+  pub level: LoggerLevel,
+  pub time: i64,
+  pub pid: u32,
+  pub label: Vec<String>,
+  pub msg: String,
 }
 
 pub trait Transport: Send + Sync {
-    fn handle(&self, data: &LogData);
+  fn handle(&self, data: &LogData);
 }
 
 #[derive(Clone)]
 pub struct Logger {
-    level: LoggerLevel,
-    label: Vec<String>,
-    transports: Vec<Arc<dyn Transport>>,
+  level: LoggerLevel,
+  label: Vec<String>,
+  transports: Vec<Arc<dyn Transport>>,
 }
 
 impl Logger {
-    pub fn new() -> Self {
-        Self { level: LoggerLevel::Info, label: vec![], transports: vec![] }
+  pub fn new() -> Self {
+    Self { level: LoggerLevel::Info, label: vec![], transports: vec![] }
+  }
+
+  pub fn with_level(mut self, level: LoggerLevel) -> Self {
+    self.level = level;
+    self
+  }
+
+  pub fn with_label(self, name: impl Into<String>) -> Self {
+    let mut label = self.label.clone();
+    label.push(name.into());
+    Self { label, ..self }
+  }
+
+  pub fn with_transport(mut self, transport: impl Transport + 'static) -> Self {
+    self.transports.push(Arc::new(transport));
+    self
+  }
+
+  pub fn log(&self, level: LoggerLevel, message: String) {
+    if level > self.level {
+      return;
     }
 
-    pub fn with_level(mut self, level: LoggerLevel) -> Self {
-        self.level = level;
-        self
+    let data = LogData {
+      level,
+      time: chrono::Local::now().timestamp_millis(),
+      pid: std::process::id(),
+      label: self.label.clone(),
+      msg: message,
+    };
+
+    for transport in &self.transports {
+      transport.handle(&data);
     }
-
-    pub fn with_label(self, name: impl Into<String>) -> Self {
-        let mut label = self.label.clone();
-        label.push(name.into());
-        Self { label, ..self }
-    }
-
-    pub fn with_transport(mut self, transport: impl Transport + 'static) -> Self {
-        self.transports.push(Arc::new(transport));
-        self
-    }
-
-    pub fn log(&self, level: LoggerLevel, message: String) {
-        if level > self.level {
-            return;
-        }
-
-        let data = LogData {
-            level,
-            time: chrono::Local::now().timestamp_millis(),
-            pid: std::process::id(),
-            label: self.label.clone(),
-            msg: message,
-        };
-
-        for transport in &self.transports {
-            transport.handle(&data);
-        }
-    }
+  }
 }
 
 #[macro_export]
@@ -155,7 +155,7 @@ macro_rules! l_trace {
 }
 
 impl Default for Logger {
-    fn default() -> Self {
-        Self::new()
-    }
+  fn default() -> Self {
+    Self::new()
+  }
 }

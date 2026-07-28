@@ -4,3 +4,4 @@ reorder_imports = true
 normalize_comments = true
 imports_granularity = "Crate"
 group_imports = "StdExternalCrate"
+tab_spaces = 2

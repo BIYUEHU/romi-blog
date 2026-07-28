@@ -5,14 +5,14 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_hitokotos")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub id: u32,
-    #[sea_orm(column_type = "Text")]
-    pub msg: String,
-    pub from: String,
-    pub r#type: String,
-    pub likes: i32,
-    pub public: String,
+  #[sea_orm(primary_key)]
+  pub id: u32,
+  #[sea_orm(column_type = "Text")]
+  pub msg: String,
+  pub from: String,
+  pub r#type: String,
+  pub likes: i32,
+  pub public: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

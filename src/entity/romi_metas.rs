@@ -5,10 +5,10 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_metas")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub mid: u32,
-    pub name: String,
-    pub is_category: String,
+  #[sea_orm(primary_key)]
+  pub mid: u32,
+  pub name: String,
+  pub is_category: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

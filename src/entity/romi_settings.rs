@@ -5,24 +5,24 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_settings")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub id: u8,
-    pub site_title: String,
-    #[sea_orm(column_type = "Text")]
-    pub site_description: String,
-    #[sea_orm(column_type = "Text")]
-    pub site_keywords: String,
-    pub site_name: String,
-    pub site_favicon: String,
-    pub site_logo: String,
-    pub header_background: String,
-    pub home_avatar: String,
-    pub home_title: String,
-    #[sea_orm(column_type = "Text")]
-    pub home_subtitle: String,
-    pub home_links: Json,
-    pub independent_pages: Json,
-    pub links: Json,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub id: u8,
+  pub site_title: String,
+  #[sea_orm(column_type = "Text")]
+  pub site_description: String,
+  #[sea_orm(column_type = "Text")]
+  pub site_keywords: String,
+  pub site_name: String,
+  pub site_favicon: String,
+  pub site_logo: String,
+  pub header_background: String,
+  pub home_avatar: String,
+  pub home_title: String,
+  #[sea_orm(column_type = "Text")]
+  pub home_subtitle: String,
+  pub home_links: Json,
+  pub independent_pages: Json,
+  pub links: Json,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

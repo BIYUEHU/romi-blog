@@ -5,20 +5,20 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_seimgs")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub id: u32,
-    pub pixiv_pid: u32,
-    pub pixiv_uid: u32,
-    pub title: String,
-    pub author: String,
-    pub r18: String,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub tags: Option<String>,
-    pub width: u32,
-    pub height: u32,
-    pub r#type: String,
-    #[sea_orm(column_type = "Text")]
-    pub url: String,
+  #[sea_orm(primary_key)]
+  pub id: u32,
+  pub pixiv_pid: u32,
+  pub pixiv_uid: u32,
+  pub title: String,
+  pub author: String,
+  pub r18: String,
+  #[sea_orm(column_type = "Text", nullable)]
+  pub tags: Option<String>,
+  pub width: u32,
+  pub height: u32,
+  pub r#type: String,
+  #[sea_orm(column_type = "Text")]
+  pub url: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -1,24 +1,24 @@
 use axum::{
-    extract::FromRequestParts,
-    http::{StatusCode, request::Parts},
+  extract::FromRequestParts,
+  http::{StatusCode, request::Parts},
 };
 
 use crate::{
-    app::RomiState,
-    guards::auth::{Access, ApiError, AuthUser},
+  app::RomiState,
+  guards::auth::{Access, ApiError, AuthUser},
 };
 
 impl FromRequestParts<RomiState> for AuthUser {
-    type Rejection = ApiError;
+  type Rejection = ApiError;
 
-    async fn from_request_parts(
-        parts: &mut Parts,
-        state: &RomiState,
-    ) -> Result<Self, Self::Rejection> {
-        let access = Access::from_request_parts(parts, state).await?;
-        match access.user {
-            Some(user) if user.status == 0 => Ok(user),
-            _ => Err(ApiError(StatusCode::UNAUTHORIZED, "No token provided or invalid".into())),
-        }
+  async fn from_request_parts(
+    parts: &mut Parts,
+    state: &RomiState,
+  ) -> Result<Self, Self::Rejection> {
+    let access = Access::from_request_parts(parts, state).await?;
+    match access.user {
+      Some(user) if user.status == 0 => Ok(user),
+      _ => Err(ApiError(StatusCode::UNAUTHORIZED, "No token provided or invalid".into())),
     }
+  }
 }

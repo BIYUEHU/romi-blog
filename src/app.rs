@@ -6,7 +6,7 @@ use serde::Deserialize;
 use crate::{
   middlewares::{req_logger_middleware, res_error_inspector_middleware},
   routes::{self, global::fallback},
-  service::ssr::SSR,
+  service::ssr::ServerSideRender,
   utils::bootstrap::get_cors,
 };
 
@@ -26,7 +26,7 @@ pub struct RomiState {
   pub conn: DatabaseConnection,
   pub logger: Logger,
   pub config: RomiConfig,
-  pub ssr: SSR,
+  pub ssr: ServerSideRender,
   pub secret: String,
 }
 
@@ -43,7 +43,7 @@ pub fn build_app(state: RomiState) -> Router {
     .nest("/info", routes::info::routes())
     .nest("/utils", routes::utils::routes());
 
-  let app = Router::new()
+  Router::new()
     .merge(routes::sitemap::routes())
     .merge(routes::rss::routes())
     .nest("/api", api)
@@ -51,7 +51,5 @@ pub fn build_app(state: RomiState) -> Router {
     .layer(middleware::from_fn_with_state(state.clone(), req_logger_middleware))
     .layer(middleware::from_fn_with_state(state.clone(), res_error_inspector_middleware))
     .fallback(fallback)
-    .with_state(state);
-
-  app
+    .with_state(state)
 }

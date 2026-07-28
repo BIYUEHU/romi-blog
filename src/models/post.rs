@@ -4,85 +4,85 @@ use ts_rs::TS;
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqPostData {
-    #[serde(rename = "strId")]
-    pub str_id: Option<String>,
-    pub title: String,
-    pub text: String,
-    pub password: Option<String>,
-    pub hide: bool,
-    pub tags: Vec<String>,
-    pub categories: Vec<String>,
-    pub banner: Option<String>,
-    #[serde(rename = "allowComment")]
-    pub allow_comment: bool,
-    pub created: u32,
+  #[serde(rename = "strId")]
+  pub str_id: Option<String>,
+  pub title: String,
+  pub text: String,
+  pub password: Option<String>,
+  pub hide: bool,
+  pub tags: Vec<String>,
+  pub categories: Vec<String>,
+  pub banner: Option<String>,
+  #[serde(rename = "allowComment")]
+  pub allow_comment: bool,
+  pub created: u32,
 }
 
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqDecryptPostData {
-    pub password: String,
+  pub password: String,
 }
 
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostData {
-    pub id: u32,
-    #[serde(rename = "strId")]
-    pub str_id: Option<String>,
-    pub title: String,
-    pub created: u32,
-    pub modified: u32,
-    pub summary: String,
-    pub password: Option<String>,
-    pub hide: bool,
-    #[serde(rename = "allowComment")]
-    pub allow_comment: bool,
-    pub tags: Vec<String>,
-    pub categories: Vec<String>,
-    pub views: u32,
-    pub likes: u32,
-    pub comments: u32,
-    pub banner: Option<String>,
+  pub id: u32,
+  #[serde(rename = "strId")]
+  pub str_id: Option<String>,
+  pub title: String,
+  pub created: u32,
+  pub modified: u32,
+  pub summary: String,
+  pub password: Option<String>,
+  pub hide: bool,
+  #[serde(rename = "allowComment")]
+  pub allow_comment: bool,
+  pub tags: Vec<String>,
+  pub categories: Vec<String>,
+  pub views: u32,
+  pub likes: u32,
+  pub comments: u32,
+  pub banner: Option<String>,
 }
 
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleDataRelatedPost {
-    pub id: u32,
-    #[serde(rename = "strId")]
-    pub str_id: Option<String>,
-    pub title: String,
+  pub id: u32,
+  #[serde(rename = "strId")]
+  pub str_id: Option<String>,
+  pub title: String,
 }
 
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResPostSingleData {
-    pub id: u32,
-    #[serde(rename = "strId")]
-    pub str_id: Option<String>,
-    pub title: String,
-    pub created: u32,
-    pub modified: u32,
-    pub text: String,
-    pub languages: Vec<String>,
-    pub password: Option<String>,
-    pub hide: bool,
-    #[serde(rename = "allowComment")]
-    pub allow_comment: bool,
-    pub tags: Vec<String>,
-    pub categories: Vec<String>,
-    pub views: u32,
-    pub likes: u32,
-    pub comments: u32,
-    pub banner: Option<String>,
-    pub prev: Option<ResPostSingleDataRelatedPost>,
-    pub next: Option<ResPostSingleDataRelatedPost>,
+  pub id: u32,
+  #[serde(rename = "strId")]
+  pub str_id: Option<String>,
+  pub title: String,
+  pub created: u32,
+  pub modified: u32,
+  pub text: String,
+  pub languages: Vec<String>,
+  pub password: Option<String>,
+  pub hide: bool,
+  #[serde(rename = "allowComment")]
+  pub allow_comment: bool,
+  pub tags: Vec<String>,
+  pub categories: Vec<String>,
+  pub views: u32,
+  pub likes: u32,
+  pub comments: u32,
+  pub banner: Option<String>,
+  pub prev: Option<ResPostSingleDataRelatedPost>,
+  pub next: Option<ResPostSingleDataRelatedPost>,
 }
 
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResDecryptPostData {
-    pub text: String,
-    pub languages: Vec<String>,
+  pub text: String,
+  pub languages: Vec<String>,
 }

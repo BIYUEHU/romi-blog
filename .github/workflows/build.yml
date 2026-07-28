@@ -28,6 +28,15 @@ jobs:
           toolchain: stable
           profile: minimal
           override: true
+          components: rustfmt, clippy
+
+      - name: Check formatting
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        run: cargo fmt -- --check
+
+      - name: Run clippy
+        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        run: cargo clippy -- -D warnings
 
       - name: Build backend
         run: cargo build --release

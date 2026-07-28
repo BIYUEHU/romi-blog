@@ -5,22 +5,22 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_posts")]
 pub struct Model {
-    #[sea_orm(primary_key)]
-    pub pid: u32,
-    pub str_id: Option<String>,
-    pub title: String,
-    pub created: u32,
-    pub modified: u32,
-    #[sea_orm(column_type = "Text")]
-    pub text: String,
-    pub password: Option<String>,
-    pub hide: String,
-    pub allow_comment: String,
-    pub views: u32,
-    pub likes: u32,
-    pub comments: u32,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub banner: Option<String>,
+  #[sea_orm(primary_key)]
+  pub pid: u32,
+  pub str_id: Option<String>,
+  pub title: String,
+  pub created: u32,
+  pub modified: u32,
+  #[sea_orm(column_type = "Text")]
+  pub text: String,
+  pub password: Option<String>,
+  pub hide: String,
+  pub allow_comment: String,
+  pub views: u32,
+  pub likes: u32,
+  pub comments: u32,
+  #[sea_orm(column_type = "Text", nullable)]
+  pub banner: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

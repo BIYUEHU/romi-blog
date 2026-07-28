@@ -5,10 +5,10 @@ use sea_orm::entity::prelude::*;
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel)]
 #[sea_orm(table_name = "romi_relationships")]
 pub struct Model {
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub pid: u32,
-    #[sea_orm(primary_key, auto_increment = false)]
-    pub mid: u32,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub pid: u32,
+  #[sea_orm(primary_key, auto_increment = false)]
+  pub mid: u32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
