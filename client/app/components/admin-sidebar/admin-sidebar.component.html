@@ -1,6 +1,14 @@
-<aside class="w-57 h-full bg-brand text-text-on-brand border-r border-border-strong">
+@if (isSidebarOpen()) {
+<div class="fixed inset-0 z-40 bg-black/40 lg:hidden" (click)="onMenuClick()"></div>
+}
+
+<aside
+  class="fixed inset-y-0 left-0 z-50 w-57 h-full bg-brand text-text-on-brand border-r border-border-strong transition-transform lg:static lg:translate-x-0"
+  [class.-translate-x-full]="!isSidebarOpen()"
+>
   <div class="h-14 flex items-center px-6 border-b border-border-strong">
-    <a [routerLink]="'/admin'" class="text-xl font-bold text-text-on-brand hover:text-text-on-brand/80 transition-colors">
+    <a [routerLink]="'/admin'"
+      class="text-xl font-bold text-text-on-brand hover:text-text-on-brand/80 transition-colors">
       Romi Admin
     </a>
   </div>

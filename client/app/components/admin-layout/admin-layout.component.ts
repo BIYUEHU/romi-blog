@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, signal } from '@angular/core'
+import { Component, effect, HostListener, OnInit, signal } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { AdminFooterComponent } from '../admin-footer/admin-footer.component'
 import { AdminHeaderComponent } from '../admin-header/admin-header.component'
@@ -11,6 +11,13 @@ import { AdminSidebarComponent } from '../admin-sidebar/admin-sidebar.component'
 })
 export class AdminLayoutComponent implements OnInit {
   public isSidebarOpen = signal(true)
+
+  public constructor() {
+    effect(() => {
+      if (typeof document !== 'undefined')
+        document.body.style.overflow = window.innerWidth <= 1024 && this.isSidebarOpen() ? 'hidden' : ''
+    })
+  }
 
   public ngOnInit() {
     this.onResize()
