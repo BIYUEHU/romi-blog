@@ -17,6 +17,7 @@ export default class RInput extends LitElement {
   @property({ type: Boolean }) public clearable = false
   @property({ type: String }) public leftIcon = ''
   @property({ type: String }) public rightIcon = ''
+  @property({ type: String }) public autocomplete = ''
 
   @state() protected focused = false
 
@@ -125,6 +126,7 @@ export default class RInput extends LitElement {
               .type="${this.type}"
               ?disabled="${this.disabled}"
               placeholder="${this.placeholder}"
+              ?autocomplete="${this.autocomplete}"
               class="${classTag}"
               @focus="${() => {
                 this.focused = true
