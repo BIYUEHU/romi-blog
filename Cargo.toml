@@ -40,3 +40,4 @@ rand = "0.8.5"
 regex = "1.11.0"
 chrono = "0.4"
 rss = "2.0"
+lettre = { version = "0.11", features = ["smtp-transport", "builder", "tokio1-native-tls"] }

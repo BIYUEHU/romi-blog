@@ -43,6 +43,8 @@ pub struct ResSettingsData {
   pub site_favicon: String,
   #[serde(rename = "siteLogo")]
   pub site_logo: String,
+  #[serde(rename = "siteUrl")]
+  pub site_url: String,
   #[serde(rename = "headerBackground")]
   pub header_background: String,
   #[serde(rename = "homeAvatar")]
@@ -56,6 +58,21 @@ pub struct ResSettingsData {
   #[serde(rename = "independentPages")]
   pub independent_pages: Vec<ResSettingsDataIndependentPage>,
   pub links: Vec<ResSettingsDataFriendLink>,
+}
+
+#[derive(Clone, Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResSmtpSettings {
+  #[serde(rename = "smtpHost")]
+  pub smtp_host: String,
+  #[serde(rename = "smtpPort")]
+  pub smtp_port: u16,
+  #[serde(rename = "smtpUsername")]
+  pub smtp_username: String,
+  #[serde(rename = "smtpPassword")]
+  pub smtp_password: String,
+  #[serde(rename = "adminEmail")]
+  pub admin_email: String,
 }
 
 #[derive(Serialize, TS)]

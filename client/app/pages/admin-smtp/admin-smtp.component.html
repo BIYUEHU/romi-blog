@@ -1,0 +1,32 @@
+<div class="space-y-6">
+  <div class="bg-bg-surface rounded-lg border border-solid border border-border-strong p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl text-text-base">邮箱设置</h2>
+      <div class="flex gap-2">
+        <r-button type="primary" (click)="saveSmtpSettings()">保存设置</r-button>
+        <r-button (click)="goBack()">返回</r-button>
+      </div>
+    </div>
+
+    @if (isLoading) {
+    <div class="text-center py-8">
+      <r-loading label="加载中..." />
+    </div>
+    } @else {
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">SMTP 设置</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <r-input label="SMTP 服务器" [(ngModel)]="smtpForm.smtpHost" class="w-full" placeholder="smtp.example.com" />
+          <r-input label="SMTP 端口" type="number" [(ngModel)]="smtpForm.smtpPort" class="w-full" placeholder="587" />
+          <r-input label="SMTP 用户名" [(ngModel)]="smtpForm.smtpUsername" class="w-full" placeholder="user@example.com" />
+          <r-input label="SMTP 密码" type="password" [(ngModel)]="smtpForm.smtpPassword" class="w-full" placeholder="••••••••" />
+          <div class="lg:col-span-2">
+            <r-input label="管理员邮箱" [(ngModel)]="smtpForm.adminEmail" class="w-full" placeholder="admin@example.com" />
+          </div>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>

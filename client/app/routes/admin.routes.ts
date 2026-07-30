@@ -78,6 +78,11 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('../pages/admin-settings/admin-settings.component').then((m) => m.AdminSettingsComponent),
         title: '系统设置'
+      },
+      {
+        path: 'smtp',
+        loadComponent: () => import('../pages/admin-smtp/admin-smtp.component').then((m) => m.AdminSmtpComponent),
+        title: '邮箱设置'
       }
     ]
   },

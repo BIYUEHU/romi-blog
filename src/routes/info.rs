@@ -4,7 +4,7 @@ use anyhow::Context;
 use axum::{
   Json, Router,
   extract::{Query, State},
-  routing::{get, put},
+  routing::{get, post, put},
 };
 use fetcher::playlist::SongInfo;
 use roga::{l_error, l_info};
@@ -25,25 +25,29 @@ use crate::{
   guards::admin::AdminUser,
   models::info::{
     ResDashboardData, ResMusicData, ResProjectData, ResSearchResultItem, ResSettingsData,
+    ResSmtpSettings,
   },
   service::music::{MusicCache, get_music_cache},
   tools::markdown::summary_markdown,
   utils::{
     api::{ApiError, ApiResult, api_ok},
-    cache::{get_projects_cache, get_settings_cache, update_settings_cache},
+    cache::{
+      get_projects_cache, get_settings_cache, get_smtp_settings_cache, update_settings_cache,
+    },
   },
 };
-
 pub fn routes() -> Router<RomiState> {
   Router::new()
     .route("/dashboard", get(fetch_dashboard))
     .route("/settings", get(fetch_settings))
     .route("/settings", put(update_settings))
+    .route("/smtp", get(fetch_smtp_settings))
+    .route("/smtp", put(update_smtp_settings))
     .route("/projects", get(fetch_projects))
     .route("/music", get(fetch_music))
     .route("/search", get(search_posts))
+    .route("/contact", post(send_contact_email))
 }
-
 async fn fetch_dashboard(
   _admin_user: AdminUser,
   State(RomiState { ref conn, .. }): State<RomiState>,
@@ -117,6 +121,7 @@ async fn update_settings(
     active_model.site_name = ActiveValue::Set(settings.site_name);
     active_model.site_favicon = ActiveValue::Set(settings.site_favicon);
     active_model.site_logo = ActiveValue::Set(settings.site_logo);
+    active_model.site_url = ActiveValue::Set(settings.site_url);
     active_model.header_background = ActiveValue::Set(settings.header_background);
     active_model.home_avatar = ActiveValue::Set(settings.home_avatar);
     active_model.home_title = ActiveValue::Set(settings.home_title);
@@ -149,7 +154,6 @@ async fn update_settings(
     Err(ApiError::internal("Settings table has no settings data"))
   }
 }
-
 async fn fetch_projects() -> ApiResult<Vec<ResProjectData>> {
   api_ok(get_projects_cache().await.context("Failed to fetch projects data")?)
 }
@@ -239,4 +243,67 @@ async fn search_posts(
     .collect();
 
   api_ok(items)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct ContactForm {
+  pub name: String,
+  pub email: String,
+  pub message: String,
+}
+
+async fn send_contact_email(
+  State(RomiState { ref conn, .. }): State<RomiState>,
+  Json(form): Json<ContactForm>,
+) -> ApiResult {
+  if form.name.is_empty() || form.email.is_empty() || form.message.is_empty() {
+    return Err(ApiError::bad_request("All fields are required"));
+  }
+
+  let subject = format!("[Contact] {} <{}>", form.name, form.email);
+  let body = format!("Name: {}\nEmail: {}\nMessage:\n{}", form.name, form.email, form.message);
+
+  crate::service::email::send_email(conn, &form.email, &subject, &body)
+    .await
+    .map_err(|e| ApiError::internal(e.to_string()))?;
+
+  api_ok(())
+}
+
+async fn fetch_smtp_settings(
+  AdminUser(_): AdminUser,
+  State(RomiState { ref conn, .. }): State<RomiState>,
+) -> ApiResult<ResSmtpSettings> {
+  api_ok(get_smtp_settings_cache(conn).await.context("Failed to fetch smtp settings")?)
+}
+
+async fn update_smtp_settings(
+  AdminUser(admin_user): AdminUser,
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
+  Json(settings): Json<ResSmtpSettings>,
+) -> ApiResult {
+  let model = romi_settings::Entity::find().one(conn).await.context("Failed to fetch settings")?;
+  if let Some(model) = model {
+    let mut active_model = model.into_active_model();
+    active_model.smtp_host = ActiveValue::Set(settings.smtp_host);
+    active_model.smtp_port = ActiveValue::Set(settings.smtp_port);
+    active_model.smtp_username = ActiveValue::Set(settings.smtp_username);
+    active_model.smtp_password = ActiveValue::Set(settings.smtp_password);
+    active_model.admin_email = ActiveValue::Set(settings.admin_email);
+
+    romi_settings::Entity::update(active_model)
+      .exec(conn)
+      .await
+      .context("Failed to update smtp settings")?;
+    l_info!(logger, "Updated smtp settings by admin {} ({})", admin_user.id, admin_user.username);
+    api_ok(())
+  } else {
+    l_error!(
+      logger,
+      "A error when updating smtp settings by admin {} ({})",
+      admin_user.id,
+      admin_user.username
+    );
+    Err(ApiError::internal("Settings table has no settings data"))
+  }
 }

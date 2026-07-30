@@ -23,8 +23,13 @@ pub struct Model {
   pub home_links: Json,
   pub independent_pages: Json,
   pub links: Json,
+  pub site_url: String,
+  pub smtp_host: String,
+  pub smtp_port: u16,
+  pub smtp_username: String,
+  pub smtp_password: String,
+  pub admin_email: String,
 }
-
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}
 

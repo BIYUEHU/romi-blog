@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 use crate::{
   constant::{GITHUB_USER, HTTP_CLIENT_AGENT, PROJECTS_CACHE_TIMEOUT, SETTINGS_CACHE_TIMEOUT},
   entity::romi_settings,
-  models::info::{ResProjectData, ResSettingsData},
+  models::info::{ResProjectData, ResSettingsData, ResSmtpSettings},
 };
 
 #[derive(Debug)]
@@ -78,6 +78,7 @@ pub async fn get_settings_cache(db: &DatabaseConnection) -> Result<ResSettingsDa
         site_name: settings.site_name,
         site_favicon: settings.site_favicon,
         site_logo: settings.site_logo,
+        site_url: settings.site_url,
         header_background: settings.header_background,
         home_avatar: settings.home_avatar,
         home_title: settings.home_title,
@@ -94,6 +95,24 @@ pub async fn get_settings_cache(db: &DatabaseConnection) -> Result<ResSettingsDa
 
 pub async fn update_settings_cache(data: ResSettingsData) {
   SETTINGS_CACHE.update(data).await;
+}
+
+pub async fn get_smtp_settings_cache(
+  db: &DatabaseConnection,
+) -> Result<ResSmtpSettings, anyhow::Error> {
+  let settings = romi_settings::Entity::find()
+    .one(db)
+    .await
+    .context("Failed to fetch settings")?
+    .ok_or_else(|| anyhow!("Settings not found"))?;
+
+  Ok(ResSmtpSettings {
+    smtp_host: settings.smtp_host,
+    smtp_port: settings.smtp_port,
+    smtp_username: settings.smtp_username,
+    smtp_password: settings.smtp_password,
+    admin_email: settings.admin_email,
+  })
 }
 
 define_cache!(PROJECTS_CACHE, Vec<ResProjectData>, PROJECTS_CACHE_TIMEOUT);

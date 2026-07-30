@@ -30,6 +30,7 @@ import type {
   ResProjectData,
   ResSearchResultItem,
   ResSettingsData,
+  ResSmtpSettings,
   ResUserData,
   UserAuthData,
   Video
@@ -371,5 +372,13 @@ export class ApiService {
     return this.http.get<ResSearchResultItem[]>(`${environment.api_base_url}/info/search`, {
       params: { q: query, page, per_page: perPage }
     })
+  }
+
+  public getSmtpSettings() {
+    return this.http.get<ResSmtpSettings>(`${environment.api_base_url}/info/smtp`)
+  }
+
+  public updateSmtpSettings(settings: ResSmtpSettings) {
+    return this.http.put<ResSmtpSettings>(`${environment.api_base_url}/info/smtp`, settings)
   }
 }

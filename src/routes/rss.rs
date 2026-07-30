@@ -26,7 +26,7 @@ fn to_rfc2822(timestamp: u32) -> String {
     .unwrap_or_else(|| String::from(""))
 }
 
-async fn fetch(State(RomiState { ref conn, ref config, .. }): State<RomiState>) -> Response {
+async fn fetch(State(RomiState { ref conn, .. }): State<RomiState>) -> Response {
   let result: Result<Response, anyhow::Error> = async {
     let settings: ResSettingsData =
       get_settings_cache(conn).await.map_err(|e| anyhow::anyhow!(e))?;
@@ -41,14 +41,14 @@ async fn fetch(State(RomiState { ref conn, ref config, .. }): State<RomiState>) 
 
     let mut channel = ChannelBuilder::default()
       .title(&settings.site_name)
-      .link(&config.site_url)
+      .link(&settings.site_url)
       .description(&settings.site_description)
       .build();
 
     for post in posts {
       let link = format!(
         "{}/post/{}",
-        config.site_url,
+        settings.site_url,
         post.str_id.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| post.pid.to_string())
       );
       let description = post.text;
@@ -64,7 +64,7 @@ async fn fetch(State(RomiState { ref conn, ref config, .. }): State<RomiState>) 
     }
 
     for news_item in news {
-      let link = format!("{}/news/{}", config.site_url, news_item.nid);
+      let link = format!("{}/news/{}", settings.site_url, news_item.nid);
       let title = news_item.text.split('\n').next().unwrap_or("").trim().to_string();
       let description = news_item.text;
       let pub_date = to_rfc2822(news_item.modified);

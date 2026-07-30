@@ -25,9 +25,7 @@ fn format_lastmod(timestamp: u32) -> String {
     .unwrap_or_default()
 }
 
-async fn fetch(
-  State(RomiState { ref conn, ref config, .. }): State<RomiState>,
-) -> Result<Response, ApiError> {
+async fn fetch(State(RomiState { ref conn, .. }): State<RomiState>) -> Result<Response, ApiError> {
   let posts = romi_posts::Entity::find().all(conn).await.context("Failed to fetch posts")?;
 
   let news = romi_news::Entity::find()
@@ -59,26 +57,26 @@ async fn fetch(
     "/gal",
     "/music",
   ] {
-    urls.push_str(&format!("<url><loc>{}{}</loc></url>", config.site_url, path));
+    urls.push_str(&format!("<url><loc>{}{}</loc></url>", settings.site_url, path));
   }
   for page in &settings.independent_pages {
-    urls.push_str(&format!("<url><loc>{}/{}</loc></url>", config.site_url, page.name));
+    urls.push_str(&format!("<url><loc>{}/{}</loc></url>", settings.site_url, page.name));
   }
   for character in &characters {
-    urls.push_str(&format!("<url><loc>{}/char/{}</loc></url>", config.site_url, character.name));
+    urls.push_str(&format!("<url><loc>{}/char/{}</loc></url>", settings.site_url, character.name));
   }
   for meta in &metas {
     if meta.is_category == "1" {
-      urls.push_str(&format!("<url><loc>{}/category/{}</loc></url>", config.site_url, meta.name));
+      urls.push_str(&format!("<url><loc>{}/category/{}</loc></url>", settings.site_url, meta.name));
     } else {
-      urls.push_str(&format!("<url><loc>{}/tag/{}</loc></url>", config.site_url, meta.name));
+      urls.push_str(&format!("<url><loc>{}/tag/{}</loc></url>", settings.site_url, meta.name));
     }
   }
   for post in &posts {
     let id = post.str_id.clone().filter(|s| !s.is_empty()).unwrap_or_else(|| post.pid.to_string());
     urls.push_str(&format!(
       "<url><loc>{}/post/{}</loc><lastmod>{}</lastmod></url>",
-      config.site_url,
+      settings.site_url,
       id,
       format_lastmod(post.modified)
     ));
@@ -86,12 +84,11 @@ async fn fetch(
   for item in &news {
     urls.push_str(&format!(
       "<url><loc>{}/news/{}</loc><lastmod>{}</lastmod></url>",
-      config.site_url,
+      settings.site_url,
       item.nid,
       format_lastmod(item.modified)
     ));
   }
-
   let xml = format!(
     r#"<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

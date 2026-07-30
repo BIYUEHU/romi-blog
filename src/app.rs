@@ -14,7 +14,6 @@ use crate::{
 pub struct RomiConfig {
   pub address: String,
   pub port: u16,
-  pub site_url: String,
   pub database_url: String,
   pub ssr_entry: String,
   pub log_level: String,
