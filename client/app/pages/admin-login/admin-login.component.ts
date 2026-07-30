@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
@@ -17,30 +17,28 @@ import { showErr } from '../../shared/utils'
   templateUrl: './admin-login.component.html'
 })
 export class AdminLoginComponent {
-  public username = ''
+  public email = ''
   public password = ''
   public rememberMe = false
   public isLoading = false
-
-  private readonly authService: AuthService = inject(AuthService)
 
   public constructor(
     private readonly router: Router,
     private readonly apiService: ApiService,
     private readonly loggerService: LoggerService,
-    private readonly notifyService: NotifyService
+    private readonly notifyService: NotifyService,
+    private readonly authService: AuthService
   ) {
     if (this.authService.isLoggedIn()) this.router.navigate(['/admin/dashboard']).then()
   }
-
   public async handleSubmit() {
-    if (!this.username || !this.password) {
-      this.notifyService.showMessage('请输入用户名和密码', MessageBoxType.Warning)
+    if (!this.email || !this.password) {
+      this.notifyService.showMessage('请输入邮箱和密码', MessageBoxType.Warning)
       return
     }
 
     this.isLoading = true
-    this.apiService.login(this.username, this.password).subscribe({
+    this.apiService.login(this.email, this.password).subscribe({
       error: (data) => {
         this.loggerService.error('Login error', data)
         this.notifyService.showMessage(`登录失败，意外的错误：${showErr(data)}`, MessageBoxType.Error)
@@ -52,7 +50,7 @@ export class AdminLoginComponent {
           this.authService.setUser(data, this.rememberMe)
           this.router.navigate(['/admin/dashboard'])
         } else {
-          this.notifyService.showMessage('用户名或密码错误', MessageBoxType.Error)
+          this.notifyService.showMessage('邮箱或密码错误', MessageBoxType.Error)
         }
       }
     })

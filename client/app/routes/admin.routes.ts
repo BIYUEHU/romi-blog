@@ -83,6 +83,12 @@ export const adminRoutes: Routes = [
         path: 'smtp',
         loadComponent: () => import('../pages/admin-smtp/admin-smtp.component').then((m) => m.AdminSmtpComponent),
         title: '邮箱设置'
+      },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('../pages/admin-profile/admin-profile.component').then((m) => m.AdminProfileComponent),
+        title: '个人资料'
       }
     ]
   },

@@ -122,12 +122,12 @@ export class ApiService {
     return this.http.delete<void>(`${environment.api_base_url}/meta/${id}`)
   }
 
-  public login(username: string, password: string) {
+  public login(email: string, password: string) {
     return this.http
       .post<ResLoginData>(
         `${environment.api_base_url}/user/login`,
         {
-          username,
+          email,
           password
         },
         {
@@ -380,5 +380,9 @@ export class ApiService {
 
   public updateSmtpSettings(settings: ResSmtpSettings) {
     return this.http.put<ResSmtpSettings>(`${environment.api_base_url}/info/smtp`, settings)
+  }
+
+  public updateProfile(username: string | null, oldPassword: string, newPassword: string | null) {
+    return this.http.put<void>(`${environment.api_base_url}/user/profile`, { username, oldPassword, newPassword })
   }
 }

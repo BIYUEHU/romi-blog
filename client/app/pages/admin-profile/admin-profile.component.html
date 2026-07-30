@@ -1,0 +1,46 @@
+<form>
+  <div class="space-y-6">
+    <div class="bg-bg-surface rounded-lg border border-solid border-border-strong p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl text-text-base">个人资料</h2>
+        <div class="flex gap-2">
+          <r-button (click)="goBack()">返回</r-button>
+        </div>
+      </div>
+
+      @if (isLoading) {
+      <div class="text-center py-8">
+        <r-loading label="加载中..." />
+      </div>
+      } @else {
+      <div class="space-y-6">
+        <div>
+          <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">基本信息</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <r-input label="用户名" [(ngModel)]="username" autocomplete="off" class="w-full" placeholder="输入新用户名" />
+            <r-input label="邮箱" [ngModel]="user?.email" disabled class="w-full" />
+            <div class="lg:col-span-2">
+              <r-input label="注册时间" [ngModel]="(user?.created || 0) | date:'yyyy-MM-dd HH:mm'" disabled
+                class="w-full" />
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-border-base">
+          <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">修改密码</h3>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <r-input label="旧密码（必填）" type="password" [(ngModel)]="oldPassword" autocomplete="new-password"
+              class="w-full" placeholder="输入旧密码" />
+            <r-input label="新密码" type="password" [(ngModel)]="newPassword" autocomplete="new-password" class="w-full"
+              placeholder="输入新密码（至少6位）" />
+            <r-input label="确认新密码" type="password" [(ngModel)]="confirmPassword" autocomplete="new-password"
+              class="w-full" placeholder="再次输入新密码" />
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <r-button type="primary" (click)="saveProfile()">保存修改</r-button>
+        </div>
+      </div>
+      }
+    </div>
+  </div>

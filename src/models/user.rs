@@ -18,6 +18,7 @@ pub struct ResUserData {
   pub username: String,
   pub email: String,
   pub created: u32,
+  #[serde(rename = "lastLogin")]
   pub last_login: u32,
   #[serde(rename = "isAdmin")]
   pub is_admin: bool,
@@ -28,10 +29,9 @@ pub struct ResUserData {
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqLoginData {
-  pub username: String,
+  pub email: String,
   pub password: String,
 }
-
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResLoginData {
@@ -40,7 +40,10 @@ pub struct ResLoginData {
 
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
-pub struct ReqPasswordData {
+pub struct ReqProfileData {
+  pub username: Option<String>,
+  #[serde(rename = "oldPassword")]
   pub old_password: String,
-  pub new_password: String,
+  #[serde(rename = "newPassword")]
+  pub new_password: Option<String>,
 }

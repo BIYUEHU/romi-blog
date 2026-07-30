@@ -1,5 +1,5 @@
 import { NgOptimizedImage, ViewportScroller } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, inject, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnDestroy, OnInit } from '@angular/core'
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
 import { ResMusicData } from '../../models/api.model'
 import { ServerErrorComponent } from '../../pages/server-error/server-error.component'
@@ -45,20 +45,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
     private readonly storeService: StoreService,
-    public readonly appTitleStrategy: AppTitleStrategy
+    public readonly appTitleStrategy: AppTitleStrategy,
+    private readonly browserService: BrowserService,
+    private readonly apiService: ApiService
   ) {
-    inject(BrowserService).on(() =>
-      inject(ApiService)
-        .getMusic()
-        .subscribe((data) => {
-          this.musicList = data
-          setTimeout(() => {
-            this.togglePlayer(true)
-          }, 1000)
-        })
+    this.browserService.on(() =>
+      this.apiService.getMusic().subscribe((data) => {
+        this.musicList = data
+        setTimeout(() => {
+          this.togglePlayer(true)
+        }, 1000)
+      })
     )
   }
-
   public get headerImageHeight() {
     return this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
   }

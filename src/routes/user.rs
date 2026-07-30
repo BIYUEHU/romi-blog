@@ -17,7 +17,7 @@ use crate::{
   app::RomiState,
   entity::romi_users,
   guards::{admin::AdminUser, auth::AuthUser},
-  models::user::{ReqLoginData, ReqPasswordData, ReqUserData, ResLoginData, ResUserData},
+  models::user::{ReqLoginData, ReqProfileData, ReqUserData, ResLoginData, ResUserData},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 pub fn routes() -> Router<RomiState> {
@@ -28,27 +28,26 @@ pub fn routes() -> Router<RomiState> {
     .route("/{id}", get(fetch))
     .route("/{id}", put(update))
     .route("/{id}", delete(remove))
-    .route("/password", put(change_password))
+    .route("/profile", put(update_profile))
 }
 async fn login(
   State(RomiState { ref logger, ref conn, ref secret, .. }): State<RomiState>,
   Json(credentials): Json<ReqLoginData>,
 ) -> ApiResult<ResLoginData> {
-  l_info!(logger, "Login attempt for user: {}", credentials.username);
+  l_info!(logger, "Login attempt for email: {}", credentials.email);
 
   let user = match romi_users::Entity::find()
-    .filter(romi_users::Column::Username.eq(&credentials.username))
+    .filter(romi_users::Column::Email.eq(&credentials.email))
     .one(conn)
     .await
     .context("Failed to fetch user")?
   {
     Some(user) if user.password == credentials.password => user,
     _ => {
-      l_warn!(logger, "Invalid credentials for user: {}", credentials.username);
+      l_warn!(logger, "Invalid credentials for email: {}", credentials.email);
       return Err(ApiError::unauthorized("Invalid credentials"));
     }
   };
-
   let claims = AuthUser {
     id: user.uid,
     username: user.username.clone(),
@@ -187,10 +186,10 @@ async fn create(
   api_ok(())
 }
 
-async fn change_password(
+async fn update_profile(
   user: AuthUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
-  Json(payload): Json<ReqPasswordData>,
+  Json(payload): Json<ReqProfileData>,
 ) -> ApiResult {
   let model = romi_users::Entity::find_by_id(user.id)
     .one(conn)
@@ -202,19 +201,41 @@ async fn change_password(
     return Err(ApiError::forbidden("User is deleted"));
   }
 
-  if payload.new_password.len() < 6 {
-    return Err(ApiError::bad_request("Password must be at least 6 characters"));
-  }
-
   if payload.old_password != model.password {
     return Err(ApiError::bad_request("Invalid old password"));
   }
 
+  let uid = model.uid;
   let mut active_model = model.into_active_model();
-  active_model.password = ActiveValue::Set(payload.new_password);
-  active_model.update(conn).await.context("Failed to update password")?;
 
-  l_info!(logger, "Password changed for user {}", user.id);
+  if let Some(username) = &payload.username {
+    if username.is_empty() {
+      return Err(ApiError::bad_request("Username cannot be empty"));
+    }
+    // 检查是否已被占用（排除自己）
+    let exists = romi_users::Entity::find()
+      .filter(romi_users::Column::Username.eq(username))
+      .filter(romi_users::Column::Uid.ne(uid))
+      .one(conn)
+      .await
+      .context("Failed to check username")?
+      .is_some();
+    if exists {
+      return Err(ApiError::bad_request("Username already taken"));
+    }
+    active_model.username = ActiveValue::Set(username.clone());
+  }
+
+  if let Some(new_password) = payload.new_password {
+    if new_password.len() < 6 {
+      return Err(ApiError::bad_request("Password must be at least 6 characters"));
+    }
+    active_model.password = ActiveValue::Set(new_password);
+  }
+
+  active_model.update(conn).await.context("Failed to update profile")?;
+
+  l_info!(logger, "Profile updated for user {}", user.id);
   api_ok(())
 }
 async fn update(

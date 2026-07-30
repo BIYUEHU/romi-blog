@@ -48,7 +48,7 @@ export class AdminSmtpComponent implements OnInit {
   }
 
   public saveSmtpSettings(): void {
-    this.apiService.updateSmtpSettings(this.smtpForm).subscribe({
+    this.apiService.updateSmtpSettings({ ...this.smtpForm, smtpPort: Number(this.smtpForm.smtpPort) }).subscribe({
       next: () => {
         this.notifyService.showMessage('邮箱设置保存成功', MessageBoxType.Success)
       },
