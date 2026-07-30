@@ -32,11 +32,11 @@ jobs:
 
       - name: Check formatting
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
-        run: cargo fmt -- --check
+        run: cargo fmt -- --check | git diff --exit-code
 
       - name: Run clippy
         if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
-        run: cargo clippy -- -D warnings
+        run: cargo clippy -- -D warnings | git diff --exit-code
 
       - name: Build backend
         run: cargo build --release

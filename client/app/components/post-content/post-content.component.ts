@@ -19,7 +19,7 @@ import { LoggerService } from '../../services/logger.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { MessageBoxType } from '../../shared/types'
-import { randomRTagType, showErr } from '../../shared/utils'
+import { showErr } from '../../shared/utils'
 import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.component'
 
 interface TocItem {
@@ -78,7 +78,7 @@ class PostContentComponent implements OnInit, OnDestroy {
     return this.comments.slice(start, start + this.pageSize)
   }
 
-  public extra?: { url: string; url2: string | null; tags: [string, string][] }
+  public extra?: { url: string; url2: string | null }
 
   public constructor(
     private readonly notifyService: NotifyService,
@@ -295,8 +295,7 @@ class PostContentComponent implements OnInit, OnDestroy {
 
     this.extra = {
       url: this.browserService.on(() => `${location.origin}/post/${this.post.id}`) ?? '',
-      url2: this.post.strId ? this.browserService.on(() => `${location.origin}/post/${this.post.strId}`) : null,
-      tags: this.post.tags.map((tag) => [tag, randomRTagType()])
+      url2: this.post.strId ? this.browserService.on(() => `${location.origin}/post/${this.post.strId}`) : null
     }
 
     if (!this.mdParser) return

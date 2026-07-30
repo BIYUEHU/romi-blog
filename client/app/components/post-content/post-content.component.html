@@ -3,13 +3,29 @@
   <div class="flex gap-8">
     <div class="flex-1 w-full pt-2">
       <ng-content select="[post-brefore]"></ng-content>
-      <div class="max-w-full w-230 post-body mb-4 p-5 rounded-xl bg-bg-surface border border-border-base"
-        [innerHTML]="renderedContent"></div>
+      <div class="max-w-full w-230 post-body p-5" [innerHTML]="renderedContent">
+      </div>
       <ng-content select="[post-after]"></ng-content>
 
       @if (password) {
       <div class="text-center mb-2">
         <r-button type="primary" (click)="decryptPost()" size="large">解密文章</r-button>
+      </div>
+      }
+
+      @if (!hideOptions && (post.categories.length + post.tags.length) > 0) {
+      <div class="text-center mt-1 flex gap-3 flex-wrap px-5">
+        @for (item of
+        post.categories; track $index) {
+        <span class="text-brand text-4 cursor-pointer" [routerLink]="['/category', item]">
+          {{ item }}
+        </span>
+        }
+        @for (item of post.tags; track $index) {
+        <span class="text-brand text-4 cursor-pointer" [routerLink]="['/tag', item[0]]">
+          #{{ item }}
+        </span>
+        }
       </div>
       }
 
@@ -20,40 +36,21 @@
       }
 
       @if (!hideCopyright) {
-      <div
-        class="text-size-lg line-height-loose mx-auto p-2 border-2 border-rounded-2 border-solid border-border-strong bg-bg-elevated mb-4">
-        <strong>本文链接：</strong><a [href]="extra?.url2 ? extra!.url2 : extra?.url" class="text-brand underline">{{
-          extra?.url2 ? extra!.url2 : extra?.url }}</a><br />
-        @if (extra && extra.url2) {
-        <strong>原始链接：</strong><a [href]="extra.url" class="text-brand underline">{{ extra.url }}</a>
-        <br />
-        }
-        <strong>版权声明：</strong><span class="text-text-sub">本文由作者原创，禁止任何形式转载。</span>
+      <div class="w-full flex justify-center text-size-lg line-height-loose p-2 mb-4">
+        <div>
+          <strong>直链：</strong><a [href]="extra?.url2 ? extra!.url2 : extra?.url" class="text-brand underline">{{
+            extra?.url2 ? extra!.url2 : extra?.url }}</a><br />
+          @if (extra && extra.url2) {
+          <strong>原链：</strong><a [href]="extra.url" class="text-brand underline">{{ extra.url }}</a>
+          <br />
+          }
+          <strong>声明：</strong><span class="text-text-sub">本文由作者原创，禁止任何形式转载。</span>
+        </div>
       </div>
       }
 
       @if (!hideOptions) {
-      @if (post.categories.length + (extra?.tags?.length ?? 0) > 0) {
-      <div class="mx-auto line-height-loose mt-5">
-        <r-divider class="mx-auto"></r-divider>
-        <div class="flex my-4 gap-4 flex-wrap">
-          @for (item of
-          post.categories; track $index) {
-          <r-tag hovered [routerLink]="['/category', item]">
-            {{ item }}
-          </r-tag>
-          }
-          @for (item of extra?.tags ?? []; track $index) {
-          <r-tag hovered [routerLink]="['/tag', item[0]]" [type]="item[1]">
-            #{{ item[0] }}
-          </r-tag>
-          }
-        </div>
-        <r-divider class="mx-auto"></r-divider>
-      </div>
-      }
-
-      <div class="mx-auto flex gap-4 my-5">
+      <div class="w-full flex justify-center gap-3 my-5">
         <r-button size="lg" type="error" (click)="likePost()">
           点个赞
         </r-button>
@@ -67,7 +64,7 @@
       }
 
       @if (!hideRelatedPosts && !post.hide && (post.prev || post.next)) {
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div class="max-w-full w-220 mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         @if (post.prev) {
         <a [routerLink]="['/post/', post.prev.strId ? post.prev.strId : post.prev.id]"
           class="group p-4 bg-bg-elevated hover:bg-bg-subtle rounded-lg transition-colors border border-border-base">
@@ -98,7 +95,7 @@
 
       @if (!hideComments) {
       @if (post.allowComment) {
-      <div class="my-6 p-3 rounded-lg">
+      <div class="max-w-full w-230 mx-auto my-6 p-3 rounded-lg">
         <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-text-base">评论区</h3>
 
         @if (browserService.is) {
@@ -142,7 +139,7 @@
           <div class="flex gap-4 p-4 rounded-lg border border-border-base m-0">
             <img width="40" height="40" [ngSrc]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
               alt="avatar" class="rounded-full bg-bg-subtle flex-shrink-0 overflow-hidden" />
-            <div class="flex-1">
+            <div class="p-3 rounded-xl bg-bg-elevated flex-1">
               <div class="flex flex-wrap items-center gap-2 truncate whitespace-nowrap">
                 @if (comment.userUrl) {
                 <a [href]="comment.userUrl" target="_blank" class="text-sm text-brand hover:text-brand-hover">

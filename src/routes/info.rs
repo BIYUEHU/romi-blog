@@ -9,10 +9,9 @@ use axum::{
 use fetcher::playlist::SongInfo;
 use roga::{l_error, l_info};
 use sea_orm::{
-  ActiveValue, ColumnTrait, EntityTrait, FromQueryResult, IntoActiveModel, PaginatorTrait,
-  QueryFilter, QueryOrder, QuerySelect,
+  ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter, QueryOrder,
+  QuerySelect,
 };
-use serde::Deserialize;
 use sysinfo::System;
 use tokio::try_join;
 
@@ -24,8 +23,8 @@ use crate::{
   },
   guards::admin::AdminUser,
   models::info::{
-    ResDashboardData, ResMusicData, ResProjectData, ResSearchResultItem, ResSettingsData,
-    ResSmtpSettings,
+    ReqContactForm, ReqSearchQuery, ResDashboardData, ResMusicData, ResProjectData,
+    ResSearchResultItem, ResSettingsData, ResSmtpSettings,
   },
   service::music::{MusicCache, get_music_cache},
   tools::markdown::summary_markdown,
@@ -36,6 +35,7 @@ use crate::{
     },
   },
 };
+
 pub fn routes() -> Router<RomiState> {
   Router::new()
     .route("/dashboard", get(fetch_dashboard))
@@ -48,6 +48,7 @@ pub fn routes() -> Router<RomiState> {
     .route("/search", get(search_posts))
     .route("/contact", post(send_contact_email))
 }
+
 async fn fetch_dashboard(
   _admin_user: AdminUser,
   State(RomiState { ref conn, .. }): State<RomiState>,
@@ -154,6 +155,7 @@ async fn update_settings(
     Err(ApiError::internal("Settings table has no settings data"))
   }
 }
+
 async fn fetch_projects() -> ApiResult<Vec<ResProjectData>> {
   api_ok(get_projects_cache().await.context("Failed to fetch projects data")?)
 }
@@ -175,34 +177,9 @@ async fn fetch_music() -> ApiResult<Vec<ResMusicData>> {
   )?)
 }
 
-#[derive(Debug, Deserialize)]
-pub struct SearchQuery {
-  q: String,
-  #[serde(default = "default_page")]
-  page: u32,
-  #[serde(default = "default_per_page")]
-  per_page: u32,
-}
-
-fn default_page() -> u32 {
-  1
-}
-fn default_per_page() -> u32 {
-  20
-}
-
-#[derive(Debug, FromQueryResult)]
-struct TempSearchResult {
-  pub pid: u32,
-  pub str_id: Option<String>,
-  pub title: String,
-  pub text: String,
-  pub modified: u32,
-}
-
 async fn search_posts(
   State(RomiState { ref conn, .. }): State<RomiState>,
-  Query(params): Query<SearchQuery>,
+  Query(params): Query<ReqSearchQuery>,
 ) -> ApiResult<Vec<ResSearchResultItem>> {
   let q = params.q.trim();
   if q.is_empty() {
@@ -210,51 +187,39 @@ async fn search_posts(
   }
 
   let page = params.page.max(1);
-  let per_page = params.per_page.min(50).max(1);
+  let per_page = params.per_page.clamp(1, 50);
   let offset = (page - 1) * per_page;
-  let query = romi_posts::Entity::find()
+  let posts = romi_posts::Entity::find()
     .filter(romi_posts::Column::Hide.ne("1"))
     .filter(
       romi_posts::Column::Title
         .like(format!("%{}%", q))
         .or(romi_posts::Column::Text.like(format!("%{}%", q))),
     )
-    .select_only()
-    .column(romi_posts::Column::Pid)
-    .column(romi_posts::Column::StrId)
-    .column(romi_posts::Column::Title)
-    .column(romi_posts::Column::Text)
-    .column(romi_posts::Column::Modified)
     .order_by(romi_posts::Column::Modified, sea_orm::Order::Desc)
     .limit(per_page as u64)
-    .offset(offset as u64);
-  let temp_items: Vec<TempSearchResult> =
-    query.into_model::<TempSearchResult>().all(conn).await.context("Failed to search posts")?;
+    .offset(offset as u64)
+    .all(conn)
+    .await
+    .context("Failed to search posts")?;
 
-  let items = temp_items
+  let items = posts
     .into_iter()
-    .map(|item| ResSearchResultItem {
-      pid: item.pid,
-      str_id: item.str_id,
-      title: item.title,
-      modified: item.modified,
-      summary: summary_markdown(&item.text, 200),
+    .map(|post| ResSearchResultItem {
+      pid: post.pid,
+      str_id: post.str_id,
+      title: post.title,
+      modified: post.modified,
+      summary: summary_markdown(&post.text, 200),
     })
     .collect();
 
   api_ok(items)
 }
 
-#[derive(Debug, Deserialize)]
-pub struct ContactForm {
-  pub name: String,
-  pub email: String,
-  pub message: String,
-}
-
 async fn send_contact_email(
   State(RomiState { ref conn, .. }): State<RomiState>,
-  Json(form): Json<ContactForm>,
+  Json(form): Json<ReqContactForm>,
 ) -> ApiResult {
   if form.name.is_empty() || form.email.is_empty() || form.message.is_empty() {
     return Err(ApiError::bad_request("All fields are required"));

@@ -17,10 +17,9 @@ use crate::{
   app::RomiState,
   entity::romi_users,
   guards::{admin::AdminUser, auth::AuthUser},
-  models::user::{ReqLoginData, ReqUserData, ResLoginData, ResUserData},
+  models::user::{ReqLoginData, ReqPasswordData, ReqUserData, ResLoginData, ResUserData},
   utils::api::{ApiError, ApiResult, api_ok},
 };
-
 pub fn routes() -> Router<RomiState> {
   Router::new()
     .route("/login", post(login))
@@ -29,8 +28,8 @@ pub fn routes() -> Router<RomiState> {
     .route("/{id}", get(fetch))
     .route("/{id}", put(update))
     .route("/{id}", delete(remove))
+    .route("/password", put(change_password))
 }
-
 async fn login(
   State(RomiState { ref logger, ref conn, ref secret, .. }): State<RomiState>,
   Json(credentials): Json<ReqLoginData>,
@@ -188,6 +187,36 @@ async fn create(
   api_ok(())
 }
 
+async fn change_password(
+  user: AuthUser,
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
+  Json(payload): Json<ReqPasswordData>,
+) -> ApiResult {
+  let model = romi_users::Entity::find_by_id(user.id)
+    .one(conn)
+    .await
+    .context("Failed to fetch user")?
+    .ok_or_else(|| ApiError::not_found("User not found"))?;
+
+  if model.is_deleted == "1" {
+    return Err(ApiError::forbidden("User is deleted"));
+  }
+
+  if payload.new_password.len() < 6 {
+    return Err(ApiError::bad_request("Password must be at least 6 characters"));
+  }
+
+  if payload.old_password != model.password {
+    return Err(ApiError::bad_request("Invalid old password"));
+  }
+
+  let mut active_model = model.into_active_model();
+  active_model.password = ActiveValue::Set(payload.new_password);
+  active_model.update(conn).await.context("Failed to update password")?;
+
+  l_info!(logger, "Password changed for user {}", user.id);
+  api_ok(())
+}
 async fn update(
   AdminUser(admin_user): AdminUser,
   Path(id): Path<u32>,

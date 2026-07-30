@@ -140,7 +140,6 @@ a:hover {
   text-align: justify;
   word-wrap: break-word;
   hyphens: auto;
-  background-color: var(--bg-surface);
   /*font-family: sans-serif;*/
   line-height: 1.75;
   /*font-weight: 400;*/

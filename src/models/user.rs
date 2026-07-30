@@ -37,3 +37,10 @@ pub struct ReqLoginData {
 pub struct ResLoginData {
   pub token: String,
 }
+
+#[derive(Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqPasswordData {
+  pub old_password: String,
+  pub new_password: String,
+}

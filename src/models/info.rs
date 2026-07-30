@@ -187,3 +187,28 @@ pub struct ResSearchResultItem {
   pub modified: u32,
   pub summary: String,
 }
+
+#[derive(Debug, Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqSearchQuery {
+  pub q: String,
+  #[serde(default = "default_page")]
+  pub page: u32,
+  #[serde(default = "default_per_page")]
+  pub per_page: u32,
+}
+
+fn default_page() -> u32 {
+  1
+}
+fn default_per_page() -> u32 {
+  20
+}
+
+#[derive(Debug, Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqContactForm {
+  pub name: String,
+  pub email: String,
+  pub message: String,
+}
