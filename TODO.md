@@ -2,12 +2,12 @@
 
 <!-- - [ ] Support more markdown-it plugins -->
 <!-- - [ ] Building-ify some configure files（Website default title, nav, favicon, highlighter language） -->
-- [ ] Blog content search
+- [x] Blog content search
 - [x] Support private news
 - [x] Settings and customization
 - [ ] Website color scheme
-- [ ] RSS feed
-- [ ] sitemap
+- [x] RSS feed
+- [x] sitemap
 - [ ] Safety system
 <!-- - [ ] Romi UI better building -->
 - [ ] Characters birthdays reminder
@@ -19,7 +19,7 @@
 - [ ] Images gallery
 - [ ] Images bed and management system
 - [ ] Refactory music player
-- [ ] I18n
+<!-- - [ ] I18n -->
 - [ ] 更多的页面细化处理 meta 更好的 seo
 - [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [x] Post view, like, share

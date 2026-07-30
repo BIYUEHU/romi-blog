@@ -1,14 +1,21 @@
-import { Component } from '@angular/core'
+import { Component, signal } from '@angular/core'
+import { FormsModule } from '@angular/forms'
 import { RouterLink } from '@angular/router'
+import type { ResSearchResultItem } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './header.component.html'
 })
 export class HeaderComponent {
   public isMenuOpen = false
+  public isSearchOpen = signal(false)
+  public searchQuery = ''
+  public searchResults = signal<ResSearchResultItem[]>([])
+  public searchLoading = signal(false)
+  private searchTimer: ReturnType<typeof setTimeout> | null = null
 
   public navItems = [
     { text: '首页', link: '/' },
@@ -39,8 +46,6 @@ export class HeaderComponent {
   public constructor(public readonly apiService: ApiService) {}
 
   public toggleMenu() {
-    // if (Date.now() - this.lastSwitchMenu < 200) return
-    // this.lastSwitchMenu = Date.now()
     this.isMenuOpen = !this.isMenuOpen
     if (this.isMenuOpen) {
       const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth
@@ -50,5 +55,39 @@ export class HeaderComponent {
       document.body.style.overflow = ''
       document.body.style.paddingRight = ''
     }
+  }
+
+  public toggleSearch() {
+    this.isSearchOpen.update((v) => !v)
+    if (!this.isSearchOpen()) {
+      this.searchResults.set([])
+      this.searchQuery = ''
+    } else {
+      this.searchQuery = ''
+      this.searchResults.set([])
+    }
+  }
+
+  public onSearchInput() {
+    if (this.searchTimer) clearTimeout(this.searchTimer)
+    this.searchTimer = setTimeout(() => {
+      const q = this.searchQuery.trim()
+      if (!q) {
+        this.searchResults.set([])
+        this.searchLoading.set(false)
+        return
+      }
+      this.searchLoading.set(true)
+      this.apiService.search(q).subscribe({
+        next: (res) => {
+          this.searchResults.set(res)
+          this.searchLoading.set(false)
+        },
+        error: () => {
+          this.searchResults.set([])
+          this.searchLoading.set(false)
+        }
+      })
+    }, 300)
   }
 }

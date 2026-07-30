@@ -3,14 +3,16 @@ use std::{env, process::Command};
 use anyhow::Context;
 use axum::{
   Json, Router,
-  extract::State,
+  extract::{Query, State},
   routing::{get, put},
 };
 use fetcher::playlist::SongInfo;
 use roga::{l_error, l_info};
 use sea_orm::{
-  ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter,
+  ActiveValue, ColumnTrait, EntityTrait, FromQueryResult, IntoActiveModel, PaginatorTrait,
+  QueryFilter, QueryOrder, QuerySelect,
 };
+use serde::Deserialize;
 use sysinfo::System;
 use tokio::try_join;
 
@@ -21,8 +23,11 @@ use crate::{
     romi_seimgs, romi_settings, romi_users,
   },
   guards::admin::AdminUser,
-  models::info::{ResDashboardData, ResMusicData, ResProjectData, ResSettingsData},
+  models::info::{
+    ResDashboardData, ResMusicData, ResProjectData, ResSearchResultItem, ResSettingsData,
+  },
   service::music::{MusicCache, get_music_cache},
+  tools::markdown::summary_markdown,
   utils::{
     api::{ApiError, ApiResult, api_ok},
     cache::{get_projects_cache, get_settings_cache, update_settings_cache},
@@ -36,6 +41,7 @@ pub fn routes() -> Router<RomiState> {
     .route("/settings", put(update_settings))
     .route("/projects", get(fetch_projects))
     .route("/music", get(fetch_music))
+    .route("/search", get(search_posts))
 }
 
 async fn fetch_dashboard(
@@ -163,4 +169,74 @@ async fn fetch_music() -> ApiResult<Vec<ResMusicData>> {
         .collect()
     },
   )?)
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SearchQuery {
+  q: String,
+  #[serde(default = "default_page")]
+  page: u32,
+  #[serde(default = "default_per_page")]
+  per_page: u32,
+}
+
+fn default_page() -> u32 {
+  1
+}
+fn default_per_page() -> u32 {
+  20
+}
+
+#[derive(Debug, FromQueryResult)]
+struct TempSearchResult {
+  pub pid: u32,
+  pub str_id: Option<String>,
+  pub title: String,
+  pub text: String,
+  pub modified: u32,
+}
+
+async fn search_posts(
+  State(RomiState { ref conn, .. }): State<RomiState>,
+  Query(params): Query<SearchQuery>,
+) -> ApiResult<Vec<ResSearchResultItem>> {
+  let q = params.q.trim();
+  if q.is_empty() {
+    return api_ok(vec![]);
+  }
+
+  let page = params.page.max(1);
+  let per_page = params.per_page.min(50).max(1);
+  let offset = (page - 1) * per_page;
+  let query = romi_posts::Entity::find()
+    .filter(romi_posts::Column::Hide.ne("1"))
+    .filter(
+      romi_posts::Column::Title
+        .like(format!("%{}%", q))
+        .or(romi_posts::Column::Text.like(format!("%{}%", q))),
+    )
+    .select_only()
+    .column(romi_posts::Column::Pid)
+    .column(romi_posts::Column::StrId)
+    .column(romi_posts::Column::Title)
+    .column(romi_posts::Column::Text)
+    .column(romi_posts::Column::Modified)
+    .order_by(romi_posts::Column::Modified, sea_orm::Order::Desc)
+    .limit(per_page as u64)
+    .offset(offset as u64);
+  let temp_items: Vec<TempSearchResult> =
+    query.into_model::<TempSearchResult>().all(conn).await.context("Failed to search posts")?;
+
+  let items = temp_items
+    .into_iter()
+    .map(|item| ResSearchResultItem {
+      pid: item.pid,
+      str_id: item.str_id,
+      title: item.title,
+      modified: item.modified,
+      summary: summary_markdown(&item.text, 200),
+    })
+    .collect();
+
+  api_ok(items)
 }

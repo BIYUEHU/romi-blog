@@ -28,6 +28,7 @@ import type {
   ResPostData,
   ResPostSingleData,
   ResProjectData,
+  ResSearchResultItem,
   ResSettingsData,
   ResUserData,
   UserAuthData,
@@ -364,5 +365,11 @@ export class ApiService {
       RTime.Hour(12),
       RTime.Hour(1)
     )
+  }
+
+  public search(query: string, page = 1, perPage = 20) {
+    return this.http.get<ResSearchResultItem[]>(`${environment.api_base_url}/info/search`, {
+      params: { q: query, page, per_page: perPage }
+    })
   }
 }
