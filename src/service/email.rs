@@ -16,7 +16,7 @@ pub async fn send_email(
   let settings: ResSmtpSettings =
     get_smtp_settings_cache(conn).await.context("Failed to fetch smtp settings")?;
 
-  let from = settings.admin_email.parse::<Mailbox>()?;
+  let from = settings.smtp_email.parse::<Mailbox>()?;
   let to = to.parse::<Mailbox>()?;
 
   let email = Message::builder().from(from).to(to).subject(subject).body(body.to_string())?;

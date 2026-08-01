@@ -111,7 +111,7 @@ pub async fn get_smtp_settings_cache(
     smtp_port: settings.smtp_port,
     smtp_username: settings.smtp_username,
     smtp_password: settings.smtp_password,
-    admin_email: settings.admin_email,
+    smtp_email: settings.smtp_email,
   })
 }
 

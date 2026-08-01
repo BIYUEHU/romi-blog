@@ -33,5 +33,7 @@
 - [x] More strict checking and linting in cicd, use lefthook when pre-commit
 - [ ] 前端白名单化普通user可访问页面
 - [ ] 注册，密码复杂度检测
+- [ ] 音乐获取改掉
+- [ ] Post meta
 
 ## Details

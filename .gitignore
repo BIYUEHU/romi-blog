@@ -53,7 +53,7 @@ build-meta.ts
 static
 /cache
 /logs
-#/data
+/data/music_cache.json
 .venv
 .vscode
 proxy.conf.json

@@ -71,8 +71,8 @@ pub struct ResSmtpSettings {
   pub smtp_username: String,
   #[serde(rename = "smtpPassword")]
   pub smtp_password: String,
-  #[serde(rename = "adminEmail")]
-  pub admin_email: String, // TODO
+  #[serde(rename = "smtpEmail")]
+  pub smtp_email: String,
 }
 
 #[derive(Serialize, TS)]

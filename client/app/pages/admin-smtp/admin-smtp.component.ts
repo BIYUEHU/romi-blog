@@ -20,7 +20,7 @@ export class AdminSmtpComponent implements OnInit {
     smtpPort: 587,
     smtpUsername: '',
     smtpPassword: '',
-    adminEmail: ''
+    smtpEmail: ''
   }
 
   constructor(

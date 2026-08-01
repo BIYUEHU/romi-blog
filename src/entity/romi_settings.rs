@@ -28,7 +28,7 @@ pub struct Model {
   pub smtp_port: u16,
   pub smtp_username: String,
   pub smtp_password: String,
-  pub admin_email: String,
+  pub smtp_email: String,
 }
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}

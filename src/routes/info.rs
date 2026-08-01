@@ -6,7 +6,6 @@ use axum::{
   extract::{Query, State},
   routing::{get, post, put},
 };
-use fetcher::playlist::SongInfo;
 use roga::{l_error, l_info};
 use sea_orm::{
   ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter, QueryOrder,
@@ -165,18 +164,17 @@ async fn fetch_music() -> ApiResult<Vec<ResMusicData>> {
     |MusicCache { data, .. }| {
       data
         .into_iter()
-        .map(|SongInfo { name, artist, url, cover, lrc }| ResMusicData {
-          name,
-          artist,
-          url,
-          cover,
-          lrc,
+        .map(|song| ResMusicData {
+          name: song.name,
+          artist: song.artist,
+          url: song.url,
+          cover: song.cover,
+          lrc: song.lrc,
         })
         .collect()
     },
   )?)
 }
-
 async fn search_posts(
   State(RomiState { ref conn, .. }): State<RomiState>,
   Query(params): Query<ReqSearchQuery>,
@@ -254,7 +252,7 @@ async fn update_smtp_settings(
     active_model.smtp_port = ActiveValue::Set(settings.smtp_port);
     active_model.smtp_username = ActiveValue::Set(settings.smtp_username);
     active_model.smtp_password = ActiveValue::Set(settings.smtp_password);
-    active_model.admin_email = ActiveValue::Set(settings.admin_email);
+    active_model.smtp_email = ActiveValue::Set(settings.smtp_email);
 
     romi_settings::Entity::update(active_model)
       .exec(conn)
