@@ -11,6 +11,13 @@ pub struct ReqUserData {
   pub status: u8,
 }
 
+#[derive(Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqRegisterData {
+  pub username: String,
+  pub email: String,
+  pub url: Option<String>,
+}
 #[derive(Serialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResUserData {
@@ -42,6 +49,7 @@ pub struct ResLoginData {
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqProfileData {
   pub username: Option<String>,
+  pub url: Option<String>,
   #[serde(rename = "oldPassword")]
   pub old_password: String,
   #[serde(rename = "newPassword")]

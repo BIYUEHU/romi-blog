@@ -2,8 +2,7 @@ import { AuthUser } from '../../output'
 
 export * from '../../output'
 
-export type UserAuthData = AuthUser & { token: string }
-
+export type UserAuthData = AuthUser & { token: string; email: string }
 export interface BangumiData {
   data: {
     subject_id: number

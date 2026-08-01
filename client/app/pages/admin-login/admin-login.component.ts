@@ -1,6 +1,6 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import { Router } from '@angular/router'
+import { Router, RouterLink } from '@angular/router'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import { ApiService } from '../../services/api.service'
@@ -12,7 +12,7 @@ import { showErr } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-login',
-  imports: [FormsModule, WebComponentInputAccessorDirective, WebComponentCheckboxAccessorDirective],
+  imports: [FormsModule, WebComponentInputAccessorDirective, WebComponentCheckboxAccessorDirective, RouterLink],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-login.component.html'
 })

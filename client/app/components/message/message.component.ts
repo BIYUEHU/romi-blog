@@ -5,7 +5,6 @@ import { isoMessageBoxSecond, MessageBoxType } from '../../shared/types'
 
 @Component({
   selector: 'app-message',
-  standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './message.component.html',
   animations: [

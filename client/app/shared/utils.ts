@@ -1,3 +1,4 @@
+import { passcore } from 'passcorelib'
 import { ResCharacterData } from '../models/api.model'
 
 export function sortByCreatedTime<T extends { created: number }[]>(list: T, reverse = true): T {
@@ -23,4 +24,8 @@ export function randomSelect<T>(arr: T[]) {
 
 export function showErr(e: unknown) {
   return e instanceof Error ? e.message : String(e)
+}
+
+export function isPasswordStrong(password: string): boolean {
+  return password.length >= 6 && passcore(password).score >= 2
 }

@@ -17,7 +17,10 @@ use sea_orm::{
 use crate::{
   app::RomiState,
   entity::{romi_comments, romi_posts, romi_users},
-  guards::{admin::AdminUser, auth::AuthUser},
+  guards::{
+    admin::AdminUser,
+    auth::{Access, AuthUser},
+  },
   models::comment::{ReqCommentData, ResCommentData},
   utils::{
     api::{ApiError, ApiResult, api_ok},
@@ -76,6 +79,7 @@ async fn fetch_all(
 async fn fetch_by_post(
   Path(pid): Path<u32>,
   State(RomiState { ref conn, .. }): State<RomiState>,
+  access: Access,
 ) -> ApiResult<Vec<ResCommentData>> {
   let comments = romi_comments::Entity::find()
     .filter(romi_comments::Column::Pid.eq(pid))
@@ -94,12 +98,15 @@ async fn fetch_by_post(
     .await
     .context("Failed to fetch users")?;
   let user_map: HashMap<u32, &romi_users::Model> = users.iter().map(|u| (u.uid, u)).collect();
+  let current_uid = access.user.map(|user| user.id);
 
   api_ok(
     comments
       .iter()
       .filter_map(|comment| {
-        if comment.status == 0 {
+        if comment.status == 0
+          || (comment.status == 1 && current_uid.map(|uid| uid == comment.uid).unwrap_or(false))
+        {
           user_map.get(&comment.uid).map(|user| ResCommentData {
             cid: comment.cid,
             pid: comment.pid,
@@ -137,12 +144,11 @@ async fn create(
     ip: ActiveValue::set(addr.ip().to_string()),
     ua: ActiveValue::set(get_req_user_agent(&headers).unwrap_or_default().to_string()),
     text: ActiveValue::set(comment.text.clone()),
-    status: ActiveValue::set(1),
+    status: ActiveValue::set(if auth_user.is_admin { 0 } else { 1 }),
   }
-  .update(&txn)
+  .insert(&txn)
   .await
   .context("Failed to create comment")?;
-
   romi_posts::Entity::update_many()
     .col_expr(romi_posts::Column::Comments, Expr::col(romi_posts::Column::Comments).add(1))
     .filter(romi_posts::Column::Pid.eq(comment.pid))
@@ -167,8 +173,7 @@ async fn create(
 
 async fn remark(
   AdminUser(admin_user): AdminUser,
-  Path(id): Path<u32>,
-  Path(status): Path<u8>,
+  Path((id, status)): Path<(u32, u8)>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
   let txn = conn.begin().await.context("Failed to start transaction")?;
@@ -178,7 +183,6 @@ async fn remark(
     2 => 2,
     _ => return Err(ApiError::bad_request("Invalid status".to_string())),
   };
-
   romi_comments::Entity::update_many()
     .col_expr(romi_comments::Column::Status, Expr::value(status))
     .filter(romi_comments::Column::Cid.eq(id))

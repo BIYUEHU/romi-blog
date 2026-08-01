@@ -1,0 +1,80 @@
+<div
+  class="select-none min-h-screen w-full bg-gradient-to-br from-[var(--brand-50)] via-brand to-[var(--brand-200)] flex items-center justify-center p-4 relative overflow-hidden">
+
+  <div class="fixed inset-0 -z-10">
+    <div
+      class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] bg-[size:4rem_4rem]">
+    </div>
+    <div class="absolute top-20 left-10 w-72 h-72 bg-[var(--brand-200)]/20 rounded-full blur-3xl animate-float"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float-delayed"></div>
+    <div
+      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-brand/20 to-transparent">
+    </div>
+  </div>
+
+  <div class="w-full max-w-md relative">
+    <div class="text-center mb-8 space-y-2">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent mb-4 shadow-lg">
+        <span class="text-3xl">🌸</span>
+      </div>
+      <h1 class="text-4xl font-bold bg-gradient-to-r from-brand to-accent bg-clip-text text-transparent">
+        注册账号
+      </h1>
+      <p class="text-text-300/80">加入我们，开始你的旅程</p>
+    </div>
+
+    <div class="relative">
+      <div class="absolute -inset-1 bg-gradient-to-r from-brand to-accent rounded-2xl blur opacity-20"></div>
+      <div class="relative bg-bg-surface backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-border-base">
+        <div class="space-y-5">
+          <div class="group">
+          <div class="space-y-5">
+            <r-input label="用户名" [(ngModel)]="username" id="username" required placeholder="请输入用户名" class="w-full" />
+            <r-input label="邮箱" [(ngModel)]="email" id="email" required placeholder="请输入邮箱" class="w-full" />
+            <r-input label="个人网站 (可选)" [(ngModel)]="url" id="url" placeholder="https://example.com" class="w-full" />
+            <div class="pt-2">
+              <r-button (click)="register()" type="primary" size="lg" class="w-full" [disabled]="isLoading">
+                {{ isLoading ? '注册中...' : '注册' }}
+              </r-button>
+            </div>
+            <div class="text-center text-sm text-text-muted">
+              已有账号？
+              <a routerLink="/admin/login" class="text-brand hover:text-accent transition-colors">去登录</a>
+            </div>
+          </div>          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px) scale(1);
+    }
+    50% {
+      transform: translateY(-20px) scale(1.05);
+    }
+  }
+  @keyframes float-delayed {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) scale(1);
+    }
+    50% {
+      transform: translateY(20px) translateX(-10px) scale(1.1);
+    }
+  }
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+  .animate-float-delayed {
+    animation: float-delayed 10s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+  .bg-gradient-radial {
+    background: radial-gradient(circle, #fff 0%, #fafafa 100%);
+  }
+</style>

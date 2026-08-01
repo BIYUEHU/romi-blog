@@ -17,12 +17,15 @@ use crate::{
   app::RomiState,
   entity::romi_users,
   guards::{admin::AdminUser, auth::AuthUser},
-  models::user::{ReqLoginData, ReqProfileData, ReqUserData, ResLoginData, ResUserData},
+  models::user::{
+    ReqLoginData, ReqProfileData, ReqRegisterData, ReqUserData, ResLoginData, ResUserData,
+  },
   utils::api::{ApiError, ApiResult, api_ok},
 };
 pub fn routes() -> Router<RomiState> {
   Router::new()
     .route("/login", post(login))
+    .route("/register", post(register))
     .route("/", get(fetch_all))
     .route("/", post(create))
     .route("/{id}", get(fetch))
@@ -51,8 +54,8 @@ async fn login(
   let claims = AuthUser {
     id: user.uid,
     username: user.username.clone(),
-    created: user.created,
     url: user.url.clone(),
+    created: user.created,
     exp: (SystemTime::now() + Duration::from_secs(60 * 60 * 24 * 12))
       .duration_since(SystemTime::UNIX_EPOCH)
       .unwrap()
@@ -60,7 +63,6 @@ async fn login(
     is_admin: user.is_admin.eq(&"1".to_string()),
     status: user.is_deleted.parse().unwrap_or(1),
   };
-
   let conn_clone = conn.clone();
   let user_id_clone = user.uid;
   spawn(async move {
@@ -185,7 +187,81 @@ async fn create(
 
   api_ok(())
 }
+async fn register(
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(payload): Json<ReqRegisterData>,
+) -> ApiResult {
+  if payload.username.is_empty() || payload.email.is_empty() {
+    l_warn!(logger, "Registration failed: missing username or email");
+    return Err(ApiError::bad_request("Username and email are required"));
+  }
 
+  let username_exists = romi_users::Entity::find()
+    .filter(romi_users::Column::Username.eq(&payload.username))
+    .one(conn)
+    .await
+    .context("Failed to check username")?
+    .is_some();
+
+  if username_exists {
+    l_warn!(logger, "Registration failed: username {} already taken", payload.username);
+    return Err(ApiError::bad_request("Username already taken"));
+  }
+
+  let email_exists = romi_users::Entity::find()
+    .filter(romi_users::Column::Email.eq(&payload.email))
+    .one(conn)
+    .await
+    .context("Failed to check email")?
+    .is_some();
+
+  if email_exists {
+    l_warn!(logger, "Registration failed: email {} already registered", payload.email);
+    return Err(ApiError::bad_request("Email already registered"));
+  }
+
+  let password = crate::tools::random::generate_random_password(12);
+  let salt = "random_salt";
+  let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs() as u32;
+
+  let result = romi_users::ActiveModel {
+    uid: ActiveValue::not_set(),
+    username: ActiveValue::set(payload.username.clone()),
+    password: ActiveValue::set(password.clone()),
+    salt: ActiveValue::set(salt.to_string()),
+    email: ActiveValue::set(payload.email.clone()),
+    created: ActiveValue::set(now),
+    last_login: ActiveValue::set(0),
+    is_admin: ActiveValue::set("0".to_string()),
+    is_deleted: ActiveValue::set("0".to_string()),
+    url: ActiveValue::set(payload.url.clone()),
+  }
+  .insert(conn)
+  .await
+  .map_err(|e| {
+    l_error!(logger, "Failed to create user: {}", e);
+    ApiError::internal(e.to_string())
+  })?;
+
+  let subject = "欢迎注册 Romi 账号";
+  let body = format!(
+    r#"<h2>您好，{}！</h2>
+<p>您的账号已注册成功。</p>
+<p><strong>登录邮箱：</strong>{}</p>
+<p><strong>临时密码：</strong><code>{}</code></p>
+<p>请登录后及时修改密码。</p>
+<br>
+<p>Romi 团队</p>"#,
+    payload.username, payload.email, password
+  );
+
+  if let Err(e) = crate::service::email::send_email(conn, &payload.email, subject, &body).await {
+    l_error!(logger, "Failed to send registration email: {}", e);
+  }
+
+  l_info!(logger, "User registered: {} ({})", result.uid, payload.username);
+  api_ok(())
+}
 async fn update_profile(
   user: AuthUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
@@ -202,9 +278,9 @@ async fn update_profile(
   }
 
   if payload.old_password != model.password {
+    l_error!(logger, "Profile update failed: invalid old password for user {}", user.id);
     return Err(ApiError::bad_request("Invalid old password"));
   }
-
   let uid = model.uid;
   let mut active_model = model.into_active_model();
 
@@ -212,7 +288,6 @@ async fn update_profile(
     if username.is_empty() {
       return Err(ApiError::bad_request("Username cannot be empty"));
     }
-    // 检查是否已被占用（排除自己）
     let exists = romi_users::Entity::find()
       .filter(romi_users::Column::Username.eq(username))
       .filter(romi_users::Column::Uid.ne(uid))
@@ -221,9 +296,14 @@ async fn update_profile(
       .context("Failed to check username")?
       .is_some();
     if exists {
+      l_warn!(logger, "Profile update failed: username {} already taken", username);
       return Err(ApiError::bad_request("Username already taken"));
     }
     active_model.username = ActiveValue::Set(username.clone());
+  }
+
+  if let Some(url) = &payload.url {
+    active_model.url = ActiveValue::Set(Some(url.clone()));
   }
 
   if let Some(new_password) = payload.new_password {

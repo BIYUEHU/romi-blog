@@ -188,6 +188,12 @@ pub struct ResSearchResultItem {
   pub summary: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ReqTestMail {
+  pub to: String,
+  pub subject: String,
+  pub content: String,
+}
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqSearchQuery {

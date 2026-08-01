@@ -59,13 +59,6 @@ export const errorInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, n
 
       layout.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, MessageBoxType.Error)
       return EMPTY
-
-      // if (r.method.toUpperCase() === 'GET') {
-      //     match(err.status)
-      //         .with(404, () => router.navigate(['/404']))
-      //         .otherwise(() => notify.showMessage(`未知错误，请联系管理员 状态码：${err.status}`, MessageBoxType.Error))
-      //     return EMPTY
-      // }
     })
   )
 }

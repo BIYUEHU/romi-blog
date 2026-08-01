@@ -94,7 +94,7 @@
         <div class="text-center text-brand/60 py-8">搜索中...</div>
         } @else {
         @for (item of searchResults(); track item.pid) {
-        <a [routerLink]="['/post', item.str_id || item.pid]"
+        <a [routerLink]="['/post', item.str_id ?? item.pid]"
           class="block p-4 rounded-xl transition-colors border border-white/5 hover:border-white/20"
           (click)="toggleSearch()">
           <h4 class="text-brand hover:text-accent text-lg font-medium">{{ item.title }}</h4>

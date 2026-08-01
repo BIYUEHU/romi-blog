@@ -1,8 +1,5 @@
 use anyhow::Context;
-use lettre::{
-  AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor, message::Mailbox,
-  transport::smtp::authentication::Credentials,
-};
+use lettre::{AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor, message::Mailbox};
 use sea_orm::DatabaseConnection;
 
 use crate::{models::info::ResSmtpSettings, utils::cache::get_smtp_settings_cache};
@@ -19,13 +16,15 @@ pub async fn send_email(
   let from = settings.smtp_email.parse::<Mailbox>()?;
   let to = to.parse::<Mailbox>()?;
 
-  let email = Message::builder().from(from).to(to).subject(subject).body(body.to_string())?;
+  let email = Message::builder()
+    .from(from)
+    .to(to)
+    .subject(subject)
+    .header(lettre::message::header::ContentType::TEXT_HTML)
+    .body(body.to_string())?;
 
-  let creds = Credentials::new(settings.smtp_username, settings.smtp_password);
-
-  let mailer = AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&settings.smtp_host)?
+  let mailer = AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(&settings.smtp_host)
     .port(settings.smtp_port)
-    .credentials(creds)
     .build();
 
   mailer.send(email).await?;

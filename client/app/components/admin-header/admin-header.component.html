@@ -20,7 +20,7 @@
     <div class="relative group">
       <button
         class="hover:cursor-pointer border-0 flex items-center gap-2 px-1.5 py-1 text-sm text-text-base hover:bg-brand rounded border border-border-base">
-        <img alt="avatar" [ngSrc]="apiService.settings().homeAvatar" width="24" height="24" class="rounded-full" />
+        <img alt="avatar" [src]="avatarUrl" width="24" height="24" class="rounded-full" />
         <span>{{ authService.user$()?.username }}</span>
         <i class="i-mdi:chevron-down text-text-muted"></i>
       </button>

@@ -6,7 +6,7 @@ use axum::{
   extract::{Query, State},
   routing::{get, post, put},
 };
-use roga::{l_error, l_info};
+use roga::{l_error, l_info, l_warn};
 use sea_orm::{
   ActiveValue, ColumnTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter, QueryOrder,
   QuerySelect,
@@ -22,10 +22,10 @@ use crate::{
   },
   guards::admin::AdminUser,
   models::info::{
-    ReqContactForm, ReqSearchQuery, ResDashboardData, ResMusicData, ResProjectData,
+    ReqContactForm, ReqSearchQuery, ReqTestMail, ResDashboardData, ResMusicData, ResProjectData,
     ResSearchResultItem, ResSettingsData, ResSmtpSettings,
   },
-  service::music::{MusicCache, get_music_cache},
+  service::music::get_music_cache,
   tools::markdown::summary_markdown,
   utils::{
     api::{ApiError, ApiResult, api_ok},
@@ -42,6 +42,7 @@ pub fn routes() -> Router<RomiState> {
     .route("/settings", put(update_settings))
     .route("/smtp", get(fetch_smtp_settings))
     .route("/smtp", put(update_smtp_settings))
+    .route("/smtp/test", post(test_smtp))
     .route("/projects", get(fetch_projects))
     .route("/music", get(fetch_music))
     .route("/search", get(search_posts))
@@ -50,7 +51,7 @@ pub fn routes() -> Router<RomiState> {
 
 async fn fetch_dashboard(
   _admin_user: AdminUser,
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResDashboardData> {
   let (
     posts_count,
@@ -73,8 +74,11 @@ async fn fetch_dashboard(
     romi_seimgs::Entity::find().count(conn),
     romi_news::Entity::find().count(conn),
   )
+  .map_err(|e| {
+    l_error!(logger, "Failed to fetch dashboard counts: {}", e);
+    e
+  })
   .context("Failed to fetch dashboard counts")?;
-
   api_ok(ResDashboardData {
     posts_count,
     categories_count,
@@ -98,13 +102,17 @@ async fn fetch_dashboard(
       .unwrap_or("".into()),
   })
 }
-
 async fn fetch_settings(
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResSettingsData> {
-  api_ok(get_settings_cache(conn).await.context("Failed to fetch site settings")?)
+  get_settings_cache(conn)
+    .await
+    .map_err(|e| {
+      l_error!(logger, "Failed to fetch settings: {}", e);
+      ApiError::internal(e.to_string())
+    })
+    .and_then(api_ok)
 }
-
 async fn update_settings(
   AdminUser(admin_user): AdminUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
@@ -155,28 +163,44 @@ async fn update_settings(
   }
 }
 
-async fn fetch_projects() -> ApiResult<Vec<ResProjectData>> {
-  api_ok(get_projects_cache().await.context("Failed to fetch projects data")?)
+async fn fetch_projects(
+  State(RomiState { ref logger, .. }): State<RomiState>,
+) -> ApiResult<Vec<ResProjectData>> {
+  get_projects_cache()
+    .await
+    .map_err(|e| {
+      l_error!(logger, "Failed to fetch projects: {}", e);
+      ApiError::internal(e.to_string())
+    })
+    .and_then(api_ok)
 }
-
-async fn fetch_music() -> ApiResult<Vec<ResMusicData>> {
-  api_ok(get_music_cache().await.context("Failed to fetch music data").map(
-    |MusicCache { data, .. }| {
-      data
-        .into_iter()
-        .map(|song| ResMusicData {
-          name: song.name,
-          artist: song.artist,
-          url: song.url,
-          cover: song.cover,
-          lrc: song.lrc,
-        })
-        .collect()
-    },
-  )?)
+async fn fetch_music(
+  State(RomiState { ref logger, .. }): State<RomiState>,
+) -> ApiResult<Vec<ResMusicData>> {
+  get_music_cache()
+    .await
+    .map_err(|e| {
+      l_error!(logger, "Failed to fetch music: {}", e);
+      ApiError::internal(e.to_string())
+    })
+    .and_then(|cache| {
+      api_ok(
+        cache
+          .data
+          .into_iter()
+          .map(|song| ResMusicData {
+            name: song.name,
+            artist: song.artist,
+            url: song.url,
+            cover: song.cover,
+            lrc: song.lrc,
+          })
+          .collect(),
+      )
+    })
 }
 async fn search_posts(
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Query(params): Query<ReqSearchQuery>,
 ) -> ApiResult<Vec<ResSearchResultItem>> {
   let q = params.q.trim();
@@ -199,8 +223,10 @@ async fn search_posts(
     .offset(offset as u64)
     .all(conn)
     .await
-    .context("Failed to search posts")?;
-
+    .map_err(|e| {
+      l_error!(logger, "Failed to search posts: {}", e);
+      ApiError::internal(e.to_string())
+    })?;
   let items = posts
     .into_iter()
     .map(|post| ResSearchResultItem {
@@ -216,57 +242,84 @@ async fn search_posts(
 }
 
 async fn send_contact_email(
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Json(form): Json<ReqContactForm>,
 ) -> ApiResult {
   if form.name.is_empty() || form.email.is_empty() || form.message.is_empty() {
+    l_warn!(logger, "Contact email failed: missing fields");
     return Err(ApiError::bad_request("All fields are required"));
   }
-
   let subject = format!("[Contact] {} <{}>", form.name, form.email);
   let body = format!("Name: {}\nEmail: {}\nMessage:\n{}", form.name, form.email, form.message);
 
-  crate::service::email::send_email(conn, &form.email, &subject, &body)
-    .await
-    .map_err(|e| ApiError::internal(e.to_string()))?;
-
+  crate::service::email::send_email(conn, &form.email, &subject, &body).await.map_err(|e| {
+    l_error!(logger, "Contact email failed: {}", e);
+    ApiError::internal(e.to_string())
+  })?;
   api_ok(())
 }
 
+async fn test_smtp(
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(payload): Json<ReqTestMail>,
+) -> ApiResult {
+  if payload.to.is_empty() || payload.content.is_empty() {
+    l_warn!(logger, "Test SMTP failed: missing to or content");
+    return Err(ApiError::bad_request("To and content are required"));
+  }
+
+  let subject = if payload.subject.is_empty() { "SMTP Test" } else { &payload.subject };
+
+  crate::service::email::send_email(conn, &payload.to, subject, &payload.content).await.map_err(
+    |e| {
+      l_error!(logger, "Test SMTP failed: {}", e);
+      ApiError::internal(e.to_string())
+    },
+  )?;
+
+  api_ok(())
+}
 async fn fetch_smtp_settings(
   AdminUser(_): AdminUser,
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResSmtpSettings> {
-  api_ok(get_smtp_settings_cache(conn).await.context("Failed to fetch smtp settings")?)
+  get_smtp_settings_cache(conn)
+    .await
+    .map_err(|e| {
+      l_error!(logger, "Failed to fetch smtp settings: {}", e);
+      ApiError::internal(e.to_string())
+    })
+    .and_then(api_ok)
 }
-
 async fn update_smtp_settings(
   AdminUser(admin_user): AdminUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
   Json(settings): Json<ResSmtpSettings>,
 ) -> ApiResult {
-  let model = romi_settings::Entity::find().one(conn).await.context("Failed to fetch settings")?;
-  if let Some(model) = model {
-    let mut active_model = model.into_active_model();
-    active_model.smtp_host = ActiveValue::Set(settings.smtp_host);
-    active_model.smtp_port = ActiveValue::Set(settings.smtp_port);
-    active_model.smtp_username = ActiveValue::Set(settings.smtp_username);
-    active_model.smtp_password = ActiveValue::Set(settings.smtp_password);
-    active_model.smtp_email = ActiveValue::Set(settings.smtp_email);
+  let model = romi_settings::Entity::find()
+    .one(conn)
+    .await
+    .map_err(|e| {
+      l_error!(logger, "Failed to fetch settings: {}", e);
+      ApiError::internal(e.to_string())
+    })?
+    .ok_or_else(|| {
+      l_error!(logger, "Settings table has no settings data");
+      ApiError::internal("Settings table has no settings data")
+    })?;
 
-    romi_settings::Entity::update(active_model)
-      .exec(conn)
-      .await
-      .context("Failed to update smtp settings")?;
-    l_info!(logger, "Updated smtp settings by admin {} ({})", admin_user.id, admin_user.username);
-    api_ok(())
-  } else {
-    l_error!(
-      logger,
-      "A error when updating smtp settings by admin {} ({})",
-      admin_user.id,
-      admin_user.username
-    );
-    Err(ApiError::internal("Settings table has no settings data"))
-  }
+  let mut active_model = model.into_active_model();
+  active_model.smtp_host = ActiveValue::Set(settings.smtp_host);
+  active_model.smtp_port = ActiveValue::Set(settings.smtp_port);
+  active_model.smtp_username = ActiveValue::Set(settings.smtp_username);
+  active_model.smtp_password = ActiveValue::Set(settings.smtp_password);
+  active_model.smtp_email = ActiveValue::Set(settings.smtp_email);
+
+  romi_settings::Entity::update(active_model).exec(conn).await.map_err(|e| {
+    l_error!(logger, "Failed to update smtp settings: {}", e);
+    ApiError::internal(e.to_string())
+  })?;
+
+  l_info!(logger, "Updated smtp settings by admin {} ({})", admin_user.id, admin_user.username);
+  api_ok(())
 }

@@ -4,6 +4,7 @@ import { ResPostSingleData } from '../../../output'
 import PostContentComponent from '../../components/post-content/post-content.component'
 import { SkeletonLoaderComponent } from '../../components/skeleton-loader/skeleton-loader.component'
 import { ApiService } from '../../services/api.service'
+import { BrowserService } from '../../services/browser.service'
 import { AppTitleStrategy } from '../../shared/title-strategy'
 import { formatDate } from '../../shared/utils'
 
@@ -19,10 +20,12 @@ export class PostComponent implements OnInit {
 
   public constructor(
     private readonly apiService: ApiService,
-    private readonly appTitleStrategy: AppTitleStrategy
+    private readonly appTitleStrategy: AppTitleStrategy,
+    private readonly browserService: BrowserService
   ) {}
 
   public ngOnInit() {
+    if (!this.browserService.is) return
     pipe(+this.id, (id) =>
       Number.isNaN(id) ? this.apiService.getPostByStrId(this.id) : this.apiService.getPost(id)
     ).subscribe((post) => {

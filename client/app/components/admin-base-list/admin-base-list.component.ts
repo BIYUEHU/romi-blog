@@ -3,7 +3,6 @@ import { NotifyService } from '../../services/notify.service'
 
 @Component({
   selector: 'app-admin-base-list',
-  standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-base-list.component.html'
 })

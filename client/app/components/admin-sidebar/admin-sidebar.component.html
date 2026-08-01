@@ -4,13 +4,11 @@
 
 <aside
   class="fixed inset-y-0 left-0 z-50 w-57 h-full bg-brand text-text-on-brand border-r border-border-strong transition-transform lg:static lg:translate-x-0"
-  [class.-translate-x-full]="!isSidebarOpen()"
->
+  [class.-translate-x-full]="!isSidebarOpen()">
   <div class="h-14 flex items-center px-6 border-b border-border-strong">
-    <a [routerLink]="'/admin'"
-      class="text-xl font-bold text-text-on-brand hover:text-text-on-brand/80 transition-colors">
+    <span class="text-xl font-bold text-text-on-brand hover:text-text-on-brand/80 transition-colors">
       Romi Admin
-    </a>
+    </span>
   </div>
 
   <nav class="py-4 overflow-y-auto">
@@ -19,7 +17,7 @@
       @if (item.children) {
       <div class="px-4 py-2 text-sm text-text-on-brand/60">{{ item.text }}</div>
       <div class="space-y-1">
-        @for (child of item.children; track $index) {
+        @for (child of item.children; track child.text) {
         <a [routerLink]="child.link" routerLinkActive="bg-brand-hover/20" (click)="onMenuClick()"
           class="flex items-center gap-3 px-6 py-2 text-text-on-brand/90 hover:bg-brand-hover/10 transition-colors">
           <i [class]="[child.icon, 'text-xl']"></i>

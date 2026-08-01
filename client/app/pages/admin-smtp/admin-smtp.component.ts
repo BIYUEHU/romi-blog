@@ -23,6 +23,14 @@ export class AdminSmtpComponent implements OnInit {
     smtpEmail: ''
   }
 
+  public testMail = {
+    to: '',
+    subject: '',
+    content: ''
+  }
+
+  public showTestModal = false
+
   constructor(
     private readonly router: Router,
     private readonly apiService: ApiService,
@@ -54,6 +62,32 @@ export class AdminSmtpComponent implements OnInit {
       },
       error: () => {
         this.notifyService.showMessage('保存失败', MessageBoxType.Error)
+      }
+    })
+  }
+
+  public openTestModal(): void {
+    this.testMail = { to: '', subject: '', content: '' }
+    this.showTestModal = true
+  }
+
+  public sendTestMail(): void {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!this.testMail.to || !emailRegex.test(this.testMail.to)) {
+      this.notifyService.showMessage('请输入有效的邮箱地址', MessageBoxType.Warning)
+      return
+    }
+    if (!this.testMail.content) {
+      this.notifyService.showMessage('内容不能为空', MessageBoxType.Warning)
+      return
+    }
+    this.apiService.testSmtp(this.testMail.to, this.testMail.subject, this.testMail.content).subscribe({
+      next: () => {
+        this.notifyService.showMessage('测试邮件发送成功', MessageBoxType.Success)
+        this.showTestModal = false
+      },
+      error: () => {
+        this.notifyService.showMessage('测试邮件发送失败，请检查 SMTP 配置', MessageBoxType.Error)
       }
     })
   }

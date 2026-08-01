@@ -8,11 +8,10 @@ export const adminRoutes: Routes = [
       import('../components/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
     canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      },
+      // {
+      //   path: '',
+      //   pathMatch: 'full',
+      // },
       {
         path: 'dashboard',
         loadComponent: () =>
@@ -96,5 +95,11 @@ export const adminRoutes: Routes = [
     path: 'login',
     loadComponent: () => import('../pages/admin-login/admin-login.component').then((m) => m.AdminLoginComponent),
     title: '后台登录'
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('../pages/admin-register/admin-register.component').then((m) => m.AdminRegisterComponent),
+    title: '注册账号'
   }
 ]

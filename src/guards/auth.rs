@@ -21,13 +21,12 @@ pub enum AccessLevel {
 pub struct AuthUser {
   pub id: u32,
   pub username: String,
-  pub created: u32,
   pub url: Option<String>,
+  pub created: u32,
   pub is_admin: bool,
   pub exp: u64,
   pub status: u8,
 }
-
 #[derive(Debug, Clone)]
 pub struct Access {
   pub user: Option<AuthUser>,

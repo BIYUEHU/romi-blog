@@ -171,7 +171,6 @@ const basicSetup: Extension = [
 
 @Component({
   selector: 'app-markdown-editor',
-  standalone: true,
   templateUrl: './markdown-editor.component.html',
   providers: [
     {

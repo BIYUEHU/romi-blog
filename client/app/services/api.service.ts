@@ -139,7 +139,8 @@ export class ApiService {
           (res) =>
             ({
               ...jwtDecode<AuthUser>(res.token),
-              token: res.token
+              token: res.token,
+              email
             }) as UserAuthData
         ),
         catchError(() => of(null))
@@ -189,7 +190,10 @@ export class ApiService {
   }
 
   public remarkComment(id: number, status: CommentStatus) {
-    return this.http.post<void>(`${environment.api_base_url}/comment/${id}/${CommentStatus.toNumber(status)}`, null)
+    return this.http.post<void>(
+      `${environment.api_base_url}/comment/remark/${id}/${CommentStatus.toNumber(status)}`,
+      null
+    )
   }
 
   public deleteComment(id: number) {
@@ -382,7 +386,23 @@ export class ApiService {
     return this.http.put<ResSmtpSettings>(`${environment.api_base_url}/info/smtp`, settings)
   }
 
-  public updateProfile(username: string | null, oldPassword: string, newPassword: string | null) {
-    return this.http.put<void>(`${environment.api_base_url}/user/profile`, { username, oldPassword, newPassword })
+  public testSmtp(to: string, subject: string, content: string) {
+    return this.http.post<void>(`${environment.api_base_url}/info/smtp/test`, { to, subject, content })
+  }
+
+  public register(username: string, email: string, url: string | null) {
+    return this.http.post<void>(
+      `${environment.api_base_url}/user/register`,
+      { username, email, url },
+      { headers: this.genHeaders([HEADER_CONTEXT.SKIP_ERROR_HANDLING]) }
+    )
+  }
+
+  public updateProfile(username: string | null, url: string | null, oldPassword: string, newPassword: string | null) {
+    return this.http.put<void>(
+      `${environment.api_base_url}/user/profile`,
+      { username, url, oldPassword, newPassword },
+      { headers: this.genHeaders([HEADER_CONTEXT.SKIP_ERROR_HANDLING]) }
+    )
   }
 }

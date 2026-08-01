@@ -4,7 +4,6 @@ import { BrowserService } from '../../services/browser.service'
 
 @Component({
   selector: 'app-progress',
-  standalone: true,
   template: ''
 })
 export class ProgressComponent implements OnInit, AfterViewInit {

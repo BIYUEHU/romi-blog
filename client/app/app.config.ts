@@ -7,8 +7,8 @@ import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angula
 import { tap } from 'rxjs'
 import { routes } from './app.routes'
 import { authInterceptor } from './interceptors/auth.interceptor'
-import { errorInterceptor } from './interceptors/errorInterceptor'
-import { transferInterceptor } from './interceptors/transferInterceptor'
+import { errorInterceptor } from './interceptors/error.Interceptor'
+import { transferInterceptor } from './interceptors/trans.ferInterceptor'
 import { ApiService } from './services/api.service'
 import { AppTitleStrategy } from './shared/title-strategy'
 

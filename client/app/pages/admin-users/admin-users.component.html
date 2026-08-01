@@ -88,6 +88,11 @@
 
     <div class="space-y-4">
       <div>
+        <label class="block text-sm font-medium text-text-base mb-1">邮箱</label>
+        <r-input type="email" [(ngModel)]="editForm.email" class="w-full" />
+      </div>
+
+      <div>
         <label class="block text-sm font-medium text-text-base mb-1">用户名</label>
         <r-input type="text" [(ngModel)]="editForm.username" class="w-full" />
       </div>
@@ -95,15 +100,10 @@
       <div>
         <label class="block text-sm font-medium text-text-base mb-1">密码</label>
         @if (editingUser !== true) {
-        <r-input type="password" [(ngModel)]="editForm.password" placeholder="留空则不修改" class="w-full" />
+        <r-input type="" [(ngModel)]="editForm.password" placeholder="留空则不修改" class="w-full" />
         } @else {
-        <r-input type="password" [(ngModel)]="editForm.password" class="w-full" />
+        <r-input type="" [(ngModel)]="editForm.password" class="w-full" />
         }
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-text-base mb-1">邮箱</label>
-        <r-input type="email" [(ngModel)]="editForm.email" class="w-full" />
       </div>
 
       <div>

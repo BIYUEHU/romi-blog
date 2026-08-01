@@ -4,6 +4,7 @@
       <h2 class="text-xl text-text-base">邮箱设置</h2>
       <div class="flex gap-2">
         <r-button type="primary" (click)="saveSmtpSettings()">保存设置</r-button>
+        <r-button (click)="openTestModal()">测试邮件</r-button>
         <r-button (click)="goBack()">返回</r-button>
       </div>
     </div>
@@ -29,3 +30,29 @@
     }
   </div>
 </div>
+
+@if (showTestModal) {
+<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="showTestModal = false">
+  <div class="bg-bg-surface rounded-lg p-6 w-full max-w-lg border border-border-base" (click)="$event.stopPropagation()">
+    <h2 class="text-lg font-medium text-text-base mb-4">发送测试邮件</h2>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-text-base mb-1">收件人</label>
+        <r-input type="email" [(ngModel)]="testMail.to" class="w-full" placeholder="test@example.com" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-text-base mb-1">主题</label>
+        <r-input type="text" [(ngModel)]="testMail.subject" class="w-full" placeholder="测试邮件" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-text-base mb-1">内容 (支持 HTML)</label>
+        <r-input type="textarea" [(ngModel)]="testMail.content" class="w-full" rows="6" placeholder="请输入邮件内容..." />
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 mt-6">
+      <r-button (click)="showTestModal = false">取消</r-button>
+      <r-button type="primary" (click)="sendTestMail()">发送</r-button>
+    </div>
+  </div>
+</div>
+}

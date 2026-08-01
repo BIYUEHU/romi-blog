@@ -50,10 +50,17 @@
               class="transition-transform hover:scale-105">
               记住我
             </r-checkbox>
-            <span (click)="forgotPassword()"
-              class="text-sm text-brand hover:text-accent transition-all duration-300 hover:underline underline-offset-4">
-              忘记密码?
-            </span>
+            <div class="flex items-center gap-3">
+              <a [routerLink]="'/admin/register'"
+                class="text-sm text-brand hover:text-accent transition-all duration-300 hover:underline underline-offset-4">
+                注册账号
+              </a>
+              <span class="text-text-muted/30">|</span>
+              <span (click)="forgotPassword()"
+                class="text-sm text-brand hover:text-accent transition-all duration-300 hover:underline underline-offset-4">
+                忘记密码?
+              </span>
+            </div>
           </div>
 
           <div class="pt-2">
@@ -67,7 +74,7 @@
           </div>
         </div>
 
-        <div class="mt-6 pt-6 border-t border-border-base text-center">
+        <div class="mt-6 border-t border-border-base text-center">
           <p class="text-xs text-text-muted/60">
             登录即表示同意
             <a class="text-brand hover:text-accent transition-colors">服务条款</a>

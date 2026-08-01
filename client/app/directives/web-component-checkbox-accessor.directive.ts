@@ -4,7 +4,6 @@ import { WebComponentDirectiveFactory } from '../shared/web-component-directive-
 
 @Directive({
   selector: 'r-checkbox',
-  standalone: true,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
