@@ -5,10 +5,15 @@ import { NotifyService } from './notify.service'
 
 @Injectable({ providedIn: 'root' })
 export class HighlighterService {
-  private static readonly SUPPORTS_LANGUAGES = Object.entries(bundledLanguages).flatMap(([canonical, def]) => [
-    canonical,
-    ...('aliases' in def ? (Array.isArray(def.aliases) ? def.aliases : [def.aliases]) : [])
-  ])
+  private static readonly EXTENSION_LANGUAGES: string[] = ['idris', 'koka']
+
+  private static readonly SUPPORTS_LANGUAGES: string[] = Object.entries(bundledLanguages).flatMap(
+    ([canonical, def]) => [
+      canonical,
+      ...('aliases' in def ? (Array.isArray(def.aliases) ? def.aliases : [def.aliases]) : [])
+    ]
+  )
+
   private static readonly DEFAULT_LANGUAGES = [
     'javascript',
     'typescript',
@@ -47,11 +52,23 @@ export class HighlighterService {
     }
 
     if (missed.length > 0) {
-      const msg = missed.join(', ')
-      this.notifyService.showMessage(
-        `${msg.length > 25 ? `${msg.substring(0, 22)}...` : msg} 语言高亮不支持`,
-        MessageBoxType.Warning
+      const msg = (
+        await Promise.all(
+          missed.map((l) =>
+            HighlighterService.EXTENSION_LANGUAGES.includes(l)
+              ? highlighter.loadLanguage(fetch(`/assets/syntaxs/${l}.tmLanguage.json`).then((res) => res.json()))
+              : l
+          )
+        )
       )
+        .filter((l) => typeof l === 'string')
+        .join(', ')
+      if (msg) {
+        this.notifyService.showMessage(
+          `${msg.length > 25 ? `${msg.substring(0, 22)}...` : msg} 语言高亮不支持`,
+          MessageBoxType.Warning
+        )
+      }
     }
 
     return highlighter
