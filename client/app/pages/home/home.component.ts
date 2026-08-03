@@ -37,12 +37,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   public ngOnInit() {
     this.browserService.on(() =>
       this.apiService.getMusic().subscribe((data) => {
-        this.aplayer = new APlayer({
-          container: document.getElementById('recent-music'),
-          theme: 'var(--primary-100)',
-          listMaxHeight: '320px',
-          audio: data
-        })
+        setTimeout(() => {
+          this.aplayer = new APlayer({
+            container: document.getElementById('recent-music'),
+            theme: 'var(--primary-100)',
+            listMaxHeight: '320px',
+            lrcType: 1,
+
+            audio: data
+          })
+        }, 0)
       })
     )
   }
