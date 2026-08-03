@@ -1,5 +1,5 @@
-*/**/*.component.html            linguist-detectable=false
+**/*.component.html                         linguist-detectable=false
 ui/**/*.*                                     linguist-detectable=false
-client/app/models/api.model.ts                             linguist-language=rust
-# client/app/shared/*.ts                                  linguist-language=rust
-client/app/services/*.ts                                      linguist-language=rust
+client/app/models/api.model.ts                linguist-language=rust
+# client/app/shared/*.ts                      linguist-language=rust
+client/app/services/*.ts                      linguist-language=rust
