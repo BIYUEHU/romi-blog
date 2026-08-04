@@ -22,7 +22,7 @@
         </span>
         }
         @for (item of post.tags; track $index) {
-        <span class="text-brand text-4 cursor-pointer" [routerLink]="['/tag', item[0]]">
+        <span class="text-brand text-4 cursor-pointer" [routerLink]="['/tag', item]">
           #{{ item }}
         </span>
         }

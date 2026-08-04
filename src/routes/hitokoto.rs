@@ -1,310 +1,115 @@
-use anyhow::Context;
 use axum::{
   Json, Router,
   extract::{Path, Query, State},
   routing::{delete, get, post, put},
 };
 use roga::*;
-use sea_orm::{
-  ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend, EntityTrait,
-  IntoActiveModel, QueryFilter, Statement,
-};
-use uuid::Uuid;
+use std::collections::HashMap;
 
 use crate::{
   app::RomiState,
-  entity::{romi_hitokotos, romi_hitokotos2},
   guards::admin::AdminUser,
   models::hitokoto::{ReqHitokoto2Data, ReqHitokotoData, ResHitokoto2Data, ResHitokotoData},
+  service::hitokoto,
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
 pub fn routes() -> Router<RomiState> {
   Router::new()
-    .route("/", get(fetch))
+    .route("/", get(get_random))
     .route("/", post(create))
-    .route("/{id}", get(fetch_by_id))
+    .route("/{id}", get(get_by_id))
     .route("/{id}", put(update))
     .route("/{id}", delete(remove))
     .route("/like/{id}", put(like))
-    .route("/public", get(fetch_public))
-    .route("/all", get(fetch_all))
-    .route("/new", get(fetch2))
-    .route("/new/all", get(fetch_all2))
+    .route("/public", get(list_public))
+    .route("/all", get(list_all))
+    .route("/new", get(get_random2))
+    .route("/new/all", get(list_all2))
     .route("/new", post(create2))
     .route("/new/{uuid}", put(update2))
     .route("/new/{uuid}", delete(remove2))
 }
 
-async fn get_hitokoto(
-  length: Option<u32>,
-  conn: &DatabaseConnection,
-  is_first: bool,
+async fn get_random(
+  Query(params): Query<HashMap<String, String>>,
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<ResHitokotoData> {
-  match if length.is_some() {
-    romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
-      DbBackend::MySql,
-      format!(
-        "SELECT * FROM romi_hitokotos WHERE char_length(msg) <= {} ORDER BY RAND() limit 1",
-        length.unwrap_or(2333)
-      ),
-      [],
-    ))
-  } else {
-    romi_hitokotos::Entity::find().from_raw_sql(Statement::from_sql_and_values(
-      DbBackend::MySql,
-      r#"SELECT * FROM romi_hitokotos ORDER BY RAND() limit 1"#,
-      [],
-    ))
-  }
-  .one(conn)
-  .await
-  .context("Failed to fetch hitokoto")?
-  {
-    Some(model) => api_ok(ResHitokotoData {
-      id: model.id,
-      msg: model.msg,
-      from: model.from,
-      r#type: model.r#type.parse().unwrap_or(0),
-      likes: model.likes as u32,
-      public: model.public == "1",
-    }),
-    None => {
-      if length.is_some() && is_first {
-        Box::pin(get_hitokoto(None, conn, false)).await
-      } else {
+  let length = params.get("length").and_then(|s| s.parse().ok());
+  match hitokoto::get_random(conn, length).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      if e.to_string().contains("No hitokoto found") {
+        l_warn!(logger, "No hitokoto found");
         Err(ApiError::not_found("No hitokoto found"))
+      } else {
+        l_error!(logger, "Failed to get hitokoto: {}", e);
+        Err(ApiError::internal("Failed to get hitokoto"))
       }
     }
   }
 }
 
-async fn fetch2(
-  State(RomiState { ref conn, .. }): State<RomiState>,
-) -> ApiResult<ResHitokoto2Data> {
-  match romi_hitokotos2::Entity::find()
-    .from_raw_sql(Statement::from_sql_and_values(
-      DbBackend::MySql,
-      r#"SELECT * FROM romi_hitokotos2 ORDER BY RAND() limit 1"#,
-      [],
-    ))
-    .one(conn)
-    .await
-    .context("Failed to fetch hitokoto")?
-  {
-    Some(model) => api_ok(ResHitokoto2Data {
-      uuid: model.uuid,
-      msg: model.msg,
-      msg_origin: model.msg_origin,
-      from: model.from,
-      from_who: model.from_who,
-      r#type: model.r#type,
-      likes: model.likes,
-      public: model.public == "1",
-      created: model.created.timestamp_millis() as u64,
-    }),
-    None => Err(ApiError::not_found("No hitokoto found")),
-  }
-}
-
-async fn fetch(
-  Query(params): Query<std::collections::HashMap<String, String>>,
-  State(RomiState { ref conn, .. }): State<RomiState>,
-) -> ApiResult<ResHitokotoData> {
-  get_hitokoto(params.get("length").and_then(|s| s.parse().ok()), conn, true).await
-}
-
-async fn fetch_by_id(
+async fn get_by_id(
   Path(id): Path<u32>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResHitokotoData> {
-  match romi_hitokotos::Entity::find_by_id(id)
-    .one(conn)
-    .await
-    .with_context(|| format!("Failed to fetch hitokoto {}", id))?
-  {
-    Some(model) => api_ok(ResHitokotoData {
-      id: model.id,
-      msg: model.msg,
-      from: model.from,
-      r#type: model.r#type.parse().unwrap_or(0),
-      likes: model.likes as u32,
-      public: model.public == "1",
-    }),
-    None => {
-      l_warn!(logger, "Hitokoto {} not found", id);
-      Err(ApiError::not_found(format!("Hitokoto {} not found", id)))
+  match hitokoto::get_by_id(conn, id).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      if e.to_string().contains("not found") {
+        l_warn!(logger, "Hitokoto {} not found", id);
+        Err(ApiError::not_found(format!("Hitokoto {} not found", id)))
+      } else {
+        l_error!(logger, "Failed to get hitokoto {}: {}", id, e);
+        Err(ApiError::internal("Failed to get hitokoto"))
+      }
     }
   }
 }
 
-async fn fetch_public(
-  State(RomiState { ref conn, .. }): State<RomiState>,
+async fn list_public(
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResHitokotoData>> {
-  api_ok(
-    romi_hitokotos::Entity::find()
-      .filter(romi_hitokotos::Column::Public.eq(1.to_string()))
-      .all(conn)
-      .await
-      .context("Failed to fetch hitokoto")?
-      .into_iter()
-      .map(|model| ResHitokotoData {
-        id: model.id,
-        msg: model.msg,
-        from: model.from,
-        r#type: model.r#type.parse().unwrap_or(0),
-        likes: model.likes as u32,
-        public: true,
-      })
-      .collect(),
-  )
+  match hitokoto::list_public(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to list public hitokotos: {}", e);
+      Err(ApiError::internal("Failed to list public hitokotos"))
+    }
+  }
 }
-
-async fn fetch_all2(
+async fn list_all(
   _admin_user: AdminUser,
-  State(RomiState { ref conn, .. }): State<RomiState>,
-) -> ApiResult<Vec<ResHitokoto2Data>> {
-  api_ok(
-    romi_hitokotos2::Entity::find()
-      .all(conn)
-      .await
-      .context("Failed to fetch hitokotos")?
-      .into_iter()
-      .map(|model| ResHitokoto2Data {
-        uuid: model.uuid,
-        msg: model.msg,
-        msg_origin: model.msg_origin,
-        from: model.from,
-        from_who: model.from_who,
-        r#type: model.r#type,
-        likes: model.likes,
-        public: model.public == "1",
-        created: model.created.timestamp_millis() as u64,
-      })
-      .collect(),
-  )
-}
-
-async fn fetch_all(
-  _admin_user: AdminUser,
-  State(RomiState { ref conn, .. }): State<RomiState>,
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResHitokotoData>> {
-  api_ok(
-    romi_hitokotos::Entity::find()
-      .all(conn)
-      .await
-      .context("Failed to fetch hitokotos")?
-      .into_iter()
-      .map(|model| ResHitokotoData {
-        id: model.id,
-        msg: model.msg,
-        from: model.from,
-        r#type: model.r#type.parse().unwrap_or(0),
-        likes: model.likes as u32,
-        public: model.public == "1",
-      })
-      .collect(),
-  )
+  match hitokoto::list_all(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to list hitokotos: {}", e);
+      Err(ApiError::internal("Failed to list hitokotos"))
+    }
+  }
 }
-
 async fn create(
   AdminUser(admin_user): AdminUser,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
-  Json(hitokoto): Json<ReqHitokotoData>,
+  Json(data): Json<ReqHitokotoData>,
 ) -> ApiResult {
-  let result = romi_hitokotos::ActiveModel {
-    id: ActiveValue::not_set(),
-    msg: ActiveValue::set(hitokoto.msg.clone()),
-    from: ActiveValue::set(hitokoto.from.clone()),
-    r#type: ActiveValue::set(hitokoto.r#type.clone().to_string()),
-    likes: ActiveValue::set(0),
-    public: ActiveValue::set((if hitokoto.public { 1 } else { 0 }).to_string()),
-  }
-  .insert(conn)
-  .await
-  .context("Failed to create hitokoto")?;
-
-  l_info!(
-    logger,
-    "Created hitokoto {} type <{}> from <{}> by admin {} ({})",
-    result.id,
-    hitokoto.r#type,
-    if hitokoto.from.is_empty() { "none" } else { &hitokoto.from },
-    admin_user.id,
-    admin_user.username,
-  );
-  api_ok(())
-}
-
-async fn create2(
-  AdminUser(admin_user): AdminUser,
-  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
-  Json(hitokoto): Json<ReqHitokoto2Data>,
-) -> ApiResult {
-  let result = romi_hitokotos2::ActiveModel {
-    id: ActiveValue::not_set(),
-    uuid: ActiveValue::set(Uuid::new_v4().to_string()),
-    msg: ActiveValue::set(hitokoto.msg.clone()),
-    msg_origin: ActiveValue::set(hitokoto.msg_origin.clone()),
-    from: ActiveValue::set(hitokoto.from.clone()),
-    from_who: ActiveValue::set(hitokoto.from_who.clone()),
-    r#type: ActiveValue::set(hitokoto.r#type),
-    likes: ActiveValue::set(0),
-    public: ActiveValue::set((if hitokoto.public { 1 } else { 0 }).to_string()),
-    created: ActiveValue::not_set(),
-  }
-  .insert(conn)
-  .await
-  .context("Failed to create hitokoto")?;
-
-  l_info!(
-    logger,
-    "Created hitokoto2 {} type <{}> by admin {} ({})",
-    result.id,
-    hitokoto.r#type,
-    // if hitokoto.from.is_empty() { "none" } else { &hitokoto.from },
-    admin_user.id,
-    admin_user.username,
-  );
-  api_ok(())
-}
-
-async fn update2(
-  AdminUser(admin_user): AdminUser,
-  Path(id): Path<u32>,
-  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
-  Json(hitokoto): Json<ReqHitokoto2Data>,
-) -> ApiResult {
-  match romi_hitokotos2::Entity::find_by_id(id)
-    .one(conn)
-    .await
-    .with_context(|| format!("Failed to fetch hitokoto {}", id))?
-  {
-    Some(model) => {
-      let mut active_model = model.into_active_model();
-      active_model.msg = ActiveValue::set(hitokoto.msg.clone());
-      active_model.from = ActiveValue::set(hitokoto.from.clone());
-      active_model.from_who = ActiveValue::set(hitokoto.from_who.clone());
-      active_model.r#type = ActiveValue::set(hitokoto.r#type);
-      active_model.public = ActiveValue::set((if hitokoto.public { 1 } else { 0 }).to_string());
-
-      active_model
-        .update(conn)
-        .await
-        .with_context(|| format!("Failed to update hitokoto {}", id))?;
-
+  match hitokoto::create(conn, data).await {
+    Ok(result) => {
       l_info!(
         logger,
-        "Updated hitokoto2 {} by admin {} ({})",
-        id,
+        "Created hitokoto {} by admin {} ({})",
+        result.id,
         admin_user.id,
         admin_user.username
       );
       api_ok(())
     }
-    None => {
-      l_warn!(logger, "Hitokoto {} not found", id);
-      Err(ApiError::not_found(format!("Hitokoto {} not found", id)))
+    Err(e) => {
+      l_error!(logger, "Failed to create hitokoto: {}", e);
+      Err(ApiError::internal("Failed to create hitokoto"))
     }
   }
 }
@@ -313,37 +118,27 @@ async fn update(
   AdminUser(admin_user): AdminUser,
   Path(id): Path<u32>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
-  Json(hitokoto): Json<ReqHitokotoData>,
+  Json(data): Json<ReqHitokotoData>,
 ) -> ApiResult {
-  match romi_hitokotos::Entity::find_by_id(id)
-    .one(conn)
-    .await
-    .with_context(|| format!("Failed to fetch hitokoto {}", id))?
-  {
-    Some(model) => {
-      let mut active_model = model.into_active_model();
-      active_model.msg = ActiveValue::set(hitokoto.msg.clone());
-      active_model.from = ActiveValue::set(hitokoto.from.clone());
-      active_model.r#type = ActiveValue::set(hitokoto.r#type.clone().to_string());
-      active_model.public = ActiveValue::set((if hitokoto.public { 1 } else { 0 }).to_string());
-
-      active_model
-        .update(conn)
-        .await
-        .with_context(|| format!("Failed to update hitokoto {}", id))?;
-
+  match hitokoto::update(conn, id, data).await {
+    Ok(result) => {
       l_info!(
         logger,
         "Updated hitokoto {} by admin {} ({})",
-        id,
+        result.id,
         admin_user.id,
         admin_user.username
       );
       api_ok(())
     }
-    None => {
-      l_warn!(logger, "Hitokoto {} not found", id);
-      Err(ApiError::not_found(format!("Hitokoto {} not found", id)))
+    Err(e) => {
+      if e.to_string().contains("not found") {
+        l_warn!(logger, "Hitokoto {} not found", id);
+        Err(ApiError::not_found(format!("Hitokoto {} not found", id)))
+      } else {
+        l_error!(logger, "Failed to update hitokoto {}: {}", id, e);
+        Err(ApiError::internal("Failed to update hitokoto"))
+      }
     }
   }
 }
@@ -352,23 +147,123 @@ async fn like(
   Path(id): Path<u32>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
-  match romi_hitokotos::Entity::find_by_id(id)
-    .one(conn)
-    .await
-    .with_context(|| format!("Failed to fetch hitokoto {}", id))?
-  {
-    Some(model) => {
-      let mut active_model = model.clone().into_active_model();
-      active_model.likes = ActiveValue::set(model.likes + 1);
-
-      active_model.update(conn).await.with_context(|| format!("Failed to like hitokoto {}", id))?;
-
+  match hitokoto::like(conn, id).await {
+    Ok(_) => {
       l_info!(logger, "Liked hitokoto {}", id);
       api_ok(())
     }
-    None => {
-      l_warn!(logger, "Hitokoto {} not found", id);
-      Err(ApiError::not_found("Hitokoto not found"))
+    Err(e) => {
+      if e.to_string().contains("not found") {
+        l_warn!(logger, "Hitokoto {} not found", id);
+        Err(ApiError::not_found("Hitokoto not found"))
+      } else {
+        l_error!(logger, "Failed to like hitokoto {}: {}", id, e);
+        Err(ApiError::internal("Failed to like hitokoto"))
+      }
+    }
+  }
+}
+
+async fn remove(
+  AdminUser(admin_user): AdminUser,
+  Path(id): Path<u32>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+) -> ApiResult {
+  match hitokoto::remove(conn, id).await {
+    Ok(_) => {
+      l_info!(
+        logger,
+        "Deleted hitokoto {} by admin {} ({})",
+        id,
+        admin_user.id,
+        admin_user.username
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to delete hitokoto {}: {}", id, e);
+      Err(ApiError::internal("Failed to delete hitokoto"))
+    }
+  }
+}
+
+// hitokoto2
+async fn get_random2(
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
+) -> ApiResult<ResHitokoto2Data> {
+  match hitokoto::get_random2(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      if e.to_string().contains("No hitokoto2 found") {
+        l_warn!(logger, "No hitokoto2 found");
+        Err(ApiError::not_found("No hitokoto2 found"))
+      } else {
+        l_error!(logger, "Failed to get hitokoto2: {}", e);
+        Err(ApiError::internal("Failed to get hitokoto2"))
+      }
+    }
+  }
+}
+async fn list_all2(
+  _admin_user: AdminUser,
+  State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
+) -> ApiResult<Vec<ResHitokoto2Data>> {
+  match hitokoto::list_all2(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to list hitokotos2: {}", e);
+      Err(ApiError::internal("Failed to list hitokotos2"))
+    }
+  }
+}
+async fn create2(
+  AdminUser(admin_user): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(data): Json<ReqHitokoto2Data>,
+) -> ApiResult {
+  match hitokoto::create2(conn, data).await {
+    Ok(result) => {
+      l_info!(
+        logger,
+        "Created hitokoto2 {} by admin {} ({})",
+        result.id,
+        admin_user.id,
+        admin_user.username
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to create hitokoto2: {}", e);
+      Err(ApiError::internal("Failed to create hitokoto2"))
+    }
+  }
+}
+
+async fn update2(
+  AdminUser(admin_user): AdminUser,
+  Path(id): Path<u32>,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(data): Json<ReqHitokoto2Data>,
+) -> ApiResult {
+  match hitokoto::update2(conn, id, data).await {
+    Ok(result) => {
+      l_info!(
+        logger,
+        "Updated hitokoto2 {} by admin {} ({})",
+        result.id,
+        admin_user.id,
+        admin_user.username
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      if e.to_string().contains("not found") {
+        l_warn!(logger, "Hitokoto2 {} not found", id);
+        Err(ApiError::not_found(format!("Hitokoto2 {} not found", id)))
+      } else {
+        l_error!(logger, "Failed to update hitokoto2 {}: {}", id, e);
+        Err(ApiError::internal("Failed to update hitokoto2"))
+      }
     }
   }
 }
@@ -378,28 +273,20 @@ async fn remove2(
   Path(uuid): Path<String>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult {
-  romi_hitokotos2::Entity::delete(romi_hitokotos2::ActiveModel {
-    uuid: ActiveValue::set(uuid.clone()),
-    ..Default::default()
-  })
-  .exec(conn)
-  .await
-  .with_context(|| format!("Failed to delete hitokoto {}", uuid))?;
-
-  l_info!(logger, "Deleted hitokoto {} by admin {} ({})", uuid, admin_user.id, admin_user.username);
-  api_ok(())
-}
-
-async fn remove(
-  AdminUser(admin_user): AdminUser,
-  Path(id): Path<u32>,
-  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
-) -> ApiResult {
-  romi_hitokotos::Entity::delete_by_id(id)
-    .exec(conn)
-    .await
-    .with_context(|| format!("Failed to delete hitokoto {}", id))?;
-
-  l_info!(logger, "Deleted hitokoto {} by admin {} ({})", id, admin_user.id, admin_user.username);
-  api_ok(())
+  match hitokoto::remove2(conn, uuid.clone()).await {
+    Ok(_) => {
+      l_info!(
+        logger,
+        "Deleted hitokoto2 {} by admin {} ({})",
+        uuid,
+        admin_user.id,
+        admin_user.username
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to delete hitokoto2 {}: {}", uuid, e);
+      Err(ApiError::internal("Failed to delete hitokoto2"))
+    }
+  }
 }

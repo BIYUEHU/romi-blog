@@ -1,3 +1,14 @@
+pub mod character;
+pub mod comment;
 pub mod email;
+pub mod hitokoto;
+pub mod info;
+pub mod meta;
 pub mod music;
+pub mod news;
+pub mod post;
+pub mod rss;
+pub mod seimg;
+pub mod sitemap;
 pub mod ssr;
+pub mod user;
