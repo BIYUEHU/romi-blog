@@ -69,16 +69,6 @@
     sans-serif;
 }
 
-/*[data-theme="purple"] {*/
-/*  --brand-base: #9573a2;*/
-/*  --accent-base: #7b5ea7;*/
-/*}*/
-
-/*[data-theme="blue"] {*/
-/*  --brand-base: #5b8dee;*/
-/*  --accent-base: #3a6fd8;*/
-/*}*/
-
 [data-dark] {
   --bg-page: #1a1a1a;
   --bg-surface: #242424;

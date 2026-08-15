@@ -5,8 +5,8 @@
 - [x] Blog content search
 - [x] Support private news
 - [x] Settings and customization
-- [ ] Website color scheme
-- [ ] Light and Dark
+- [x] Website color scheme
+- [x] Light and Dark
 - [x] RSS feed
 - [x] sitemap
 - [ ] Safety system

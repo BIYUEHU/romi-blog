@@ -71,15 +71,62 @@
     <i class="i-mdi-arrow-up-thick text-xl"></i>
   </button>
   }
-  <button type="button" [routerLink]="'/admin'"
+  <button type="button" (click)="toggleThemeLayer()"
     class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
     <i class="i-mdi-settings-outline text-xl"></i>
   </button>
-  <div id="aplayer-global"></div>
-
-  <button type="button" (click)="togglePlayer(false)"
+  <button type="button" [routerLink]="'/admin'"
     class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
-    <i class="i-mdi-music-note-outline text-xl"></i>
+    <i class="i-mdi-account-circle-outline text-xl"></i>
   </button>
+  <div id="aplayer-global"></div>
+  @if (themeLayerVisible) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="themeLayerVisible = false">
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div class="relative bg-bg-surface border border-border shadow-xl rounded-lg w-full max-w-sm p-5"
+      (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-text-base font-semibold text-lg">设置</span>
+        <button type="button" (click)="themeLayerVisible = false"
+          class="text-text-muted hover:text-text-base transition-colors bg-transparent border-0 cursor-pointer">
+          <i class="i-mdi-close text-2xl"></i>
+        </button>
+      </div>
+      <div class="mb-4">
+        <div class="text-sm text-text-sub mb-2">主题模式</div>
+        <div class="flex gap-2">
+          @for (theme of themes; track theme.value) {
+          <button type="button" (click)="selectTheme(theme.value)"
+            class="flex-1 py-2 rounded-md border-0 text-sm transition-colors"
+            [class]="selectedTheme === theme.value ? 'bg-brand text-text-on-brand border-brand' : 'bg-bg-elevated text-text-base border-border hover:bg-bg-subtle'">
+            {{ theme.value === 'light' ? '浅色' : theme.value === 'dark' ? '深色' : '跟随系统' }}
+          </button>
+          }
+        </div>
+      </div>
+      <div class="mb-4">
+        <div class="text-sm text-text-sub mb-2">配色方案</div>
+        <div class="flex flex-col gap-2">
+          @for (color of colors; track color.name) {
+          <button type="button" (click)="selectColor(color.name)"
+            class="w-full flex items-center gap-3 p-2 rounded-md border transition-colors"
+            [class]="selectedColor === color.name ? 'bg-bg-elevated border-brand' : 'bg-transparent border-border hover:bg-bg-subtle'">
+            <span class="w-6 h-6 rounded-full shrink-0" [style.background-color]="color.brand"></span>
+            <span class="text-text-base text-sm">{{ color.name }}</span>
+          </button>
+          }
+        </div>
+      </div>
+      <div>
+        <div class="text-sm text-text-sub mb-2">音乐播放</div>
+        <button type="button" (click)="togglePlayer(false)"
+          class="w-full py-2 rounded-md border text-sm transition-colors bg-bg-elevated text-text-base border-border hover:bg-bg-subtle">
+          {{ aplayer ? '关闭播放器' : '开启播放器' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+  }
   }
 </div>

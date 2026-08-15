@@ -9,6 +9,8 @@ const isoStoreKey = iso<StoreKey>()
 export const STORE_KEYS = {
   APLAYER_DISABLED: isoStoreKey.wrap('aplayer-disabled'),
   APLAYER_ALIVE_TIME: isoStoreKey.wrap('aplayer-alive-time'),
+  THEME: isoStoreKey.wrap('theme'),
+  COLOR: isoStoreKey.wrap('color'),
   ADMIN_AUTH: isoStoreKey.wrap('admin-auth'),
   POST_DRAFT_NEW: isoStoreKey.wrap('post-draft-new'),
   IS_DEBUG: isoStoreKey.wrap('is-dev-mode'),

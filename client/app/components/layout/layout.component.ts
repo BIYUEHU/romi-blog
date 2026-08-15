@@ -41,6 +41,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public isLoading = false
   public isError = false
 
+  public themeLayerVisible = false
+  public readonly themes = [
+    { value: 'light' as const, label: '浅色' },
+    { value: 'dark' as const, label: '深色' },
+    { value: 'system' as const, label: '跟随系统' }
+  ] as const
+  public readonly colors = [
+    { name: '粉色', brand: '#d87cb6', accent: '#9573a2' },
+    { name: '紫色', brand: '#9573a2', accent: '#7b5ea7' },
+    { name: '蓝色', brand: '#5b8dee', accent: '#3a6fd8' },
+    { name: '绿色', brand: '#4caf7d', accent: '#3a9d6e' },
+    { name: '橙色', brand: '#f0a04b', accent: '#e08a3c' }
+  ] as const
+  public selectedTheme: 'light' | 'dark' | 'system' = 'light'
+  public selectedColor = '粉色'
+
   public constructor(
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
@@ -64,6 +80,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
+    this.initTheme()
+  }
+
+  private initTheme() {
+    const theme = this.storeService.getItem(STORE_KEYS.THEME)
+    const color = this.storeService.getItem(STORE_KEYS.COLOR)
+    if (theme) this.selectTheme(theme as 'light' | 'dark' | 'system')
+    if (color) this.selectColor(color)
   }
 
   @HostListener('window:scroll')
@@ -142,6 +166,30 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public reload() {
     window.location.reload()
+  }
+
+  public toggleThemeLayer() {
+    this.themeLayerVisible = !this.themeLayerVisible
+  }
+
+  public selectTheme(theme: 'light' | 'dark' | 'system') {
+    this.selectedTheme = theme
+    this.storeService.setItem(STORE_KEYS.THEME, theme)
+    document.documentElement.toggleAttribute('data-dark', this.isDarkTheme(theme))
+  }
+
+  private isDarkTheme(theme: 'light' | 'dark' | 'system'): boolean {
+    if (theme === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches
+    return theme === 'dark'
+  }
+
+  public selectColor(color: string) {
+    this.selectedColor = color
+    this.storeService.setItem(STORE_KEYS.COLOR, color)
+    const preset = this.colors.find((item) => item.name === color)
+    if (!preset) return
+    document.documentElement.style.setProperty('--brand-base', preset.brand)
+    document.documentElement.style.setProperty('--accent-base', preset.accent)
   }
 
   public ngOnDestroy() {

@@ -15,8 +15,7 @@
     "unocss:dev": "unocss --watch",
     "test": "ng test",
     "serve": "node dist/server/server.mjs",
-    "fix": "biome check --write",
-    "ag": "bun agent/bin"
+    "fix": "biome check --write"
   },
   "browser": {
     "node:fs": false,
@@ -101,6 +100,7 @@
     "p-limit": "^6.2.0",
     "pangu": "^7.2.0",
     "typescript": "~5.9.3",
+    "webagentx": "^1.1.0",
     "unocss": "^0.64.1"
   },
   "workspaces": [
