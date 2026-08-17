@@ -158,7 +158,7 @@ export default class RInput extends LitElement {
               this.rightIcon
                 ? html`
               <div class="absolute right-3 z-10">
-                <div 
+                <div
                   class="h-5 w-5 ${this.rightIcon} cursor-pointer"
                   @click="${() => this.handleIconClick('right')}"
                 ></div>

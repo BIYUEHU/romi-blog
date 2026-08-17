@@ -90,7 +90,10 @@
         <r-input type="text" [(ngModel)]="editForm.imgs" class="w-full" />
       </div>
 
-      <r-input label="创建时间" type="datetime-local" [(ngModel)]="editForm.created" class="w-full" />
+      <div>
+        <label class="block text-sm font-medium text-text-base mb-1">创建时间</label>
+        <r-input type="datetime-local" [(ngModel)]="editForm.created" class="w-full" />
+      </div>
     </div>
 
     <div class="flex justify-end gap-2 mt-6">

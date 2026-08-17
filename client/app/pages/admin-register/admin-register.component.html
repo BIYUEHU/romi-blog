@@ -30,9 +30,18 @@
         <div class="space-y-5">
           <div class="group">
           <div class="space-y-5">
-            <r-input label="用户名" [(ngModel)]="username" id="username" required placeholder="请输入用户名" class="w-full" />
-            <r-input label="邮箱" [(ngModel)]="email" id="email" required placeholder="请输入邮箱" class="w-full" />
-            <r-input label="个人网站 (可选)" [(ngModel)]="url" id="url" placeholder="https://example.com" class="w-full" />
+            <div class="mb-3">
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">用户名 <span class="text-error-500">*</span></label>
+              <r-input [(ngModel)]="username" id="username" placeholder="请输入用户名" class="w-full" />
+            </div>
+            <div class="mb-3">
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">邮箱 <span class="text-error-500">*</span></label>
+              <r-input [(ngModel)]="email" id="email" placeholder="请输入邮箱" class="w-full" />
+            </div>
+            <div class="mb-3">
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">个人网站 (可选)</label>
+              <r-input [(ngModel)]="url" id="url" placeholder="https://example.com" class="w-full" />
+            </div>
             <div class="pt-2">
               <r-button (click)="register()" type="primary" size="lg" class="w-full" [disabled]="isLoading">
                 {{ isLoading ? '注册中...' : '注册' }}

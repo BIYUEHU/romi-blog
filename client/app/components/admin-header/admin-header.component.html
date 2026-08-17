@@ -1,7 +1,7 @@
 <header class="h-14 bg-brand-border border-b border-border-base flex items-center justify-between px-6 sticky top-0">
   <div class="flex items-center gap-4">
     <button (click)="toggleSidebar()"
-      class="hover:cursor-pointer w-8 h-8 flex items-center justify-center text-brand hover:bg-brand-hover rounded-sm border-0">
+      class="hover:cursor-pointer bg-bg-elevated w-8 h-8 flex items-center justify-center text-brand hover:bg-brand-hover rounded-sm border-0">
       <i class="i-mdi:menu text-xl"></i>
     </button>
 
@@ -19,7 +19,7 @@
 
     <div class="relative group">
       <button
-        class="hover:cursor-pointer border-0 flex items-center gap-2 px-1.5 py-1 text-sm text-text-base hover:bg-brand rounded border border-border-base">
+        class="hover:cursor-pointer border-0 flex bg-bg-elevated items-center gap-2 px-1.5 py-1 text-sm text-text-base hover:bg-brand rounded border border-border-base">
         <img alt="avatar" [src]="avatarUrl" width="24" height="24" class="rounded-full" />
         <span>{{ authService.user$()?.username }}</span>
         <i class="i-mdi:chevron-down text-text-muted"></i>
@@ -27,11 +27,13 @@
 
       <div
         class="hidden top-7.5 group-hover:block absolute min-w-15 min-h-5 children:rounded bg-bg-surface border border-border-base rounded-md shadow-lg">
-        <button class="hover:cursor-pointer border-0 min-w-23 block px-4 py-2 text-sm text-text-base hover:bg-brand"
+        <button
+          class="hover:cursor-pointer border-0 min-w-23 bg-bg-elevated block px-4 py-2 text-sm text-text-base hover:bg-brand"
           [routerLink]="'/admin/profile'">
           个人资料
         </button>
-        <button class="hover:cursor-pointer border-0 min-w-23 block px-4 py-2 text-sm text-red-600 hover:bg-brand-hover"
+        <button
+          class="hover:cursor-pointer border-0  bg-bg-elevated  min-w-23 block px-4 py-2 text-sm text-red-600 hover:bg-brand-hover"
           (click)="logout()">
           退出登录
         </button>

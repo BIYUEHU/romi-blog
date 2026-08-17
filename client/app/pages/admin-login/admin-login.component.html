@@ -33,21 +33,22 @@
       <div class="relative bg-bg-surface backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-border-base">
 
         <div class="space-y-5">
-          <div class="group">
-            <r-input label="邮箱" [(ngModel)]="email" id="email" required placeholder="请输入邮箱"
-              class="w-full transition-all duration-300">
-            </r-input>
+          <div class="group mb-3">
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">邮箱 <span
+                class="text-error-500">*</span></label>
+            <r-input [(ngModel)]="email" id="email" placeholder="请输入邮箱"
+              class="w-full transition-all duration-300"></r-input>
           </div>
-
-          <div class="group">
-            <r-input label="密码" [(ngModel)]="password" id="password" placeholder="请输入密码" required type="password"
-              class="w-full transition-all duration-300">
-            </r-input>
+          <div class="group mb-3">
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">密码 <span
+                class="text-error-500">*</span></label>
+            <r-input [(ngModel)]="password" id="password" placeholder="请输入密码" type="password"
+              class="w-full transition-all duration-300"></r-input>
           </div>
 
           <div class="flex items-center justify-between pt-2">
             <r-checkbox name="rememberMe" type="primary" [(ngModel)]="rememberMe"
-              class="transition-transform hover:scale-105">
+              class="transition-transform text-text-base hover:scale-105">
               记住我
             </r-checkbox>
             <div class="flex items-center gap-3">
@@ -74,19 +75,11 @@
           </div>
         </div>
 
-        <div class="mt-6 border-t border-border-base text-center">
-          <p class="text-xs text-text-muted/60">
-            登录即表示同意
-            <a class="text-brand hover:text-accent transition-colors">服务条款</a>
-            和
-            <a class="text-brand hover:text-accent transition-colors">隐私政策</a>
-          </p>
-        </div>
       </div>
     </div>
 
     <div class="mt-8 text-center">
-      <p class="text-sm text-text-sub/50">
+      <p class="text-sm text-text-sub">
         Powered by <span class="font-semibold">Romi</span> · Made with
         <span class="text-red-500 animate-pulse">Love ❤</span>
       </p>

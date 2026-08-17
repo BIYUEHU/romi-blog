@@ -18,12 +18,26 @@
       <div>
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">SMTP 设置</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <r-input label="SMTP 服务器" [(ngModel)]="smtpForm.smtpHost" class="w-full" placeholder="smtp.example.com" />
-          <r-input label="SMTP 端口" type="number" [(ngModel)]="smtpForm.smtpPort" class="w-full" placeholder="587" />
-          <r-input label="SMTP 用户名" [(ngModel)]="smtpForm.smtpUsername" class="w-full" placeholder="user@example.com" />
-          <r-input label="SMTP 密码" [(ngModel)]="smtpForm.smtpPassword" class="w-full" placeholder="••••••••" />
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">SMTP 服务器</label>
+            <r-input [(ngModel)]="smtpForm.smtpHost" class="w-full" placeholder="smtp.example.com" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">SMTP 端口</label>
+            <r-input type="number" [(ngModel)]="smtpForm.smtpPort" class="w-full" placeholder="587" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">SMTP 用户名</label>
+            <r-input [(ngModel)]="smtpForm.smtpUsername" class="w-full" placeholder="user@example.com" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">SMTP 密码</label>
+            <r-input [(ngModel)]="smtpForm.smtpPassword" class="w-full" placeholder="••••••••" />
+          </div>
           <div class="lg:col-span-2">
-            <r-input label="SMTP 邮箱" [(ngModel)]="smtpForm.smtpEmail" class="w-full" placeholder="smtp@example.com" />          </div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">SMTP 邮箱</label>
+            <r-input [(ngModel)]="smtpForm.smtpEmail" class="w-full" placeholder="smtp@example.com" />
+          </div>
         </div>
       </div>
     </div>
@@ -33,7 +47,8 @@
 
 @if (showTestModal) {
 <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50" (click)="showTestModal = false">
-  <div class="bg-bg-surface rounded-lg p-6 w-full max-w-lg border border-border-base" (click)="$event.stopPropagation()">
+  <div class="bg-bg-surface rounded-lg p-6 w-full max-w-lg border border-border-base"
+    (click)="$event.stopPropagation()">
     <h2 class="text-lg font-medium text-text-base mb-4">发送测试邮件</h2>
     <div class="space-y-4">
       <div>

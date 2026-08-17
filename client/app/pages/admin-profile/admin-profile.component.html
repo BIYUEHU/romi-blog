@@ -14,14 +14,23 @@
         <div>
           <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">基本信息</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <r-input label="用户名" [(ngModel)]="username" autocomplete="off" class="w-full" placeholder="输入新用户名"
-              name="username" />
-            <r-input label="邮箱" [ngModel]="user?.email" disabled class="w-full" name="email" />
-            <r-input label="个人网站" [(ngModel)]="url" autocomplete="off" class="w-full" placeholder="https://example.com"
-              name="url" />
-            <div class="lg:col-span-2">
-              <r-input label="注册时间" [ngModel]="(user?.created ?? 0) * 1000 | date: 'yyyy-MM-dd HH:mm'" disabled
-                class="w-full" name="created" />
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">用户名</label>
+              <r-input [(ngModel)]="username" autocomplete="off" class="w-full" placeholder="输入新用户名" name="username" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">邮箱</label>
+              <r-input [ngModel]="user?.email" disabled class="w-full" name="email" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">个人网站</label>
+              <r-input [(ngModel)]="url" autocomplete="off" class="w-full" placeholder="https://example.com"
+                name="url" />
+            </div>
+            <div class="lg:col-span-2 mb-3">
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">注册时间</label>
+              <r-input [ngModel]="(user?.created ?? 0) * 1000 | date: 'yyyy-MM-dd HH:mm'" disabled class="w-full"
+                name="created" />
             </div>
           </div>
         </div>
@@ -29,12 +38,21 @@
         <div class="pt-6 border-t border-border-base">
           <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">修改密码</h3>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <r-input label="旧密码（必填）" type="password" [(ngModel)]="oldPassword" autocomplete="new-password"
-              class="w-full" placeholder="输入旧密码" name="oldPassword" />
-            <r-input label="新密码" type="password" [(ngModel)]="newPassword" autocomplete="new-password" class="w-full"
-              placeholder="输入新密码（至少6位）" name="newPassword" />
-            <r-input label="确认新密码" type="password" [(ngModel)]="confirmPassword" autocomplete="new-password"
-              class="w-full" placeholder="再次输入新密码" name="confirmPassword" />
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">旧密码（必填）</label>
+              <r-input type="password" [(ngModel)]="oldPassword" autocomplete="new-password" class="w-full"
+                placeholder="输入旧密码" name="oldPassword" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">新密码</label>
+              <r-input type="password" [(ngModel)]="newPassword" autocomplete="new-password" class="w-full"
+                placeholder="输入新密码（至少6位）" name="newPassword" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">确认新密码</label>
+              <r-input type="password" [(ngModel)]="confirmPassword" autocomplete="new-password" class="w-full"
+                placeholder="再次输入新密码" name="confirmPassword" />
+            </div>
           </div>
         </div>
         <div class="flex gap-2">

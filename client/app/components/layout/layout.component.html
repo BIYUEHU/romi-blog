@@ -95,10 +95,10 @@
       <div class="mb-4">
         <div class="text-sm text-text-sub mb-2">主题模式</div>
         <div class="flex gap-2">
-          @for (theme of themes; track theme.value) {
+          @for (theme of themeService.themes; track theme.value) {
           <button type="button" (click)="selectTheme(theme.value)"
             class="flex-1 py-2 rounded-md border-0 text-sm transition-colors"
-            [class]="selectedTheme === theme.value ? 'bg-brand text-text-on-brand border-brand' : 'bg-bg-elevated text-text-base border-border hover:bg-bg-subtle'">
+            [class]="themeService.selectedTheme === theme.value ? 'bg-brand text-text-on-brand border-brand' : 'bg-bg-elevated text-text-base border-border hover:bg-bg-subtle'">
             {{ theme.value === 'light' ? '浅色' : theme.value === 'dark' ? '深色' : '跟随系统' }}
           </button>
           }
@@ -107,10 +107,10 @@
       <div class="mb-4">
         <div class="text-sm text-text-sub mb-2">配色方案</div>
         <div class="flex flex-col gap-2">
-          @for (color of colors; track color.name) {
+          @for (color of themeService.colors; track color.name) {
           <button type="button" (click)="selectColor(color.name)"
             class="w-full flex items-center gap-3 p-2 rounded-md border transition-colors"
-            [class]="selectedColor === color.name ? 'bg-bg-elevated border-brand' : 'bg-transparent border-border hover:bg-bg-subtle'">
+            [class]="themeService.selectedColor === color.name ? 'bg-bg-elevated border-brand' : 'bg-transparent border-border hover:bg-bg-subtle'">
             <span class="w-6 h-6 rounded-full shrink-0" [style.background-color]="color.brand"></span>
             <span class="text-text-base text-sm">{{ color.name }}</span>
           </button>

@@ -17,25 +17,56 @@
       <div>
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">站点设置</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <r-input label="站点标题" [(ngModel)]="settingsForm.siteTitle" class="w-full" />
-          <r-input label="站点名称" [(ngModel)]="settingsForm.siteName" class="w-full" />
-          <r-input label="站点描述" [(ngModel)]="settingsForm.siteDescription" class="w-full" />
           <div>
-            <r-input label="站点关键词" [(ngModel)]="settingsForm.siteKeywords" class="w-full" />
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">站点标题</label>
+            <r-input [(ngModel)]="settingsForm.siteTitle" class="w-full" />
           </div>
-          <r-input label="站点 URL" [(ngModel)]="settingsForm.siteUrl" class="w-full" placeholder="https://example.com" />
-          <r-input label="Favicon 地址" [(ngModel)]="settingsForm.siteFavicon" class="w-full" />
-          <r-input label="Logo 地址" [(ngModel)]="settingsForm.siteLogo" class="w-full" />
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">站点名称</label>
+            <r-input [(ngModel)]="settingsForm.siteName" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">站点描述</label>
+            <r-input [(ngModel)]="settingsForm.siteDescription" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">站点关键词</label>
+            <r-input [(ngModel)]="settingsForm.siteKeywords" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">站点 URL</label>
+            <r-input [(ngModel)]="settingsForm.siteUrl" class="w-full" placeholder="https://example.com" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">Favicon 地址</label>
+            <r-input [(ngModel)]="settingsForm.siteFavicon" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">Logo 地址</label>
+            <r-input [(ngModel)]="settingsForm.siteLogo" class="w-full" />
+          </div>
         </div>
       </div>
 
       <div class="pt-6">
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-3">页面设置</h3>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <r-input label="头部背景" [(ngModel)]="settingsForm.headerBackground" class="w-full" />
-          <r-input label="首页头像" [(ngModel)]="settingsForm.homeAvatar" class="w-full" />
-          <r-input label="首页标题" [(ngModel)]="settingsForm.homeTitle" class="w-full" />
-          <r-input label="首页副标题（一行一个）" as="textarea" rows="3" [(ngModel)]="settingsForm.homeSubtitle" class="w-full" />
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">头部背景</label>
+            <r-input [(ngModel)]="settingsForm.headerBackground" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">首页头像</label>
+            <r-input [(ngModel)]="settingsForm.homeAvatar" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">首页标题</label>
+            <r-input [(ngModel)]="settingsForm.homeTitle" class="w-full" />
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">首页副标题（一行一个）</label>
+            <r-input as="textarea" rows="3" [(ngModel)]="settingsForm.homeSubtitle" class="w-full" />
+          </div>
         </div>
       </div>
 
@@ -43,9 +74,18 @@
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">首页链接</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <r-input label="图标类" [(ngModel)]="homeLinkForm[0]" placeholder="例如 mdi:github" />
-            <r-input label="文字" [(ngModel)]="homeLinkForm[1]" placeholder="GitHub" />
-            <r-input label="链接" [(ngModel)]="homeLinkForm[2]" placeholder="https://..." />
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">图标类</label>
+              <r-input [(ngModel)]="homeLinkForm[0]" placeholder="例如 mdi:github" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">文字</label>
+              <r-input [(ngModel)]="homeLinkForm[1]" placeholder="GitHub" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">链接</label>
+              <r-input [(ngModel)]="homeLinkForm[2]" placeholder="https://..." />
+            </div>
           </div>
           <div class="flex gap-2">
             <r-button type="primary" (click)="saveHomeLink()">
@@ -75,9 +115,18 @@
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">独立页面</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <r-input label="标识名" [(ngModel)]="independentPageForm.name" placeholder="例如 about" />
-            <r-input label="页面标题" [(ngModel)]="independentPageForm.title" placeholder="关于我们" />
-            <r-input label="文章ID" type="number" [(ngModel)]="independentPageForm.id" placeholder="必填" />
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">标识名</label>
+              <r-input [(ngModel)]="independentPageForm.name" placeholder="例如 about" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">页面标题</label>
+              <r-input [(ngModel)]="independentPageForm.title" placeholder="关于我们" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">文章ID</label>
+              <r-input type="number" [(ngModel)]="independentPageForm.id" placeholder="必填" />
+            </div>
           </div>
           <div class="flex flex-wrap items-center gap-4">
             <r-checkbox [(ngModel)]="independentPageForm.routine" type="primary">常规</r-checkbox>
@@ -134,10 +183,22 @@
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">友链</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            <r-input label="名称" [(ngModel)]="friendLinkForm.name" placeholder="站点名称" />
-            <r-input label="链接" [(ngModel)]="friendLinkForm.link" placeholder="https://..." />
-            <r-input label="头像地址" [(ngModel)]="friendLinkForm.avatar" placeholder="https://..." />
-            <r-input label="描述" [(ngModel)]="friendLinkForm.description" placeholder="这是一个网站" />
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">名称</label>
+              <r-input [(ngModel)]="friendLinkForm.name" placeholder="站点名称" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">链接</label>
+              <r-input [(ngModel)]="friendLinkForm.link" placeholder="https://..." />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">头像地址</label>
+              <r-input [(ngModel)]="friendLinkForm.avatar" placeholder="https://..." />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">描述</label>
+              <r-input [(ngModel)]="friendLinkForm.description" placeholder="这是一个网站" />
+            </div>
           </div>
           <div class="flex gap-2">
             <r-button type="primary" (click)="saveFriendLink()">

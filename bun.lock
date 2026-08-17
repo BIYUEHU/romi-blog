@@ -37,7 +37,6 @@
         "ts-adt": "^2.1.2",
         "ts-pattern": "^5.9.0",
         "tslib": "^2.3.0",
-        "webagentx": "^1.1.0",
         "zone.js": "~0.15.1",
       },
       "devDependencies": {
@@ -68,6 +67,7 @@
         "pangu": "^7.2.0",
         "typescript": "~5.9.3",
         "unocss": "^0.64.1",
+        "webagentx": "^1.1.1",
       },
     },
     "ui": {
@@ -2039,7 +2039,7 @@
 
     "weak-lru-cache": ["weak-lru-cache@1.2.2", "", {}, "sha512-DEAoo25RfSYMuTGc9vPJzZcZullwIqRDSI9LOy+fkCJPi6hykCnfKaXTuPBDuXAUcqHXyOgFtHNp/kB2FjYHbw=="],
 
-    "webagentx": ["webagentx@1.1.0", "", { "dependencies": { "@biomejs/biome": "^2.5.4", "@clack/prompts": "^1.7.0", "cac": "^7.0.0", "clipboardy": "^5.3.1", "picocolors": "^1.1.1", "remark": "^15.0.1", "tinyglobby": "^0.2.17" }, "peerDependencies": { "typescript": "^7.0.2" }, "bin": { "webagentx": "dist/cli.js", "wa": "dist/cli.js", "ro": "dist/cli.js" } }, "sha512-AW39rOHOGGzDen/RrlTj3wAjto0kpYOi6RvdJ8Pp4FY/G0RlSlq1Nsz9dsjjyvownWANKXoQD6AWmtXAOtLfLA=="],
+    "webagentx": ["webagentx@1.1.1", "", { "dependencies": { "@biomejs/biome": "^2.5.4", "@clack/prompts": "^1.7.0", "cac": "^7.0.0", "clipboardy": "^5.3.1", "picocolors": "^1.1.1", "remark": "^15.0.1", "tinyglobby": "^0.2.17" }, "peerDependencies": { "typescript": "^7.0.2" }, "bin": { "webagentx": "dist/cli.js", "wa": "dist/cli.js", "ro": "dist/cli.js" } }, "sha512-j+0AraCYmGphq0lUUiJ/y6gbaI9pZCK+95ufMPj349Bk6vcrI2B7TLjHwflpzE/4jO37GLRU8cMszIFgGs7I4A=="],
 
     "which": ["which@1.3.1", "", { "dependencies": { "isexe": "2.0.0" }, "bin": { "which": "./bin/which" } }, "sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ=="],
 
