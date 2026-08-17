@@ -22,8 +22,8 @@ export class ThemeService {
     { name: '橙色', brand: '#f0a04b', accent: '#e08a3c' }
   ] as const
 
-  public selectedTheme: ThemeMode = 'light'
-  public selectedColor = '粉色'
+  public selectedTheme: ThemeMode = 'system'
+  public selectedColor: string = this.colors[0].name
 
   public constructor(
     private readonly storeService: StoreService,
@@ -31,14 +31,16 @@ export class ThemeService {
   ) {}
 
   public init() {
+    if (!this.browserService.is) return
     const theme = this.storeService.getItem(STORE_KEYS.THEME)
     const color = this.storeService.getItem(STORE_KEYS.COLOR)
-    if (theme) this.applyTheme(theme as ThemeMode)
+    this.applyTheme(theme ? (theme as ThemeMode) : 'system')
     if (color) this.applyColor(color)
   }
 
   public applyTheme(theme: ThemeMode) {
     this.selectedTheme = theme
+    if (!this.browserService.is) return
     this.storeService.setItem(STORE_KEYS.THEME, theme)
     const dark = this.isDark(theme)
     document.documentElement.toggleAttribute('data-dark', dark)
@@ -47,6 +49,7 @@ export class ThemeService {
 
   public applyColor(color: string) {
     this.selectedColor = color
+    if (!this.browserService.is) return
     this.storeService.setItem(STORE_KEYS.COLOR, color)
     const preset = this.colors.find((item) => item.name === color)
     if (!preset) return

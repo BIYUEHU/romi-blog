@@ -1,4 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Meta } from '@angular/platform-browser'
 import { pipe } from 'fp-ts/function'
 import { ResPostSingleData } from '../../../output'
 import PostContentComponent from '../../components/post-content/post-content.component'
@@ -21,7 +22,8 @@ export class PostComponent implements OnInit {
   public constructor(
     private readonly apiService: ApiService,
     private readonly appTitleStrategy: AppTitleStrategy,
-    private readonly browserService: BrowserService
+    private readonly browserService: BrowserService,
+    private readonly meta: Meta
   ) {}
 
   public ngOnInit() {
@@ -31,6 +33,8 @@ export class PostComponent implements OnInit {
     ).subscribe((post) => {
       this.post = { ...post, text: post.password ? '文章已加密' : post.text }
       this.appTitleStrategy.setTitle(post.title)
+      this.meta.updateTag({ name: 'keywords', content: [post.categories, ...post.tags].join(',') })
+      this.meta.updateTag({ name: 'description', content: post.text.slice(0, 150) })
       this.appTitleStrategy.updateHeader({
         title: post.title,
         subTitle: [

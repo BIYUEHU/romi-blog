@@ -54,7 +54,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     this.apiService.likeNews(this.news.id).subscribe(() => {
       this.storeService.setItem(STORE_KEYS.newsLiked(this.news.id), true)
       if (this.news) this.news.likes += 1
-      // this.updateHeader()  TODO
+      // TODO: this.updateHeader()
       this.notifyService.showMessage('点赞成功', MessageBoxType.Success)
     })
   }

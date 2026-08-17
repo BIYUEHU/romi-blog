@@ -22,7 +22,6 @@ export class AppTitleStrategy extends TitleStrategy {
 
   public constructor(
     private readonly title: Title,
-    // private readonly meta: Meta, // TODO: base on backend api to set descr,keywords,meta...
     private readonly browserService: BrowserService,
     private readonly apiService: ApiService
   ) {

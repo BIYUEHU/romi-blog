@@ -113,7 +113,7 @@
           <r-input as="textarea" class="text-lg" rows="4" [(ngModel)]="commentText" placeholder="写下你的想法..."></r-input>
           <div class="flex flex-wrap justify-between mt-4 gap-4 items-center">
             <div [routerLink]="'/'" ] class="text-brand hover:text-accent rounded-md transition-colors">
-              当前登录：{{ user.username }} <!-- TODO： 加个 link to user profile -->
+              当前登录：{{ user.username }}
             </div>
             <r-button (click)="addComment()" type="primary">发表评论</r-button>
           </div>
