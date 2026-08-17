@@ -1,7 +1,10 @@
 #![allow(clippy::obfuscated_if_else)]
 use std::{env, fs, net::SocketAddr};
 
-use roga::{transport::console::ConsoleTransport, *};
+use roga::{
+  transport::{console::ConsoleTransport, file::FileTransport},
+  *,
+};
 use sea_orm::Database;
 use tokio::signal;
 use utils::bootstrap::{load_config, load_env_vars};
@@ -52,6 +55,7 @@ async fn main() {
 
   let logger = Logger::new()
     .with_transport(ConsoleTransport { label_color: "magenta", ..Default::default() })
+    .with_transport(FileTransport::default())
     .with_level(match config.log_level.as_str() {
       "fatal" => LoggerLevel::Fatal,
       "error" => LoggerLevel::Error,

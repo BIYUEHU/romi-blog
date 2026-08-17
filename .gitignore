@@ -58,3 +58,4 @@ static
 .vscode
 proxy.conf.json
 agent
+logs

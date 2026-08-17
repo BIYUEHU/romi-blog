@@ -8,10 +8,14 @@ A Fast, beautiful, lightweight, and flexible logging library for Rust.
 use roga::*;
 use serde_json::json;
 use transport::console::ConsoleTransport;
+use transport::file::FileTransport;
 
 fn main() {
     let logger = Logger::new()
         .with_transport(ConsoleTransport {
+            ..Default::default()
+        })
+        .with_transport(FileTransport {
             ..Default::default()
         })
         .with_level(LoggerLevel::Trace)
