@@ -39,14 +39,14 @@ export class AdminSidebarComponent {
         ],
         adminOnly: true
       },
-      {
-        text: '媒体管理',
-        children: [
-          { text: '文件管理', link: '/admin/files', icon: 'i-mdi:file', adminOnly: true },
-          { text: '图片管理', link: '/admin/images', icon: 'i-mdi:image', adminOnly: true }
-        ],
-        adminOnly: true
-      },
+      // {
+      //   text: '媒体管理',
+      //   children: [
+      //     { text: '文件管理', link: '/admin/files', icon: 'i-mdi:file', adminOnly: true },
+      //     { text: '图片管理', link: '/admin/images', icon: 'i-mdi:image', adminOnly: true }
+      //   ],
+      //   adminOnly: true
+      // },
       {
         text: '系统管理',
         children: [

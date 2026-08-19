@@ -24,7 +24,12 @@
                 "input": "client/public"
               }
             ],
-            "styles": ["client/app/styles/index.css", "ui/styles.css"],
+            "styles": [
+              "client/app/styles/index.css",
+              "ui/styles.css",
+              "node_modules/@milkdown/crepe/lib/theme/common/style.css",
+              "node_modules/@milkdown/crepe/lib/theme/nord/style.css"
+            ],
             "scripts": ["ui/dist/romi-ui.umd.cjs"],
             "server": "client/main.server.ts",
             "prerender": false,

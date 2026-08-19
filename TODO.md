@@ -30,6 +30,5 @@
 - [x] Music playlist cannot automatically create json file
 - [x] Use `uv` to run python scripts
 - [x] More strict checking and linting in cicd, use lefthook when pre-commit
-- [ ] editor styles 缺失
 
 ## Details
