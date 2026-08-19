@@ -2,12 +2,15 @@ use std::net::SocketAddr;
 
 use axum::{
   extract::{ConnectInfo, Request, State},
+  http::StatusCode,
   middleware::Next,
-  response::Response,
+  response::{IntoResponse, Response},
 };
 use roga::*;
 
-use crate::{app::RomiState, constant::NODEJS_LOGGER_LABEL, utils::http::get_req_user_agent};
+use crate::{
+  app::RomiState, constant::NODEJS_LOGGER_LABEL, service::info, utils::http::get_req_user_agent,
+};
 
 fn setup_logger(logger: Logger, user_agent: Option<&str>) -> Logger {
   if user_agent.map(|str| str.contains("node")).unwrap_or(false) {
@@ -15,6 +18,26 @@ fn setup_logger(logger: Logger, user_agent: Option<&str>) -> Logger {
   } else {
     logger
   }
+}
+
+pub async fn ip_blacklist_middleware(
+  State(RomiState { conn, logger, .. }): State<RomiState>,
+  ConnectInfo(addr): ConnectInfo<SocketAddr>,
+  req: Request,
+  next: Next,
+) -> Response {
+  let ip = addr.ip().to_string();
+  match info::is_ip_blacklisted(&conn, &ip).await {
+    Ok(true) => {
+      l_warn!(logger.clone().with_label("Security"), "Blocked request from blacklisted IP: {}", ip);
+      return (StatusCode::FORBIDDEN, "Forbidden").into_response();
+    }
+    Ok(false) => {}
+    Err(e) => {
+      l_error!(logger.clone().with_label("Security"), "Failed to check IP blacklist: {}", e);
+    }
+  }
+  next.run(req).await
 }
 
 pub async fn req_logger_middleware(

@@ -1,0 +1,73 @@
+<div class="space-y-6">
+  <div class="bg-bg-surface rounded-lg border border-border-base p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl text-text-base">安全系统</h2>
+    </div>
+    <div class="space-y-6">
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider">日志查看</h3>
+        </div>
+        <select [(ngModel)]="selectedLog" (ngModelChange)="selectLog(selectedLog)"
+          class="w-full px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
+          <option value="" disabled>请选择日志文件</option>
+          @for (log of logs; track log.name) {
+          <option [value]="log.name">{{ log.name }} ({{ log.size }} bytes)</option>
+          }
+        </select>
+        <div class="space-y-2">
+          <r-input [(ngModel)]="logFilter" name="logFilter" class="w-full" placeholder="搜索日志内容..." />
+        </div>
+        <div class="bg-bg-elevated rounded-lg p-4 overflow-auto max-h-96">
+          @if (isLoading) {
+          <div class="text-center py-8 text-text-muted">加载中...</div>
+          } @else if (selectedLog) {
+          <div class="space-y-1 font-mono text-sm">
+            @for (entry of filteredEntries; track $index) {
+            <div class="text-text-base">
+              <span class="text-text-sub">{{ formatTime(entry.time) }}</span>
+              <span class="ml-2 font-bold text-accent">[{{ entry.level }}]</span>
+              @if (entry.label.length > 0) {
+              <span class="ml-2 text-brand">[{{ entry.label.join('][') }}]</span>
+              }
+              <span class="ml-2">{{ entry.msg }}</span>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="text-center py-8 text-text-muted">请选择日志文件</div>
+          }
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider">IP 黑名单</h3>
+        </div>
+        <div class="flex flex-col md:flex-row gap-2">
+          <r-input [(ngModel)]="newIp" name="newIp" class="w-full" placeholder="IP 地址" />
+          <r-input [(ngModel)]="newReason" name="newReason" class="w-full" placeholder="封禁原因（可选）" />
+          <r-button type="primary" (click)="addBlacklist()" class="md:shrink-0">添加</r-button>
+        </div>
+        <div class="bg-bg-elevated rounded-lg p-4 overflow-auto max-h-96">
+          @if (blacklist.length === 0) {
+          <div class="text-center py-8 text-text-muted">暂无黑名单</div>
+          } @else {
+          <div class="space-y-2">
+            @for (item of blacklist; track item.id) {
+            <div class="flex items-center justify-between p-3 bg-bg-surface rounded-lg border border-border-base">
+              <div>
+                <div class="text-text-base font-medium">{{ item.ip }}</div>
+                <div class="text-xs text-text-sub">{{ item.reason || '无原因' }} · {{ formatTime(item.created) }}</div>
+              </div>
+              <button type="button" (click)="deleteBlacklist(item.id)"
+                class="i-mdi:close text-red-500 hover:text-red-600 cursor-pointer"></button>
+            </div>
+            }
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

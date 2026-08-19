@@ -1,6 +1,7 @@
 #![allow(clippy::obfuscated_if_else)]
 use std::{env, fs, net::SocketAddr};
 
+use migration::{Migrator, MigratorTrait};
 use roga::{
   transport::{console::ConsoleTransport, file::FileTransport},
   *,
@@ -79,7 +80,13 @@ async fn main() {
       config.database_url.clone()
     };
     match Database::connect(&database_url).await {
-      Ok(conn) => conn,
+      Ok(conn) => {
+        if let Err(e) = Migrator::up(&conn, None).await {
+          l_fatal!(&logger, "Failed to run migrations: {}", e);
+          return;
+        }
+        conn
+      }
       Err(err) => {
         l_fatal!(&logger, "Failed to connect to database at {}, error: {}", database_url, err);
         return;

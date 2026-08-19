@@ -53,8 +53,7 @@ export class AdminSidebarComponent {
           { text: '系统设置', link: '/admin/settings', icon: 'i-mdi:cog', adminOnly: true },
           { text: '邮箱设置', link: '/admin/smtp', icon: 'i-mdi:email', adminOnly: true },
           { text: '安全设置', link: '/admin/security', icon: 'i-mdi:shield-key', adminOnly: true },
-          { text: '个人资料', link: '/admin/profile', icon: 'i-mdi:account', adminOnly: false },
-          { text: '网站日志', link: '/admin/logs', icon: 'i-mdi:file-document-outline', adminOnly: true }
+          { text: '个人资料', link: '/admin/profile', icon: 'i-mdi:account', adminOnly: false }
         ],
         adminOnly: false
       }

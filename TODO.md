@@ -9,7 +9,7 @@
 - [x] Light and Dark
 - [x] RSS feed
 - [x] sitemap
-- [ ] Safety system
+- [x] Safety system
 <!-- - [ ] Romi UI better building -->
 - [ ] Characters birthdays reminder
 - [x] File transporter logger
@@ -21,7 +21,6 @@
 - [ ] Images bed and management system
 - [ ] Refactory music player
 <!-- - [ ] I18n -->
-- [x] 更多的页面细化处理 meta 更好的 seo
 - [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [x] Post view, like, share
 - [x] News view, like

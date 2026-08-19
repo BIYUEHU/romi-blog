@@ -4,7 +4,7 @@ use sea_orm::DatabaseConnection;
 use serde::Deserialize;
 
 use crate::{
-  middlewares::{req_logger_middleware, res_error_inspector_middleware},
+  middlewares::{ip_blacklist_middleware, req_logger_middleware, res_error_inspector_middleware},
   routes::{self, global::fallback},
   service::ssr::ServerSideRender,
   utils::bootstrap::get_cors,
@@ -47,6 +47,7 @@ pub fn build_app(state: RomiState) -> Router {
     .merge(routes::rss::routes())
     .nest("/api", api)
     .layer(get_cors())
+    .layer(middleware::from_fn_with_state(state.clone(), ip_blacklist_middleware))
     .layer(middleware::from_fn_with_state(state.clone(), req_logger_middleware))
     .layer(middleware::from_fn_with_state(state.clone(), res_error_inspector_middleware))
     .fallback(fallback)

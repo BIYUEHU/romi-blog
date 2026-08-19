@@ -1,7 +1,7 @@
 use axum::{
   Json, Router,
-  extract::{Query, State},
-  routing::{get, post, put},
+  extract::{Path, Query, State},
+  routing::{delete, get, post, put},
 };
 use roga::{l_error, l_info, l_warn};
 
@@ -9,8 +9,9 @@ use crate::{
   app::RomiState,
   guards::admin::AdminUser,
   models::info::{
-    ReqContactForm, ReqSearchQuery, ReqTestMail, ResDashboardData, ResMusicData, ResProjectData,
-    ResSearchResultItem, ResSettingsData, ResSmtpSettings,
+    ReqContactForm, ReqIpBlacklistAdd, ReqSearchQuery, ReqTestMail, ResDashboardData,
+    ResIpBlacklistItem, ResLogEntry, ResLogFile, ResMusicData, ResProjectData, ResSearchResultItem,
+    ResSettingsData, ResSmtpSettings,
   },
   service::email::send_email,
   service::info,
@@ -29,6 +30,11 @@ pub fn routes() -> Router<RomiState> {
     .route("/music", get(get_music))
     .route("/search", get(search_posts))
     .route("/contact", post(send_contact_email))
+    .route("/logs", get(get_logs))
+    .route("/logs/{name}", get(get_log))
+    .route("/security/blacklist", get(get_ip_blacklist))
+    .route("/security/blacklist", post(add_ip_blacklist))
+    .route("/security/blacklist/{id}", delete(delete_ip_blacklist))
 }
 
 async fn get_dashboard(
@@ -146,6 +152,95 @@ async fn test_smtp(
     Err(e) => {
       l_error!(logger, "Test SMTP failed: {}", e);
       Err(ApiError::internal(e.to_string()))
+    }
+  }
+}
+
+async fn get_logs(
+  AdminUser(_): AdminUser,
+  State(RomiState { ref logger, .. }): State<RomiState>,
+) -> ApiResult<Vec<ResLogFile>> {
+  match info::list_logs().await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to list logs: {}", e);
+      Err(ApiError::internal("Failed to list logs"))
+    }
+  }
+}
+
+async fn get_log(
+  AdminUser(_): AdminUser,
+  State(RomiState { ref logger, .. }): State<RomiState>,
+  Path(name): Path<String>,
+) -> ApiResult<Vec<ResLogEntry>> {
+  match info::read_log(&name).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to read log {}: {}", name, e);
+      Err(ApiError::internal("Failed to read log"))
+    }
+  }
+}
+
+async fn get_ip_blacklist(
+  AdminUser(_): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+) -> ApiResult<Vec<ResIpBlacklistItem>> {
+  match info::list_ip_blacklist(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to list IP blacklist: {}", e);
+      Err(ApiError::internal("Failed to list IP blacklist"))
+    }
+  }
+}
+
+async fn add_ip_blacklist(
+  AdminUser(admin_user): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(payload): Json<ReqIpBlacklistAdd>,
+) -> ApiResult {
+  if payload.ip.trim().is_empty() {
+    return Err(ApiError::bad_request("IP is required"));
+  }
+  match info::add_ip_blacklist(conn, payload.ip.trim().to_string(), payload.reason).await {
+    Ok(_) => {
+      l_info!(
+        logger,
+        "Admin {} ({}) added IP {} to blacklist",
+        admin_user.id,
+        admin_user.username,
+        payload.ip
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to add IP blacklist: {}", e);
+      Err(ApiError::internal("Failed to add IP blacklist"))
+    }
+  }
+}
+
+async fn delete_ip_blacklist(
+  AdminUser(admin_user): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  axum::extract::Path(id): axum::extract::Path<u32>,
+) -> ApiResult {
+  match info::delete_ip_blacklist(conn, id).await {
+    Ok(_) => {
+      l_info!(
+        logger,
+        "Admin {} ({}) removed IP blacklist id {}",
+        admin_user.id,
+        admin_user.username,
+        id
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to delete IP blacklist: {}", e);
+      Err(ApiError::internal("Failed to delete IP blacklist"))
     }
   }
 }

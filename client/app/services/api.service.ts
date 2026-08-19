@@ -21,6 +21,9 @@ import type {
   ResDecryptPostData,
   ResHitokoto2Data,
   ResHitokotoData,
+  ResIpBlacklistItem,
+  ResLogEntry,
+  ResLogFile,
   ResLoginData,
   ResMetaData,
   ResMusicData,
@@ -404,5 +407,25 @@ export class ApiService {
       { username, url, oldPassword, newPassword },
       { headers: this.genHeaders([HEADER_CONTEXT.SKIP_ERROR_HANDLING]) }
     )
+  }
+
+  public getLogs() {
+    return this.http.get<ResLogFile[]>(`${environment.api_base_url}/info/logs`)
+  }
+
+  public getLog(name: string) {
+    return this.http.get<ResLogEntry[]>(`${environment.api_base_url}/info/logs/${name}`)
+  }
+
+  public getIpBlacklist() {
+    return this.http.get<ResIpBlacklistItem[]>(`${environment.api_base_url}/info/security/blacklist`)
+  }
+
+  public addIpBlacklist(ip: string, reason: string | null) {
+    return this.http.post<void>(`${environment.api_base_url}/info/security/blacklist`, { ip, reason })
+  }
+
+  public deleteIpBlacklist(id: number) {
+    return this.http.delete<void>(`${environment.api_base_url}/info/security/blacklist/${id}`)
   }
 }

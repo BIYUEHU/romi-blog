@@ -33,6 +33,13 @@ export interface Video {
   length: string
 }
 
+export interface ResIpBlacklistItem {
+  id: number
+  ip: string
+  reason: string | null
+  created: number
+}
+
 export interface LanguageColors {
   [key: string]: {
     color: string

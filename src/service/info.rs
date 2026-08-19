@@ -9,12 +9,12 @@ use tokio::try_join;
 
 use crate::{
   entity::{
-    romi_comments, romi_hitokotos, romi_metas, romi_news, romi_news_comments, romi_posts,
-    romi_seimgs, romi_settings, romi_users,
+    romi_comments, romi_hitokotos, romi_ip_blacklist, romi_metas, romi_news, romi_news_comments,
+    romi_posts, romi_seimgs, romi_settings, romi_users,
   },
   models::info::{
-    ResDashboardData, ResMusicData, ResProjectData, ResSearchResultItem, ResSettingsData,
-    ResSmtpSettings,
+    ResDashboardData, ResIpBlacklistItem, ResLogEntry, ResLogFile, ResMusicData, ResProjectData,
+    ResSearchResultItem, ResSettingsData, ResSmtpSettings,
   },
   service::music::get_music_cache,
   tools::markdown::summary_markdown,
@@ -176,6 +176,83 @@ pub async fn search_posts(
 
 pub async fn get_smtp_settings(db: &DatabaseConnection) -> Result<ResSmtpSettings> {
   get_smtp_settings_cache(db).await.context("Failed to fetch smtp settings")
+}
+
+pub async fn list_logs() -> Result<Vec<ResLogFile>> {
+  let mut entries = tokio::fs::read_dir("logs").await.context("Failed to read logs directory")?;
+  let mut logs = Vec::new();
+  while let Some(entry) = entries.next_entry().await.context("Failed to read log entry")? {
+    let path = entry.path();
+    if !path.is_file() {
+      continue;
+    }
+    let name = entry.file_name().to_string_lossy().into_owned();
+    let metadata = tokio::fs::metadata(&path).await.context("Failed to read log metadata")?;
+    logs.push(ResLogFile {
+      name,
+      size: metadata.len(),
+      modified: metadata
+        .modified()
+        .ok()
+        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+        .map(|d| d.as_secs() as i64)
+        .unwrap_or_default(),
+    });
+  }
+  logs.sort_by(|a, b| b.name.cmp(&a.name));
+  Ok(logs)
+}
+
+pub async fn read_log(name: &str) -> Result<Vec<ResLogEntry>> {
+  let path = std::path::Path::new("logs").join(name);
+  let content = tokio::fs::read_to_string(&path).await.context("Failed to read log file")?;
+  Ok(content.lines().filter_map(|line| serde_json::from_str::<ResLogEntry>(line).ok()).collect())
+}
+
+pub async fn list_ip_blacklist(db: &DatabaseConnection) -> Result<Vec<ResIpBlacklistItem>> {
+  let items = romi_ip_blacklist::Entity::find()
+    .order_by(romi_ip_blacklist::Column::Created, sea_orm::Order::Desc)
+    .all(db)
+    .await
+    .context("Failed to fetch IP blacklist")?;
+  Ok(
+    items
+      .into_iter()
+      .map(|m| ResIpBlacklistItem { id: m.id, ip: m.ip, reason: m.reason, created: m.created })
+      .collect(),
+  )
+}
+
+pub async fn add_ip_blacklist(
+  db: &DatabaseConnection,
+  ip: String,
+  reason: Option<String>,
+) -> Result<()> {
+  let model = romi_ip_blacklist::ActiveModel {
+    ip: ActiveValue::Set(ip),
+    reason: ActiveValue::Set(reason),
+    created: ActiveValue::Set(chrono::Local::now().timestamp()),
+    ..Default::default()
+  };
+  romi_ip_blacklist::Entity::insert(model).exec(db).await.context("Failed to add IP blacklist")?;
+  Ok(())
+}
+
+pub async fn delete_ip_blacklist(db: &DatabaseConnection, id: u32) -> Result<()> {
+  romi_ip_blacklist::Entity::delete_by_id(id)
+    .exec(db)
+    .await
+    .context("Failed to delete IP blacklist")?;
+  Ok(())
+}
+
+pub async fn is_ip_blacklisted(db: &DatabaseConnection, ip: &str) -> Result<bool> {
+  let count = romi_ip_blacklist::Entity::find()
+    .filter(romi_ip_blacklist::Column::Ip.eq(ip))
+    .count(db)
+    .await
+    .context("Failed to check IP blacklist")?;
+  Ok(count > 0)
 }
 
 pub async fn update_smtp_settings(db: &DatabaseConnection, data: ResSmtpSettings) -> Result<()> {

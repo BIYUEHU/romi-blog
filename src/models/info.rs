@@ -218,3 +218,37 @@ pub struct ReqContactForm {
   pub email: String,
   pub message: String,
 }
+
+#[derive(Clone, Serialize, TS, Debug)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResLogFile {
+  pub name: String,
+  pub size: u64,
+  pub modified: i64,
+}
+
+#[derive(Clone, Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResLogEntry {
+  pub time: i64,
+  pub level: String,
+  pub pid: u32,
+  pub label: Vec<String>,
+  pub msg: String,
+}
+
+#[derive(Clone, Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResIpBlacklistItem {
+  pub id: u32,
+  pub ip: String,
+  pub reason: Option<String>,
+  pub created: i64,
+}
+
+#[derive(Debug, Deserialize, TS)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ReqIpBlacklistAdd {
+  pub ip: String,
+  pub reason: Option<String>,
+}
