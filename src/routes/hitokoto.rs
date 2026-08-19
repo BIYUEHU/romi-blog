@@ -233,7 +233,7 @@ async fn create2(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create hitokoto2: {}", e);
+      l_error!(logger, "Failed to create hitokoto2: {:?}", e); // TOdo: 错误应当详细
       Err(ApiError::internal("Failed to create hitokoto2"))
     }
   }
@@ -241,11 +241,11 @@ async fn create2(
 
 async fn update2(
   AdminUser(admin_user): AdminUser,
-  Path(id): Path<u32>,
+  Path(uuid): Path<String>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Json(data): Json<ReqHitokoto2Data>,
 ) -> ApiResult {
-  match hitokoto::update2(conn, id, data).await {
+  match hitokoto::update2(conn, uuid.clone(), data).await {
     Ok(result) => {
       l_info!(
         logger,
@@ -258,10 +258,10 @@ async fn update2(
     }
     Err(e) => {
       if e.to_string().contains("not found") {
-        l_warn!(logger, "Hitokoto2 {} not found", id);
-        Err(ApiError::not_found(format!("Hitokoto2 {} not found", id)))
+        l_warn!(logger, "Hitokoto2 {} not found", uuid);
+        Err(ApiError::not_found(format!("Hitokoto2 {} not found", uuid)))
       } else {
-        l_error!(logger, "Failed to update hitokoto2 {}: {}", id, e);
+        l_error!(logger, "Failed to update hitokoto2 {}: {}", uuid, e);
         Err(ApiError::internal("Failed to update hitokoto2"))
       }
     }

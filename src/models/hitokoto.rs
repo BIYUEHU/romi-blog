@@ -31,6 +31,7 @@ pub struct ReqHitokoto2Data {
   #[serde(rename = "fromWho")]
   pub from_who: Option<String>,
   pub r#type: u8,
+  pub likes: u32,
   pub public: bool,
 }
 

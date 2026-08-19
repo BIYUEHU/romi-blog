@@ -33,6 +33,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
     from: null,
     fromWho: null,
     type: 1,
+    likes: 0,
     public: false
   }
 
@@ -96,6 +97,7 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
         from: from?.trim() || null,
         fromWho: fromWho?.trim() || null,
         type: Number(this.newHitokoto.type),
+        likes: Number(this.newHitokoto.likes),
         public: isPublic
       })
       .subscribe(() => {
@@ -113,20 +115,25 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
       from: hitokoto.from,
       fromWho: hitokoto.fromWho,
       type: hitokoto.type,
-      public: hitokoto.public
+      public: hitokoto.public,
+      likes: hitokoto.likes
     }
   }
 
   public cancelEdit() {
     this.editingHitokoto = null
-    this.newHitokoto = { msg: '', msgOrigin: null, from: null, fromWho: null, type: 1, public: false }
+    this.newHitokoto = { msg: '', msgOrigin: null, from: null, fromWho: null, type: 1, likes: 0, public: false }
   }
 
   public updateHitokoto() {
     if (!this.editingHitokoto) return
 
     this.apiService
-      .updateHitokoto2(this.editingHitokoto.uuid, { ...this.newHitokoto, type: Number(this.newHitokoto.type) })
+      .updateHitokoto2(this.editingHitokoto.uuid, {
+        ...this.newHitokoto,
+        type: Number(this.newHitokoto.type),
+        likes: Number(this.newHitokoto.likes)
+      })
       .subscribe(() => {
         this.loadItems()
         this.cancelEdit()

@@ -219,7 +219,7 @@ pub async fn create2(
     from: ActiveValue::set(data.from),
     from_who: ActiveValue::set(data.from_who),
     r#type: ActiveValue::set(data.r#type),
-    likes: ActiveValue::set(0),
+    likes: ActiveValue::set(data.likes),
     public: ActiveValue::set(if data.public { "1" } else { "0" }.to_string()),
     created: ActiveValue::not_set(),
   };
@@ -229,10 +229,11 @@ pub async fn create2(
 
 pub async fn update2(
   conn: &DatabaseConnection,
-  id: u32,
+  uuid: String,
   data: ReqHitokoto2Data,
 ) -> Result<romi_hitokotos2::Model> {
-  let model = romi_hitokotos2::Entity::find_by_id(id)
+  let model = romi_hitokotos2::Entity::find()
+    .filter(romi_hitokotos2::Column::Uuid.eq(uuid))
     .one(conn)
     .await
     .context("Failed to fetch hitokoto2")?
@@ -243,18 +244,23 @@ pub async fn update2(
   active.from = ActiveValue::set(data.from);
   active.from_who = ActiveValue::set(data.from_who);
   active.r#type = ActiveValue::set(data.r#type);
+  active.likes = ActiveValue::set(data.likes);
   active.public = ActiveValue::set(if data.public { "1" } else { "0" }.to_string());
 
   active.update(conn).await.context("Failed to update hitokoto2")
 }
 
 pub async fn remove2(conn: &DatabaseConnection, uuid: String) -> Result<()> {
-  romi_hitokotos2::Entity::delete(romi_hitokotos2::ActiveModel {
-    uuid: ActiveValue::set(uuid),
-    ..Default::default()
-  })
-  .exec(conn)
-  .await
-  .context("Failed to delete hitokoto2")?;
+  let model = romi_hitokotos2::Entity::find()
+    .filter(romi_hitokotos2::Column::Uuid.eq(uuid))
+    .one(conn)
+    .await
+    .context("Failed to find hitokoto2")?
+    .ok_or_else(|| anyhow::anyhow!("Hitokoto2 not found"))?;
+
+  romi_hitokotos2::Entity::delete_by_id(model.id)
+    .exec(conn)
+    .await
+    .context("Failed to delete hitokoto2")?;
   Ok(())
 }

@@ -43,6 +43,7 @@
           </select>
           {{ newHitokoto.public ? '公开' : '私密' }}
           <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
+          <r-input type="number" [(ngModel)]="newHitokoto.likes" placeholder="点赞数" />
         </div>
         <r-button (click)="createHitokoto()" type="primary">
           添加一言
@@ -68,10 +69,12 @@
             <select [(ngModel)]="newHitokoto.type"
               class="px-4 py-2 bg-bg-surface border border-border-base rounded-lg focus:border-brand focus:ring-1 focus:ring-brand outline-none text-text-base">
               @for (type of types; track type[0]) {
-              <option [value]="type[0]">{{ type[0] }}</option>
+              <option [value]="type[0]">{{ type[1] }}</option>
               }
             </select>
+            <span>{{ newHitokoto.public ? '公开' : '私密' }}</span>
             <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
+            <r-input type="number" [(ngModel)]="newHitokoto.likes" placeholder="点赞数" />
           </div>
           <div class="flex items-center gap-2">
             <r-button (click)="cancelEdit()">
