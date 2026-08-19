@@ -137,7 +137,7 @@
         <div class="mb-6">
           @for (comment of pagedComments; track comment.cid) {
           <div class="flex gap-4 p-4 rounded-lg border border-border-base m-0">
-            <img width="40" height="40" [ngSrc]="'https://api.dicebear.com/7.x/avataaars/svg?seed=' + comment.username"
+            <img width="40" height="40" [ngSrc]="'https://www.gravatar.com/avatar/' + comment.avatarHash"
               alt="avatar" class="rounded-full bg-bg-subtle flex-shrink-0 overflow-hidden" />
             <div class="p-3 rounded-xl bg-bg-elevated flex-1">
               <div class="flex flex-wrap items-center gap-2 truncate whitespace-nowrap">

@@ -67,7 +67,7 @@ export class ProgressComponent implements OnInit, AfterViewInit {
       progressBar.style.top = '0'
       progressBar.style.left = '0'
       progressBar.style.height = '4px'
-      progressBar.style.backgroundColor = 'var(--primary-100)'
+      progressBar.style.backgroundColor = 'var(--brand-base)'
       progressBar.style.width = '100%'
       progressBar.style.zIndex = '9999'
       document.body.appendChild(progressBar)

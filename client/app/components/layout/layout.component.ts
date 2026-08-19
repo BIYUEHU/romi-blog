@@ -135,7 +135,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       autoplay: true,
       lrcType: 1,
       order: 'random',
-      theme: 'var(--primary-100)',
+      theme: 'var(--brand-base)',
       audio: this.musicList
     })
   }
@@ -154,10 +154,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   public selectTheme(theme: 'light' | 'dark' | 'system') {
     this.themeService.applyTheme(theme)
+    this.reload()
   }
 
   public selectColor(color: string) {
     this.themeService.applyColor(color)
+    this.reload()
   }
 
   public ngOnDestroy() {

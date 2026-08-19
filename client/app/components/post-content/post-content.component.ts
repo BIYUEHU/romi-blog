@@ -232,11 +232,10 @@ class PostContentComponent implements OnInit, OnDestroy {
         try {
           if (!lang || !this.highlighter) return ''
           const langHandled = lang.toLowerCase()
-          const loaded = this.highlighter.getLoadedLanguages()
           return this.highlighter.codeToHtml(str, {
             mergeWhitespaces: true,
-            theme: 'vitesse-light',
-            lang: loaded.includes(langHandled) ? langHandled : ''
+            theme: this.highlighter.getLoadedThemes()[0],
+            lang: this.highlighter.getLoadedLanguages().includes(langHandled) ? langHandled : ''
           })
         } catch {
           return ''

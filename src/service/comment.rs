@@ -2,6 +2,7 @@ use std::{collections::HashMap, net::SocketAddr};
 
 use anyhow::{Context, Result};
 use http::HeaderMap;
+use md5::compute;
 use migration::Expr;
 use sea_orm::{
   ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
@@ -42,6 +43,7 @@ pub async fn list(db: &DatabaseConnection) -> Result<Vec<ResCommentData>> {
           created: comment.created,
           text: comment.text.clone(),
           user_url: user.url.clone(),
+          avatar_hash: format!("{:x}", compute(user.email.trim().to_lowercase().as_bytes())),
           status: comment.status,
         })
       })
@@ -87,6 +89,7 @@ pub async fn list_by_post(
             created: comment.created,
             text: comment.text.clone(),
             user_url: user.url.clone(),
+            avatar_hash: format!("{:x}", compute(user.email.trim().to_lowercase().as_bytes())),
             status: comment.status,
           })
         } else {

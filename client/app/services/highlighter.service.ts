@@ -35,7 +35,7 @@ export class HighlighterService {
   public async getHighlighter(langs: string[]): Promise<HighlighterGeneric<BundledLanguage, BundledTheme>> {
     if (!this.highlighterPromise) {
       this.highlighterPromise = createHighlighter({
-        themes: ['vitesse-light'],
+        themes: [document.documentElement.hasAttribute('data-dark') ? 'vitesse-dark' : 'vitesse-light'],
         langs: HighlighterService.DEFAULT_LANGUAGES
       })
     }

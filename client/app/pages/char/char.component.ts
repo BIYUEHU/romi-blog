@@ -77,7 +77,7 @@ export class CharComponent implements OnInit, OnChanges, OnDestroy {
         setTimeout(() => {
           this.aplayer = new APlayer({
             container: document.getElementById('aplayer'),
-            theme: 'var(--primary-100)',
+            theme: 'var(--brand-base)',
             lrcType: 1,
             audio,
             ...(this.char?.color ? { theme: `#${this.char.color}` } : {})

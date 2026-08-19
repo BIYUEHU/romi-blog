@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.aplayer = new APlayer({
             container: document.getElementById('recent-music'),
-            theme: 'var(--primary-100)',
+            theme: 'var(--brand-base)',
             listMaxHeight: '320px',
             lrcType: 1,
 

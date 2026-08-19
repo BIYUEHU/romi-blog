@@ -30,7 +30,7 @@ export class MusicComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.aplayer = new APlayer({
             container: document.getElementById('aplayer'),
-            theme: 'var(--primary-100)',
+            theme: 'var(--brand-base)',
             listMaxHeight: '70vh',
             lrcType: 1,
             audio: data
