@@ -9,12 +9,12 @@ use tokio::try_join;
 
 use crate::{
   entity::{
-    romi_comments, romi_hitokotos, romi_ip_blacklist, romi_metas, romi_news, romi_news_comments,
-    romi_posts, romi_seimgs, romi_settings, romi_users,
+    romi_characters, romi_comments, romi_hitokotos, romi_ip_blacklist, romi_metas, romi_news,
+    romi_news_comments, romi_posts, romi_seimgs, romi_settings, romi_users,
   },
   models::info::{
-    ResDashboardData, ResIpBlacklistItem, ResLogEntry, ResLogFile, ResMusicData, ResProjectData,
-    ResSearchResultItem, ResSettingsData, ResSmtpSettings,
+    ResBirthdayReminderConfig, ResDashboardData, ResIpBlacklistItem, ResLogEntry, ResLogFile,
+    ResMusicData, ResProjectData, ResSearchResultItem, ResSettingsData, ResSmtpSettings,
   },
   service::music::get_music_cache,
   tools::markdown::summary_markdown,
@@ -244,6 +244,95 @@ pub async fn delete_ip_blacklist(db: &DatabaseConnection, id: u32) -> Result<()>
     .await
     .context("Failed to delete IP blacklist")?;
   Ok(())
+}
+
+pub async fn get_birthday_reminder_config(
+  db: &DatabaseConnection,
+) -> Result<ResBirthdayReminderConfig> {
+  let settings = romi_settings::Entity::find()
+    .one(db)
+    .await
+    .context("Failed to fetch settings")?
+    .ok_or_else(|| anyhow::anyhow!("Settings not found"))?;
+  Ok(ResBirthdayReminderConfig {
+    enabled: settings.birthday_reminder_enabled != 0,
+    hour: settings.birthday_reminder_hour,
+    minute: settings.birthday_reminder_minute,
+    template: settings.birthday_reminder_template,
+  })
+}
+
+pub async fn update_birthday_reminder_config(
+  db: &DatabaseConnection,
+  data: ResBirthdayReminderConfig,
+) -> Result<()> {
+  let model = romi_settings::Entity::find()
+    .one(db)
+    .await
+    .context("Failed to fetch settings")?
+    .ok_or_else(|| anyhow::anyhow!("Settings not found"))?;
+  let mut active = model.into_active_model();
+  active.birthday_reminder_enabled = ActiveValue::Set(if data.enabled { 1 } else { 0 });
+  active.birthday_reminder_hour = ActiveValue::Set(data.hour);
+  active.birthday_reminder_minute = ActiveValue::Set(data.minute);
+  active.birthday_reminder_template = ActiveValue::Set(data.template);
+  romi_settings::Entity::update(active)
+    .exec(db)
+    .await
+    .context("Failed to update birthday reminder config")?;
+  Ok(())
+}
+
+pub async fn get_birthday_reminder_log(
+  db: &DatabaseConnection,
+) -> Result<serde_json::Map<String, serde_json::Value>> {
+  let settings = romi_settings::Entity::find()
+    .one(db)
+    .await
+    .context("Failed to fetch settings")?
+    .ok_or_else(|| anyhow::anyhow!("Settings not found"))?;
+  Ok(settings.birthday_reminder_log.as_object().cloned().unwrap_or_default())
+}
+
+pub async fn set_birthday_reminder_log(
+  db: &DatabaseConnection,
+  log: serde_json::Map<String, serde_json::Value>,
+) -> Result<()> {
+  let model = romi_settings::Entity::find()
+    .one(db)
+    .await
+    .context("Failed to fetch settings")?
+    .ok_or_else(|| anyhow::anyhow!("Settings not found"))?;
+  let mut active = model.into_active_model();
+  active.birthday_reminder_log = ActiveValue::Set(serde_json::Value::Object(log));
+  romi_settings::Entity::update(active)
+    .exec(db)
+    .await
+    .context("Failed to update birthday reminder log")?;
+  Ok(())
+}
+
+pub async fn get_characters_with_birthday(
+  db: &DatabaseConnection,
+  month_day: &str,
+) -> Result<Vec<romi_characters::Model>> {
+  let chars =
+    romi_characters::Entity::find().all(db).await.context("Failed to fetch characters")?;
+  Ok(
+    chars
+      .into_iter()
+      .filter(|c| {
+        c.birthday
+          .map(|b| {
+            let dt = chrono::DateTime::from_timestamp(b as i64, 0)
+              .map(|d| d.format("%m-%d").to_string())
+              .unwrap_or_default();
+            dt == month_day
+          })
+          .unwrap_or(false)
+      })
+      .collect(),
+  )
 }
 
 pub async fn is_ip_blacklisted(db: &DatabaseConnection, ip: &str) -> Result<bool> {

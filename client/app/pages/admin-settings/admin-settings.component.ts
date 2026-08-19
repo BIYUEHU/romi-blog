@@ -4,6 +4,7 @@ import { Router } from '@angular/router'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type {
+  ResBirthdayReminderConfig,
   ResSettingsData,
   ResSettingsDataFriendLink,
   ResSettingsDataHomeLink,
@@ -26,6 +27,12 @@ export class AdminSettingsComponent implements OnInit {
 
   public isLoading = true
   public settingsForm!: ResSettingsData
+  public birthdayReminderForm: ResBirthdayReminderConfig = {
+    enabled: false,
+    hour: 8,
+    minute: 0,
+    template: '今天是 $name$（$romaji$）的生日，记得送上祝福~\n\n角色简介：\n$description$\n\n—— $site_name$'
+  }
 
   public editingHomeLinkIndex: number | null = null
   public homeLinkForm: ResSettingsDataHomeLink = ['', '', '']
@@ -67,6 +74,9 @@ export class AdminSettingsComponent implements OnInit {
     })
     this.apiService.getPosts().subscribe((data) => {
       this.postIds = data.map((p) => p.id)
+    })
+    this.apiService.getBirthdayReminderConfig().subscribe((data) => {
+      this.birthdayReminderForm = data
     })
   }
 
@@ -179,6 +189,13 @@ export class AdminSettingsComponent implements OnInit {
     this.apiService
       .updateSettings(this.settingsForm)
       .subscribe(() => this.notifyService.showMessage('保存成功', MessageBoxType.Success))
+    this.apiService
+      .updateBirthdayReminderConfig({
+        ...this.birthdayReminderForm,
+        hour: Number(this.birthdayReminderForm.hour),
+        minute: Number(this.birthdayReminderForm.minute)
+      })
+      .subscribe(() => this.notifyService.showMessage('生日提醒设置保存成功', MessageBoxType.Success))
   }
 
   public goBack(): void {

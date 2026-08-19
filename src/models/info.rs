@@ -194,6 +194,7 @@ pub struct ReqTestMail {
   pub subject: String,
   pub content: String,
 }
+
 #[derive(Debug, Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ReqSearchQuery {
@@ -244,6 +245,15 @@ pub struct ResIpBlacklistItem {
   pub ip: String,
   pub reason: Option<String>,
   pub created: i64,
+}
+
+#[derive(Clone, Serialize, Deserialize, TS, Debug)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResBirthdayReminderConfig {
+  pub enabled: bool,
+  pub hour: i8,
+  pub minute: i8,
+  pub template: String,
 }
 
 #[derive(Debug, Deserialize, TS)]

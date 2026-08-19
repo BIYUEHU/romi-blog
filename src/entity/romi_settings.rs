@@ -29,6 +29,11 @@ pub struct Model {
   pub smtp_username: String,
   pub smtp_password: String,
   pub smtp_email: String,
+  pub birthday_reminder_enabled: i8,
+  pub birthday_reminder_hour: i8,
+  pub birthday_reminder_minute: i8,
+  pub birthday_reminder_template: String,
+  pub birthday_reminder_log: Json,
 }
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {}

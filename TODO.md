@@ -11,7 +11,7 @@
 - [x] sitemap
 - [x] Safety system
 <!-- - [ ] Romi UI better building -->
-- [ ] Characters birthdays reminder
+- [x] Characters birthdays reminder
 - [x] File transporter logger
 - [x] filter requests from Node.Js
 - [x] Refactory php ial api, such as proxy, qqavatar, etc.

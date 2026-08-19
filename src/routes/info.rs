@@ -9,9 +9,9 @@ use crate::{
   app::RomiState,
   guards::admin::AdminUser,
   models::info::{
-    ReqContactForm, ReqIpBlacklistAdd, ReqSearchQuery, ReqTestMail, ResDashboardData,
-    ResIpBlacklistItem, ResLogEntry, ResLogFile, ResMusicData, ResProjectData, ResSearchResultItem,
-    ResSettingsData, ResSmtpSettings,
+    ReqContactForm, ReqIpBlacklistAdd, ReqSearchQuery, ReqTestMail, ResBirthdayReminderConfig,
+    ResDashboardData, ResIpBlacklistItem, ResLogEntry, ResLogFile, ResMusicData, ResProjectData,
+    ResSearchResultItem, ResSettingsData, ResSmtpSettings,
   },
   service::email::send_email,
   service::info,
@@ -35,6 +35,8 @@ pub fn routes() -> Router<RomiState> {
     .route("/security/blacklist", get(get_ip_blacklist))
     .route("/security/blacklist", post(add_ip_blacklist))
     .route("/security/blacklist/{id}", delete(delete_ip_blacklist))
+    .route("/security/birthday-reminder", get(get_birthday_reminder_config))
+    .route("/security/birthday-reminder", put(update_birthday_reminder_config))
 }
 
 async fn get_dashboard(
@@ -241,6 +243,41 @@ async fn delete_ip_blacklist(
     Err(e) => {
       l_error!(logger, "Failed to delete IP blacklist: {}", e);
       Err(ApiError::internal("Failed to delete IP blacklist"))
+    }
+  }
+}
+
+async fn get_birthday_reminder_config(
+  AdminUser(_): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+) -> ApiResult<ResBirthdayReminderConfig> {
+  match info::get_birthday_reminder_config(conn).await {
+    Ok(data) => api_ok(data),
+    Err(e) => {
+      l_error!(logger, "Failed to get birthday reminder config: {}", e);
+      Err(ApiError::internal("Failed to get birthday reminder config"))
+    }
+  }
+}
+
+async fn update_birthday_reminder_config(
+  AdminUser(admin_user): AdminUser,
+  State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
+  Json(data): Json<ResBirthdayReminderConfig>,
+) -> ApiResult {
+  match info::update_birthday_reminder_config(conn, data).await {
+    Ok(_) => {
+      l_info!(
+        logger,
+        "Admin {} ({}) updated birthday reminder config",
+        admin_user.id,
+        admin_user.username
+      );
+      api_ok(())
+    }
+    Err(e) => {
+      l_error!(logger, "Failed to update birthday reminder config: {}", e);
+      Err(ApiError::internal("Failed to update birthday reminder config"))
     }
   }
 }

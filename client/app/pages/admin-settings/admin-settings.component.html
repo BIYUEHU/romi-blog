@@ -180,6 +180,29 @@
       </div>
 
       <div class="pt-6">
+        <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">生日提醒</h3>
+        <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
+          <div class="flex items-center gap-4">
+            <r-checkbox [(ngModel)]="birthdayReminderForm.enabled" type="primary">启用生日提醒</r-checkbox>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">发送时间（小时）</label>
+              <r-input type="number" [(ngModel)]="birthdayReminderForm.hour" placeholder="0-23" />
+            </div>
+            <div>
+              <label class="self-start ml-1 text-sm font-medium text-text-sub">发送时间（分钟）</label>
+              <r-input type="number" [(ngModel)]="birthdayReminderForm.minute" placeholder="0-59" />
+            </div>
+          </div>
+          <div>
+            <label class="self-start ml-1 text-sm font-medium text-text-sub">邮件模板</label>
+            <r-input as="textarea" rows="5" [(ngModel)]="birthdayReminderForm.template" placeholder="支持 $name$、$romaji$、$description$、$birthday$、$age$、$site_name$、$site_url$" />
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6">
         <h3 class="text-sm font-medium text-text-sub uppercase tracking-wider mb-4">友链</h3>
         <div class="bg-bg-elevated rounded-lg p-4 mb-4 space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">

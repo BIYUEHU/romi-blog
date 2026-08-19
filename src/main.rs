@@ -105,6 +105,19 @@ async fn main() {
     l_fatal!(&logger, "{}", e);
   }
 
+  let admin_email = {
+    use crate::entity::romi_users;
+    use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
+    romi_users::Entity::find()
+      .filter(romi_users::Column::IsAdmin.eq("1"))
+      .one(&conn)
+      .await
+      .map(|user| user.map(|u| u.email).unwrap_or_default())
+      .unwrap_or_default()
+  };
+
+  crate::service::birthday_reminder::spawn(conn.clone(), logger.clone(), admin_email);
+
   let ssr = ServerSideRender::new(config.ssr_entry.clone(), config.port + 1, logger.clone());
 
   let app = build_app(RomiState {

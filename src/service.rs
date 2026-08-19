@@ -1,3 +1,4 @@
+pub mod birthday_reminder;
 pub mod character;
 pub mod comment;
 pub mod email;

@@ -15,6 +15,7 @@ import type {
   ReqNewsData,
   ReqPostData,
   ReqUserData,
+  ResBirthdayReminderConfig,
   ResCharacterData,
   ResCommentData,
   ResDashboardData,
@@ -427,5 +428,13 @@ export class ApiService {
 
   public deleteIpBlacklist(id: number) {
     return this.http.delete<void>(`${environment.api_base_url}/info/security/blacklist/${id}`)
+  }
+
+  public getBirthdayReminderConfig() {
+    return this.http.get<ResBirthdayReminderConfig>(`${environment.api_base_url}/info/security/birthday-reminder`)
+  }
+
+  public updateBirthdayReminderConfig(data: ResBirthdayReminderConfig) {
+    return this.http.put<void>(`${environment.api_base_url}/info/security/birthday-reminder`, data)
   }
 }
