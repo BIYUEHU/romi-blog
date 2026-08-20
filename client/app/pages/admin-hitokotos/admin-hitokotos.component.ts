@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common'
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import {
@@ -8,6 +9,7 @@ import { WebComponentInputAccessorDirective } from '../../directives/web-compone
 import { WebComponentSwitchAccessorDirective } from '../../directives/web-component-switch-accessor.directive'
 import { ReqHitokotoData, ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
+import { HITOKOTO_TYPES } from '../../shared/constants'
 import { MessageBoxType } from '../../shared/types'
 
 @Component({
@@ -16,28 +18,28 @@ import { MessageBoxType } from '../../shared/types'
     FormsModule,
     WebComponentInputAccessorDirective,
     WebComponentSwitchAccessorDirective,
-    AdminBaseListComponent
+    AdminBaseListComponent,
+    DatePipe
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './admin-hitokotos.component.html'
 })
 export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResHitokotoData> implements OnInit {
+  protected readonly Number = Number
   public filterType = 0
   public editingHitokoto: ResHitokotoData | null = null
 
   public newHitokoto: ReqHitokotoData = {
     msg: '',
-    from: '',
+    msgOrigin: null,
+    from: null,
+    fromWho: null,
     type: 1,
+    likes: 0,
     public: false
   }
 
-  public readonly types = [
-    { value: 1, label: '二刺猿' },
-    { value: 2, label: '文艺' },
-    { value: 3, label: '俗语' },
-    { value: 4, label: '杂类' }
-  ]
+  public readonly types = HITOKOTO_TYPES
 
   public constructor(private readonly apiService: ApiService) {
     super()
@@ -53,17 +55,20 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
 
   protected searchPredicate(hitokoto: ResHitokotoData, query: string): boolean {
     const filterType = Number(this.filterType)
-    const matchesSearch = hitokoto.msg.toLowerCase().includes(query) || hitokoto.from.toLowerCase().includes(query)
+    const matchesSearch =
+      hitokoto.msg.toLowerCase().includes(query) ||
+      !!hitokoto.msgOrigin?.toLowerCase().includes(query) ||
+      !!hitokoto.from?.toLowerCase().includes(query) ||
+      !!hitokoto.fromWho?.toLowerCase().includes(query)
     return filterType ? hitokoto.type === filterType && matchesSearch : matchesSearch
   }
 
-  protected deleteItem(id: number) {
-    if (this.confirmDelete()) {
-      this.apiService.deleteHitokoto(id).subscribe(() => {
-        this.notifyService.showMessage('一言删除成功', MessageBoxType.Secondary)
-        this.items = this.items.filter((h) => h.id !== id)
-      })
-    }
+  protected deleteItem(uuid: string) {
+    if (!this.confirmDelete()) return
+    this.apiService.deleteHitokoto(uuid).subscribe(() => {
+      this.notifyService.showMessage('一言删除成功', MessageBoxType.Secondary)
+      this.items = this.items.filter((h) => h.uuid !== uuid)
+    })
   }
 
   public ngOnInit() {
@@ -75,34 +80,46 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
       this.notifyService.showMessage('请输入一言内容', MessageBoxType.Warning)
       return
     }
-
-    this.apiService.createHitokoto({ ...this.newHitokoto, type: Number(this.newHitokoto.type) }).subscribe(() => {
-      this.loadItems()
-      this.cancelEdit()
-      this.notifyService.showMessage('一言创建成功', MessageBoxType.Success)
-    })
+    this.apiService
+      .createHitokoto({
+        ...this.newHitokoto,
+        msg: this.newHitokoto.msg.trim(),
+        type: Number(this.newHitokoto.type),
+        likes: Number(this.newHitokoto.likes)
+      })
+      .subscribe(() => {
+        this.loadItems()
+        this.cancelEdit()
+        this.notifyService.showMessage('一言创建成功', MessageBoxType.Success)
+      })
   }
 
   public startEdit(hitokoto: ResHitokotoData) {
     this.editingHitokoto = hitokoto
     this.newHitokoto = {
       msg: hitokoto.msg,
+      msgOrigin: hitokoto.msgOrigin,
       from: hitokoto.from,
+      fromWho: hitokoto.fromWho,
       type: hitokoto.type,
+      likes: hitokoto.likes,
       public: hitokoto.public
     }
   }
 
   public cancelEdit() {
     this.editingHitokoto = null
-    this.newHitokoto = { msg: '', from: '', type: 1, public: false }
+    this.newHitokoto = { msg: '', msgOrigin: null, from: null, fromWho: null, type: 1, likes: 0, public: false }
   }
 
   public updateHitokoto() {
     if (!this.editingHitokoto) return
-
     this.apiService
-      .updateHitokoto(this.editingHitokoto.id, { ...this.newHitokoto, type: Number(this.newHitokoto.type) })
+      .updateHitokoto(this.editingHitokoto.uuid, {
+        ...this.newHitokoto,
+        type: Number(this.newHitokoto.type),
+        likes: Number(this.newHitokoto.likes)
+      })
       .subscribe(() => {
         this.loadItems()
         this.cancelEdit()

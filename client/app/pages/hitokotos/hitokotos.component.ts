@@ -4,7 +4,9 @@ import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
+import { HITOKOTO_TYPES } from '../../shared/constants'
 import { MessageBoxType } from '../../shared/types'
+import { formatHitokotoSource } from '../../shared/utils'
 
 @Component({
   selector: 'app-hitokotos',
@@ -13,13 +15,23 @@ import { MessageBoxType } from '../../shared/types'
   templateUrl: './hitokotos.component.html'
 })
 export class HitokotosComponent implements OnInit {
-  public static readonly typeColors = ['#4CAF50', '#FF9800', '#03A9F4', '#F44336']
-  public static readonly typeNames = ['二刺猿', '文艺', '俗语', '杂类']
-  public static readonly tagTypes = ['success', 'warning', 'info', 'error']
+  public static readonly typeNames = HITOKOTO_TYPES.map(([, label]) => label)
+  public static readonly tagTypes = [
+    'secondary',
+    'info',
+    'success',
+    'warning',
+    'error',
+    'primary',
+    'secondary',
+    'info',
+    'warning'
+  ]
 
   @Input() public hitokotos: ResHitokotoData[] = []
-
   public displayedHitokotos: ResHitokotoData[] = []
+
+  public readonly formatHitokotoSource = formatHitokotoSource
 
   public constructor(
     private readonly notifyService: NotifyService,
@@ -45,28 +57,24 @@ export class HitokotosComponent implements OnInit {
     this.hitokotos = this.hitokotos.slice(20)
   }
 
-  public likeHitokoto(id: number): void {
-    if (this.isLiked(id)) return
-    this.apiService.likeHitokoto(id).subscribe(() => {
-      this.storeService.setItem(STORE_KEYS.hitokotoLiked(id), true)
-      const hitokoto = this.hitokotos.find((h) => h.id === id)
+  public likeHitokoto(uuid: string): void {
+    if (this.isLiked(uuid)) return
+    this.apiService.likeHitokoto(uuid).subscribe(() => {
+      this.storeService.setItem(STORE_KEYS.hitokotoLiked(uuid), true)
+      const hitokoto = this.hitokotos.find((h) => h.uuid === uuid)
       if (hitokoto) hitokoto.likes += 1
     })
   }
 
-  public isLiked(id: number): boolean {
-    return !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(id))
-  }
-
-  public getTypeColor(type: number): string {
-    return HitokotosComponent.typeColors[(type - 1) % HitokotosComponent.typeColors.length]
+  public isLiked(uuid: string): boolean {
+    return !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(uuid))
   }
 
   public getTypeName(type: number): string {
-    return HitokotosComponent.typeNames[(type - 1) % HitokotosComponent.typeNames.length] || 'Unknown'
+    return HitokotosComponent.typeNames[(type - 1) % HitokotosComponent.typeNames.length] ?? '未知'
   }
 
   public getTagType(type: number): string {
-    return HitokotosComponent.tagTypes[(type - 1) % HitokotosComponent.tagTypes.length]
+    return HitokotosComponent.tagTypes[(type - 1) % HitokotosComponent.tagTypes.length] ?? 'secondary'
   }
 }

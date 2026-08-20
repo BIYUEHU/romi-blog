@@ -28,7 +28,7 @@ async fn list(
   match character::list(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list characters: {}", e);
+      l_error!(logger, "Failed to list characters: {:#}", e);
       Err(ApiError::internal("Failed to list characters"))
     }
   }
@@ -45,7 +45,7 @@ async fn fetch(
         l_warn!(logger, "Character {} not found", id);
         Err(ApiError::not_found(format!("Character {} not found", id)))
       } else {
-        l_error!(logger, "Failed to get character {}: {}", id, e);
+        l_error!(logger, "Failed to get character {}: {:#}", id, e);
         Err(ApiError::internal("Failed to get character"))
       }
     }
@@ -70,7 +70,7 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create character: {}", e);
+      l_error!(logger, "Failed to create character: {:#}", e);
       Err(ApiError::internal("Failed to create character"))
     }
   }
@@ -98,7 +98,7 @@ async fn update(
         l_warn!(logger, "Character {} not found", id);
         Err(ApiError::not_found(format!("Character {} not found", id)))
       } else {
-        l_error!(logger, "Failed to update character {}: {}", id, e);
+        l_error!(logger, "Failed to update character {}: {:#}", id, e);
         Err(ApiError::internal("Failed to update character"))
       }
     }
@@ -122,7 +122,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete character {}: {}", id, e);
+      l_error!(logger, "Failed to delete character {}: {:#}", id, e);
       Err(ApiError::internal("Failed to delete character"))
     }
   }

@@ -38,7 +38,7 @@ async fn login(
         l_warn!(logger, "Invalid login attempt: {}", e);
         Err(ApiError::unauthorized("Invalid credentials"))
       } else {
-        l_error!(logger, "Login failed: {}", e);
+        l_error!(logger, "Login failed: {:#}", e);
         Err(ApiError::internal("Login failed"))
       }
     }
@@ -52,7 +52,7 @@ async fn list(
   match user::list(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list users: {}", e);
+      l_error!(logger, "Failed to list users: {:#}", e);
       Err(ApiError::internal("Failed to list users"))
     }
   }
@@ -70,7 +70,7 @@ async fn fetch(
         l_warn!(logger, "User {} not found", id);
         Err(ApiError::not_found("User not found"))
       } else {
-        l_error!(logger, "Failed to get user {}: {}", id, e);
+        l_error!(logger, "Failed to get user {}: {:#}", id, e);
         Err(ApiError::internal("Failed to get user"))
       }
     }
@@ -99,7 +99,7 @@ async fn create(
         l_warn!(logger, "User creation failed: {}", e);
         Err(ApiError::bad_request("Username or email already taken"))
       } else {
-        l_error!(logger, "Failed to create user: {}", e);
+        l_error!(logger, "Failed to create user: {:#}", e);
         Err(ApiError::internal("Failed to create user"))
       }
     }
@@ -120,7 +120,7 @@ async fn register(
         l_warn!(logger, "Registration failed: {}", e);
         Err(ApiError::bad_request(e.to_string()))
       } else {
-        l_error!(logger, "Registration failed: {}", e);
+        l_error!(logger, "Registration failed: {:#}", e);
         Err(ApiError::internal("Registration failed"))
       }
     }
@@ -149,7 +149,7 @@ async fn update_profile(
         l_warn!(logger, "Profile update failed: {}", e);
         Err(ApiError::bad_request(e.to_string()))
       } else {
-        l_error!(logger, "Profile update failed: {}", e);
+        l_error!(logger, "Profile update failed: {:#}", e);
         Err(ApiError::internal("Profile update failed"))
       }
     }
@@ -172,7 +172,7 @@ async fn update(
         l_warn!(logger, "User {} not found", id);
         Err(ApiError::not_found("User not found"))
       } else {
-        l_error!(logger, "Failed to update user {}: {}", id, e);
+        l_error!(logger, "Failed to update user {}: {:#}", id, e);
         Err(ApiError::internal("Failed to update user"))
       }
     }
@@ -195,7 +195,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete user {}: {}", id, e);
+      l_error!(logger, "Failed to delete user {}: {:#}", id, e);
       Err(ApiError::internal("Failed to delete user"))
     }
   }

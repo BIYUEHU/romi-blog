@@ -42,7 +42,7 @@ export class FooterComponent implements OnInit {
       .pipe(
         map((data) => {
           const msg = data.msg.length > 30 ? `${data.msg.substring(0, 25)}...` : data.msg
-          return { ...data, msg: `${msg}${data.from.trim() ? ` —— ${data.from}` : ''}` }
+          return { ...data, msg: `${msg}${data.from?.trim() ? ` —— ${data.from}` : ''}` }
         })
       )
       .subscribe((data) => {

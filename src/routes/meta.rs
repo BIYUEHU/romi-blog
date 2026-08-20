@@ -27,7 +27,7 @@ async fn list(
   match meta::list(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list metas: {}", e);
+      l_error!(logger, "Failed to list metas: {:#}", e);
       Err(ApiError::internal("Failed to list metas"))
     }
   }
@@ -44,7 +44,7 @@ async fn fetch(
         l_warn!(logger, "Meta {} not found", id);
         Err(ApiError::not_found("Meta not found"))
       } else {
-        l_error!(logger, "Failed to get meta {}: {}", id, e);
+        l_error!(logger, "Failed to get meta {}: {:#}", id, e);
         Err(ApiError::internal("Failed to get meta"))
       }
     }
@@ -73,7 +73,7 @@ async fn create(
         l_warn!(logger, "Meta name already exists");
         Err(ApiError::bad_request("Meta name already exists"))
       } else {
-        l_error!(logger, "Failed to create meta: {}", e);
+        l_error!(logger, "Failed to create meta: {:#}", e);
         Err(ApiError::internal("Failed to create meta"))
       }
     }
@@ -91,7 +91,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete meta {}: {}", id, e);
+      l_error!(logger, "Failed to delete meta {}: {:#}", id, e);
       Err(ApiError::internal("Failed to delete meta"))
     }
   }

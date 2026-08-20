@@ -9,7 +9,6 @@ import type {
   LanguageColors,
   ReqCharacterData,
   ReqDecryptPostData,
-  ReqHitokoto2Data,
   ReqHitokotoData,
   ReqMetaData,
   ReqNewsData,
@@ -20,7 +19,6 @@ import type {
   ResCommentData,
   ResDashboardData,
   ResDecryptPostData,
-  ResHitokoto2Data,
   ResHitokotoData,
   ResIpBlacklistItem,
   ResLogEntry,
@@ -204,8 +202,8 @@ export class ApiService {
     return this.http.delete<void>(`${environment.api_base_url}/comment/${id}`)
   }
 
-  public getHitokoto(id?: number) {
-    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto${id ? `/${id}` : ''}`, {
+  public getHitokoto(uuid?: string) {
+    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto${uuid ? `/${uuid}` : ''}`, {
       headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
     })
   }
@@ -218,42 +216,16 @@ export class ApiService {
     return this.http.post<void>(`${environment.api_base_url}/hitokoto`, data)
   }
 
-  public getHitokoto2() {
-    return this.http.get<ResHitokoto2Data>(`${environment.api_base_url}/hitokoto/new`, {
-      headers: this.genHeaders([HEADER_CONTEXT.ERROR_REDIRECT])
-    })
+  public updateHitokoto(uuid: string, data: ReqHitokotoData) {
+    return this.http.put<void>(`${environment.api_base_url}/hitokoto/${uuid}`, data)
   }
 
-  public getHitokotos2() {
-    return this.http.get<ResHitokoto2Data[]>(`${environment.api_base_url}/hitokoto/new/all`)
+  public likeHitokoto(uuid: string) {
+    return this.http.put<void>(`${environment.api_base_url}/hitokoto/like/${uuid}`, {})
   }
 
-  public createHitokoto2(data: ReqHitokoto2Data) {
-    return this.http.post<void>(`${environment.api_base_url}/hitokoto/new`, data)
-  }
-
-  public updateHitokoto2(uuid: string, data: ReqHitokoto2Data) {
-    return this.http.put<void>(`${environment.api_base_url}/hitokoto/new/${uuid}`, data)
-  }
-
-  public deleteHitokoto2(uuid: string) {
-    return this.http.delete<void>(`${environment.api_base_url}/hitokoto/new/${uuid}`)
-  }
-
-  public updateHitokoto(id: number, data: ReqHitokotoData) {
-    return this.http.put<void>(`${environment.api_base_url}/hitokoto/${id}`, data)
-  }
-
-  public likeHitokoto(id: number) {
-    return this.http.put<void>(`${environment.api_base_url}/hitokoto/like/${id}`, {})
-  }
-
-  public deleteHitokoto(id: number) {
-    return this.http.delete<void>(`${environment.api_base_url}/hitokoto/${id}`)
-  }
-
-  public getHitokotoById(id: number) {
-    return this.http.get<ResHitokotoData>(`${environment.api_base_url}/hitokoto/${id}`)
+  public deleteHitokoto(uuid: string) {
+    return this.http.delete<void>(`${environment.api_base_url}/hitokoto/${uuid}`)
   }
 
   public getCharacters() {

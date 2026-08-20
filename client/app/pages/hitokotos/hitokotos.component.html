@@ -1,37 +1,29 @@
 <div class="max-w-98% w-6xl mx-auto space-y-6 pb-6">
-
   <div class="columns-1 md:columns-2 gap-x-4">
-    @for (hitokoto of displayedHitokotos; track $index) {
+    @for (hitokoto of displayedHitokotos; track hitokoto.uuid) {
     <div
-      class="break-inside-avoid mb-4 bg-bg-surface rounded-lg border border-border-base p-4 transition-colors relative"
-      [style]="'flex-shrink:0;width:100%;max-width:100%;flex:0 0 auto; border-left: 4px solid ' + getTypeColor(hitokoto.type)">
-      <p [routerLink]="['/hitokoto/' + hitokoto.id]"
-        class="text-text-base mb-4 overflow-y-auto max-h-50 hover:text-brand hover:cursor-pointer">{{
-        hitokoto.msg
-        }}
+      class="break-inside-avoid mb-4 bg-bg-surface rounded-lg border border-border-base p-4 transition-colors relative">
+      @if (hitokoto.msgOrigin) {
+      <p class="text-text-sub mb-2 text-sm">{{ hitokoto.msgOrigin }}</p>
+      }
+      <p [routerLink]="['/hitokoto/' + hitokoto.uuid]"
+        class="text-text-base mb-4 overflow-y-auto max-h-50 hover:text-brand hover:cursor-pointer">{{ hitokoto.msg }}
       </p>
-
       <div class="flex items-center justify-between text-sm">
         <div class="flex items-center gap-4 text-accent">
-          @if (hitokoto.from) {
-          <span>{{ hitokoto.from }}</span>
-          }
-          <r-tag [type]="getTagType(hitokoto.type)">
-            {{ getTypeName(hitokoto.type) }}
-          </r-tag>
+          <span>{{ formatHitokotoSource(hitokoto.from, hitokoto.fromWho) }}</span>
+          <r-tag [type]="getTagType(hitokoto.type)">{{ getTypeName(hitokoto.type) }}</r-tag>
         </div>
-
         <div class="flex items-center gap-2">
           <i class="i-mdi:thumb-up cursor-pointer transition-colors"
-            [class]="isLiked(hitokoto.id) ? 'text-brand' : 'text-accent hover:text-brand'"
-            (click)="likeHitokoto(hitokoto.id)"></i>
+            [class]="isLiked(hitokoto.uuid) ? 'text-brand' : 'text-accent hover:text-brand'"
+            (click)="likeHitokoto(hitokoto.uuid)"></i>
           <span class="text-text-sub">{{ hitokoto.likes }}</span>
         </div>
       </div>
     </div>
     }
   </div>
-
   @if (hitokotos.length > 0) {
   <div class="flex justify-center">
     <r-button type="info" (click)="loadMore()">加载更多</r-button>

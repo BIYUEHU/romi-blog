@@ -188,7 +188,7 @@ pub async fn register(
   };
 
   let result = active.insert(db).await.map_err(|e| {
-    l_error!(logger, "Failed to create user: {}", e);
+    l_error!(logger, "Failed to create user: {:#}", e);
     anyhow::anyhow!(e)
   })?;
 
@@ -205,7 +205,7 @@ pub async fn register(
   );
 
   if let Err(e) = send_email(db, &payload.email, subject, &body).await {
-    l_error!(logger, "Failed to send registration email: {}", e);
+    l_error!(logger, "Failed to send registration email: {:#}", e);
   }
 
   Ok(result)

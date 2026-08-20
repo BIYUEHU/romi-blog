@@ -9,10 +9,16 @@ pub struct Model {
   pub id: u32,
   #[sea_orm(column_type = "Text")]
   pub msg: String,
-  pub from: String,
-  pub r#type: String,
-  pub likes: i32,
+  #[sea_orm(column_type = "Text", nullable)]
+  pub msg_origin: Option<String>,
+  #[sea_orm(unique)]
+  pub uuid: String,
+  pub from: Option<String>,
+  pub from_who: Option<String>,
+  pub r#type: u8,
+  pub likes: u32,
   pub public: String,
+  pub created: DateTimeUtc,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

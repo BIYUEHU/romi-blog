@@ -33,7 +33,6 @@ export class AdminSidebarComponent {
           { text: '评论管理', link: '/admin/comments', icon: 'i-mdi:comment', adminOnly: true },
           { text: '用户管理', link: '/admin/users', icon: 'i-mdi:account-multiple', adminOnly: true },
           { text: '一言管理', link: '/admin/hitokotos', icon: 'i-mdi:format-quote-close', adminOnly: true },
-          { text: '一言管理', link: '/admin/hitokotos2', icon: 'i-mdi:format-quote-close', adminOnly: true },
           { text: '动态管理', link: '/admin/news', icon: 'i-mdi:newspaper', adminOnly: true },
           { text: '角色管理', link: '/admin/chars', icon: 'i-mdi:star', adminOnly: true }
         ],

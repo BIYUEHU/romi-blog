@@ -34,7 +34,7 @@ pub async fn ip_blacklist_middleware(
     }
     Ok(false) => {}
     Err(e) => {
-      l_error!(logger.clone().with_label("Security"), "Failed to check IP blacklist: {}", e);
+      l_error!(logger.clone().with_label("Security"), "Failed to check IP blacklist: {:#}", e);
     }
   }
   next.run(req).await

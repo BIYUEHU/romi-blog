@@ -6,6 +6,7 @@ import { NotifyService } from '../../services/notify.service'
 import { STORE_KEYS, StoreService } from '../../services/store.service'
 import { AppTitleStrategy } from '../../shared/title-strategy'
 import { MessageBoxType } from '../../shared/types'
+import { formatHitokotoSource } from '../../shared/utils'
 import { HitokotosComponent } from '../hitokotos/hitokotos.component'
 
 @Component({
@@ -21,7 +22,7 @@ export class HitokotoComponent {
   public isLoading = false
 
   public get isLiked() {
-    return !!this.hitokoto && !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(this.hitokoto.id))
+    return !!this.hitokoto && !!this.storeService.getItem(STORE_KEYS.hitokotoLiked(this.hitokoto.uuid))
   }
 
   public constructor(
@@ -31,8 +32,12 @@ export class HitokotoComponent {
     private readonly storeService: StoreService
   ) {}
 
-  public readonly getTagType = HitokotosComponent.prototype.getTagType
+  public getHitokotoSource(hitokoto: ResHitokotoData) {
+    const source = formatHitokotoSource(hitokoto.from, hitokoto.fromWho)
+    return source ? ` ——${source}` : ''
+  }
 
+  public readonly getTagType = HitokotosComponent.prototype.getTagType
   public readonly getTypeName = HitokotosComponent.prototype.getTypeName
 
   public nextHitokoto() {
@@ -49,17 +54,16 @@ export class HitokotoComponent {
       this.notifyService.showMessage('已经点过赞了')
       return
     }
-
-    this.apiService.likeHitokoto(this.hitokoto.id).subscribe(() => {
-      this.storeService.setItem(STORE_KEYS.hitokotoLiked((this.hitokoto as ResHitokotoData).id), true)
-      ;(this.hitokoto as ResHitokotoData).likes += 1
+    this.apiService.likeHitokoto(this.hitokoto.uuid).subscribe(() => {
+      this.storeService.setItem(STORE_KEYS.hitokotoLiked(this.hitokoto.uuid), true)
+      this.hitokoto.likes += 1
       this.notifyService.showMessage('点赞成功', MessageBoxType.Success)
     })
   }
 
   public shareHitokoto() {
     if (!this.hitokoto) return
-    navigator.clipboard.writeText(`${location.origin}/hitokoto/${this.hitokoto.id}`).then(
+    navigator.clipboard.writeText(`${location.origin}/hitokoto/${this.hitokoto.uuid}`).then(
       () => this.notifyService.showMessage('链接已复制', MessageBoxType.Secondary),
       () => this.notifyService.showMessage('复制失败', MessageBoxType.Error)
     )

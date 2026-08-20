@@ -46,7 +46,7 @@ async fn get_dashboard(
   match info::get_dashboard(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get dashboard: {}", e);
+      l_error!(logger, "Failed to get dashboard: {:#}", e);
       Err(ApiError::internal("Failed to get dashboard"))
     }
   }
@@ -58,7 +58,7 @@ async fn get_settings(
   match info::get_settings(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get settings: {}", e);
+      l_error!(logger, "Failed to get settings: {:#}", e);
       Err(ApiError::internal("Failed to get settings"))
     }
   }
@@ -75,7 +75,7 @@ async fn update_settings(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to update settings: {}", e);
+      l_error!(logger, "Failed to update settings: {:#}", e);
       Err(ApiError::internal("Failed to update settings"))
     }
   }
@@ -87,7 +87,7 @@ async fn get_projects(
   match info::get_projects().await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get projects: {}", e);
+      l_error!(logger, "Failed to get projects: {:#}", e);
       Err(ApiError::internal("Failed to get projects"))
     }
   }
@@ -99,7 +99,7 @@ async fn get_music(
   match info::get_music().await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get music: {}", e);
+      l_error!(logger, "Failed to get music: {:#}", e);
       Err(ApiError::internal("Failed to get music"))
     }
   }
@@ -112,7 +112,7 @@ async fn search_posts(
   match info::search_posts(conn, &params.q, params.page, params.per_page).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to search posts: {}", e);
+      l_error!(logger, "Failed to search posts: {:#}", e);
       Err(ApiError::internal("Failed to search posts"))
     }
   }
@@ -132,7 +132,7 @@ async fn send_contact_email(
   match send_email(conn, &form.email, &subject, &body).await {
     Ok(_) => api_ok(()),
     Err(e) => {
-      l_error!(logger, "Contact email failed: {}", e);
+      l_error!(logger, "Contact email failed: {:#}", e);
       Err(ApiError::internal(e.to_string()))
     }
   }
@@ -152,7 +152,7 @@ async fn test_smtp(
   match send_email(conn, &payload.to, subject, &payload.content).await {
     Ok(_) => api_ok(()),
     Err(e) => {
-      l_error!(logger, "Test SMTP failed: {}", e);
+      l_error!(logger, "Test SMTP failed: {:#}", e);
       Err(ApiError::internal(e.to_string()))
     }
   }
@@ -165,7 +165,7 @@ async fn get_logs(
   match info::list_logs().await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list logs: {}", e);
+      l_error!(logger, "Failed to list logs: {:#}", e);
       Err(ApiError::internal("Failed to list logs"))
     }
   }
@@ -179,7 +179,7 @@ async fn get_log(
   match info::read_log(&name).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to read log {}: {}", name, e);
+      l_error!(logger, "Failed to read log {}: {:#}", name, e);
       Err(ApiError::internal("Failed to read log"))
     }
   }
@@ -192,7 +192,7 @@ async fn get_ip_blacklist(
   match info::list_ip_blacklist(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list IP blacklist: {}", e);
+      l_error!(logger, "Failed to list IP blacklist: {:#}", e);
       Err(ApiError::internal("Failed to list IP blacklist"))
     }
   }
@@ -218,7 +218,7 @@ async fn add_ip_blacklist(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to add IP blacklist: {}", e);
+      l_error!(logger, "Failed to add IP blacklist: {:#}", e);
       Err(ApiError::internal("Failed to add IP blacklist"))
     }
   }
@@ -241,7 +241,7 @@ async fn delete_ip_blacklist(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete IP blacklist: {}", e);
+      l_error!(logger, "Failed to delete IP blacklist: {:#}", e);
       Err(ApiError::internal("Failed to delete IP blacklist"))
     }
   }
@@ -254,7 +254,7 @@ async fn get_birthday_reminder_config(
   match info::get_birthday_reminder_config(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get birthday reminder config: {}", e);
+      l_error!(logger, "Failed to get birthday reminder config: {:#}", e);
       Err(ApiError::internal("Failed to get birthday reminder config"))
     }
   }
@@ -276,7 +276,7 @@ async fn update_birthday_reminder_config(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to update birthday reminder config: {}", e);
+      l_error!(logger, "Failed to update birthday reminder config: {:#}", e);
       Err(ApiError::internal("Failed to update birthday reminder config"))
     }
   }
@@ -289,7 +289,7 @@ async fn get_smtp_settings(
   match info::get_smtp_settings(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to get smtp settings: {}", e);
+      l_error!(logger, "Failed to get smtp settings: {:#}", e);
       Err(ApiError::internal("Failed to get smtp settings"))
     }
   }
@@ -306,7 +306,7 @@ async fn update_smtp_settings(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to update smtp settings: {}", e);
+      l_error!(logger, "Failed to update smtp settings: {:#}", e);
       Err(ApiError::internal("Failed to update smtp settings"))
     }
   }

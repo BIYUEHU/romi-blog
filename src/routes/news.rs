@@ -35,7 +35,7 @@ async fn list(
   match news::list(conn, is_admin).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list news: {}", e);
+      l_error!(logger, "Failed to list news: {:#}", e);
       Err(ApiError::internal("Failed to list news"))
     }
   }
@@ -54,7 +54,7 @@ async fn fetch(
         l_warn!(logger, "News {} not found or private", id);
         Err(ApiError::not_found("News not found"))
       } else {
-        l_error!(logger, "Failed to get news {}: {}", id, e);
+        l_error!(logger, "Failed to get news {}: {:#}", id, e);
         Err(ApiError::internal("Failed to get news"))
       }
     }
@@ -78,7 +78,7 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create news: {}", e);
+      l_error!(logger, "Failed to create news: {:#}", e);
       Err(ApiError::internal("Failed to create news"))
     }
   }
@@ -100,7 +100,7 @@ async fn update(
         l_warn!(logger, "News {} not found", id);
         Err(ApiError::not_found("News not found"))
       } else {
-        l_error!(logger, "Failed to update news {}: {}", id, e);
+        l_error!(logger, "Failed to update news {}: {:#}", id, e);
         Err(ApiError::internal("Failed to update news"))
       }
     }
@@ -121,7 +121,7 @@ async fn like(
         l_warn!(logger, "News {} not found", id);
         Err(ApiError::not_found("News not found"))
       } else {
-        l_error!(logger, "Failed to like news {}: {}", id, e);
+        l_error!(logger, "Failed to like news {}: {:#}", id, e);
         Err(ApiError::internal("Failed to like news"))
       }
     }
@@ -142,7 +142,7 @@ async fn view(
         l_warn!(logger, "News {} not found", id);
         Err(ApiError::not_found("News not found"))
       } else {
-        l_error!(logger, "Failed to view news {}: {}", id, e);
+        l_error!(logger, "Failed to view news {}: {:#}", id, e);
         Err(ApiError::internal("Failed to view news"))
       }
     }
@@ -160,7 +160,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete news {}: {}", id, e);
+      l_error!(logger, "Failed to delete news {}: {:#}", id, e);
       Err(ApiError::internal("Failed to delete news"))
     }
   }

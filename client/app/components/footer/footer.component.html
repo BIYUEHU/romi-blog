@@ -7,7 +7,7 @@
       <p>感谢陪伴：{{ currentTime }}</p>
       @if (data) {
       <p>
-        <a [routerLink]="['/hitokoto/' , data.id]" class="text-brand hover:text-brand-hover">{{
+        <a [routerLink]="['/hitokoto/' , data.uuid]" class="text-brand hover:text-brand-hover">{{
           data.msg
           }}</a>
       </p>

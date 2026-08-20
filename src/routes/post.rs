@@ -35,7 +35,7 @@ async fn list(
   match post::list(conn, access.level).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list posts: {}", e);
+      l_error!(logger, "Failed to list posts: {:#}", e);
       Err(ApiError::internal("Failed to list posts"))
     }
   }
@@ -53,7 +53,7 @@ async fn fetch(
         l_warn!(logger, "Post {} not found", id);
         Err(ApiError::not_found("Post not found"))
       } else {
-        l_error!(logger, "Failed to get post {}: {}", id, e);
+        l_error!(logger, "Failed to get post {}: {:#}", id, e);
         Err(ApiError::internal("Failed to get post"))
       }
     }
@@ -72,7 +72,7 @@ async fn get_by_str_id(
         l_warn!(logger, "Post with str_id {} not found", str_id);
         Err(ApiError::not_found("Post not found"))
       } else {
-        l_error!(logger, "Failed to get post by str_id {}: {}", str_id, e);
+        l_error!(logger, "Failed to get post by str_id {}: {:#}", str_id, e);
         Err(ApiError::internal("Failed to get post"))
       }
     }
@@ -101,7 +101,7 @@ async fn create(
         l_warn!(logger, "Invalid str_id");
         Err(ApiError::bad_request("Invalid str_id"))
       } else {
-        l_error!(logger, "Failed to create post: {}", e);
+        l_error!(logger, "Failed to create post: {:#}", e);
         Err(ApiError::internal("Failed to create post"))
       }
     }
@@ -124,7 +124,7 @@ async fn update(
         l_warn!(logger, "Post {} not found", id);
         Err(ApiError::not_found("Post not found"))
       } else {
-        l_error!(logger, "Failed to update post {}: {}", id, e);
+        l_error!(logger, "Failed to update post {}: {:#}", id, e);
         Err(ApiError::internal("Failed to update post"))
       }
     }
@@ -145,7 +145,7 @@ async fn like(
         l_warn!(logger, "Post {} not found", id);
         Err(ApiError::not_found("Post not found"))
       } else {
-        l_error!(logger, "Failed to like post {}: {}", id, e);
+        l_error!(logger, "Failed to like post {}: {:#}", id, e);
         Err(ApiError::internal("Failed to like post"))
       }
     }
@@ -166,7 +166,7 @@ async fn view(
         l_warn!(logger, "Post {} not found", id);
         Err(ApiError::not_found("Post not found"))
       } else {
-        l_error!(logger, "Failed to view post {}: {}", id, e);
+        l_error!(logger, "Failed to view post {}: {:#}", id, e);
         Err(ApiError::internal("Failed to view post"))
       }
     }
@@ -184,7 +184,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to delete post {}: {}", id, e);
+      l_error!(logger, "Failed to delete post {}: {:#}", id, e);
       Err(ApiError::internal("Failed to delete post"))
     }
   }
@@ -208,7 +208,7 @@ async fn decrypt(
         l_warn!(logger, "Incorrect password for post {}", id);
         Err(ApiError::unauthorized("Incorrect password"))
       } else {
-        l_error!(logger, "Failed to decrypt post {}: {}", id, e);
+        l_error!(logger, "Failed to decrypt post {}: {:#}", id, e);
         Err(ApiError::internal("Failed to decrypt post"))
       }
     }

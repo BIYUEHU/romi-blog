@@ -1,6 +1,11 @@
 import { passcore } from 'passcorelib'
 import { ResCharacterData } from '../models/api.model'
 
+export const formatHitokotoSource = (from?: string | null, fromWho?: string | null) => {
+  const source = from?.trim()
+  return [fromWho?.trim(), source ? `「${source}」` : null].filter(Boolean).join('')
+}
+
 export function sortByCreatedTime<T extends { created: number }[]>(list: T, reverse = true): T {
   return list.sort((a, b) => (reverse ? -1 : 1) * (a.created - b.created))
 }

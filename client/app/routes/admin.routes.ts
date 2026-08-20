@@ -50,12 +50,7 @@ export const adminRoutes: Routes = [
           import('../pages/admin-hitokotos/admin-hitokotos.component').then((m) => m.AdminHitokotosComponent),
         title: '一言管理'
       },
-      {
-        path: 'hitokotos2',
-        loadComponent: () =>
-          import('../pages/admin-hitokotos2/admin-hitokotos.component').then((m) => m.AdminHitokotosComponent),
-        title: '一言管理'
-      },
+
       {
         path: 'news',
         loadComponent: () => import('../pages/admin-news/admin-news.component').then((m) => m.AdminNewsComponent),

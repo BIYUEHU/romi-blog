@@ -4,6 +4,6 @@ import { ResHitokotoData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 
 export const hitokotoResolver: ResolveFn<ResHitokotoData> = (route) => {
-  const id = route.paramMap.get('id')
-  return id ? inject(ApiService).getHitokoto(+id) : inject(ApiService).getHitokoto()
+  const uuid = route.paramMap.get('uuid')
+  return uuid ? inject(ApiService).getHitokoto(uuid) : inject(ApiService).getHitokoto()
 }

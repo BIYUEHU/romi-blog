@@ -163,7 +163,7 @@ export const publicRoutes: Routes = [
     }
   },
   {
-    path: 'hitokoto/:id',
+    path: 'hitokoto/:uuid',
     component: HitokotoComponent,
     resolve: {
       hitokoto: hitokotoResolver

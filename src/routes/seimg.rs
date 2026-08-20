@@ -33,7 +33,7 @@ async fn list(
   match seimg::list(conn, limit, tag, r18).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list seimgs: {}", e);
+      l_error!(logger, "Failed to list seimgs: {:#}", e);
       Err(ApiError::internal("Failed to list seimgs"))
     }
   }
@@ -57,7 +57,7 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create seimg: {}", e);
+      l_error!(logger, "Failed to create seimg: {:#}", e);
       Err(ApiError::internal("Failed to create seimg"))
     }
   }
@@ -86,7 +86,7 @@ async fn update(
         l_warn!(logger, "Seimg {} not found", id);
         Err(ApiError::not_found(format!("Seimg {} not found", id)))
       } else {
-        l_error!(logger, "Failed to update seimg {}: {}", id, e);
+        l_error!(logger, "Failed to update seimg {}: {:#}", id, e);
         Err(ApiError::internal("Failed to update seimg"))
       }
     }
@@ -104,7 +104,7 @@ async fn remove(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to remove seimg {}: {}", id, e);
+      l_error!(logger, "Failed to remove seimg {}: {:#}", id, e);
       Err(ApiError::internal("Failed to remove seimg"))
     }
   }

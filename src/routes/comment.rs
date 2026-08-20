@@ -35,7 +35,7 @@ async fn list(
   match comment::list(conn).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list comments: {}", e);
+      l_error!(logger, "Failed to list comments: {:#}", e);
       Err(ApiError::internal("Failed to list comments"))
     }
   }
@@ -50,7 +50,7 @@ async fn list_by_post(
   match comment::list_by_post(conn, pid, current_uid).await {
     Ok(data) => api_ok(data),
     Err(e) => {
-      l_error!(logger, "Failed to list comments for post {}: {}", pid, e);
+      l_error!(logger, "Failed to list comments for post {}: {:#}", pid, e);
       Err(ApiError::internal("Failed to list comments"))
     }
   }
@@ -76,7 +76,7 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create comment: {}", e);
+      l_error!(logger, "Failed to create comment: {:#}", e);
       Err(ApiError::internal("Failed to create comment"))
     }
   }
@@ -106,7 +106,7 @@ async fn update_status(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to update comment {}: {}", id, e);
+      l_error!(logger, "Failed to update comment {}: {:#}", id, e);
       Err(ApiError::internal("Failed to update comment"))
     }
   }
@@ -135,7 +135,7 @@ async fn remove(
         l_warn!(logger, "Comment {} not found", id);
         Err(ApiError::not_found("Comment not found"))
       } else {
-        l_error!(logger, "Failed to delete comment {}: {}", id, e);
+        l_error!(logger, "Failed to delete comment {}: {:#}", id, e);
         Err(ApiError::internal("Failed to delete comment"))
       }
     }

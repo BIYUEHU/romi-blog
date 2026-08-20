@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core'
+import { THEME_COLORS } from '../shared/constants'
 import { BrowserService } from './browser.service'
 import { STORE_KEYS, StoreService } from './store.service'
 
@@ -14,13 +15,7 @@ export class ThemeService {
     { value: 'system' as const, label: '跟随系统' }
   ] as const
 
-  public readonly colors = [
-    { name: '粉色', brand: '#d87cb6', accent: '#9573a2' },
-    { name: '紫色', brand: '#9573a2', accent: '#7b5ea7' },
-    { name: '蓝色', brand: '#5b8dee', accent: '#3a6fd8' },
-    { name: '绿色', brand: '#4caf7d', accent: '#3a9d6e' },
-    { name: '橙色', brand: '#f0a04b', accent: '#e08a3c' }
-  ] as const
+  public readonly colors = THEME_COLORS
 
   public selectedTheme: ThemeMode = 'system'
   public selectedColor: string = this.colors[0].name

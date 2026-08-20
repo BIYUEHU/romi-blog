@@ -4,6 +4,30 @@ import buildMeta from '../../environments/build-meta'
 import { environment } from '../../environments/environment'
 import { LoggerService } from '../services/logger.service'
 
+export const HITOKOTO_TYPES = Object.entries({
+  1: '动漫',
+  2: '游戏',
+  3: '文学',
+  4: '哲学',
+  5: '歌词',
+  6: '诗词',
+  7: '网络',
+  8: '名句',
+  9: '影视',
+  10: '其它'
+})
+
+export const THEME_COLORS = [
+  { name: '有村ロミ - Arimura Romi', brand: '#d87cb6', accent: '#9573a2' },
+  { name: '姬野星奏 - Himeno Sena', brand: '#E3AD88', accent: 'e8ac96' },
+  { name: '美浜羊 - Mihama Hitsuji', brand: '#F7DCFF', accent: '#A881CE' },
+  { name: '夏目藍 - Natsume Ai', brand: '#5b8dee', accent: '#3a6fd8' },
+  { name: '水無月蛍 - Minazuki Hotaru', brand: '#4caf7d', accent: '#3a9d6e' },
+  { name: '遠藤沙弥 - Endou Saya', brand: '#FF9891', accent: '#924376' },
+  { name: '七濑步　- Nanase Ayumu', brand: '#B28F96', accent: '#9F8193' },
+  { name: '羽音々翼 - Haotone Tsubasa', brand: '#BCE3EA', accent: '#728AB8' }
+] as const
+
 export const COPYRIGHT_YEAR = 2026
 
 export const ROMI_METADATA = { pkg, build: buildMeta } //

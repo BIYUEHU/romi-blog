@@ -50,17 +50,6 @@ CREATE TABLE `romi_comments` (
 ) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `romi_hitokotos`;
-CREATE TABLE `romi_hitokotos` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `msg` text NOT NULL,
-  `from` varchar(150) NOT NULL,
-  `type` varchar(10) NOT NULL,
-  `likes` int(10) NOT NULL DEFAULT '0',
-  `public` char(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=791 DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `romi_hitokotos2`;
 CREATE TABLE `romi_hitokotos2` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `msg` text NOT NULL,

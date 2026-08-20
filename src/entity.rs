@@ -5,7 +5,6 @@ pub mod prelude;
 pub mod romi_characters;
 pub mod romi_comments;
 pub mod romi_hitokotos;
-pub mod romi_hitokotos2;
 pub mod romi_ip_blacklist;
 pub mod romi_metas;
 pub mod romi_news;

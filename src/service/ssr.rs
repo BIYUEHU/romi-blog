@@ -46,7 +46,7 @@ impl ServerSideRender {
       .map_err(|e| {
         l_error!(
           logger.clone().with_label(NODEJS_LOGGER_LABEL),
-          "Failed to start Node.js process: {}",
+          "Failed to start Node.js process: {:#}",
           e
         );
         e
