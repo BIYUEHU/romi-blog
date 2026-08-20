@@ -27,9 +27,44 @@ idiot without technical power!</span>
 
 <!-- markdownlint-enable -->
 
-> It's still in developing...
+## Deployment
+
+Please refer to the [Deployment Guide](./DEPLOY.md) for detailed instructions.
+
+## Features
+
+- Personal-first: simple but not bare, expressive but not flashy
+- Powered by Angular WebComponents + Rust Axum
+- A personal portal and expression platform, including a full blog system
+- Supports moments, waifu characters, hitokoto, anime, GalGame, movies, and books
+- Full backend user & comment system backed by a robust security system
+- Modern development with Bun, Biome, and UnoCSS
+- Guaranteed type consistency between frontend and backend
+- Fun color theme system and character birthday reminders
+
+## Public APIs
+
+Some endpoints are exposed for general use — random hitokoto,
+random image, IP/UA info, and more.
+
+## Colors Scheme
+
+```typescript
+export const THEME_COLORS = [
+  { name: '有村ロミ - Arimura Romi', brand: '#d87cb6', accent: '#9573a2' },
+  { name: '姬野星奏 - Himeno Sena', brand: '#E3AD88', accent: 'e8ac96' },
+  { name: '美浜羊 - Mihama Hitsuji', brand: '#F7DCFF', accent: '#A881CE' },
+  { name: '夏目藍 - Natsume Ai', brand: '#5b8dee', accent: '#3a6fd8' },
+  { name: '水無月蛍 - Minazuki Hotaru', brand: '#4caf7d', accent: '#3a9d6e' },
+  { name: '遠藤沙弥 - Endou Saya', brand: '#FF9891', accent: '#924376' },
+  { name: '七濑步　- Nanase Ayumu', brand: '#B28F96', accent: '#9F8193' },
+  { name: '羽音々翼 - Haotone Tsubasa', brand: '#BCE3EA', accent: '#728AB8' }
+] as const
+```
 
 ## Stacks
+
+![ARCHITECTURE](./ARCHITECTURE.png)
 
 ### Frontend
 
@@ -45,20 +80,24 @@ idiot without technical power!</span>
 - MySQL
 - JsonWebToken
 
-## Development
+### Workflow
 
 - Node.js
 - BiomeJS
 - Python3
 - Rust
 - Git
+- GitHub Actions
 - rustfmt (nightly)
 - cargo-watch: `cargo install cargo-watch`
 
-## Public APIs
+## Development
 
-Some endpoints are exposed for general use — random hitokoto,
-random image, IP/UA info, and more.
+```bash
+bun install
+bun run init
+bun run dev
+```
 
 ## License
 
