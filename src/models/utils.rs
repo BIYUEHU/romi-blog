@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
+use utoipa::ToSchema;
 
-#[derive(Deserialize, TS)]
+#[derive(Deserialize, TS, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct QueryAgentData {
   pub url: Option<String>,
@@ -9,7 +10,7 @@ pub struct QueryAgentData {
   pub content_type: Option<String>,
 }
 
-#[derive(Deserialize, TS)]
+#[derive(Deserialize, TS, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct QueryViewBadgeData {
   pub label: Option<String>,
@@ -19,7 +20,7 @@ pub struct QueryViewBadgeData {
   pub right_color: Option<String>,
 }
 
-#[derive(Serialize, TS)]
+#[derive(Serialize, TS, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResViewData {
   pub slug: String,

@@ -43,7 +43,6 @@ Thumbs.db
 
 .42c
 
-# Custom
 /scripts/*.json
 /scripts/*.jsonl
 /ui/styles.css
@@ -59,3 +58,4 @@ static
 proxy.conf.json
 agent
 logs
+openapi-utils.json

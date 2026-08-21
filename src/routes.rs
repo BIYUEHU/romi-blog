@@ -11,3 +11,4 @@ pub mod seimg;
 pub mod sitemap;
 pub mod user;
 pub mod utils;
+pub mod utils_doc;

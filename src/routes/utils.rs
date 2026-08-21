@@ -8,6 +8,7 @@ use axum::{
   response::{IntoResponse, Redirect},
   routing::{get, post},
 };
+
 use rand::random;
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel};
 
@@ -47,16 +48,19 @@ async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
   }
 }
 
+#[utoipa::path(get, path = "/api/utils/qqavatar", responses((status = 200, description = "Default QQ avatar")))]
 async fn qqavatar_default(
   State(RomiState { config: RomiConfig { qid, .. }, .. }): State<RomiState>,
 ) -> impl IntoResponse {
   qqavatar(qid.unwrap_or("10101".to_string()), 640).await
 }
 
+#[utoipa::path(get, path = "/api/utils/qqavatar/{qid}", responses((status = 200, description = "QQ avatar by qid")))]
 async fn qqavatar_qid(Path(qid): Path<String>) -> impl IntoResponse {
   qqavatar(qid, 640).await
 }
 
+#[utoipa::path(get, path = "/api/utils/qqavatar/{qid}/{size}", responses((status = 200, description = "QQ avatar by qid and size")))]
 async fn qqavatar_qid_size(Path((qid, size)): Path<(String, u32)>) -> impl IntoResponse {
   qqavatar(qid, size).await
 }
@@ -78,14 +82,17 @@ async fn background(id: String) -> impl IntoResponse {
   }
 }
 
+#[utoipa::path(get, path = "/api/utils/background", responses((status = 303, description = "Default random background")))]
 async fn background_default() -> impl IntoResponse {
   choose_background(DEFAULT_BACKGROUNDS.to_string()).into_response()
 }
 
+#[utoipa::path(get, path = "/api/utils/background/{id}", responses((status = 303, description = "Random background by id")))]
 async fn background_id(Path(id): Path<String>) -> impl IntoResponse {
   background(id).await
 }
 
+#[utoipa::path(get, path = "/api/utils/agent", responses((status = 200, description = "Fetch agent by url")))]
 async fn agent(Query(params): Query<QueryAgentData>) -> impl IntoResponse {
   if let Some(url) = params.url {
     match reqwest::get(&url).await {
@@ -104,6 +111,7 @@ async fn agent(Query(params): Query<QueryAgentData>) -> impl IntoResponse {
   }
 }
 
+#[utoipa::path(get, path = "/api/utils/view/{slug}", responses((status = 200, description = "Get view count", body = ResViewData)))]
 async fn get_views(
   Path(slug): Path<String>,
   State(RomiState { ref conn, .. }): State<RomiState>,
@@ -118,6 +126,7 @@ async fn get_views(
   }
 }
 
+#[utoipa::path(post, path = "/api/utils/view/{slug}", responses((status = 200, description = "Increase view count")))]
 async fn post_views(
   Path(slug): Path<String>,
   State(RomiState { ref conn, .. }): State<RomiState>,
@@ -145,6 +154,7 @@ async fn post_views(
   api_ok(())
 }
 
+#[utoipa::path(get, path = "/api/utils/view/badge/{slug}", responses((status = 200, description = "View badge SVG")))]
 async fn view_badge(
   Path(slug): Path<String>,
   Query(params): Query<QueryViewBadgeData>,

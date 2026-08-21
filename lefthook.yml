@@ -3,7 +3,7 @@ pre-commit:
     biome:
       run: bun biome check --write --staged
       stage_fixed: true
-      glob: "*.{js,ts,json,jsonc,html,css}"
+      glob: "**/*.{js,ts,json,jsonc,css}"
     rustfmt:
       run: cargo fmt --
       stage_fixed: true

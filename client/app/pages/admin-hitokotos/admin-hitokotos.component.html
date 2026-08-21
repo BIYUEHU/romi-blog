@@ -30,7 +30,7 @@
             <option [value]="type[0]">{{ type[1] }}</option>
             }
           </select>
-          <span>{{ newHitokoto.public ? '公开' : '私密' }}</span>
+          <span class="text-text-base">{{ newHitokoto.public ? '公开' : '私密' }}</span>
           <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
           <r-input type="number" [(ngModel)]="newHitokoto.likes" placeholder="点赞数" />
         </div>
@@ -60,7 +60,7 @@
               <option [value]="type[0]">{{ type[1] }}</option>
               }
             </select>
-            <span>{{ newHitokoto.public ? '公开' : '私密' }}</span>
+            <span class="text-text-base">{{ newHitokoto.public ? '公开' : '私密' }}</span>
             <r-switch [(ngModel)]="newHitokoto.public" label="公开"></r-switch>
             <r-input type="number" [(ngModel)]="newHitokoto.likes" placeholder="点赞数" />
           </div>
@@ -86,7 +86,8 @@
             <span class="px-2 py-0.5 text-xs rounded-full bg-brand text-text-on-brand">公开</span>
             }
             <span>
-              <r-tag size="sm" [type]="['secondary','info', 'success', 'warning'][hitokoto.type - 1]">
+              <r-tag class="text-text-base" size="sm"
+                [type]="['secondary','info', 'success', 'warning'][hitokoto.type - 1]">
                 {{ types[hitokoto.type - 1]?.[1] }}
               </r-tag>
             </span>

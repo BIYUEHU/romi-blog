@@ -39,6 +39,7 @@ jsonwebtoken = "9.3.0"
 sysinfo = "0.37"
 uuid = { version = "1.13.1", features = ["v4"] }
 ts-rs = "11.0.1"
+utoipa = { version = "5", features = ["axum_extras"] }
 rand = "0.8.5"
 regex = "1.11.0"
 chrono = "0.4"

@@ -79,6 +79,7 @@ def write_proxy_conf(path: Path, target_url: str) -> None:
 
 def main() -> None:
   root = Path(__file__).resolve().parents[1]
+  subprocess.run(["cargo", "test", "export_utils_api_doc"], cwd=str(root), check=True)
   write_meta_file(
     root / "client" / "environments" / "build-meta.ts",
     {
