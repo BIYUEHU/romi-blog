@@ -18,7 +18,7 @@
 ![UnoCSS](https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white)
 ![Codeberg](https://img.shields.io/badge/Codeberg-2185D0?style=flat-square&logo=codeberg&logoColor=white)
 
-[TODO](./TODO.md) | [Blog](https://hotaru.icu)
+[TODO](./TODO.md) | [Blog](https://i.arimuraromi.com)
 
 <span style="color:red;font-weight:bold;font-size:1.5em">Anyone who use ready-made blog frameworks or tools are all
 idiot without technical power!</span>
@@ -46,6 +46,8 @@ Please refer to the [Deployment Guide](./DEPLOY.md) for detailed instructions.
 
 Some endpoints are exposed for general use — random hitokoto,
 random image, IP/UA info, and more.
+
+> [Public API Documentation](https://i.arimuraromi.com/api/)
 
 ## Colors Scheme
 
