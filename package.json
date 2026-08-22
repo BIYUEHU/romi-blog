@@ -66,6 +66,7 @@
     "markdown-it": "^14.1.0",
     "newtype-ts": "^0.3.5",
     "passcorelib": "^1.0.4",
+    "resplayer": "^1.1.5",
     "rxjs": "~7.8.0",
     "shiki": "^1.24.2",
     "ts-adt": "^2.1.2",

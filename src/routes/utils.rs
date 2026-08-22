@@ -48,6 +48,7 @@ async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
   }
 }
 
+/// Returns the default QQ avatar based on the configured QQ ID.
 #[utoipa::path(get, path = "/api/utils/qqavatar", responses((status = 200, description = "Default QQ avatar")))]
 async fn qqavatar_default(
   State(RomiState { config: RomiConfig { qid, .. }, .. }): State<RomiState>,
@@ -55,11 +56,13 @@ async fn qqavatar_default(
   qqavatar(qid.unwrap_or("10101".to_string()), 640).await
 }
 
+/// Returns a QQ avatar for the given QQ ID.
 #[utoipa::path(get, path = "/api/utils/qqavatar/{qid}", responses((status = 200, description = "QQ avatar by qid")))]
 async fn qqavatar_qid(Path(qid): Path<String>) -> impl IntoResponse {
   qqavatar(qid, 640).await
 }
 
+/// Returns a QQ avatar for the given QQ ID and size.
 #[utoipa::path(get, path = "/api/utils/qqavatar/{qid}/{size}", responses((status = 200, description = "QQ avatar by qid and size")))]
 async fn qqavatar_qid_size(Path((qid, size)): Path<(String, u32)>) -> impl IntoResponse {
   qqavatar(qid, size).await
@@ -82,17 +85,20 @@ async fn background(id: String) -> impl IntoResponse {
   }
 }
 
+/// Redirects to a random default background image.
 #[utoipa::path(get, path = "/api/utils/background", responses((status = 303, description = "Default random background")))]
 async fn background_default() -> impl IntoResponse {
   choose_background(DEFAULT_BACKGROUNDS.to_string()).into_response()
 }
 
+/// Redirects to a random background image from the given background set.
 #[utoipa::path(get, path = "/api/utils/background/{id}", responses((status = 303, description = "Random background by id")))]
 async fn background_id(Path(id): Path<String>) -> impl IntoResponse {
   background(id).await
 }
 
-#[utoipa::path(get, path = "/api/utils/agent", responses((status = 200, description = "Fetch agent by url")))]
+/// Fetches content from a remote URL and returns it as a proxy response.
+#[utoipa::path(get, path = "/api/utils/agent", params(QueryAgentData), responses((status = 200, description = "Fetch agent by url")))]
 async fn agent(Query(params): Query<QueryAgentData>) -> impl IntoResponse {
   if let Some(url) = params.url {
     match reqwest::get(&url).await {
@@ -111,6 +117,7 @@ async fn agent(Query(params): Query<QueryAgentData>) -> impl IntoResponse {
   }
 }
 
+/// Gets the current view count for the given slug without incrementing it.
 #[utoipa::path(get, path = "/api/utils/view/{slug}", responses((status = 200, description = "Get view count", body = ResViewData)))]
 async fn get_views(
   Path(slug): Path<String>,
@@ -126,11 +133,12 @@ async fn get_views(
   }
 }
 
+/// Increments the view count for the given slug.
 #[utoipa::path(post, path = "/api/utils/view/{slug}", responses((status = 200, description = "Increase view count")))]
 async fn post_views(
   Path(slug): Path<String>,
   State(RomiState { ref conn, .. }): State<RomiState>,
-) -> ApiResult {
+) -> ApiResult<u32> {
   match romi_views::Entity::find_by_id(slug.clone())
     .one(conn)
     .await
@@ -143,18 +151,20 @@ async fn post_views(
         .update(conn)
         .await
         .with_context(|| format!("Failed to update view {}", slug.clone()))?;
+      api_ok(model.count)
     }
     None => {
       romi_views::ActiveModel { slug: ActiveValue::Set(slug.clone()), count: ActiveValue::Set(1) }
         .insert(conn)
         .await
         .with_context(|| format!("Failed to create view {}", slug.clone()))?;
+      api_ok(0)
     }
   }
-  api_ok(())
 }
 
-#[utoipa::path(get, path = "/api/utils/view/badge/{slug}", responses((status = 200, description = "View badge SVG")))]
+/// Increments the view count and returns an SVG badge for the given slug.
+#[utoipa::path(get, path = "/api/utils/view/badge/{slug}", params(QueryViewBadgeData), responses((status = 200, description = "View badge SVG")))]
 async fn view_badge(
   Path(slug): Path<String>,
   Query(params): Query<QueryViewBadgeData>,
@@ -163,14 +173,25 @@ async fn view_badge(
   let label = params.label.unwrap_or_else(|| "views".to_string());
   let left_color = params.left_color.unwrap_or_else(|| "#555".to_string());
   let right_color = params.right_color.unwrap_or_else(|| "#4c1".to_string());
-  let count = romi_views::Entity::find_by_id(slug.clone())
-    .one(conn)
-    .await
-    .ok()
-    .flatten()
-    .map(|model| model.count)
-    .unwrap_or(0)
-    .to_string();
+  let count = match romi_views::Entity::find_by_id(slug.clone()).one(conn).await.ok().flatten() {
+    Some(model) => {
+      let count = model.count + 1;
+      let mut active_model = model.into_active_model();
+      active_model.count = ActiveValue::Set(count);
+      let _ = active_model.update(conn).await;
+      count
+    }
+    None => {
+      let _ = romi_views::ActiveModel {
+        slug: ActiveValue::Set(slug.clone()),
+        count: ActiveValue::Set(1),
+      }
+      .insert(conn)
+      .await;
+      1
+    }
+  }
+  .to_string();
   let left_width = label.len() as u32 * 7 + 20;
   let right_width = count.len() as u32 * 7 + 20;
   let width = left_width + right_width;

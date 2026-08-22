@@ -1,14 +1,11 @@
 import { NgOptimizedImage, ViewportScroller } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, HostListener, Input, OnInit } from '@angular/core'
 import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterLink } from '@angular/router'
-import { ResMusicData } from '../../models/api.model'
 import { ServerErrorComponent } from '../../pages/server-error/server-error.component'
-import { ApiService } from '../../services/api.service'
 import { BrowserService } from '../../services/browser.service'
-import { STORE_KEYS, StoreService } from '../../services/store.service'
-import { ThemeService } from '../../services/theme.service'
+import { PlayerService } from '../../services/player.service'
+import { ThemeMode, ThemeService } from '../../services/theme.service'
 import { AppTitleStrategy } from '../../shared/title-strategy'
-import { APlayer } from '../../shared/types'
 import { ErrorPageComponent } from '../error-page/error-page.component'
 import { FooterComponent } from '../footer/footer.component'
 import { HeaderComponent } from '../header/header.component'
@@ -27,16 +24,12 @@ import { SkeletonLoaderComponent } from '../skeleton-loader/skeleton-loader.comp
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './layout.component.html'
 })
-export class LayoutComponent implements OnInit, OnDestroy {
+export class LayoutComponent implements OnInit {
   private static SCROLL_OFFSET_HEIGHT_PX = -88
 
   @Input() public imageHeight = ''
   @Input() public fullBackground = false
   @Input() public disabledFooter = false
-
-  private musicList?: ResMusicData[]
-
-  protected aplayer?: APlayer
 
   public showBackTop = false
   public isLoading = false
@@ -47,27 +40,23 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public constructor(
     private readonly router: Router,
     private readonly viewportScroller: ViewportScroller,
-    private readonly storeService: StoreService,
     public readonly themeService: ThemeService,
+    private readonly playerService: PlayerService,
     public readonly appTitleStrategy: AppTitleStrategy,
-    private readonly browserService: BrowserService,
-    private readonly apiService: ApiService
-  ) {
-    this.browserService.on(() =>
-      this.apiService.getMusic().subscribe((data) => {
-        this.musicList = data
-        setTimeout(() => {
-          this.togglePlayer(true)
-        }, 1000)
-      })
-    )
-  }
+    private readonly browserService: BrowserService
+  ) {}
+
   public get headerImageHeight() {
     return this.imageHeight ? this.imageHeight : this.fullBackground ? 'min-h-screen' : 'h-350px'
   }
 
+  public get playerIsDisabled() {
+    return this.playerService.disabled
+  }
+
   public ngOnInit() {
     this.router.events.subscribe((event) => this.handleRouteEvent(event))
+    this.browserService.on(() => setTimeout(() => this.togglePlayer(true), 1000))
   }
 
   @HostListener('window:scroll')
@@ -114,30 +103,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   public togglePlayer(isFirst: boolean) {
-    if (
-      this.router.url === '/music' ||
-      (isFirst && this.storeService.getItem(STORE_KEYS.APLAYER_DISABLED) === 'true')
-    ) {
-      return
-    }
-
-    if (this.aplayer) {
-      this.storeService.setItem(STORE_KEYS.APLAYER_DISABLED, 'true')
-      this.aplayer.destroy()
-      this.aplayer = void 0
-      return
-    }
-
-    this.storeService.setItem(STORE_KEYS.APLAYER_DISABLED, 'false')
-    this.aplayer = new APlayer({
-      container: document.getElementById('aplayer-global'),
-      fixed: true,
-      autoplay: true,
-      lrcType: 1,
-      order: 'random',
-      theme: 'var(--brand-base)',
-      audio: this.musicList
-    })
+    if (isFirst) this.playerService.init(document.getElementById('player-global')!)
+    else this.playerService.toggle()
   }
 
   public notify() {
@@ -152,7 +119,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.themeLayerVisible = !this.themeLayerVisible
   }
 
-  public selectTheme(theme: 'light' | 'dark' | 'system') {
+  public selectTheme(theme: ThemeMode) {
     this.themeService.applyTheme(theme)
     this.reload()
   }
@@ -160,9 +127,5 @@ export class LayoutComponent implements OnInit, OnDestroy {
   public selectColor(color: string) {
     this.themeService.applyColor(color)
     this.reload()
-  }
-
-  public ngOnDestroy() {
-    this.aplayer?.destroy()
   }
 }

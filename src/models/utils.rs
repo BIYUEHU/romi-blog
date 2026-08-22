@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
-use utoipa::ToSchema;
+use utoipa::{IntoParams, ToSchema};
 
-#[derive(Deserialize, TS, ToSchema)]
+#[derive(Deserialize, TS, IntoParams, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct QueryAgentData {
   pub url: Option<String>,
@@ -10,7 +10,7 @@ pub struct QueryAgentData {
   pub content_type: Option<String>,
 }
 
-#[derive(Deserialize, TS, ToSchema)]
+#[derive(Deserialize, TS, IntoParams, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct QueryViewBadgeData {
   pub label: Option<String>,

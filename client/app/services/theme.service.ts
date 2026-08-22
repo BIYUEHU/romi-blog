@@ -3,21 +3,21 @@ import { THEME_COLORS } from '../shared/constants'
 import { BrowserService } from './browser.service'
 import { STORE_KEYS, StoreService } from './store.service'
 
-type ThemeMode = 'light' | 'dark' | 'system'
+export type ThemeMode = 'light' | 'dark' | 'auto'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
   public readonly themes = [
-    { value: 'light' as const, label: '浅色' },
-    { value: 'dark' as const, label: '深色' },
-    { value: 'system' as const, label: '跟随系统' }
+    { value: 'light', label: '浅色' },
+    { value: 'dark', label: '深色' },
+    { value: 'auto', label: '跟随系统' }
   ] as const
 
   public readonly colors = THEME_COLORS
 
-  public selectedTheme: ThemeMode = 'system'
+  public selectedTheme: ThemeMode = 'auto'
   public selectedColor: string = this.colors[0].name
 
   public constructor(
@@ -29,7 +29,7 @@ export class ThemeService {
     if (!this.browserService.is) return
     const theme = this.storeService.getItem(STORE_KEYS.THEME)
     const color = this.storeService.getItem(STORE_KEYS.COLOR)
-    this.applyTheme(theme ? (theme as ThemeMode) : 'system')
+    this.applyTheme(theme ? (theme as ThemeMode) : 'auto')
     if (color) this.applyColor(color)
   }
 
@@ -53,7 +53,7 @@ export class ThemeService {
   }
 
   private isDark(theme: ThemeMode): boolean {
-    if (theme === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches
+    if (theme === 'auto') return window.matchMedia('(prefers-color-scheme: dark)').matches
     return theme === 'dark'
   }
 }

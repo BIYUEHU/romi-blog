@@ -67,19 +67,19 @@
   @if (!fullBackground) {
   @if (showBackTop) {
   <button type="button" (click)="scrollToTop()"
-    class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    class="fixed right-3 lg:right-12 bottom-48 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
     <i class="i-mdi-arrow-up-thick text-xl"></i>
   </button>
   }
   <button type="button" (click)="toggleThemeLayer()"
-    class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    class="fixed right-3 lg:right-12 bottom-36 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
     <i class="i-mdi-settings-outline text-xl"></i>
   </button>
   <button type="button" [routerLink]="'/admin'"
-    class="fixed right-3 lg:right-12 bottom-12 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
+    class="fixed right-3 lg:right-12 bottom-24 w-10 h-10 bg-brand text-text-on-brand rounded-md flex items-center justify-center hover:cursor-pointer hover:bg-brand-hover transition-colors border-0">
     <i class="i-mdi-account-circle-outline text-xl"></i>
   </button>
-  <div id="aplayer-global"></div>
+  <div id="player-global"></div>
   @if (themeLayerVisible) {
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4" (click)="themeLayerVisible = false">
     <div class="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -121,7 +121,7 @@
         <div class="text-sm text-text-sub mb-2">音乐播放</div>
         <button type="button" (click)="togglePlayer(false)"
           class="w-full py-2 rounded-md border text-sm transition-colors bg-bg-elevated text-text-base border-border hover:bg-bg-subtle">
-          {{ aplayer ? '关闭播放器' : '开启播放器' }}
+          {{ playerIsDisabled ? '开启播放器' : '关闭播放器' }}
         </button>
       </div>
       <div class="mt-4">

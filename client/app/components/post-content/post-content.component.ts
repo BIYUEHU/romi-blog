@@ -290,7 +290,8 @@ class PostContentComponent implements OnInit, OnDestroy {
   }
 
   private async renderContent(force = false) {
-    if (!this.highlighter || force) this.highlighter = await this.highlighterService.getHighlighter(this.post.languages)
+    if (this.browserService.is && (!this.highlighter || force))
+      this.highlighter = await this.highlighterService.getHighlighter(this.post.languages)
 
     this.extra = {
       url: this.browserService.on(() => `${location.origin}/post/${this.post.id}`) ?? '',

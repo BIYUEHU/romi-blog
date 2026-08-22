@@ -7,8 +7,8 @@ interface StoreKey extends Newtype<{ readonly StoreKey: unique symbol }, string>
 const isoStoreKey = iso<StoreKey>()
 
 export const STORE_KEYS = {
-  APLAYER_DISABLED: isoStoreKey.wrap('aplayer-disabled'),
-  APLAYER_ALIVE_TIME: isoStoreKey.wrap('aplayer-alive-time'),
+  PLAYER_DISABLED: isoStoreKey.wrap('player-disabled'),
+  PLAYER_ALIVE_TIME: isoStoreKey.wrap('player-alive-time'),
   THEME: isoStoreKey.wrap('theme'),
   COLOR: isoStoreKey.wrap('color'),
   ADMIN_AUTH: isoStoreKey.wrap('admin-auth'),
