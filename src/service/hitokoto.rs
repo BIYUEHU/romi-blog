@@ -53,6 +53,16 @@ pub async fn create(
   conn: &DatabaseConnection,
   data: ReqHitokotoData,
 ) -> Result<romi_hitokotos::Model> {
+  let exists = romi_hitokotos::Entity::find()
+    .filter(romi_hitokotos::Column::Msg.eq(&data.msg))
+    .one(conn)
+    .await
+    .context("Failed to check duplicate hitokoto")?
+    .is_some();
+  if exists {
+    anyhow::bail!("Hitokoto msg already exists");
+  }
+
   let active = romi_hitokotos::ActiveModel {
     id: ActiveValue::not_set(),
     uuid: ActiveValue::set(uuid::Uuid::new_v4().to_string()),
@@ -74,11 +84,22 @@ pub async fn update(
   data: ReqHitokotoData,
 ) -> Result<romi_hitokotos::Model> {
   let model = romi_hitokotos::Entity::find()
-    .filter(romi_hitokotos::Column::Uuid.eq(uuid))
+    .filter(romi_hitokotos::Column::Uuid.eq(&uuid))
     .one(conn)
     .await
     .context("Failed to fetch hitokoto")?
     .ok_or_else(|| anyhow::anyhow!("Hitokoto not found"))?;
+
+  let exists = romi_hitokotos::Entity::find()
+    .filter(romi_hitokotos::Column::Msg.eq(&data.msg))
+    .filter(romi_hitokotos::Column::Uuid.ne(&uuid))
+    .one(conn)
+    .await
+    .context("Failed to check duplicate hitokoto")?
+    .is_some();
+  if exists {
+    anyhow::bail!("Hitokoto msg already exists");
+  }
 
   let mut active = model.into_active_model();
   active.msg = ActiveValue::set(data.msg);

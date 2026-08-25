@@ -29,6 +29,5 @@ export const homeResolver: ResolveFn<HomeData> = () => {
     news: apiService.getNewses().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
     videos: apiService.getVideos().pipe(map((data) => data.sort((a, b) => b.created - a.created).slice(0, 4))),
     projects: apiService.getProjects().pipe(map((data) => data.slice(0, 4)))
-    // music: apiService.getMusic()
   })
 }

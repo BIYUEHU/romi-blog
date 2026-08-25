@@ -29,29 +29,35 @@
       <div class="relative bg-bg-surface backdrop-blur-xl rounded-2xl shadow-2xl p-8 border border-border-base">
         <div class="space-y-5">
           <div class="group">
-          <div class="space-y-5">
-            <div class="mb-3">
-              <label class="self-start ml-1 text-sm font-medium text-text-sub">用户名 <span class="text-error-500">*</span></label>
-              <r-input [(ngModel)]="username" id="username" placeholder="请输入用户名" class="w-full" />
+            <div class="space-y-5">
+              <div class="mb-3">
+                <label class="self-start ml-1 text-sm font-medium text-text-sub">用户名 <span
+                    class="text-error-500">*</span></label>
+                <r-input [(ngModel)]="username" id="username" placeholder="请输入用户名" class="w-full" />
+              </div>
+              <div class="mb-3">
+                <label class="self-start ml-1 text-sm font-medium text-text-sub">邮箱 <span
+                    class="text-error-500">*</span></label>
+                <r-input [(ngModel)]="email" id="email" placeholder="请输入邮箱" class="w-full" />
+              </div>
+              <div class="mb-3">
+                <label class="self-start ml-1 text-sm font-medium text-text-sub">个人网站 (可选)</label>
+                <r-input [(ngModel)]="url" id="url" placeholder="https://example.com" class="w-full" />
+              </div>
+              <div class="pt-2 flex gap-2">
+                <r-button (click)="register()" type="primary" size="lg" class="flex-1" [disabled]="isLoading">
+                  {{ isLoading ? '注册中...' : '注册' }}
+                </r-button>
+                <r-button routerLink="/" size="lg">
+                  前台
+                </r-button>
+              </div>
+              <div class="text-center text-sm text-text-muted">
+                已有账号？
+                <a routerLink="/admin/login" class="text-brand hover:text-accent transition-colors">去登录</a>
+              </div>
             </div>
-            <div class="mb-3">
-              <label class="self-start ml-1 text-sm font-medium text-text-sub">邮箱 <span class="text-error-500">*</span></label>
-              <r-input [(ngModel)]="email" id="email" placeholder="请输入邮箱" class="w-full" />
-            </div>
-            <div class="mb-3">
-              <label class="self-start ml-1 text-sm font-medium text-text-sub">个人网站 (可选)</label>
-              <r-input [(ngModel)]="url" id="url" placeholder="https://example.com" class="w-full" />
-            </div>
-            <div class="pt-2">
-              <r-button (click)="register()" type="primary" size="lg" class="w-full" [disabled]="isLoading">
-                {{ isLoading ? '注册中...' : '注册' }}
-              </r-button>
-            </div>
-            <div class="text-center text-sm text-text-muted">
-              已有账号？
-              <a routerLink="/admin/login" class="text-brand hover:text-accent transition-colors">去登录</a>
-            </div>
-          </div>          </div>
+          </div>
         </div>
       </div>
     </div>
@@ -59,30 +65,38 @@
 </div>
 <style>
   @keyframes float {
+
     0%,
     100% {
       transform: translateY(0px) scale(1);
     }
+
     50% {
       transform: translateY(-20px) scale(1.05);
     }
   }
+
   @keyframes float-delayed {
+
     0%,
     100% {
       transform: translateY(0px) translateX(0px) scale(1);
     }
+
     50% {
       transform: translateY(20px) translateX(-10px) scale(1.1);
     }
   }
+
   .animate-float {
     animation: float 8s ease-in-out infinite;
   }
+
   .animate-float-delayed {
     animation: float-delayed 10s ease-in-out infinite;
     animation-delay: 1s;
   }
+
   .bg-gradient-radial {
     background: radial-gradient(circle, #fff 0%, #fafafa 100%);
   }

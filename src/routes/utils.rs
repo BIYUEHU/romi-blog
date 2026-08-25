@@ -1,22 +1,25 @@
 use std::fs;
+use std::net::IpAddr;
+use std::time::Duration;
 
 use anyhow::Context;
 use axum::{
-  Router,
+  Json, Router,
   extract::{Path, Query, State},
-  http::{HeaderMap, StatusCode},
-  response::{IntoResponse, Redirect},
+  http::{HeaderMap, HeaderName, HeaderValue, StatusCode},
+  response::{IntoResponse, Redirect, Response},
   routing::{get, post},
 };
-
+use futures_util::stream::StreamExt;
 use rand::random;
+use reqwest::{Client, Method};
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel};
 
 use crate::{
   app::{RomiConfig, RomiState},
   constant::DATA_DIR,
   entity::romi_views,
-  models::utils::{QueryAgentData, QueryViewBadgeData, ResViewData},
+  models::utils::{QueryAgentData, QueryViewBadgeData, ReqAgentData, ResViewData},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -33,7 +36,8 @@ pub fn routes() -> Router<RomiState> {
     .route("/view/{slug}", post(post_views))
     .route("/view/i/{slug}", get(post_views))
     .route("/view/badge/{slug}", get(view_badge))
-    .route("/agent", get(agent))
+    .route("/agent", get(agent_get))
+    .route("/agent", post(agent_post))
 }
 
 async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
@@ -97,23 +101,104 @@ async fn background_id(Path(id): Path<String>) -> impl IntoResponse {
   background(id).await
 }
 
-/// Fetches content from a remote URL and returns it as a proxy response.
+/// Fetches content from a remote URL via GET and returns it as a proxy response.
 #[utoipa::path(get, path = "/api/utils/agent", params(QueryAgentData), responses((status = 200, description = "Fetch agent by url")))]
-async fn agent(Query(params): Query<QueryAgentData>) -> impl IntoResponse {
-  if let Some(url) = params.url {
-    match reqwest::get(&url).await {
-      Ok(resp) => {
-        let bytes = resp.bytes().await.unwrap_or_default();
-        let mut headers = HeaderMap::new();
-        if let Some(ct) = params.content_type {
-          headers.insert("Content-Type", ct.parse().unwrap());
-        }
-        (headers, bytes).into_response()
-      }
-      Err(_) => (StatusCode::BAD_GATEWAY, "fetch failed").into_response(),
+async fn agent_get(Query(params): Query<QueryAgentData>) -> Response {
+  match params.url {
+    Some(url) => {
+      let headers = params.headers.and_then(|s| serde_json::from_str(&s).ok());
+      proxy_request(Method::GET, &url, headers, None, params.content_type).await
     }
-  } else {
-    (StatusCode::BAD_REQUEST, "missing url param").into_response()
+    None => (StatusCode::BAD_REQUEST, "missing url param").into_response(),
+  }
+}
+
+/// Fetches content from a remote URL via POST with optional custom headers and body.
+#[utoipa::path(post, path = "/api/utils/agent", request_body = ReqAgentData, responses((status = 200, description = "Fetch agent by url")))]
+async fn agent_post(Json(payload): Json<ReqAgentData>) -> Response {
+  proxy_request(Method::POST, &payload.url, payload.headers, payload.body, payload.content_type)
+    .await
+}
+
+fn is_private_ip(ip: IpAddr) -> bool {
+  match ip {
+    IpAddr::V4(ip) => ip.is_loopback() || ip.is_private() || ip.is_unspecified(),
+    IpAddr::V6(ip) => ip.is_loopback() || ip.is_unicast_link_local() || ip.is_unspecified(),
+  }
+}
+
+async fn proxy_request(
+  method: Method,
+  url: &str,
+  headers: Option<Vec<(String, String)>>,
+  body: Option<String>,
+  content_type: Option<String>,
+) -> Response {
+  let parsed = match reqwest::Url::parse(url) {
+    Ok(parsed) => parsed,
+    Err(_) => return (StatusCode::BAD_REQUEST, "invalid url").into_response(),
+  };
+
+  let host = match parsed.host_str() {
+    Some(host) => host,
+    None => return (StatusCode::BAD_REQUEST, "missing host").into_response(),
+  };
+
+  let resolved = tokio::net::lookup_host((host, 80)).await;
+  if let Ok(mut ips) = resolved
+    && let Some(ip) = ips.next()
+    && is_private_ip(ip.ip())
+  {
+    return (StatusCode::FORBIDDEN, "private ip not allowed").into_response();
+  }
+
+  let client = Client::builder()
+    .timeout(Duration::from_secs(15))
+    .connect_timeout(Duration::from_secs(10))
+    .build()
+    .unwrap_or_default();
+
+  let mut req = client.request(method, url);
+  if let Some(body) = body {
+    req = req.body(body);
+  }
+  if let Some(headers) = headers {
+    for (name, value) in headers {
+      if let (Ok(name), Ok(value)) =
+        (HeaderName::from_bytes(name.as_bytes()), HeaderValue::from_str(&value))
+      {
+        req = req.header(name, value);
+      }
+    }
+  }
+
+  match req.send().await {
+    Ok(resp) => {
+      let status = resp.status();
+      let mut headers = HeaderMap::new();
+      if let Some(ct) = content_type
+        && let Ok(value) = ct.parse()
+      {
+        headers.insert("Content-Type", value);
+      }
+
+      let mut stream = resp.bytes_stream();
+      let mut buf = Vec::new();
+      let limit = 20 * 1024 * 1024;
+
+      while let Some(chunk) = stream.next().await {
+        let chunk = match chunk {
+          Ok(chunk) => chunk,
+          Err(_) => return (StatusCode::BAD_GATEWAY, "fetch failed").into_response(),
+        };
+        if buf.len() + chunk.len() > limit {
+          return (StatusCode::PAYLOAD_TOO_LARGE, "response too large").into_response();
+        }
+        buf.extend_from_slice(&chunk);
+      }
+      (status, headers, buf).into_response()
+    }
+    Err(_) => (StatusCode::BAD_GATEWAY, "fetch failed").into_response(),
   }
 }
 

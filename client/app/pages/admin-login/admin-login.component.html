@@ -15,7 +15,6 @@
   </div>
 
   <div class="w-full max-w-md relative">
-
     <div class="text-center mb-8 space-y-2">
       <div
         class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand to-accent mb-4 shadow-lg">
@@ -64,13 +63,16 @@
             </div>
           </div>
 
-          <div class="pt-2">
-            <r-button (click)="handleSubmit()" type="primary" size="lg" class="w-full relative overflow-hidden"
+          <div class="pt-2 flex gap-2">
+            <r-button (click)="handleSubmit()" type="primary" size="lg" class="flex-1 relative overflow-hidden"
               [disabled]="isLoading">
               <span class="relative z-10">{{ isLoading ? '登录中...' : '登录' }}</span>
               <div
                 class="absolute inset-0 bg-gradient-to-r from-accent to-brand opacity-0 transition-opacity duration-300">
               </div>
+            </r-button>
+            <r-button size="lg" routerLink="/">
+              前台
             </r-button>
           </div>
         </div>
@@ -78,7 +80,7 @@
       </div>
     </div>
 
-    <div class="mt-8 text-center">
+    <div class="mt-8 text-center space-y-4">
       <p class="text-sm text-text-sub">
         Powered by <span class="font-semibold">Romi</span> · Made with
         <span class="text-red-500 animate-pulse">Love ❤</span>

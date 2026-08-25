@@ -109,7 +109,15 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
 
   public cancelEdit() {
     this.editingHitokoto = null
-    this.newHitokoto = { msg: '', msgOrigin: null, from: null, fromWho: null, type: 1, likes: 0, public: false }
+    this.newHitokoto = {
+      msg: '',
+      msgOrigin: null,
+      from: null,
+      fromWho: null,
+      type: this.newHitokoto.type ?? 1,
+      likes: 0,
+      public: false
+    }
   }
 
   public updateHitokoto() {

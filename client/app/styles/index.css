@@ -345,3 +345,27 @@ a:hover {
   padding: 0.2em 0;
   -webkit-overflow-scrolling: touch;
 }
+
+.dark {
+  .aplayer,
+  .aplayer.aplayer-fixed .aplayer-body {
+    background: rgba(22, 22, 22, 0.7) !important;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .aplayer .aplayer-info .aplayer-controller .aplayer-time,
+  .aplayer .aplayer-list ol li .aplayer-list-index,
+  .aplayer .aplayer-list ol li .aplayer-list-author {
+    color: #d4d4d4;
+  }
+
+  .aplayer .aplayer-info .aplayer-controller .aplayer-time .aplayer-icon path {
+    fill: #d4d4d4;
+  }
+
+  .aplayer .aplayer-list ol li:hover,
+  .aplayer .aplayer-list ol li.aplayer-list-light {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}

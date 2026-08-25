@@ -5,6 +5,7 @@ use crate::models::utils::{QueryAgentData, QueryViewBadgeData, ResViewData};
 #[allow(dead_code)]
 #[derive(OpenApi)]
 #[openapi(
+  info(title = "RomiBlog Public Api"),
   paths(
     super::utils::qqavatar_default,
     super::utils::qqavatar_qid,
@@ -14,7 +15,8 @@ use crate::models::utils::{QueryAgentData, QueryViewBadgeData, ResViewData};
     super::utils::get_views,
     super::utils::post_views,
     super::utils::view_badge,
-    super::utils::agent
+    super::utils::agent_get,
+    super::utils::agent_post
   ),
   components(schemas(QueryAgentData, QueryViewBadgeData, ResViewData))
 )]

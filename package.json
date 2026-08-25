@@ -25,11 +25,12 @@
     "blog",
     "rust",
     "angular",
-    "rust",
     "full-stack",
     "web",
     "frontend",
-    "backend"
+    "backend",
+    "axum",
+    "unocss"
   ],
   "bugs": {
     "url": "https://github.com/biyuehu/romi-nest/issues"

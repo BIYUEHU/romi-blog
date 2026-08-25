@@ -80,6 +80,7 @@ async fn create(
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Json(data): Json<ReqHitokotoData>,
 ) -> ApiResult {
+  let msg = data.msg.clone();
   match hitokoto::create(conn, data).await {
     Ok(result) => {
       l_info!(
@@ -92,8 +93,13 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      l_error!(logger, "Failed to create hitokoto: {:#}", e);
-      Err(ApiError::internal("Failed to create hitokoto"))
+      if e.to_string().contains("already exists") {
+        l_warn!(logger, "Duplicate hitokoto msg: {}", msg);
+        Err(ApiError::bad_request("Hitokoto msg already exists"))
+      } else {
+        l_error!(logger, "Failed to create hitokoto: {:#}", e);
+        Err(ApiError::internal("Failed to create hitokoto"))
+      }
     }
   }
 }

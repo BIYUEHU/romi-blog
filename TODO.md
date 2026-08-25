@@ -31,6 +31,6 @@
 - [x] Use `uv` to run python scripts
 - [x] More strict checking and linting in cicd, use lefthook when pre-commit
 - [x] Public API documentation
-- [ ] APlayer light-dark supports
+- [x] APlayer light-dark supports
 
 ## Details

@@ -2,7 +2,7 @@
 members = [".", "library/roga", "library/migration"]
 [package]
 name = "romichan"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
 publish = false
 license = "GPL-3.0-or-later"
@@ -28,7 +28,8 @@ tokio = { version = "1.40", features = [
 dotenvy = "0.15.7"
 config = "0.15.6"
 once_cell = "1.21.3"
-reqwest = { version = "0.12.22", features = ["json"] }
+reqwest = { version = "0.12.22", features = ["json", "stream"] }
+futures-util = "0.3"
 http = "1.3.1"
 anyhow = "1.0.89"
 serde = { version = "1.0.210", features = ["derive"] }

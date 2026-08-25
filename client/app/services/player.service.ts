@@ -18,6 +18,20 @@ import { ThemeService } from './theme.service'
 export class PlayerService {
   private player?: playerInstance
   private container?: HTMLElement
+  private listener() {
+    if (!this.player || this.disabled) return
+    playInstance(this.player)
+  }
+  private addListeners() {
+    this.removeListeners()
+    this.listenerRefer = this.listener.bind(this)
+    ;['click', 'tourchstart'].map((event) => document.addEventListener(event, this.listenerRefer!))
+  }
+  private removeListeners() {
+    if (!this.listenerRefer) return
+    ;['click', 'tourchstart'].map((event) => document.removeEventListener(event, this.listenerRefer!))
+  }
+  private listenerRefer?: () => void
 
   public constructor(
     private readonly storeService: StoreService,
@@ -41,11 +55,12 @@ export class PlayerService {
     }
 
     this.apiService.getMusic().subscribe((musicList) => {
+      this.removeListeners
       this.container = container
       this.player = makePlayer({
         container,
         fixed: true,
-        autoplay: false,
+        autoplay: true,
         order: 'random',
         theme: this.themeService.selectedTheme,
         color: 'var(--brand-base)',
@@ -59,7 +74,7 @@ export class PlayerService {
         hideInstance(this.player)
       } else {
         pauseInstance(this.player)
-        playInstance(this.player)
+        this.addListeners()
       }
     })
   }
