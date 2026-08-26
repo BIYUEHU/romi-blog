@@ -25,6 +25,12 @@ pub fn routes() -> Router<RomiState> {
     .route("/{uuid}", delete(remove))
 }
 
+/// Returns a random hitokoto from the public collection.
+#[utoipa::path(
+  get,
+  path = "/api/hitokoto",
+  responses((status = 200, description = "Random hitokoto", body = ResHitokotoData))
+)]
 async fn get_random(
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<ResHitokotoData> {

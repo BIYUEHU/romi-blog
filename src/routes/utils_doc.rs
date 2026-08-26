@@ -1,7 +1,10 @@
 use utoipa::OpenApi;
 
-use crate::models::utils::{
-  QueryAgentData, QueryViewBadgeData, ResBingData, ResMcskinData, ResMotdData, ResViewData,
+use crate::models::{
+  hitokoto::ResHitokotoData,
+  utils::{
+    QueryAgentData, QueryViewBadgeData, ResBingData, ResMcskinData, ResMotdData, ResViewData,
+  },
 };
 
 #[allow(dead_code)]
@@ -9,6 +12,14 @@ use crate::models::utils::{
 #[openapi(
   info(title = "RomiChan Public Api"),
   paths(
+    super::utils::agent_get,
+    super::utils::agent_post,
+    super::hitokoto::get_random,
+    super::utils::motd,
+    super::utils::motd_default_port,
+    super::utils::motdbe,
+    super::utils::motdbe_default_port,
+    super::utils::mcskin,
     super::utils::qqavatar_default,
     super::utils::qqavatar_qid,
     super::utils::qqavatar_qid_size,
@@ -17,17 +28,10 @@ use crate::models::utils::{
     super::utils::get_views,
     super::utils::post_views,
     super::utils::view_badge,
-    super::utils::agent_get,
-    super::utils::agent_post,
     super::utils::color_random,
     super::utils::color_rgb,
-    super::utils::mcskin,
     super::utils::bing_redirect,
-    super::utils::bing_json,
-    super::utils::motd,
-    super::utils::motd_default_port,
-    super::utils::motdbe,
-    super::utils::motdbe_default_port
+    super::utils::bing_json
   ),
   components(schemas(
     QueryAgentData,
@@ -35,7 +39,8 @@ use crate::models::utils::{
     ResViewData,
     ResMcskinData,
     ResBingData,
-    ResMotdData
+    ResMotdData,
+    ResHitokotoData
   ))
 )]
 struct UtilsApiDoc;

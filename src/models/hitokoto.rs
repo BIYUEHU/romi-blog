@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
+use utoipa::ToSchema;
 
 #[derive(Deserialize, TS)]
 #[ts(export, export_to = "../client/output.ts")]
@@ -15,7 +16,7 @@ pub struct ReqHitokotoData {
   pub public: bool,
 }
 
-#[derive(Serialize, TS)]
+#[derive(Serialize, TS, ToSchema)]
 #[ts(export, export_to = "../client/output.ts")]
 pub struct ResHitokotoData {
   pub uuid: String,
