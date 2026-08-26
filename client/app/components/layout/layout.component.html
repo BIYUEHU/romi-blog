@@ -120,17 +120,20 @@
       <div>
         <div class="text-sm text-text-sub mb-2">音乐播放</div>
         <button type="button" (click)="togglePlayer(false)"
-          class="w-full py-2 rounded-md border text-sm transition-colors bg-bg-elevated text-text-base border-border hover:bg-bg-subtle">
+          class="w-full py-2 rounded-md border text-sm transition-colors bg-bg-elevated text-text-base border-0 hover:bg-bg-subtle">
           {{ playerIsDisabled ? '开启播放器' : '关闭播放器' }}
         </button>
       </div>
       <div class="mt-4">
         <a href="/api/" target="_blank"
-          class="w-full block py-2 rounded-md border text-center text-sm transition-colors bg-bg-elevated text-text-base border-border hover:bg-bg-subtle">
+          class="w-full block py-2 rounded-md border text-center text-sm transition-colors bg-bg-elevated text-text-base hover:text-text-base hover:bg-bg-subtle">
           访问公共接口文档
         </a>
       </div>
-
+      <a href="https://github.com/biyuehu/romi-nest" target="_blank"
+        class="w-full mt-4 block rounded-md border text-center text-sm transition-colors text-brand">
+        👉 开源地址 👈
+      </a>
     </div>
   </div>
   }

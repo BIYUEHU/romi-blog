@@ -6,6 +6,7 @@ on:
     paths:
       - '**.ts'
       - '**.rs'
+      - '**.html'
       - 'Cargo.toml'
       - '**.json'
       - '.github/**/*'
