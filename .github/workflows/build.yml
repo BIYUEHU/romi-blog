@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-22.04, macos-latest, windows-latest ]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
         arch: [ x86_64, aarch64 ]
 
     steps:
@@ -31,28 +31,28 @@ jobs:
           components: rustfmt, clippy
 
       - name: Check formatting
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: cargo fmt -- --check | git diff --exit-code
 
       - name: Run clippy
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: cargo clippy -- -D warnings | git diff --exit-code
 
       - name: Build backend
         run: cargo build --release
 
       - name: Upload artifact (Linux)
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-22.04-romichan-server
+          name: ubuntu-latest-romichan-server
           path: target/release/romichan
 
       - name: Upload artifact (Linux aarch64)
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'aarch64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'aarch64'
         uses: actions/upload-artifact@v4
         with:
-          name: ubuntu-22.04-romichan-server-aarch64
+          name: ubuntu-latest-romichan-server-aarch64
           path: target/release/romichan
 
       - name: Upload artifact (macOS)
@@ -84,15 +84,15 @@ jobs:
           path: target/release/romichan.exe
 
       - name: Set up Bun
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         uses: oven-sh/setup-bun@v2
 
       - name: Set up uv
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         uses: astral-sh/setup-uv@v5
 
       - name: Build frontend
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         run: |
           bun install
           bun run fix && git diff --exit-code
@@ -100,7 +100,7 @@ jobs:
       #          tar -czf dist.tar.gz dist
 
       - name: Upload artifact (Frontend)
-        if: matrix.os == 'ubuntu-22.04' && matrix.arch == 'x86_64'
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
         uses: actions/upload-artifact@v4
         with:
           name: romichan-client

@@ -47,7 +47,7 @@ pub fn load_config() -> Result<RomiConfig> {
     .build()
     .map_err(|e| {
       anyhow::anyhow!(
-        "Cannot find {}at current directory: {}, error: {}",
+        "Cannot find {} at current directory: {}, error: {}",
         CONFIG_FILE,
         current_dir.display(),
         e

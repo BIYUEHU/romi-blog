@@ -4,7 +4,7 @@
 
 <a target="_blank" href="https://vndb.org/c90804"><img src="client/public/favicon.ico" alt="RomiChan logo" width="200"></a>
 
-# RomiChan - Blog
+# RomiChan - Personal CMS
 
 **A powerful website system — blog, lists, notes, api, and more. Powered by Axum + Angular.**
 
@@ -20,8 +20,7 @@
 
 [TODO](./TODO.md) | [Blog](https://i.arimuraromi.com)
 
-<span style="color:red;font-weight:bold;font-size:1.5em">Anyone who use ready-made blog frameworks or tools are all
-idiot without technical power!</span>
+<span style="color:red;font-weight:bold;font-size:1.5em">Anyone who use ready-made blog frameworks or tools are all idiot without technical power!</span>
 
 </div>
 
