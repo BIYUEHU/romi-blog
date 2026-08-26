@@ -38,3 +38,26 @@ pub struct ResViewData {
   pub slug: String,
   pub count: u32,
 }
+#[derive(Serialize, TS, ToSchema)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResMcskinData {
+  pub skin: String,
+  pub cape: Option<String>,
+}
+
+#[derive(Serialize, TS, ToSchema)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResBingData {
+  pub url: String,
+  pub copyright: String,
+}
+
+#[derive(Serialize, TS, ToSchema)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResMotdData {
+  pub online: bool,
+  pub version: String,
+  pub motd: String,
+  pub players_online: u32,
+  pub players_max: u32,
+}

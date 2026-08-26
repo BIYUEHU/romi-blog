@@ -10,18 +10,27 @@ use axum::{
   response::{IntoResponse, Redirect, Response},
   routing::{get, post},
 };
+use base64::{Engine, engine::general_purpose::STANDARD as BASE64};
 use futures_util::stream::StreamExt;
 use rand::random;
+use regex::Regex;
 use reqwest::{Client, Method};
 use sea_orm::{ActiveModelTrait, ActiveValue, EntityTrait, IntoActiveModel};
+use tokio::net::{TcpStream, UdpSocket};
 
 use crate::{
   app::{RomiConfig, RomiState},
   constant::DATA_DIR,
   entity::romi_views,
-  models::utils::{QueryAgentData, QueryViewBadgeData, ReqAgentData, ResViewData},
+  models::utils::{
+    QueryAgentData, QueryViewBadgeData, ReqAgentData, ResBingData, ResMcskinData, ResMotdData,
+    ResViewData,
+  },
   utils::api::{ApiError, ApiResult, api_ok},
 };
+
+const DEFAULT_MC_PORT: u16 = 25565;
+const DEFAULT_MCBE_PORT: u16 = 19132;
 
 const DEFAULT_BACKGROUNDS: &str = include_str!("../../data/background_2.txt");
 
@@ -38,6 +47,15 @@ pub fn routes() -> Router<RomiState> {
     .route("/view/badge/{slug}", get(view_badge))
     .route("/agent", get(agent_get))
     .route("/agent", post(agent_post))
+    .route("/color", get(color_random))
+    .route("/color/{r}/{g}/{b}", get(color_rgb))
+    .route("/mcskin/{name}", get(mcskin))
+    .route("/bing", get(bing_redirect))
+    .route("/bing/json", get(bing_json))
+    .route("/motd/{host}", get(motd_default_port))
+    .route("/motd/{host}/{port}", get(motd))
+    .route("/motdbe/{host}", get(motdbe_default_port))
+    .route("/motdbe/{host}/{port}", get(motdbe))
 }
 
 async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
@@ -304,4 +322,273 @@ async fn view_badge(
       right_center = left_width + right_width / 2
     ),
   )
+}
+
+fn color_svg(r: u8, g: u8, b: u8) -> String {
+  let text_color = format!(
+    "#{:02X}{:02X}{:02X}",
+    r.saturating_sub(32),
+    g.saturating_sub(32),
+    b.saturating_sub(32)
+  );
+  let hex = format!("#{r:02X}{g:02X}{b:02X}");
+  let hsl = format!(
+    "hsl({},{}%,{}%)",
+    (r as f32 / 255.0 * 360.0).round(),
+    (g as f32 / 255.0 * 100.0).round(),
+    (b as f32 / 255.0 * 100.0).round()
+  );
+  format!(
+    r##"<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720">
+<rect width="1280" height="720" fill="rgb({r},{g},{b})"/>
+<g fill="{text_color}" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="48">
+<text x="640" y="330">rgb({r},{g},{b})</text>
+<text x="640" y="390">{hex}</text>
+<text x="640" y="450">{hsl}</text>
+</g>
+</svg>"##
+  )
+}
+
+/// Returns an SVG image showing the given color with its RGB/hex/HSL values.
+#[utoipa::path(
+  get,
+  path = "/api/utils/color/{r}/{g}/{b}",
+  params(
+    ("r" = u8, Path, description = "Red channel, 0-255"),
+    ("g" = u8, Path, description = "Green channel, 0-255"),
+    ("b" = u8, Path, description = "Blue channel, 0-255"),
+  ),
+  responses(
+    (status = 200, description = "SVG image with rgb/hex/hsl text overlay", content_type = "image/svg+xml"),
+    (status = 400, description = "Any channel out of 0-255 range"),
+  )
+)]
+async fn color_rgb(Path((r, g, b)): Path<(u8, u8, u8)>) -> impl IntoResponse {
+  ([("Content-Type", "image/svg+xml; charset=utf-8")], color_svg(r, g, b))
+}
+
+/// Returns an SVG image showing a random color with its RGB/hex/HSL values.
+#[utoipa::path(
+  get,
+  path = "/api/utils/color",
+  responses((status = 200, description = "SVG image with rgb/hex/hsl text overlay", content_type = "image/svg+xml"))
+)]
+async fn color_random() -> impl IntoResponse {
+  color_rgb(Path((random(), random(), random()))).await
+}
+
+async fn mojang_uuid(name: &str) -> Option<String> {
+  reqwest::get(format!("https://api.mojang.com/users/profiles/minecraft/{name}"))
+    .await
+    .ok()?
+    .json::<serde_json::Value>()
+    .await
+    .ok()?
+    .get("id")
+    .and_then(|id| id.as_str())
+    .map(str::to_string)
+}
+
+async fn mojang_textures(uuid: &str) -> Option<serde_json::Value> {
+  let value =
+    reqwest::get(format!("https://sessionserver.mojang.com/session/minecraft/profile/{uuid}"))
+      .await
+      .ok()?
+      .json::<serde_json::Value>()
+      .await
+      .ok()?;
+  let encoded = value.get("properties")?.get(0)?.get("value")?.as_str()?;
+  let decoded = BASE64.decode(encoded).ok()?;
+  serde_json::from_slice::<serde_json::Value>(&decoded).ok()?.get("textures").cloned()
+}
+
+/// Fetches Minecraft skin and cape URLs for the given player name.
+#[utoipa::path(
+  get,
+  path = "/api/utils/mcskin/{name}",
+  params(("name" = String, Path, description = "Minecraft Java Edition player name")),
+  responses(
+    (status = 200, description = "Skin and cape URLs", body = ResMcskinData),
+    (status = 404, description = "Player name not found or has no skin set"),
+    (status = 502, description = "Failed to reach Mojang API"),
+  )
+)]
+async fn mcskin(Path(name): Path<String>) -> ApiResult<ResMcskinData> {
+  let uuid = mojang_uuid(&name).await.ok_or_else(|| ApiError::not_found("Player not found"))?;
+  let textures = mojang_textures(&uuid)
+    .await
+    .ok_or_else(|| ApiError::bad_gateway("Failed to fetch skin data"))?;
+  let skin = textures
+    .get("SKIN")
+    .and_then(|skin| skin.get("url"))
+    .and_then(|url| url.as_str())
+    .map(str::to_string)
+    .ok_or_else(|| ApiError::not_found("No skin found"))?;
+  let cape = textures
+    .get("CAPE")
+    .and_then(|cape| cape.get("url"))
+    .and_then(|url| url.as_str())
+    .map(str::to_string);
+  api_ok(ResMcskinData { skin, cape })
+}
+async fn fetch_bing() -> Option<ResBingData> {
+  let body = reqwest::get("https://cn.bing.com/HPImageArchive.aspx?idx=0&n=1")
+    .await
+    .ok()?
+    .text()
+    .await
+    .ok()?;
+  let url = Regex::new(r"<url>(.*?)</url>").ok()?.captures(&body)?.get(1)?.as_str().to_string();
+  let copyright =
+    Regex::new(r"<copyright>(.*?)</copyright>").ok()?.captures(&body)?.get(1)?.as_str().to_string();
+  Some(ResBingData { url: format!("https://cn.bing.com{url}"), copyright })
+}
+
+/// Redirects to today's Bing wallpaper image.
+#[utoipa::path(
+  get,
+  path = "/api/utils/bing",
+  responses(
+    (status = 303, description = "Redirect to Bing wallpaper image"),
+    (status = 502, description = "Failed to fetch or parse Bing's daily image feed"),
+  )
+)]
+async fn bing_redirect() -> Response {
+  match fetch_bing().await {
+    Some(data) => Redirect::to(&data.url).into_response(),
+    None => ApiError::bad_gateway("Failed to fetch Bing wallpaper").into_response(),
+  }
+}
+
+/// Returns today's Bing wallpaper image URL and copyright as JSON.
+#[utoipa::path(
+  get,
+  path = "/api/utils/bing/json",
+  responses(
+    (status = 200, description = "Bing wallpaper image URL and copyright text", body = ResBingData),
+    (status = 502, description = "Failed to fetch or parse Bing's daily image feed"),
+  )
+)]
+async fn bing_json() -> ApiResult<ResBingData> {
+  fetch_bing()
+    .await
+    .ok_or_else(|| ApiError::bad_gateway("Failed to fetch Bing wallpaper"))
+    .map(api_ok)?
+}
+
+async fn ping_motd(host: String, port: u16) -> ApiResult<ResMotdData> {
+  let mut stream = TcpStream::connect((host.as_str(), port))
+    .await
+    .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?;
+  let response = craftping::tokio::ping(&mut stream, &host, port)
+    .await
+    .map_err(|_| ApiError::bad_gateway("Failed to ping server"))?;
+  let motd = response
+    .description
+    .as_ref()
+    .and_then(|d| d.get("text"))
+    .and_then(|t| t.as_str())
+    .unwrap_or_default();
+  api_ok(ResMotdData {
+    online: true,
+    version: response.version,
+    motd: motd.to_string(),
+    players_online: response.online_players as u32,
+    players_max: response.max_players as u32,
+  })
+}
+
+/// Queries a Minecraft Java Edition server's status via the given host and port.
+#[utoipa::path(
+  get,
+  path = "/api/utils/motd/{host}/{port}",
+  params(
+    ("host" = String, Path, description = "Server hostname or IP address"),
+    ("port" = u16, Path, description = "Server port"),
+  ),
+  responses(
+    (status = 200, description = "Server version, motd and player counts", body = ResMotdData),
+    (status = 502, description = "Server unreachable or does not speak the Java ping protocol"),
+  )
+)]
+async fn motd(Path((host, port)): Path<(String, u16)>) -> ApiResult<ResMotdData> {
+  ping_motd(host, port).await
+}
+
+/// Queries a Minecraft Java Edition server's status using the default port 25565.
+#[utoipa::path(
+  get,
+  path = "/api/utils/motd/{host}",
+  params(("host" = String, Path, description = "Server hostname or IP address")),
+  responses(
+    (status = 200, description = "Server version, motd and player counts", body = ResMotdData),
+    (status = 502, description = "Server unreachable or does not speak the Java ping protocol"),
+  )
+)]
+async fn motd_default_port(Path(host): Path<String>) -> ApiResult<ResMotdData> {
+  ping_motd(host, DEFAULT_MC_PORT).await
+}
+
+async fn ping_motdbe(host: String, port: u16) -> ApiResult<ResMotdData> {
+  let socket =
+    UdpSocket::bind("0.0.0.0:0").await.map_err(|_| ApiError::internal("Failed to bind socket"))?;
+  socket
+    .connect((host.as_str(), port))
+    .await
+    .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?;
+
+  let mut packet = vec![0x01u8];
+  packet.extend_from_slice(&0u64.to_be_bytes());
+  packet.extend_from_slice(&[
+    0x00, 0xff, 0xff, 0x00, 0xfe, 0xfe, 0xfe, 0xfe, 0xfd, 0xfd, 0xfd, 0xfd, 0x12, 0x34, 0x56, 0x78,
+  ]);
+  packet.extend_from_slice(&0u64.to_be_bytes());
+  socket.send(&packet).await.map_err(|_| ApiError::bad_gateway("Failed to send ping"))?;
+
+  let mut buf = [0u8; 1024];
+  let len =
+    socket.recv(&mut buf).await.map_err(|_| ApiError::bad_gateway("Failed to receive pong"))?;
+  let text = String::from_utf8_lossy(&buf[35..len]);
+  let fields = text.split(';').collect::<Vec<_>>();
+  let field = |index: usize| fields.get(index).map(|s| s.to_string()).unwrap_or_default();
+
+  api_ok(ResMotdData {
+    online: true,
+    version: field(3),
+    motd: field(1),
+    players_online: field(4).parse().unwrap_or_default(),
+    players_max: field(5).parse().unwrap_or_default(),
+  })
+}
+
+/// Queries a Minecraft Bedrock Edition server's status via the given host and port.
+#[utoipa::path(
+  get,
+  path = "/api/utils/motdbe/{host}/{port}",
+  params(
+    ("host" = String, Path, description = "Server hostname or IP address"),
+    ("port" = u16, Path, description = "Server port"),
+  ),
+  responses(
+    (status = 200, description = "Server version, motd and player counts", body = ResMotdData),
+    (status = 502, description = "Server unreachable or does not speak the RakNet ping protocol"),
+  )
+)]
+async fn motdbe(Path((host, port)): Path<(String, u16)>) -> ApiResult<ResMotdData> {
+  ping_motdbe(host, port).await
+}
+
+/// Queries a Minecraft Bedrock Edition server's status using the default port 19132.
+#[utoipa::path(
+  get,
+  path = "/api/utils/motdbe/{host}",
+  params(("host" = String, Path, description = "Server hostname or IP address")),
+  responses(
+    (status = 200, description = "Server version, motd and player counts", body = ResMotdData),
+    (status = 502, description = "Server unreachable or does not speak the RakNet ping protocol"),
+  )
+)]
+async fn motdbe_default_port(Path(host): Path<String>) -> ApiResult<ResMotdData> {
+  ping_motdbe(host, DEFAULT_MCBE_PORT).await
 }

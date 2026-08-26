@@ -51,8 +51,8 @@ where
 #[macro_export]
 macro_rules! define_cache {
   ($name:ident, $typ:ty, $ttl:expr) => {
-    static $name: once_cell::sync::Lazy<std::sync::Arc<$crate::utils::cache::CacheEntity<$typ>>> =
-      once_cell::sync::Lazy::new(|| {
+    static $name: std::sync::LazyLock<std::sync::Arc<$crate::utils::cache::CacheEntity<$typ>>> =
+      std::sync::LazyLock::new(|| {
         std::sync::Arc::new($crate::utils::cache::CacheEntity::new(std::time::Duration::from_secs(
           $ttl,
         )))

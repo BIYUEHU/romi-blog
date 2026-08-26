@@ -4,7 +4,6 @@ use sea_orm::{
   QueryFilter, QueryOrder, QuerySelect,
 };
 use std::{env, process::Command};
-use sysinfo::System;
 use tokio::try_join;
 
 use crate::{
@@ -57,11 +56,10 @@ pub async fn get_dashboard(db: &DatabaseConnection) -> Result<ResDashboardData> 
     seimgs_count,
     news_count,
     version: env!("CARGO_PKG_VERSION").into(),
-    os_info: format!(
-      "{} {}",
-      System::name().unwrap_or_default(),
-      System::os_version().unwrap_or_default()
-    ),
+    os_info: {
+      let info = os_info::get();
+      format!("{} {}", info.os_type(), info.version())
+    },
     home_dir: env::var("HOME").unwrap_or_default(),
     nodejs_version: Command::new("node")
       .arg("-v")
