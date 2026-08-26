@@ -478,12 +478,16 @@ async fn bing_json() -> ApiResult<ResBingData> {
 }
 
 async fn ping_motd(host: String, port: u16) -> ApiResult<ResMotdData> {
-  let mut stream = TcpStream::connect((host.as_str(), port))
-    .await
-    .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?;
-  let response = craftping::tokio::ping(&mut stream, &host, port)
-    .await
-    .map_err(|_| ApiError::bad_gateway("Failed to ping server"))?;
+  let mut stream =
+    tokio::time::timeout(Duration::from_secs(5), TcpStream::connect((host.as_str(), port)))
+      .await
+      .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?
+      .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?;
+  let response =
+    tokio::time::timeout(Duration::from_secs(5), craftping::tokio::ping(&mut stream, &host, port))
+      .await
+      .map_err(|_| ApiError::bad_gateway("Failed to ping server"))?
+      .map_err(|_| ApiError::bad_gateway("Failed to ping server"))?;
   let motd = response
     .description
     .as_ref()
@@ -533,9 +537,9 @@ async fn motd_default_port(Path(host): Path<String>) -> ApiResult<ResMotdData> {
 async fn ping_motdbe(host: String, port: u16) -> ApiResult<ResMotdData> {
   let socket =
     UdpSocket::bind("0.0.0.0:0").await.map_err(|_| ApiError::internal("Failed to bind socket"))?;
-  socket
-    .connect((host.as_str(), port))
+  tokio::time::timeout(Duration::from_secs(5), socket.connect((host.as_str(), port)))
     .await
+    .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?
     .map_err(|_| ApiError::bad_gateway("Failed to connect to server"))?;
 
   let mut packet = vec![0x01u8];
@@ -544,11 +548,16 @@ async fn ping_motdbe(host: String, port: u16) -> ApiResult<ResMotdData> {
     0x00, 0xff, 0xff, 0x00, 0xfe, 0xfe, 0xfe, 0xfe, 0xfd, 0xfd, 0xfd, 0xfd, 0x12, 0x34, 0x56, 0x78,
   ]);
   packet.extend_from_slice(&0u64.to_be_bytes());
-  socket.send(&packet).await.map_err(|_| ApiError::bad_gateway("Failed to send ping"))?;
+  tokio::time::timeout(Duration::from_secs(5), socket.send(&packet))
+    .await
+    .map_err(|_| ApiError::bad_gateway("Failed to send ping"))?
+    .map_err(|_| ApiError::bad_gateway("Failed to send ping"))?;
 
   let mut buf = [0u8; 1024];
-  let len =
-    socket.recv(&mut buf).await.map_err(|_| ApiError::bad_gateway("Failed to receive pong"))?;
+  let len = tokio::time::timeout(Duration::from_secs(5), socket.recv(&mut buf))
+    .await
+    .map_err(|_| ApiError::bad_gateway("Failed to receive pong"))?
+    .map_err(|_| ApiError::bad_gateway("Failed to receive pong"))?;
   let text = String::from_utf8_lossy(&buf[35..len]);
   let fields = text.split(';').collect::<Vec<_>>();
   let field = |index: usize| fields.get(index).map(|s| s.to_string()).unwrap_or_default();

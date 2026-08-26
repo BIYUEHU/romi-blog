@@ -21,6 +21,7 @@ export class PlayerService {
   private listener() {
     if (!this.player || this.disabled) return
     playInstance(this.player)
+    this.removeListeners()
   }
   private addListeners() {
     this.removeListeners()

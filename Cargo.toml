@@ -52,5 +52,7 @@ lettre = { version = "0.11", features = [
     "tokio1-native-tls",
 ] }
 base64 = "0.22"
-craftping = { version = "0.7", default-features = false, features = ["async-tokio"] }
-tower_governor = "0.7"
+craftping = { version = "0.7", default-features = false, features = [
+    "async-tokio",
+] }
+governor = "0.6"
