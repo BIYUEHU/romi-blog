@@ -20,7 +20,6 @@
 - [ ] Images gallery
 - [ ] Images bed and management system
 - [ ] Refactory music player
-<!-- - [ ] I18n -->
 - [x] Posts status: 0 published; 1 hide; ~~2 draft~~
 - [x] Post view, like, share
 - [x] News view, like
