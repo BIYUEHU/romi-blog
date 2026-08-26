@@ -4,9 +4,7 @@
     <div (click)="windowOpen(repo.html_url)" class="p-1">
       <div class="flex items-start justify-between gap-4 mb-4">
         <div>
-          <span class="text-xl font-bold group-hover:text-brand">
-            {{ repo.name }}
-          </span>
+          <span class="text-xl font-bold group-hover:text-brand">{{ repo.name }}</span>
           @if (repo.archived) {
           <r-tag type="error" class="ml-2">已归档</r-tag>
           }
