@@ -3,9 +3,9 @@ import { ResolveFn } from '@angular/router'
 import { map } from 'rxjs/operators'
 import { ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
-import { sortByCreatedTime } from '../../shared/utils'
+import { handlePasswordAndHidePost, sortByCreatedTime } from '../../shared/utils'
 
 export const postsResolver: ResolveFn<ResPostData[]> = () =>
   inject(ApiService)
     .getPosts()
-    .pipe(map((list) => sortByCreatedTime(list)))
+    .pipe(map((list) => handlePasswordAndHidePost(sortByCreatedTime(list))))

@@ -122,35 +122,36 @@ pub async fn list(db: &DatabaseConnection, access_level: AccessLevel) -> Result<
   }
 
   let is_admin = access_level == AccessLevel::Admin;
-  let mut result = Vec::new();
-  for post in posts {
-    if post.hide == "1" {
-      continue;
-    }
-    let has_password = post.password.as_ref().map(|p| !p.is_empty()).unwrap_or(false);
-    let (tags, categories) = post_metas.get(&post.pid).cloned().unwrap_or((vec![], vec![]));
-    let password = post.password.clone().filter(|p| !p.is_empty());
+  Ok(
+    posts
+      .into_iter()
+      .map(|post| {
+        let (tags, categories) = post_metas.get(&post.pid).cloned().unwrap_or((vec![], vec![]));
 
-    result.push(ResPostData {
-      id: post.pid,
-      str_id: post.str_id.clone(),
-      title: post.title,
-      summary: if has_password { String::new() } else { summary_markdown(&post.text, 70) },
-      created: post.created,
-      modified: post.modified,
-      banner: post.banner,
-      tags,
-      categories,
-      views: post.views,
-      likes: post.likes,
-      comments: post.comments,
-      allow_comment: post.allow_comment == "1",
-      password: if is_admin { password } else { None },
-      hide: false,
-    });
-  }
-
-  Ok(result)
+        ResPostData {
+          id: post.pid,
+          str_id: post.str_id.clone(),
+          title: post.title,
+          summary: if post.password.as_ref().map(|p| !p.is_empty()).unwrap_or(false) {
+            String::new()
+          } else {
+            summary_markdown(&post.text, 70)
+          },
+          created: post.created,
+          modified: post.modified,
+          banner: post.banner,
+          tags,
+          categories,
+          views: post.views,
+          likes: post.likes,
+          comments: post.comments,
+          allow_comment: post.allow_comment == "1",
+          password: if is_admin { post.password.clone().filter(|p| !p.is_empty()) } else { None },
+          hide: post.hide == "1",
+        }
+      })
+      .collect(),
+  )
 }
 
 pub async fn get_by_id(

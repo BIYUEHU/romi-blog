@@ -1,4 +1,4 @@
-import { Component, Input, type OnInit } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { ResPostData } from '../../../output'
 import { PostListComponent } from '../../components/post-list/post-list.component'
 
@@ -7,10 +7,6 @@ import { PostListComponent } from '../../components/post-list/post-list.componen
   imports: [PostListComponent],
   template: `<app-post-list  [posts]="posts" />`
 })
-export class PostsComponent implements OnInit {
+export class PostsComponent {
   @Input() public posts!: ResPostData[]
-
-  public ngOnInit() {
-    this.posts = this.posts.map((post) => (post.password ? { ...post, summary: '文章已加密' } : post))
-  }
 }
