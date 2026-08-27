@@ -12,7 +12,7 @@ use crate::{
     auth::{Access, AccessLevel},
   },
   models::news::{ReqNewsData, ResNewsData},
-  service::news,
+  service::news::{self, NewsError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -49,14 +49,18 @@ async fn fetch(
   let is_admin = access.level == AccessLevel::Admin;
   match news::get(conn, id, is_admin).await {
     Ok(data) => api_ok(data),
+    Err(e)
+      if matches!(
+        e.downcast_ref::<NewsError>(),
+        Some(NewsError::NotFound | NewsError::Private)
+      ) =>
+    {
+      l_warn!(logger, "News {} not found or private", id);
+      Err(ApiError::not_found("News not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") || e.to_string().contains("private") {
-        l_warn!(logger, "News {} not found or private", id);
-        Err(ApiError::not_found("News not found"))
-      } else {
-        l_error!(logger, "Failed to get news {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to get news"))
-      }
+      l_error!(logger, "Failed to get news {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to get news"))
     }
   }
 }
@@ -95,14 +99,13 @@ async fn update(
       l_info!(logger, "Updated news {} by admin {} ({})", id, admin_user.id, admin_user.username);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<NewsError>().is_some() => {
+      l_warn!(logger, "News {} not found", id);
+      Err(ApiError::not_found("News not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "News {} not found", id);
-        Err(ApiError::not_found("News not found"))
-      } else {
-        l_error!(logger, "Failed to update news {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to update news"))
-      }
+      l_error!(logger, "Failed to update news {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to update news"))
     }
   }
 }
@@ -116,14 +119,13 @@ async fn like(
       l_info!(logger, "Liked news {}", id);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<NewsError>().is_some() => {
+      l_warn!(logger, "News {} not found", id);
+      Err(ApiError::not_found("News not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "News {} not found", id);
-        Err(ApiError::not_found("News not found"))
-      } else {
-        l_error!(logger, "Failed to like news {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to like news"))
-      }
+      l_error!(logger, "Failed to like news {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to like news"))
     }
   }
 }
@@ -137,14 +139,13 @@ async fn view(
       l_info!(logger, "Viewed news {}", id);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<NewsError>().is_some() => {
+      l_warn!(logger, "News {} not found", id);
+      Err(ApiError::not_found("News not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "News {} not found", id);
-        Err(ApiError::not_found("News not found"))
-      } else {
-        l_error!(logger, "Failed to view news {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to view news"))
-      }
+      l_error!(logger, "Failed to view news {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to view news"))
     }
   }
 }

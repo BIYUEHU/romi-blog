@@ -1,11 +1,33 @@
 use anyhow::{Context, Result};
 use sea_orm::{
   ActiveModelTrait, ActiveValue, ColumnTrait, DatabaseConnection, DbBackend, EntityTrait,
-  IntoActiveModel, QueryFilter, Statement,
+  IntoActiveModel, QueryFilter, QueryTrait, Statement,
 };
 
 use crate::entity::romi_hitokotos;
 use crate::models::hitokoto::{ReqHitokotoData, ResHitokotoData};
+
+#[derive(Debug, thiserror::Error)]
+pub enum HitokotoError {
+  #[error("Hitokoto msg already exists")]
+  Duplicate,
+}
+
+async fn ensure_msg_unique(
+  conn: &DatabaseConnection,
+  msg: &str,
+  exclude_uuid: Option<&str>,
+) -> Result<()> {
+  let exists = romi_hitokotos::Entity::find()
+    .filter(romi_hitokotos::Column::Msg.eq(msg))
+    .apply_if(exclude_uuid, |query, uuid| query.filter(romi_hitokotos::Column::Uuid.ne(uuid)))
+    .one(conn)
+    .await
+    .context("Failed to check duplicate hitokoto")?
+    .is_some();
+
+  exists.then(|| Err(HitokotoError::Duplicate.into())).unwrap_or(Ok(()))
+}
 
 pub async fn get_random(conn: &DatabaseConnection) -> Result<ResHitokotoData> {
   let model = romi_hitokotos::Entity::find()
@@ -53,15 +75,7 @@ pub async fn create(
   conn: &DatabaseConnection,
   data: ReqHitokotoData,
 ) -> Result<romi_hitokotos::Model> {
-  let exists = romi_hitokotos::Entity::find()
-    .filter(romi_hitokotos::Column::Msg.eq(&data.msg))
-    .one(conn)
-    .await
-    .context("Failed to check duplicate hitokoto")?
-    .is_some();
-  if exists {
-    anyhow::bail!("Hitokoto msg already exists");
-  }
+  ensure_msg_unique(conn, &data.msg, None).await?;
 
   let active = romi_hitokotos::ActiveModel {
     id: ActiveValue::not_set(),
@@ -90,16 +104,7 @@ pub async fn update(
     .context("Failed to fetch hitokoto")?
     .ok_or_else(|| anyhow::anyhow!("Hitokoto not found"))?;
 
-  let exists = romi_hitokotos::Entity::find()
-    .filter(romi_hitokotos::Column::Msg.eq(&data.msg))
-    .filter(romi_hitokotos::Column::Uuid.ne(&uuid))
-    .one(conn)
-    .await
-    .context("Failed to check duplicate hitokoto")?
-    .is_some();
-  if exists {
-    anyhow::bail!("Hitokoto msg already exists");
-  }
+  ensure_msg_unique(conn, &data.msg, Some(&uuid)).await?;
 
   let mut active = model.into_active_model();
   active.msg = ActiveValue::set(data.msg);

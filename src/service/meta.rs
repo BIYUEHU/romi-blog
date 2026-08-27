@@ -9,6 +9,14 @@ use sea_orm::{
 use crate::entity::{romi_metas, romi_relationships};
 use crate::models::meta::{ReqMetaData, ResMetaData};
 
+#[derive(Debug, thiserror::Error)]
+pub enum MetaError {
+  #[error("Meta not found")]
+  NotFound,
+  #[error("Meta name already exists")]
+  Duplicate,
+}
+
 pub async fn list(db: &DatabaseConnection) -> Result<Vec<ResMetaData>> {
   let metas = romi_metas::Entity::find().all(db).await.context("Failed to list metas")?;
 
@@ -49,7 +57,7 @@ pub async fn get(db: &DatabaseConnection, id: u32) -> Result<ResMetaData> {
     .one(db)
     .await
     .context("Failed to get meta")?
-    .ok_or_else(|| anyhow::anyhow!("Meta not found"))?;
+    .ok_or(MetaError::NotFound)?;
 
   let count = romi_relationships::Entity::find()
     .filter(romi_relationships::Column::Mid.eq(id))
@@ -69,9 +77,7 @@ pub async fn create(db: &DatabaseConnection, data: ReqMetaData) -> Result<romi_m
     .context("Failed to check meta existence")?
     .is_some();
 
-  if exists {
-    anyhow::bail!("Meta name already exists");
-  }
+  (!exists).then_some(()).ok_or(MetaError::Duplicate)?;
 
   let active = romi_metas::ActiveModel {
     mid: ActiveValue::not_set(),

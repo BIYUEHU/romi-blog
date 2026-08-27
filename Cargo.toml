@@ -43,6 +43,7 @@ ts-rs = "11.0.1"
 utoipa = { version = "5", features = ["axum_extras"] }
 rand = "0.8.5"
 regex = "1.11.0"
+thiserror = "2"
 chrono = "0.4"
 md5 = "0.7"
 rss = "2.0"

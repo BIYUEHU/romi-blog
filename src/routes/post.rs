@@ -11,7 +11,7 @@ use crate::{
   models::post::{
     ReqDecryptPostData, ReqPostData, ResDecryptPostData, ResPostData, ResPostSingleData,
   },
-  service::post,
+  service::post::{self, PostError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -48,14 +48,13 @@ async fn fetch(
 ) -> ApiResult<ResPostSingleData> {
   match post::get_by_id(conn, id, access.level).await {
     Ok(data) => api_ok(data),
+    Err(e) if e.downcast_ref::<PostError>().is_some() => {
+      l_warn!(logger, "Post {} not found", id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post {} not found", id);
-        Err(ApiError::not_found("Post not found"))
-      } else {
-        l_error!(logger, "Failed to get post {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to get post"))
-      }
+      l_error!(logger, "Failed to get post {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to get post"))
     }
   }
 }
@@ -67,14 +66,13 @@ async fn get_by_str_id(
 ) -> ApiResult<ResPostSingleData> {
   match post::get_by_str_id(conn, str_id.clone(), access.level).await {
     Ok(data) => api_ok(data),
+    Err(e) if e.downcast_ref::<PostError>().is_some() => {
+      l_warn!(logger, "Post with str_id {} not found", str_id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post with str_id {} not found", str_id);
-        Err(ApiError::not_found("Post not found"))
-      } else {
-        l_error!(logger, "Failed to get post by str_id {}: {:#}", str_id, e);
-        Err(ApiError::internal("Failed to get post"))
-      }
+      l_error!(logger, "Failed to get post by str_id {}: {:#}", str_id, e);
+      Err(ApiError::internal("Failed to get post"))
     }
   }
 }
@@ -97,13 +95,8 @@ async fn create(
       api_ok(())
     }
     Err(e) => {
-      if e.to_string().contains("Invalid str_id") {
-        l_warn!(logger, "Invalid str_id");
-        Err(ApiError::bad_request("Invalid str_id"))
-      } else {
-        l_error!(logger, "Failed to create post: {:#}", e);
-        Err(ApiError::internal("Failed to create post"))
-      }
+      l_error!(logger, "Failed to create post: {:#}", e);
+      Err(ApiError::internal("Failed to create post"))
     }
   }
 }
@@ -119,14 +112,13 @@ async fn update(
       l_info!(logger, "Updated post {} by admin {} ({})", id, admin_user.id, admin_user.username);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<PostError>().is_some() => {
+      l_warn!(logger, "Post {} not found", id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post {} not found", id);
-        Err(ApiError::not_found("Post not found"))
-      } else {
-        l_error!(logger, "Failed to update post {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to update post"))
-      }
+      l_error!(logger, "Failed to update post {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to update post"))
     }
   }
 }
@@ -140,14 +132,13 @@ async fn like(
       l_info!(logger, "Liked post {}", id);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<PostError>().is_some() => {
+      l_warn!(logger, "Post {} not found", id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post {} not found", id);
-        Err(ApiError::not_found("Post not found"))
-      } else {
-        l_error!(logger, "Failed to like post {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to like post"))
-      }
+      l_error!(logger, "Failed to like post {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to like post"))
     }
   }
 }
@@ -161,14 +152,13 @@ async fn view(
       l_info!(logger, "Viewed post {}", id);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<PostError>().is_some() => {
+      l_warn!(logger, "Post {} not found", id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post {} not found", id);
-        Err(ApiError::not_found("Post not found"))
-      } else {
-        l_error!(logger, "Failed to view post {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to view post"))
-      }
+      l_error!(logger, "Failed to view post {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to view post"))
     }
   }
 }
@@ -197,20 +187,21 @@ async fn decrypt(
 ) -> ApiResult<ResDecryptPostData> {
   match post::decrypt(conn, id, data.password).await {
     Ok(result) => api_ok(result),
+    Err(e) if matches!(e.downcast_ref::<PostError>(), Some(PostError::NotPasswordProtected)) => {
+      l_warn!(logger, "Post {} is not password protected", id);
+      Err(ApiError::bad_request("Post is not password protected"))
+    }
+    Err(e) if matches!(e.downcast_ref::<PostError>(), Some(PostError::IncorrectPassword)) => {
+      l_warn!(logger, "Incorrect password for post {}", id);
+      Err(ApiError::unauthorized("Incorrect password"))
+    }
+    Err(e) if matches!(e.downcast_ref::<PostError>(), Some(PostError::NotFound)) => {
+      l_warn!(logger, "Post {} not found", id);
+      Err(ApiError::not_found("Post not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Post {} not found", id);
-        Err(ApiError::not_found("Post not found"))
-      } else if e.to_string().contains("not password protected") {
-        l_warn!(logger, "Post {} is not password protected", id);
-        Err(ApiError::bad_request("Post is not password protected"))
-      } else if e.to_string().contains("Incorrect password") {
-        l_warn!(logger, "Incorrect password for post {}", id);
-        Err(ApiError::unauthorized("Incorrect password"))
-      } else {
-        l_error!(logger, "Failed to decrypt post {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to decrypt post"))
-      }
+      l_error!(logger, "Failed to decrypt post {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to decrypt post"))
     }
   }
 }

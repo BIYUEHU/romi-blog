@@ -15,6 +15,12 @@ use crate::{
   utils::http::get_req_user_agent,
 };
 
+#[derive(Debug, thiserror::Error)]
+pub enum CommentError {
+  #[error("Comment not found")]
+  NotFound,
+}
+
 pub async fn list(db: &DatabaseConnection) -> Result<Vec<ResCommentData>> {
   let comments = romi_comments::Entity::find().all(db).await.context("Failed to fetch comments")?;
 
@@ -141,12 +147,6 @@ pub async fn create(
 
 pub async fn update_status(db: &DatabaseConnection, id: u32, status: u8) -> Result<()> {
   let txn = db.begin().await.context("Failed to start transaction")?;
-  let status = match status {
-    0 => 0,
-    1 => 1,
-    2 => 2,
-    _ => anyhow::bail!("Invalid status"),
-  };
 
   romi_comments::Entity::update_many()
     .col_expr(romi_comments::Column::Status, Expr::value(status))
@@ -166,7 +166,7 @@ pub async fn remove(db: &DatabaseConnection, id: u32) -> Result<romi_comments::M
     .one(&txn)
     .await
     .with_context(|| format!("Failed to fetch comment {}", id))?
-    .ok_or_else(|| anyhow::anyhow!("Comment not found"))?;
+    .ok_or(CommentError::NotFound)?;
 
   romi_comments::Entity::delete_by_id(id)
     .exec(&txn)

@@ -17,6 +17,30 @@ use crate::service::email::send_email;
 use crate::tools::random::generate_random_password;
 use roga::*;
 
+#[derive(Debug, thiserror::Error)]
+pub enum UserError {
+  #[error("User not found")]
+  NotFound,
+  #[error("Invalid credentials")]
+  InvalidCredentials,
+  #[error("Username or email already taken")]
+  UsernameOrEmailTaken,
+  #[error("Username already taken")]
+  UsernameTaken,
+  #[error("Email already registered")]
+  EmailTaken,
+  #[error("Username and email are required")]
+  MissingFields,
+  #[error("User is deleted")]
+  UserDeleted,
+  #[error("Invalid old password")]
+  InvalidOldPassword,
+  #[error("Username cannot be empty")]
+  EmptyUsername,
+  #[error("Password must be at least 6 characters")]
+  PasswordTooShort,
+}
+
 pub async fn login(
   db: &DatabaseConnection,
   credentials: ReqLoginData,
@@ -27,11 +51,9 @@ pub async fn login(
     .one(db)
     .await
     .context("Failed to fetch user")?
-    .ok_or_else(|| anyhow::anyhow!("Invalid credentials"))?;
+    .ok_or(UserError::InvalidCredentials)?;
 
-  if user.password != credentials.password {
-    anyhow::bail!("Invalid credentials");
-  }
+  (user.password == credentials.password).then_some(()).ok_or(UserError::InvalidCredentials)?;
 
   let claims = AuthUser {
     id: user.uid,
@@ -90,7 +112,7 @@ pub async fn get(db: &DatabaseConnection, id: u32) -> Result<ResUserData> {
     .one(db)
     .await
     .context("Failed to get user")?
-    .ok_or_else(|| anyhow::anyhow!("User not found"))?;
+    .ok_or(UserError::NotFound)?;
 
   Ok(ResUserData {
     uid: user.uid,
@@ -114,9 +136,7 @@ pub async fn create(db: &DatabaseConnection, data: ReqUserData) -> Result<romi_u
     .context("Failed to check user existence")?
     .is_some();
 
-  if exists {
-    anyhow::bail!("Username or email already taken");
-  }
+  (!exists).then_some(()).ok_or(UserError::UsernameOrEmailTaken)?;
 
   let salt = "random_salt";
   let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().as_secs() as u32;
@@ -144,9 +164,9 @@ pub async fn register(
   payload: ReqRegisterData,
   logger: &Logger,
 ) -> Result<romi_users::Model> {
-  if payload.username.is_empty() || payload.email.is_empty() {
-    anyhow::bail!("Username and email are required");
-  }
+  (!payload.username.is_empty() && !payload.email.is_empty())
+    .then_some(())
+    .ok_or(UserError::MissingFields)?;
 
   let username_exists = romi_users::Entity::find()
     .filter(romi_users::Column::Username.eq(&payload.username))
@@ -155,9 +175,7 @@ pub async fn register(
     .context("Failed to check username")?
     .is_some();
 
-  if username_exists {
-    anyhow::bail!("Username already taken");
-  }
+  (!username_exists).then_some(()).ok_or(UserError::UsernameTaken)?;
 
   let email_exists = romi_users::Entity::find()
     .filter(romi_users::Column::Email.eq(&payload.email))
@@ -166,9 +184,7 @@ pub async fn register(
     .context("Failed to check email")?
     .is_some();
 
-  if email_exists {
-    anyhow::bail!("Email already registered");
-  }
+  (!email_exists).then_some(()).ok_or(UserError::EmailTaken)?;
 
   let password = generate_random_password(12);
   let salt = "random_salt";
@@ -221,24 +237,20 @@ pub async fn update_profile(
     .one(db)
     .await
     .context("Failed to get user")?
-    .ok_or_else(|| anyhow::anyhow!("User not found"))?;
+    .ok_or(UserError::NotFound)?;
 
-  if model.is_deleted == "1" {
-    anyhow::bail!("User is deleted");
-  }
+  (model.is_deleted != "1").then_some(()).ok_or(UserError::UserDeleted)?;
 
   if payload.old_password != model.password {
     l_error!(logger, "Invalid old password for user {}", user_id);
-    anyhow::bail!("Invalid old password");
+    return Err(UserError::InvalidOldPassword.into());
   }
 
   let uid = model.uid;
   let mut active = model.into_active_model();
 
   if let Some(username) = &payload.username {
-    if username.is_empty() {
-      anyhow::bail!("Username cannot be empty");
-    }
+    (!username.is_empty()).then_some(()).ok_or(UserError::EmptyUsername)?;
     let exists = romi_users::Entity::find()
       .filter(romi_users::Column::Username.eq(username))
       .filter(romi_users::Column::Uid.ne(uid))
@@ -248,7 +260,7 @@ pub async fn update_profile(
       .is_some();
     if exists {
       l_warn!(logger, "Username {} already taken", username);
-      anyhow::bail!("Username already taken");
+      return Err(UserError::UsernameTaken.into());
     }
     active.username = ActiveValue::Set(username.clone());
   }
@@ -258,9 +270,7 @@ pub async fn update_profile(
   }
 
   if let Some(new_password) = payload.new_password {
-    if new_password.len() < 6 {
-      anyhow::bail!("Password must be at least 6 characters");
-    }
+    (new_password.len() >= 6).then_some(()).ok_or(UserError::PasswordTooShort)?;
     active.password = ActiveValue::Set(new_password);
   }
 
@@ -273,7 +283,7 @@ pub async fn update(db: &DatabaseConnection, id: u32, data: ReqUserData) -> Resu
     .one(db)
     .await
     .context("Failed to get user")?
-    .ok_or_else(|| anyhow::anyhow!("User not found"))?;
+    .ok_or(UserError::NotFound)?;
 
   let is_admin = model.is_admin.clone();
   let mut active = model.into_active_model();

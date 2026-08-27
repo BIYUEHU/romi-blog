@@ -15,6 +15,16 @@ use crate::models::post::{
 use crate::tools::markdown::{collect_markdown_languages, summary_markdown};
 use crate::tools::time::get_timestamp;
 
+#[derive(Debug, thiserror::Error)]
+pub enum PostError {
+  #[error("Post not found")]
+  NotFound,
+  #[error("Post is not password protected")]
+  NotPasswordProtected,
+  #[error("Incorrect password")]
+  IncorrectPassword,
+}
+
 fn valid_str_id(s: String) -> Option<String> {
   if s.is_empty() || !s.is_ascii() || !s.chars().next().unwrap().is_ascii_alphabetic() {
     None
@@ -163,7 +173,7 @@ pub async fn get_by_id(
     .one(db)
     .await
     .context("Failed to get post")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
   let (tags, categories) = get_post_metas(db, pid).await?;
   let has_password = post.password.as_ref().map(|p| !p.is_empty()).unwrap_or(false);
@@ -223,7 +233,7 @@ pub async fn get_by_str_id(
     .one(db)
     .await
     .context("Failed to get post by str_id")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
   let (tags, categories) = get_post_metas(db, post.pid).await?;
   let has_password = post.password.as_ref().map(|p| !p.is_empty()).unwrap_or(false);
@@ -330,7 +340,7 @@ pub async fn update(db: &DatabaseConnection, pid: u32, data: ReqPostData) -> Res
     .one(&txn)
     .await
     .context("Failed to get post")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
   let mut active = existing.into_active_model();
   active.title = ActiveValue::set(data.title);
@@ -419,7 +429,7 @@ pub async fn like(db: &DatabaseConnection, pid: u32) -> Result<()> {
     .one(db)
     .await
     .context("Failed to get post")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
   let likes = post.likes + 1;
   let mut active = post.into_active_model();
@@ -433,7 +443,7 @@ pub async fn view(db: &DatabaseConnection, pid: u32) -> Result<()> {
     .one(db)
     .await
     .context("Failed to get post")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
   let views = post.views + 1;
   let mut active = post.into_active_model();
@@ -472,12 +482,10 @@ pub async fn decrypt(
     .one(db)
     .await
     .context("Failed to get post")?
-    .ok_or_else(|| anyhow::anyhow!("Post not found"))?;
+    .ok_or(PostError::NotFound)?;
 
-  let stored = post.password.ok_or_else(|| anyhow::anyhow!("Post is not password protected"))?;
-  if stored != password {
-    anyhow::bail!("Incorrect password");
-  }
+  let stored = post.password.ok_or(PostError::NotPasswordProtected)?;
+  (stored == password).then_some(()).ok_or(PostError::IncorrectPassword)?;
 
   let text = post.text;
   let languages = collect_markdown_languages(&text);

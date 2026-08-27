@@ -11,7 +11,7 @@ use crate::{
   models::user::{
     ReqLoginData, ReqProfileData, ReqRegisterData, ReqUserData, ResLoginData, ResUserData,
   },
-  service::user,
+  service::user::{self, UserError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -33,14 +33,13 @@ async fn login(
 ) -> ApiResult<ResLoginData> {
   match user::login(conn, credentials, secret).await {
     Ok(data) => api_ok(data),
+    Err(e) if matches!(e.downcast_ref::<UserError>(), Some(UserError::InvalidCredentials)) => {
+      l_warn!(logger, "Invalid login attempt: {}", e);
+      Err(ApiError::unauthorized("Invalid credentials"))
+    }
     Err(e) => {
-      if e.to_string().contains("Invalid credentials") {
-        l_warn!(logger, "Invalid login attempt: {}", e);
-        Err(ApiError::unauthorized("Invalid credentials"))
-      } else {
-        l_error!(logger, "Login failed: {:#}", e);
-        Err(ApiError::internal("Login failed"))
-      }
+      l_error!(logger, "Login failed: {:#}", e);
+      Err(ApiError::internal("Login failed"))
     }
   }
 }
@@ -65,14 +64,13 @@ async fn fetch(
 ) -> ApiResult<ResUserData> {
   match user::get(conn, id).await {
     Ok(data) => api_ok(data),
+    Err(e) if e.downcast_ref::<UserError>().is_some() => {
+      l_warn!(logger, "User {} not found", id);
+      Err(ApiError::not_found("User not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "User {} not found", id);
-        Err(ApiError::not_found("User not found"))
-      } else {
-        l_error!(logger, "Failed to get user {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to get user"))
-      }
+      l_error!(logger, "Failed to get user {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to get user"))
     }
   }
 }
@@ -94,14 +92,13 @@ async fn create(
       );
       api_ok(())
     }
+    Err(e) if matches!(e.downcast_ref::<UserError>(), Some(UserError::UsernameOrEmailTaken)) => {
+      l_warn!(logger, "User creation failed: {}", e);
+      Err(ApiError::bad_request("Username or email already taken"))
+    }
     Err(e) => {
-      if e.to_string().contains("already taken") {
-        l_warn!(logger, "User creation failed: {}", e);
-        Err(ApiError::bad_request("Username or email already taken"))
-      } else {
-        l_error!(logger, "Failed to create user: {:#}", e);
-        Err(ApiError::internal("Failed to create user"))
-      }
+      l_error!(logger, "Failed to create user: {:#}", e);
+      Err(ApiError::internal("Failed to create user"))
     }
   }
 }
@@ -115,14 +112,18 @@ async fn register(
       l_info!(logger, "User registered: {} ({})", result.uid, result.username);
       api_ok(())
     }
+    Err(e)
+      if matches!(
+        e.downcast_ref::<UserError>(),
+        Some(UserError::UsernameTaken | UserError::EmailTaken | UserError::MissingFields)
+      ) =>
+    {
+      l_warn!(logger, "Registration failed: {}", e);
+      Err(ApiError::bad_request(e.to_string()))
+    }
     Err(e) => {
-      if e.to_string().contains("already taken") || e.to_string().contains("required") {
-        l_warn!(logger, "Registration failed: {}", e);
-        Err(ApiError::bad_request(e.to_string()))
-      } else {
-        l_error!(logger, "Registration failed: {:#}", e);
-        Err(ApiError::internal("Registration failed"))
-      }
+      l_error!(logger, "Registration failed: {:#}", e);
+      Err(ApiError::internal("Registration failed"))
     }
   }
 }
@@ -137,21 +138,27 @@ async fn update_profile(
       l_info!(logger, "Profile updated for user {}", user.id);
       api_ok(())
     }
+    Err(e)
+      if matches!(
+        e.downcast_ref::<UserError>(),
+        Some(
+          UserError::InvalidOldPassword
+            | UserError::EmptyUsername
+            | UserError::UsernameTaken
+            | UserError::PasswordTooShort
+        )
+      ) =>
+    {
+      l_warn!(logger, "Profile update failed: {}", e);
+      Err(ApiError::bad_request(e.to_string()))
+    }
+    Err(e) if matches!(e.downcast_ref::<UserError>(), Some(UserError::NotFound)) => {
+      l_warn!(logger, "User {} not found", user.id);
+      Err(ApiError::not_found("User not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "User {} not found", user.id);
-        Err(ApiError::not_found("User not found"))
-      } else if e.to_string().contains("Invalid old password")
-        || e.to_string().contains("Username cannot be empty")
-        || e.to_string().contains("already taken")
-        || e.to_string().contains("at least 6 characters")
-      {
-        l_warn!(logger, "Profile update failed: {}", e);
-        Err(ApiError::bad_request(e.to_string()))
-      } else {
-        l_error!(logger, "Profile update failed: {:#}", e);
-        Err(ApiError::internal("Profile update failed"))
-      }
+      l_error!(logger, "Profile update failed: {:#}", e);
+      Err(ApiError::internal("Profile update failed"))
     }
   }
 }
@@ -167,14 +174,13 @@ async fn update(
       l_info!(logger, "Updated user {} by admin {} ({})", id, admin_user.id, admin_user.username);
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<UserError>().is_some() => {
+      l_warn!(logger, "User {} not found", id);
+      Err(ApiError::not_found("User not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "User {} not found", id);
-        Err(ApiError::not_found("User not found"))
-      } else {
-        l_error!(logger, "Failed to update user {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to update user"))
-      }
+      l_error!(logger, "Failed to update user {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to update user"))
     }
   }
 }

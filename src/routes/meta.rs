@@ -9,7 +9,7 @@ use crate::{
   app::RomiState,
   guards::admin::AdminUser,
   models::meta::{ReqMetaData, ResMetaData},
-  service::meta,
+  service::meta::{self, MetaError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -39,14 +39,13 @@ async fn fetch(
 ) -> ApiResult<ResMetaData> {
   match meta::get(conn, id).await {
     Ok(data) => api_ok(data),
+    Err(e) if e.downcast_ref::<MetaError>().is_some() => {
+      l_warn!(logger, "Meta {} not found", id);
+      Err(ApiError::not_found("Meta not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Meta {} not found", id);
-        Err(ApiError::not_found("Meta not found"))
-      } else {
-        l_error!(logger, "Failed to get meta {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to get meta"))
-      }
+      l_error!(logger, "Failed to get meta {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to get meta"))
     }
   }
 }
@@ -68,14 +67,13 @@ async fn create(
       );
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<MetaError>().is_some() => {
+      l_warn!(logger, "Meta name already exists");
+      Err(ApiError::bad_request("Meta name already exists"))
+    }
     Err(e) => {
-      if e.to_string().contains("already exists") {
-        l_warn!(logger, "Meta name already exists");
-        Err(ApiError::bad_request("Meta name already exists"))
-      } else {
-        l_error!(logger, "Failed to create meta: {:#}", e);
-        Err(ApiError::internal("Failed to create meta"))
-      }
+      l_error!(logger, "Failed to create meta: {:#}", e);
+      Err(ApiError::internal("Failed to create meta"))
     }
   }
 }

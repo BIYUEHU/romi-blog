@@ -9,7 +9,7 @@ use crate::{
   app::RomiState,
   guards::admin::AdminUser,
   models::hitokoto::{ReqHitokotoData, ResHitokotoData},
-  service::hitokoto,
+  service::hitokoto::{self, HitokotoError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -98,14 +98,13 @@ async fn create(
       );
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<HitokotoError>().is_some() => {
+      l_warn!(logger, "Duplicate hitokoto msg: {}", msg);
+      Err(ApiError::bad_request("Hitokoto msg already exists"))
+    }
     Err(e) => {
-      if e.to_string().contains("already exists") {
-        l_warn!(logger, "Duplicate hitokoto msg: {}", msg);
-        Err(ApiError::bad_request("Hitokoto msg already exists"))
-      } else {
-        l_error!(logger, "Failed to create hitokoto: {:#}", e);
-        Err(ApiError::internal("Failed to create hitokoto"))
-      }
+      l_error!(logger, "Failed to create hitokoto: {:#}", e);
+      Err(ApiError::internal("Failed to create hitokoto"))
     }
   }
 }
@@ -126,6 +125,10 @@ async fn update(
         admin_user.username
       );
       api_ok(())
+    }
+    Err(e) if e.downcast_ref::<HitokotoError>().is_some() => {
+      l_warn!(logger, "Duplicate hitokoto msg on update: {}", uuid);
+      Err(ApiError::bad_request("Hitokoto msg already exists"))
     }
     Err(_) => {
       l_warn!(logger, "Hitokoto {} not found", uuid);

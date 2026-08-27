@@ -16,12 +16,9 @@ pub fn spawn(db: DatabaseConnection, logger: Logger, admin_email: String) {
 }
 
 async fn run(db: &DatabaseConnection, logger: &Logger, admin_email: &str) {
-  let config = match info::get_birthday_reminder_config(db).await {
-    Ok(config) => config,
-    Err(e) => {
-      roga::l_error!(logger, "Failed to get birthday reminder config: {}", e);
-      return;
-    }
+  let Ok(config) = info::get_birthday_reminder_config(db).await else {
+    roga::l_error!(logger, "Failed to get birthday reminder config");
+    return;
   };
 
   if !config.enabled {
@@ -34,20 +31,14 @@ async fn run(db: &DatabaseConnection, logger: &Logger, admin_email: &str) {
   }
 
   let month_day = now.format("%m-%d").to_string();
-  let characters = match info::get_characters_with_birthday(db, &month_day).await {
-    Ok(characters) => characters,
-    Err(e) => {
-      roga::l_error!(logger, "Failed to get birthday characters: {}", e);
-      return;
-    }
+  let Ok(characters) = info::get_characters_with_birthday(db, &month_day).await else {
+    roga::l_error!(logger, "Failed to get birthday characters");
+    return;
   };
 
-  let mut log = match info::get_birthday_reminder_log(db).await {
-    Ok(log) => log,
-    Err(e) => {
-      roga::l_error!(logger, "Failed to get birthday reminder log: {}", e);
-      return;
-    }
+  let Ok(mut log) = info::get_birthday_reminder_log(db).await else {
+    roga::l_error!(logger, "Failed to get birthday reminder log");
+    return;
   };
 
   for character in characters {

@@ -104,11 +104,9 @@ async fn try_load_cache() -> Result<MusicCache> {
   let current_time =
     SystemTime::now().duration_since(UNIX_EPOCH).context("Failed to get system time")?.as_secs();
 
-  if cache.timestamp + MUSIC_CACHE_TIMEOUT <= current_time {
-    anyhow::bail!("Cache expired");
-  }
-
-  Ok(cache)
+  (cache.timestamp + MUSIC_CACHE_TIMEOUT > current_time)
+    .then_some(cache)
+    .ok_or_else(|| anyhow::anyhow!("Cache expired"))
 }
 
 fn spawn_cache_refresh() {

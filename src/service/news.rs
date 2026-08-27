@@ -7,6 +7,14 @@ use sea_orm::{
 use crate::entity::romi_news;
 use crate::models::news::{ReqNewsData, ResNewsData};
 
+#[derive(Debug, thiserror::Error)]
+pub enum NewsError {
+  #[error("News not found")]
+  NotFound,
+  #[error("News is private")]
+  Private,
+}
+
 pub async fn list(db: &DatabaseConnection, is_admin: bool) -> Result<Vec<ResNewsData>> {
   let mut query = romi_news::Entity::find();
   if !is_admin {
@@ -39,10 +47,10 @@ pub async fn get(db: &DatabaseConnection, id: u32, is_admin: bool) -> Result<Res
     .one(db)
     .await
     .context("Failed to get news")?
-    .ok_or_else(|| anyhow::anyhow!("News not found"))?;
+    .ok_or(NewsError::NotFound)?;
 
   if item.private == "1" && !is_admin {
-    anyhow::bail!("News is private");
+    return Err(NewsError::Private.into());
   }
 
   Ok(ResNewsData {
@@ -79,7 +87,7 @@ pub async fn update(db: &DatabaseConnection, id: u32, data: ReqNewsData) -> Resu
     .one(db)
     .await
     .context("Failed to get news")?
-    .ok_or_else(|| anyhow::anyhow!("News not found"))?;
+    .ok_or(NewsError::NotFound)?;
 
   let mut active = model.into_active_model();
   active.created = ActiveValue::set(data.created);
@@ -97,7 +105,7 @@ pub async fn like(db: &DatabaseConnection, id: u32) -> Result<()> {
     .one(db)
     .await
     .context("Failed to get news")?
-    .ok_or_else(|| anyhow::anyhow!("News not found"))?;
+    .ok_or(NewsError::NotFound)?;
 
   let likes = model.likes + 1;
   let mut active = model.into_active_model();
@@ -112,7 +120,7 @@ pub async fn view(db: &DatabaseConnection, id: u32) -> Result<()> {
     .one(db)
     .await
     .context("Failed to get news")?
-    .ok_or_else(|| anyhow::anyhow!("News not found"))?;
+    .ok_or(NewsError::NotFound)?;
 
   let views = model.views + 1;
   let mut active = model.into_active_model();

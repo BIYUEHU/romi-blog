@@ -6,6 +6,12 @@ use sea_orm::{ActiveModelTrait, ActiveValue, DatabaseConnection, EntityTrait, In
 use crate::entity::romi_seimgs;
 use crate::models::seimg::{ReqSeimgData, ResSeimgData};
 
+#[derive(Debug, thiserror::Error)]
+pub enum SeimgError {
+  #[error("Seimg not found")]
+  NotFound,
+}
+
 pub async fn list(
   db: &DatabaseConnection,
   limit: u32,
@@ -91,7 +97,7 @@ pub async fn update(
     .one(db)
     .await
     .context("Failed to find seimg")?
-    .ok_or_else(|| anyhow::anyhow!("Seimg not found"))?;
+    .ok_or(SeimgError::NotFound)?;
 
   let mut active = model.into_active_model();
   active.title = ActiveValue::set(data.title);

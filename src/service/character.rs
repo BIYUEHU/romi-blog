@@ -5,6 +5,12 @@ use std::time::SystemTime;
 use crate::entity::romi_characters;
 use crate::models::character::{ReqCharacterData, ResCharacterData};
 
+#[derive(Debug, thiserror::Error)]
+pub enum CharacterError {
+  #[error("Character not found")]
+  NotFound,
+}
+
 fn split_pipe_str_to_vec(s: &str) -> Vec<String> {
   s.split('|').filter(|t| !t.is_empty()).map(str::to_string).collect()
 }
@@ -62,7 +68,7 @@ pub async fn get(db: &DatabaseConnection, id: u32) -> Result<ResCharacterData> {
     .one(db)
     .await
     .context("Failed to get character")?
-    .ok_or_else(|| anyhow::anyhow!("Character not found"))?;
+    .ok_or(CharacterError::NotFound)?;
 
   Ok(ResCharacterData {
     id: m.id,
@@ -142,7 +148,7 @@ pub async fn update(db: &DatabaseConnection, id: u32, data: ReqCharacterData) ->
     .one(db)
     .await
     .context("Failed to get character")?
-    .ok_or_else(|| anyhow::anyhow!("Character not found"))?;
+    .ok_or(CharacterError::NotFound)?;
 
   let mut active = existing.into_active_model();
 

@@ -10,7 +10,7 @@ use crate::{
   app::RomiState,
   guards::admin::AdminUser,
   models::seimg::{ReqSeimgData, ResSeimgData},
-  service::seimg,
+  service::seimg::{self, SeimgError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -81,14 +81,13 @@ async fn update(
       );
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<SeimgError>().is_some() => {
+      l_warn!(logger, "Seimg {} not found", id);
+      Err(ApiError::not_found(format!("Seimg {} not found", id)))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Seimg {} not found", id);
-        Err(ApiError::not_found(format!("Seimg {} not found", id)))
-      } else {
-        l_error!(logger, "Failed to update seimg {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to update seimg"))
-      }
+      l_error!(logger, "Failed to update seimg {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to update seimg"))
     }
   }
 }

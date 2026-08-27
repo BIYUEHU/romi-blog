@@ -15,7 +15,7 @@ use crate::{
     auth::{Access, AuthUser},
   },
   models::comment::{ReqCommentData, ResCommentData},
-  service::comment,
+  service::comment::{self, CommentError},
   utils::api::{ApiError, ApiResult, api_ok},
 };
 
@@ -130,14 +130,13 @@ async fn remove(
       );
       api_ok(())
     }
+    Err(e) if e.downcast_ref::<CommentError>().is_some() => {
+      l_warn!(logger, "Comment {} not found", id);
+      Err(ApiError::not_found("Comment not found"))
+    }
     Err(e) => {
-      if e.to_string().contains("not found") {
-        l_warn!(logger, "Comment {} not found", id);
-        Err(ApiError::not_found("Comment not found"))
-      } else {
-        l_error!(logger, "Failed to delete comment {}: {:#}", id, e);
-        Err(ApiError::internal("Failed to delete comment"))
-      }
+      l_error!(logger, "Failed to delete comment {}: {:#}", id, e);
+      Err(ApiError::internal("Failed to delete comment"))
     }
   }
 }
