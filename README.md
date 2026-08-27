@@ -12,7 +12,6 @@ RomiChan is the personal website and CMS, built for one person's actual daily us
 
 [![Build](https://github.com/BIYUEHU/romichan/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BIYUEHU/romichan/actions/workflows/build.yml)
 ![License](https://img.shields.io/badge/license-GPL3.0-purple)
-[![wakatime](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/a2a043a3-ec9d-4fae-b01c-e19ad6eb0011.svg)](https://wakatime.com/badge/user/018dc603-712a-4205-a226-d4c9ccd0d02b/project/a2a043a3-ec9d-4fae-b01c-e19ad6eb0011)
 ![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)
 ![Axum](https://img.shields.io/badge/Axum-6366f1?style=flat-square&logo=rust&logoColor=white)
 ![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white)
