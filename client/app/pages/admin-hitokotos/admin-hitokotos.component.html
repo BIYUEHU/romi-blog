@@ -1,3 +1,25 @@
+@if (items.length > 0) {
+<div class="bg-bg-surface rounded-lg border border-solid border-border-strong p-6 mb-6 flex flex-wrap items-center gap-8">
+  <svg viewBox="0 0 42 42" class="w-40 h-40 shrink-0">
+    <circle cx="21" cy="21" r="15.9155" fill="transparent" stroke="var(--color-bg-elevated)" stroke-width="4" />
+    @for (segment of donutSegments; track segment.type) {
+    <circle cx="21" cy="21" r="15.9155" fill="transparent" [attr.stroke]="segment.color" stroke-width="4"
+      [attr.stroke-dasharray]="segment.percent + ' ' + (100 - segment.percent)"
+      [attr.stroke-dashoffset]="25 - segment.offset" />
+    }
+  </svg>
+  <div class="flex-1 grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2 min-w-60">
+    @for (stat of typeStats; track stat.type) {
+    <div class="flex items-center gap-2 text-sm">
+      <span class="w-3 h-3 rounded-full shrink-0" [style.background]="stat.color"></span>
+      <span class="text-text-base">{{ stat.label }}</span>
+      <span class="text-text-sub ml-auto">{{ stat.count }} · {{ stat.percent.toFixed(1) }}%</span>
+    </div>
+    }
+  </div>
+</div>
+}
+
 <app-admin-base-list [items]="pagedItems" [isLoading]="isLoading" [currentPage]="currentPage" [pages]="pages"
   (pageChange)="goToPage($event)">
   <div search-area class="space-y-4">

@@ -12,6 +12,21 @@ import { ApiService } from '../../services/api.service'
 import { HITOKOTO_TYPES } from '../../shared/constants'
 import { MessageBoxType } from '../../shared/types'
 
+const TYPE_COLORS = [
+  '#d87cb6',
+  '#9573a2',
+  '#5b8dee',
+  '#4caf7d',
+  '#F7DCFF',
+  '#FF9891',
+  '#E3AD88',
+  '#B28F96',
+  '#BCE3EA',
+  '#728AB8'
+]
+
+type TypeStat = { type: number; label: string; count: number; percent: number; color: string }
+
 @Component({
   selector: 'app-admin-hitokotos',
   imports: [
@@ -28,6 +43,32 @@ export class AdminHitokotosComponent extends AbstractAdminBaseListComponent<ResH
   protected readonly Number = Number
   public filterType = 0
   public editingHitokoto: ResHitokotoData | null = null
+
+  public get typeStats(): TypeStat[] {
+    const total = this.items.length
+    return this.types
+      .map(([type, label], index) => {
+        const count = this.items.filter((item) => item.type === Number(type)).length
+        return {
+          type: Number(type),
+          label,
+          count,
+          percent: total ? (count / total) * 100 : 0,
+          color: TYPE_COLORS[index]
+        }
+      })
+      .filter(({ count }) => count > 0)
+      .sort((a, b) => b.count - a.count)
+  }
+
+  public get donutSegments(): (TypeStat & { offset: number })[] {
+    let offset = 0
+    return this.typeStats.map((stat) => {
+      const segment = { ...stat, offset }
+      offset += stat.percent
+      return segment
+    })
+  }
 
   public newHitokoto: ReqHitokotoData = {
     msg: '',
