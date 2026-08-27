@@ -10,7 +10,10 @@ use crate::models::{
 #[allow(dead_code)]
 #[derive(OpenApi)]
 #[openapi(
-  info(title = "RomiChan Public Api"),
+  info(
+    title = "RomiChan Public Api",
+    description = "Public, cross-origin-enabled endpoints. All requests are rate-limited per IP; exceeding the limit returns 429 Too Many Requests."
+  ),
   paths(
     super::utils::agent_get,
     super::utils::agent_post,

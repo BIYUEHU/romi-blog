@@ -89,12 +89,6 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('../pages/admin-security/admin-security.component').then((m) => m.AdminSecurityComponent),
         title: '安全系统'
-      },
-      {
-        path: 'security',
-        loadComponent: () =>
-          import('../pages/admin-security/admin-security.component').then((m) => m.AdminSecurityComponent),
-        title: '安全系统'
       }
     ]
   },
