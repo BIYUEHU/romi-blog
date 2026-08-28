@@ -55,7 +55,7 @@ export class AdminSecurityComponent implements OnInit {
     this.selectedLog = name
     this.isLoading = true
     this.apiService.getLog(name).subscribe((entries) => {
-      this.entries = entries
+      this.entries = entries.reverse()
       this.isLoading = false
     })
   }

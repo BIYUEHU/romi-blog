@@ -40,7 +40,7 @@ pub fn routes() -> Router<RomiState> {
 }
 
 async fn get_dashboard(
-  _admin_user: AdminUser,
+  AdminUser(_): AdminUser,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResDashboardData> {
   match info::get_dashboard(conn).await {
@@ -119,6 +119,7 @@ async fn search_posts(
 }
 
 async fn send_contact_email(
+  AdminUser(_): AdminUser,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Json(form): Json<ReqContactForm>,
 ) -> ApiResult {
@@ -139,6 +140,7 @@ async fn send_contact_email(
 }
 
 async fn test_smtp(
+  AdminUser(_): AdminUser,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
   Json(payload): Json<ReqTestMail>,
 ) -> ApiResult {

@@ -29,7 +29,7 @@ pub fn routes() -> Router<RomiState> {
 }
 
 async fn list(
-  _admin_user: AdminUser,
+  AdminUser(_): AdminUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResCommentData>> {
   match comment::list(conn).await {

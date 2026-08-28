@@ -45,7 +45,7 @@ async fn login(
 }
 
 async fn list(
-  _admin_user: AdminUser,
+  AdminUser(_): AdminUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResUserData>> {
   match user::list(conn).await {
@@ -58,7 +58,7 @@ async fn list(
 }
 
 async fn fetch(
-  _admin_user: AdminUser,
+  AdminUser(_): AdminUser,
   Path(id): Path<u32>,
   State(RomiState { ref logger, ref conn, .. }): State<RomiState>,
 ) -> ApiResult<ResUserData> {

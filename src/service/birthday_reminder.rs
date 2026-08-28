@@ -52,7 +52,8 @@ async fn run(db: &DatabaseConnection, logger: &Logger, admin_email: &str) {
       .replace("$name$", &character.name)
       .replace("$romaji$", &character.romaji)
       .replace("$description$", &character.description)
-      .replace("$birthday$", &month_day)
+      .replace("$month$", &now.format("%m").to_string())
+      .replace("$day$", &now.format("%d").to_string())
       .replace("$age$", &character.age.map(|a| a.to_string()).unwrap_or_default());
 
     match send_email(db, admin_email, &format!("今天是 {} 的生日", character.name), &body).await

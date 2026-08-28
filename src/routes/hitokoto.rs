@@ -69,7 +69,7 @@ async fn list_public(
 }
 
 async fn list_all(
-  _admin_user: AdminUser,
+  AdminUser(_): AdminUser,
   State(RomiState { ref conn, ref logger, .. }): State<RomiState>,
 ) -> ApiResult<Vec<ResHitokotoData>> {
   match hitokoto::list_all(conn).await {
