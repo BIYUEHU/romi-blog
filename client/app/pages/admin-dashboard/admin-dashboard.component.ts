@@ -5,6 +5,7 @@ import { CardComponent } from '../../components/card/card.component'
 import { ResDashboardData, ResPostData } from '../../models/api.model'
 import { ApiService } from '../../services/api.service'
 import { ROMI_METADATA } from '../../shared/constants'
+import { formatDate } from '../../shared/utils'
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -84,7 +85,9 @@ export class AdminDashboardComponent implements OnInit {
       { label: '系统版本', value: this.dashboardData?.version ?? '' },
       { label: 'Node.js 版本', value: this.dashboardData?.nodejsVersion ?? '' },
       { label: '服务器系统', value: this.dashboardData?.osInfo ?? '' },
-      { label: '用户目录', value: this.dashboardData?.homeDir ?? '' }
+      { label: '用户目录', value: this.dashboardData?.homeDir ?? '' },
+      { label: '构建时间', value: formatDate(new Date(ROMI_METADATA.build.BUILD_TIME)) },
+      { label: '哈希值', value: ROMI_METADATA.build.HASH }
     ]
   }
 

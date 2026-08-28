@@ -60,7 +60,7 @@ pub async fn get_dashboard(db: &DatabaseConnection) -> Result<ResDashboardData> 
       let info = os_info::get();
       format!("{} {}", info.os_type(), info.version())
     },
-    home_dir: env::var("HOME").unwrap_or_default(),
+    home_dir: home::home_dir().map(|path| path.display().to_string()).unwrap_or_default(),
     nodejs_version: Command::new("node")
       .arg("-v")
       .output()

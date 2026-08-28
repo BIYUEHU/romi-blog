@@ -30,7 +30,7 @@ export const THEME_COLORS = [
 
 export const COPYRIGHT_YEAR = 2026
 
-export const ROMI_METADATA = { pkg, build: buildMeta } //
+export const ROMI_METADATA = { pkg, build: buildMeta }
 
 export enum HEADER_CONTEXT {
   SKIP_BRING_TOKEN = 'Bring-Token',
@@ -43,18 +43,18 @@ export const DEFAULT_LINT_CONFIG: Configuration = {
   // MD001: true, // 标题层级要递增
   // MD003: false, // 标题样式不限制
   // MD004: false, // 列表样式不限制
-  // MD005: true, // 列表缩进要一致
+  MD005: true, // 列表缩进要一致
   // MD007: false, // 列表缩进不严格
   // MD009: false, // 允许行尾空格
   // MD010: true, // 不允许硬制表符
   // MD011: true, // 检查反转链接
   // MD012: false, // 允许多个空行(博客常用)
-  // MD013: false, // 不限制行长度
+  MD013: true, // 不限制行长度
   // MD014: false, // shell 命令 $ 不限制
-  // MD018: true, // # 后需要空格
+  MD018: true, // # 后需要空格
   // MD019: true, // 标题前后不要多个 #
   // MD022: false, // 标题前后空行不严格
-  // MD023: true, // 标题不要缩进
+  MD023: true, // 标题不要缩进
   MD024: false, // 允许重复标题(博客常用)
   // MD025: false, // 允许多个 h1
   // MD026: false, // 标题末尾标点不限制
@@ -64,7 +64,7 @@ export const DEFAULT_LINT_CONFIG: Configuration = {
   // MD030: true, // 列表标记后要空格
   // MD031: false, // 代码块前后空行不严格
   // MD032: false, // 列表前后空行不严格
-  // MD033: false, // 允许内联 HTML(博客常用)
+  MD033: true, // 允许内联 HTML(博客常用)
   // MD034: false, // 允许裸 URL
   // MD035: false, // 水平线样式不限制
   // MD036: false, // 允许强调代替标题
