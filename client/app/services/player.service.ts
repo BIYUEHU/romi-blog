@@ -47,6 +47,7 @@ export class PlayerService {
 
   public init(container: HTMLElement) {
     if (!this.browserService.is) return
+    if (this.disabled) return
     if (this.player) {
       if (container && container !== this.container) {
         remountInstance(this.player, container)
@@ -56,7 +57,7 @@ export class PlayerService {
     }
 
     this.apiService.getMusic().subscribe((musicList) => {
-      this.removeListeners
+      this.removeListeners()
       this.container = container
       this.player = makePlayer({
         container,
@@ -70,25 +71,25 @@ export class PlayerService {
         showList: false,
         debug: false
       })
-      if (this.disabled) {
-        pauseInstance(this.player)
-        hideInstance(this.player)
-      } else {
-        pauseInstance(this.player)
-        this.addListeners()
-      }
+
+      pauseInstance(this.player)
+      this.addListeners()
     })
   }
 
   public toggle() {
-    if (!this.player) return
-
     if (this.disabled) {
       this.storeService.setItem(STORE_KEYS.PLAYER_DISABLED, 'false')
-      showInstance(this.player)
-      playInstance(this.player)
+      if (this.player) {
+        showInstance(this.player)
+        playInstance(this.player)
+        return
+      }
+      const container = this.container ?? document.getElementById('player-global')
+      if (container) this.init(container)
     } else {
       this.storeService.setItem(STORE_KEYS.PLAYER_DISABLED, 'true')
+      if (!this.player) return
       pauseInstance(this.player)
       hideInstance(this.player)
     }

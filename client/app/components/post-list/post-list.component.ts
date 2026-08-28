@@ -1,4 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import { ResPostData } from '../../models/api.model'
 import { PostCardComponent } from '../post-card/post-card.component'
 
@@ -16,11 +17,16 @@ export class PostListComponent implements OnInit {
   public totalPages = 1
   public displayedPosts: ResPostData[] = []
 
+  public constructor(
+    private readonly route: ActivatedRoute,
+    private readonly router: Router
+  ) {}
+
   public ngOnInit() {
-    this.updateDisplayedPosts()
     this.posts = this.posts.filter(({ hide }) => !hide)
     this.totalPages = Math.ceil(this.posts.length / this.pageSize)
-    this.currentPage = 1
+    const pageFromUrl = Number(this.route.snapshot.queryParamMap.get('page'))
+    this.currentPage = pageFromUrl >= 1 && pageFromUrl <= this.totalPages ? pageFromUrl : 1
     this.updateDisplayedPosts()
   }
 
@@ -31,11 +37,15 @@ export class PostListComponent implements OnInit {
   }
 
   public goToPage(page: number | string) {
-    if (typeof page !== 'number') return
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page
-      this.updateDisplayedPosts()
-    }
+    if (typeof page !== 'number' || page < 1 || page > this.totalPages) return
+    this.currentPage = page
+    this.updateDisplayedPosts()
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: page === 1 ? null : page },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    })
   }
 
   public getPageNumbers(): (number | string)[] {

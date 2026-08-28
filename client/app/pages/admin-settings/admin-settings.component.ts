@@ -1,6 +1,7 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
+import { forkJoin } from 'rxjs'
 import { WebComponentCheckboxAccessorDirective } from '../../directives/web-component-checkbox-accessor.directive'
 import { WebComponentInputAccessorDirective } from '../../directives/web-component-input-accessor.directive'
 import type {
@@ -186,16 +187,14 @@ export class AdminSettingsComponent implements OnInit {
   }
 
   public saveSettings(): void {
-    this.apiService
-      .updateSettings(this.settingsForm)
-      .subscribe(() => this.notifyService.showMessage('保存成功', MessageBoxType.Success))
-    this.apiService
-      .updateBirthdayReminderConfig({
+    forkJoin([
+      this.apiService.updateSettings(this.settingsForm),
+      this.apiService.updateBirthdayReminderConfig({
         ...this.birthdayReminderForm,
         hour: Number(this.birthdayReminderForm.hour),
         minute: Number(this.birthdayReminderForm.minute)
       })
-      .subscribe(() => this.notifyService.showMessage('生日提醒设置保存成功', MessageBoxType.Success))
+    ]).subscribe(() => this.notifyService.showMessage('保存成功', MessageBoxType.Success))
   }
 
   public goBack(): void {

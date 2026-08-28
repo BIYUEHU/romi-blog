@@ -156,7 +156,11 @@ pub async fn list(db: &DatabaseConnection, access_level: AccessLevel) -> Result<
           likes: post.likes,
           comments: post.comments,
           allow_comment: post.allow_comment == "1",
-          password: if is_admin { post.password.clone().filter(|p| !p.is_empty()) } else { None },
+          password: post
+            .password
+            .clone()
+            .filter(|p| !p.is_empty())
+            .map(|p| if is_admin { p } else { "password".to_string() }),
           hide: post.hide == "1",
         }
       })
@@ -201,7 +205,11 @@ pub async fn get_by_id(
     modified: post.modified,
     text: if !has_password || is_admin { post.text.clone() } else { String::new() },
     languages: if !has_password { collect_markdown_languages(&post.text) } else { vec![] },
-    password: if is_admin { post.password.clone().filter(|p| !p.is_empty()) } else { None },
+    password: post
+      .password
+      .clone()
+      .filter(|p| !p.is_empty())
+      .map(|p| if is_admin { p } else { "password".to_string() }),
     hide: post.hide == "1",
     allow_comment: post.allow_comment == "1",
     tags,
@@ -261,7 +269,11 @@ pub async fn get_by_str_id(
     modified: post.modified,
     text: if !has_password || is_admin { post.text.clone() } else { String::new() },
     languages: collect_markdown_languages(&post.text),
-    password: if is_admin { post.password.clone().filter(|p| !p.is_empty()) } else { None },
+    password: post
+      .password
+      .clone()
+      .filter(|p| !p.is_empty())
+      .map(|p| if is_admin { p } else { "password".to_string() }),
     hide: post.hide == "1",
     allow_comment: post.allow_comment == "1",
     tags,

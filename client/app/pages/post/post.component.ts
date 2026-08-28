@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
 import { Meta } from '@angular/platform-browser'
 import { pipe } from 'fp-ts/function'
 import { ResPostSingleData } from '../../../output'
@@ -15,7 +15,7 @@ import { formatDate } from '../../shared/utils'
   templateUrl: './post.component.html',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class PostComponent implements OnInit {
+export class PostComponent implements OnInit, OnChanges {
   @Input() public readonly id!: string
   public post?: ResPostSingleData
 
@@ -27,7 +27,16 @@ export class PostComponent implements OnInit {
   ) {}
 
   public ngOnInit() {
+    this.loadPost()
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes['id'] && !changes['id'].firstChange) this.loadPost()
+  }
+
+  private loadPost() {
     if (!this.browserService.is) return
+    this.post = void 0
     pipe(+this.id, (id) =>
       Number.isNaN(id) ? this.apiService.getPostByStrId(this.id) : this.apiService.getPost(id)
     ).subscribe((post) => {

@@ -1,4 +1,5 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA, EventEmitter, Input, inject, Output } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
 import { NotifyService } from '../../services/notify.service'
 
 @Component({
@@ -16,37 +17,36 @@ export class AdminBaseListComponent {
 
 export abstract class AbstractAdminBaseListComponent<T> {
   protected readonly notifyService = inject(NotifyService)
-
+  protected readonly route = inject(ActivatedRoute)
+  protected readonly router = inject(Router)
   public items: T[] = []
   public isLoading = true
   public searchQuery = ''
   public emptyMessage = '暂无数据'
-  public currentPage = 1
+  public currentPage = Number(this.route.snapshot.queryParamMap.get('page')) || 1
   public pageSize = 10
-
   protected abstract loadItems(): void
-
   protected abstract searchPredicate(item: T, query: string): boolean
-
   protected abstract deleteItem(id: number | string): void
-
   public get pages() {
     return Array.from({ length: Math.ceil(this.filteredItems.length / this.pageSize) }, (_, i) => i + 1)
   }
-
   public get filteredItems() {
     return this.items.filter((item) => this.searchPredicate(item, this.searchQuery.toLowerCase()))
   }
-
   public get pagedItems() {
     const start = (this.currentPage - 1) * this.pageSize
     return this.filteredItems.slice(start, start + this.pageSize)
   }
-
   public goToPage(page: number) {
     this.currentPage = page
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: page === 1 ? null : page },
+      queryParamsHandling: 'merge',
+      replaceUrl: true
+    })
   }
-
   protected confirmDelete(): boolean {
     return confirm('确定要删除这条数据吗？')
   }

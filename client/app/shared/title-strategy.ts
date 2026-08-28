@@ -34,7 +34,9 @@ export class AppTitleStrategy extends TitleStrategy {
 
   public updateHeader(data: Partial<typeof AppTitleStrategy.DEFAULT_HEADER>) {
     this.header.update((header) => ({
-      ...(header.imageUrl.trim() ? header : { ...header, imageUrl: this.apiService.settings().headerBackground }),
+      title: header.title,
+      imageUrl: this.apiService.settings().headerBackground,
+      subTitle: [],
       ...data
     }))
   }

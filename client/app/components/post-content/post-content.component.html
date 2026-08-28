@@ -14,7 +14,7 @@
       }
 
       @if (!hideOptions && (post.categories.length + post.tags.length) > 0) {
-      <div class="text-center mt-1 flex gap-3 flex-wrap px-5">
+      <div class="max-w-230 text-center mx-auto mt-1 flex gap-3 flex-wrap px-5">
         @for (item of
         post.categories; track $index) {
         <span class="text-brand text-4 cursor-pointer" [routerLink]="['/category', item]">
@@ -137,8 +137,8 @@
         <div class="mb-6">
           @for (comment of pagedComments; track comment.cid) {
           <div class="flex gap-4 p-4 rounded-lg border border-border-base m-0">
-            <img width="40" height="40" [ngSrc]="'https://www.gravatar.com/avatar/' + comment.avatarHash"
-              alt="avatar" class="rounded-full bg-bg-subtle flex-shrink-0 overflow-hidden" />
+            <img width="40" height="40" [ngSrc]="'https://www.gravatar.com/avatar/' + comment.avatarHash" alt="avatar"
+              class="rounded-full bg-bg-subtle flex-shrink-0 overflow-hidden" />
             <div class="p-3 rounded-xl bg-bg-elevated flex-1">
               <div class="flex flex-wrap items-center gap-2 truncate whitespace-nowrap">
                 @if (comment.userUrl) {
@@ -193,13 +193,6 @@
         }
       </div>
 
-      } @else {
-      <div class="mt-8 mb-6 bg-bg-elevated">
-        <h3 class="text-2xl font-bold mb-6 flex items-center gap-2 text-text-base">评论区</h3>
-        <div class="p-6 bg-bg-elevated rounded-lg text-center border border-border-base">
-          <p class="text-text-sub mb-4">评论已关闭</p>
-        </div>
-      </div>
       }
       }
     </div>

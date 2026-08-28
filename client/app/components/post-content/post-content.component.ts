@@ -1,5 +1,5 @@
 import { DatePipe, NgOptimizedImage } from '@angular/common'
-import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnDestroy, OnInit } from '@angular/core'
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { RouterLink } from '@angular/router'
@@ -45,7 +45,7 @@ interface CommentItem extends ResCommentData {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './post-content.component.html'
 })
-class PostContentComponent implements OnInit, OnDestroy {
+class PostContentComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) public post!: ResPostSingleData
   @Input() public password = false
   @Input() public hideToc = false
@@ -58,7 +58,8 @@ class PostContentComponent implements OnInit, OnDestroy {
   private viewedTimeoutId?: number
   private mdParser?: MarkdownIt
   private highlighter?: HighlighterGeneric<BundledLanguage, BundledTheme>
-  private readonly destroy$ = new Subject<void>()
+  private destroy$ = new Subject<void>()
+  private currentPostId?: number
 
   public renderedContent?: SafeHtml
   public commentText = ''
@@ -93,6 +94,32 @@ class PostContentComponent implements OnInit, OnDestroy {
 
   public ngOnInit() {
     this.mdParser = this.setupMdParser()
+    this.loadPost()
+  }
+
+  public ngOnChanges(changes: SimpleChanges) {
+    if (changes['post'] && !changes['post'].firstChange && this.mdParser) this.loadPost()
+  }
+
+  public ngOnDestroy() {
+    this.teardownPost()
+  }
+
+  private teardownPost() {
+    if (this.viewedTimeoutId) clearTimeout(this.viewedTimeoutId)
+    this.destroy$.next()
+    this.destroy$.complete()
+    this.destroy$ = new Subject<void>()
+  }
+
+  private loadPost() {
+    this.teardownPost()
+
+    this.currentPostId = this.post.id
+    this.comments = null
+    this.replyingTo = null
+    this.commentText = ''
+    this.currentPage = 1
 
     this.renderContent().then(() =>
       this.browserService.on(() => {
@@ -116,13 +143,9 @@ class PostContentComponent implements OnInit, OnDestroy {
         .getCommentsByPost(this.post.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe((comments) => {
-          this.comments = this.parseComments(comments)
+          if (this.currentPostId === this.post.id) this.comments = this.parseComments(comments)
         })
     }
-  }
-
-  public ngOnDestroy() {
-    if (this.viewedTimeoutId) clearTimeout(this.viewedTimeoutId)
   }
 
   public goToPage(page: number) {

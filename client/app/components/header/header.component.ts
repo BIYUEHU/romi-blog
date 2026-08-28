@@ -39,8 +39,7 @@ export class HeaderComponent {
     },
     { text: '关于', link: '/about' },
     { text: '友链', link: '/links' },
-    { text: '项目', link: '/project' },
-    { text: '日志', link: '/log' }
+    { text: '项目', link: '/project' }
   ]
 
   public constructor(public readonly apiService: ApiService) {}
