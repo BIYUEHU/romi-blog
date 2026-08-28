@@ -115,8 +115,6 @@ export const DEFAULT_LINT_CONFIG: Configuration = {
   logger.record(
     '<cyanBright>Fucking SpringBoot, Django, Rails, Nest, Laravel!</cyanBright> <redBright>Axum and Rust is the future!</redBright>'
   )
-  logger.record(
-    '<whiteBright>Fucking C, CPP, Java, Python, CSharp, Golang! The future will belong to</whiteBright> <redBright>Rust and More Languages based on PLT and TT!</redBright>'
-  )
+  logger.record('<whiteBright>Fucking C, CPP, Java, Python, CSharp, Golang! The future will belong to</whiteBright>')
   return
 })()

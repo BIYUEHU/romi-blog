@@ -3,7 +3,7 @@
   "description": "A blog system built with Angular and Rust",
   "version": "1.0.0",
   "license": "GPL-3.0-or-later",
-  "author": "Romi <me@hotaru.icu>",
+  "author": "Romi <i@arimuraromi.com>",
   "scripts": {
     "init": "bunx lefthook install",
     "ng": "ng",

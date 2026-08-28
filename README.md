@@ -10,7 +10,7 @@
 
 RomiChan is the personal website and CMS, built for one person's actual daily use rather than as a generic framework — open-sourced as-is for anyone curious enough to read or self-host it. Powered by Axum + Angular.
 
-[![Build](https://github.com/BIYUEHU/romichan/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/BIYUEHU/romichan/actions/workflows/build.yml)
+[![Build](https://github.com/biyuehu/romichan/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/biyuehu/romichan/actions/workflows/build.yml)
 ![License](https://img.shields.io/badge/license-GPL3.0-purple)
 ![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)
 ![Axum](https://img.shields.io/badge/Axum-6366f1?style=flat-square&logo=rust&logoColor=white)

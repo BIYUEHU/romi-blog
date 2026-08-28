@@ -2,7 +2,7 @@
 name = "roga"
 version = "1.0.0"
 edition = "2021"
-authors = ["Arimura Sena <me@hotaru.icu>"]
+authors = ["Arimura Sena <i@arimuraromi.com>"]
 description = "A Fast, beautiful, lightweight, and flexible logging library for Rust"
 repository = "https://github.com/BIYUEHU/romi-nest/tree/main/library/roga"
 readme = "README.md"
