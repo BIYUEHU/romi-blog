@@ -24,7 +24,7 @@ use crate::{
   entity::romi_views,
   models::utils::{
     QueryAgentData, QueryViewBadgeData, ReqAgentData, ResBingData, ResMcskinData, ResMotdData,
-    ResViewData,
+    ResViewData, ResWordsData,
   },
   utils::api::{ApiError, ApiResult, api_ok},
 };
@@ -56,6 +56,8 @@ pub fn routes() -> Router<RomiState> {
     .route("/motd/{host}/{port}", get(motd))
     .route("/motdbe/{host}", get(motdbe_default_port))
     .route("/motdbe/{host}/{port}", get(motdbe))
+    .route("/words/{msg}", get(words_with_type))
+    .route("/words", get(words))
 }
 
 async fn qqavatar(qid: String, size: u32) -> impl IntoResponse {
@@ -600,4 +602,93 @@ async fn motdbe(Path((host, port)): Path<(String, u16)>) -> ApiResult<ResMotdDat
 )]
 async fn motdbe_default_port(Path(host): Path<String>) -> ApiResult<ResMotdData> {
   ping_motdbe(host, DEFAULT_MCBE_PORT).await
+}
+
+fn clean_line(line: &str) -> String {
+  line.replace(['\n', '\t', '\r'], "")
+}
+
+const WORD_TYPES: &[(&str, &str)] = &[
+  ("yan", "一言"),
+  ("saohua", "骚话"),
+  ("like", "情话"),
+  ("life", "人生语录"),
+  ("socwords", "社会语录"),
+  ("badsoup", "毒鸡汤"),
+  ("jokes", "笑话"),
+  ("sadness", "网抑云"),
+  ("gentle", "温柔语录"),
+  ("dog", "舔狗语录"),
+  ("love", "爱情语录"),
+  ("sign", "个性签名"),
+  ("renjian", "人间"),
+  ("classics", "经典语录"),
+  ("ce", "英汉语录"),
+  ("poetry", "诗词"),
+];
+
+/// Returns a random quote from the given collection, or a bilingual pair for `msg=ce`.
+///
+/// Available `msg` values:
+/// `yan` (一言), `saohua` (骚话), `like` (情话), `life` (人生语录),
+/// `socwords` (社会语录), `badsoup` (毒鸡汤), `jokes` (笑话),
+/// `sadness` (网抑云), `gentle` (温柔语录), `dog` (舔狗语录),
+/// `love` (爱情语录), `sign` (个性签名), `renjian` (人间),
+/// `classics` (经典语录), `ce` (英汉语录), `poetry` (诗词).
+#[utoipa::path(
+  get,
+  path = "/api/utils/words/{msg}",
+  params(("msg" = String, Path, description = "Quote type: yan, saohua, like, life, socwords, badsoup, jokes, sadness, gentle, dog, love, sign, renjian, classics, ce, poetry")),
+  responses(
+    (status = 200, description = "Random quote", body = ResWordsData),
+    (status = 404, description = "No quotes available"),
+  )
+)]
+async fn words_with_type(Path(msg): Path<String>) -> ApiResult<ResWordsData> {
+  let msg = WORD_TYPES.iter().position(|(file, _)| *file == msg).unwrap_or(0) + 1;
+  let (file_name, word_type) = WORD_TYPES[msg - 1];
+  let path = format!("data/words/{file_name}.txt");
+  let content = tokio::fs::read_to_string(&path).await.context("Failed to read words file")?;
+  let lines = content.lines().filter(|line| !line.trim().is_empty()).collect::<Vec<_>>();
+  if lines.is_empty() {
+    return Err(ApiError::not_found("No quotes available"));
+  }
+  let index = random::<usize>() % lines.len();
+  let mut text = clean_line(lines[index]);
+  let mut english = None;
+  let mut chinese = None;
+
+  if msg == 15 {
+    if text.chars().any(|ch| ch.is_ascii_alphabetic()) {
+      english = Some(text.clone());
+      chinese = lines.get(index.wrapping_sub(1)).map(|line| clean_line(line));
+      text = format!("{}\n{}", text, chinese.clone().unwrap_or_default());
+    } else {
+      chinese = Some(text.clone());
+      english = lines.get((index + 1).min(lines.len() - 1)).map(|line| clean_line(line));
+      text = format!("{}\n{}", english.clone().unwrap_or_default(), text);
+    }
+  }
+
+  api_ok(ResWordsData { text, word_type: word_type.to_string(), english, chinese })
+}
+
+/// Returns a random quote from any available collection.
+#[utoipa::path(
+  get,
+  path = "/api/utils/words",
+  responses((status = 200, description = "Random quote from any collection", body = ResWordsData))
+)]
+async fn words() -> ApiResult<ResWordsData> {
+  let msg = random::<usize>() % WORD_TYPES.len() + 1;
+  let (file_name, word_type) = WORD_TYPES[msg - 1];
+  let path = format!("data/words/{file_name}.txt");
+  let content = tokio::fs::read_to_string(&path).await.context("Failed to read words file")?;
+  let lines = content.lines().filter(|line| !line.trim().is_empty()).collect::<Vec<_>>();
+  if lines.is_empty() {
+    return Err(ApiError::not_found("No quotes available"));
+  }
+  let index = random::<usize>() % lines.len();
+  let text = clean_line(lines[index]);
+  api_ok(ResWordsData { text, word_type: word_type.to_string(), english: None, chinese: None })
 }

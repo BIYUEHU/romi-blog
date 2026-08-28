@@ -61,3 +61,13 @@ pub struct ResMotdData {
   pub players_online: u32,
   pub players_max: u32,
 }
+
+#[derive(Serialize, TS, ToSchema)]
+#[ts(export, export_to = "../client/output.ts")]
+pub struct ResWordsData {
+  pub text: String,
+  #[serde(rename = "type")]
+  pub word_type: String,
+  pub english: Option<String>,
+  pub chinese: Option<String>,
+}

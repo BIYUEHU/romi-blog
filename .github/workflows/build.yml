@@ -106,3 +106,10 @@ jobs:
         with:
           name: romichan-client
           path: dist
+
+      - name: Upload artifact (Data)
+        if: matrix.os == 'ubuntu-latest' && matrix.arch == 'x86_64'
+        uses: actions/upload-artifact@v4
+        with:
+          name: romichan-dataset
+          path: data/

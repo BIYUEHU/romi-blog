@@ -4,6 +4,7 @@ use crate::models::{
   hitokoto::ResHitokotoData,
   utils::{
     QueryAgentData, QueryViewBadgeData, ResBingData, ResMcskinData, ResMotdData, ResViewData,
+    ResWordsData,
   },
 };
 
@@ -34,7 +35,9 @@ use crate::models::{
     super::utils::color_random,
     super::utils::color_rgb,
     super::utils::bing_redirect,
-    super::utils::bing_json
+    super::utils::bing_json,
+    super::utils::words_with_type,
+    super::utils::words
   ),
   components(schemas(
     QueryAgentData,
@@ -43,7 +46,8 @@ use crate::models::{
     ResMcskinData,
     ResBingData,
     ResMotdData,
-    ResHitokotoData
+    ResHitokotoData,
+    ResWordsData
   ))
 )]
 struct UtilsApiDoc;
